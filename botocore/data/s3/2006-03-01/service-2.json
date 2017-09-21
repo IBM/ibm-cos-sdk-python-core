@@ -3731,6 +3731,7 @@
       "members":{
         "IBMServiceInstanceId":{
           "shape":"AccountId",
+          "documentation":"The owning storage account. All buckets owned by this storage account are returned.",
           "location":"header",
           "locationName":"ibm-service-instance-id"
         }
