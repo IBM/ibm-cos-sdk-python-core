@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Botocore Events &mdash; botocore 1.5.26 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.5.26',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="botocore 1.5.26 documentation" href="../index.html" />
+    <link rel="up" title="Botocore Topic Guides" href="index.html" />
+    <link rel="next" title="Botocore Paginators" href="paginators.html" />
+    <link rel="prev" title="Botocore Topic Guides" href="index.html" />
+  
+   
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="paginators.html" title="Botocore Paginators"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Botocore Topic Guides"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">botocore 1.5.26 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Botocore Topic Guides</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">botocore 1.5.26 documentation</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Getting Started With botocore</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/config.html">Config Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Available Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/loaders.html">Loaders Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/response.html">Response Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/stubber.html">Stubber Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Botocore Topic Guides</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="">Botocore Events</a></li>
+<li class="toctree-l2"><a class="reference internal" href="paginators.html">Botocore Paginators</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Botocore Development</a></li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Contents</h2>
+    <div class="sidebar-localtoc">
+      <ul>
+<li><a class="reference internal" href="#">Botocore Events</a><ul>
+<li><a class="reference internal" href="#session-events">Session Events</a></li>
+<li><a class="reference internal" href="#event-types">Event Types</a></li>
+<li><a class="reference internal" href="#event-emission">Event Emission</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="index.html">Botocore Topic Guides</a></li>
+              
+              <li>Botocore Events</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="botocore-events">
+<h1>Botocore Events<a class="headerlink" href="#botocore-events" title="Permalink to this headline">¶</a></h1>
+<p>Botocore will emit events during various parts of its execution.  Users of the
+library can register handlers (callables) for these events, such that whenever
+an event is emitted, all registered handlers for the event will be called.
+This allows you to customize and extend the behavior of botocore without having
+to modify the internals.  This document covers this event system in detail.</p>
+<div class="section" id="session-events">
+<h2>Session Events<a class="headerlink" href="#session-events" title="Permalink to this headline">¶</a></h2>
+<p>The main interface for events is through the <tt class="xref py py-class docutils literal"><span class="pre">botocore.session.Session</span></tt>
+class.  The <tt class="docutils literal"><span class="pre">Session</span></tt> object allows you to register and unregister handlers
+to events.</p>
+</div>
+<div class="section" id="event-types">
+<h2>Event Types<a class="headerlink" href="#event-types" title="Permalink to this headline">¶</a></h2>
+<p>The table below shows all of the events emitted by botocore.  In some cases,
+the events are listed as <tt class="docutils literal"><span class="pre">&lt;service&gt;.&lt;operations&gt;.bar</span></tt>, in which <tt class="docutils literal"><span class="pre">&lt;service&gt;</span></tt>
+and <tt class="docutils literal"><span class="pre">&lt;operation&gt;</span></tt> are replaced with a specific service and operation, for
+example <tt class="docutils literal"><span class="pre">s3.ListObjects.bar</span></tt>.</p>
+<table class="table table-bordered">
+<caption>Events</caption>
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Event Name</th>
+<th class="head">Occurance</th>
+<th class="head">Arguments</th>
+<th class="head">Return Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>service-created</strong></td>
+<td>Whenever a service is created via the Sessions <tt class="docutils literal"><span class="pre">get_service</span></tt>
+method.</td>
+<td><tt class="docutils literal"><span class="pre">service</span></tt> - The newly created <tt class="xref py py-class docutils literal"><span class="pre">botocore.service.Service</span></tt>
+object.</td>
+<td>Ignored.</td>
+</tr>
+<tr class="row-odd"><td><strong>before-call.&lt;service&gt;.&lt;operation&gt;</strong></td>
+<td>When an operation is being called (<tt class="docutils literal"><span class="pre">Operation.call</span></tt>).</td>
+<td><tt class="docutils literal"><span class="pre">operation</span></tt> - The newly created <tt class="xref py py-class docutils literal"><span class="pre">botocore.operation.Operation</span></tt>
+object.</td>
+<td>Ignored.</td>
+</tr>
+<tr class="row-even"><td><strong>after-call.&lt;service&gt;.&lt;operation&gt;</strong></td>
+<td>After an operation has been called, but before the response is parsed.</td>
+<td><tt class="docutils literal"><span class="pre">http_response</span></tt> - The HTTP response, <tt class="docutils literal"><span class="pre">parsed</span></tt> - The parsed data.</td>
+<td>Ignored.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="event-emission">
+<h2>Event Emission<a class="headerlink" href="#event-emission" title="Permalink to this headline">¶</a></h2>
+<p>When an event is emitted, the handlers are invoked in the order that they were
+registered.</p>
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="index.html" title="previous chapter (use the left arrow)">Botocore Topic Guides</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="paginators.html" title="next chapter (use the right arrow)">Botocore Paginators</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="paginators.html" title="Botocore Paginators"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Botocore Topic Guides"
+             >previous</a> |</li>
+        <li><a href="../index.html">botocore 1.5.26 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Botocore Topic Guides</a> &raquo;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2013, Mitch Garnaat. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

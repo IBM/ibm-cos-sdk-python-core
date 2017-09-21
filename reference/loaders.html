@@ -1,0 +1,418 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Loaders Reference &mdash; botocore 1.5.26 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.5.26',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="botocore 1.5.26 documentation" href="../index.html" />
+    <link rel="next" title="Response Reference" href="response.html" />
+    <link rel="prev" title="S3" href="services/s3.html" />
+  
+   
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="response.html" title="Response Reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="services/s3.html" title="S3"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">botocore 1.5.26 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">botocore 1.5.26 documentation</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Getting Started With botocore</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">Config Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Available Services</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Loaders Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-botocore.loaders">botocore.loaders</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="response.html">Response Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stubber.html">Stubber Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topics/index.html">Botocore Topic Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Botocore Development</a></li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Contents</h2>
+    <div class="sidebar-localtoc">
+      <ul>
+<li><a class="reference internal" href="#">Loaders Reference</a><ul>
+<li><a class="reference internal" href="#module-botocore.loaders">botocore.loaders</a><ul>
+<li><a class="reference internal" href="#the-search-path">The Search Path</a></li>
+<li><a class="reference internal" href="#directory-layout">Directory Layout</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+              <li>Loaders Reference</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="loaders-reference">
+<h1>Loaders Reference<a class="headerlink" href="#loaders-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-botocore.loaders">
+<span id="botocore-loaders"></span><h2>botocore.loaders<a class="headerlink" href="#module-botocore.loaders" title="Permalink to this headline">¶</a></h2>
+<p>Module for loading various model files.</p>
+<p>This module provides the classes that are used to load models used
+by botocore.  This can include:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Service models (e.g. the model for EC2, S3, DynamoDB, etc.)</li>
+<li>Service model extras which customize the service models</li>
+<li>Other models associated with a service (pagination, waiters)</li>
+<li>Non service-specific config (Endpoint data, retry config)</li>
+</ul>
+</div></blockquote>
+<p>Loading a module is broken down into several steps:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Determining the path to load</li>
+<li>Search the data_path for files to load</li>
+<li>The mechanics of loading the file</li>
+<li>Searching for extras and applying them to the loaded file</li>
+</ul>
+</div></blockquote>
+<p>The last item is used so that other faster loading mechanism
+besides the default JSON loader can be used.</p>
+<div class="section" id="the-search-path">
+<h3>The Search Path<a class="headerlink" href="#the-search-path" title="Permalink to this headline">¶</a></h3>
+<p>Similar to how the PATH environment variable is to finding executables
+and the PYTHONPATH environment variable is to finding python modules
+to import, the botocore loaders have the concept of a data path exposed
+through AWS_DATA_PATH.</p>
+<p>This enables end users to provide additional search paths where we
+will attempt to load models outside of the models we ship with
+botocore.  When you create a <tt class="docutils literal"><span class="pre">Loader</span></tt>, there are two paths
+automatically added to the model search path:</p>
+<blockquote>
+<div><ul class="simple">
+<li>&lt;botocore root&gt;/data/</li>
+<li>~/.aws/models</li>
+</ul>
+</div></blockquote>
+<p>The first value is the path where all the model files shipped with
+botocore are located.</p>
+<p>The second path is so that users can just drop new model files in
+<tt class="docutils literal"><span class="pre">~/.aws/models</span></tt> without having to mess around with the AWS_DATA_PATH.</p>
+<p>The AWS_DATA_PATH using the platform specific path separator to
+separate entries (typically <tt class="docutils literal"><span class="pre">:</span></tt> on linux and <tt class="docutils literal"><span class="pre">;</span></tt> on windows).</p>
+</div>
+<div class="section" id="directory-layout">
+<h3>Directory Layout<a class="headerlink" href="#directory-layout" title="Permalink to this headline">¶</a></h3>
+<p>The Loader expects a particular directory layout.  In order for any
+directory specified in AWS_DATA_PATH to be considered, it must have
+this structure for service models:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;root&gt;
+  |
+  |-- servicename1
+  |   |-- 2012-10-25
+  |       |-- service-2.json
+  |-- ec2
+  |   |-- 2014-01-01
+  |   |   |-- paginators-1.json
+  |   |   |-- service-2.json
+  |   |   |-- waiters-2.json
+  |   |-- 2015-03-01
+  |       |-- paginators-1.json
+  |       |-- service-2.json
+  |       |-- waiters-2.json
+  |       |-- service-2.sdk-extras.json
+</pre></div>
+</div>
+<p>That is:</p>
+<blockquote>
+<div><ul class="simple">
+<li>The root directory contains sub directories that are the name
+of the services.</li>
+<li>Within each service directory, there's a sub directory for each
+available API version.</li>
+<li>Within each API version, there are model specific files, including
+(but not limited to): service-2.json, waiters-2.json, paginators-1.json</li>
+</ul>
+</div></blockquote>
+<p>The <tt class="docutils literal"><span class="pre">-1</span></tt> and <tt class="docutils literal"><span class="pre">-2</span></tt> suffix at the end of the model files denote which version
+schema is used within the model.  Even though this information is available in
+the <tt class="docutils literal"><span class="pre">version</span></tt> key within the model, this version is also part of the filename
+so that code does not need to load the JSON model in order to determine which
+version to use.</p>
+<p>The <tt class="docutils literal"><span class="pre">sdk-extras</span></tt> and similar files represent extra data that needs to be
+applied to the model after it is loaded. Data in these files might represent
+information that doesn't quite fit in the original models, but is still needed
+for the sdk. For instance, additional operation parameters might be added here
+which don't represent the actual service api.</p>
+<dl class="class">
+<dt id="botocore.loaders.ExtrasProcessor">
+<em class="property">class </em><tt class="descclassname">botocore.loaders.</tt><tt class="descname">ExtrasProcessor</tt><a class="headerlink" href="#botocore.loaders.ExtrasProcessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes data from extras files into service models.</p>
+<dl class="method">
+<dt id="botocore.loaders.ExtrasProcessor.process">
+<tt class="descname">process</tt><big>(</big><em>original_model</em>, <em>extra_models</em><big>)</big><a class="headerlink" href="#botocore.loaders.ExtrasProcessor.process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes data from a list of loaded extras files into a model</p>
+<dl class="docutils field-list" frame="void" rules="none">
+<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first last simple">
+<li><strong>original_model</strong> (<em>dict</em>) -- The service model to load all the extras into.</li>
+<li><strong>extra_models</strong> (<em>iterable of dict</em>) -- A list of loaded extras models.</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="botocore.loaders.JSONFileLoader">
+<em class="property">class </em><tt class="descclassname">botocore.loaders.</tt><tt class="descname">JSONFileLoader</tt><a class="headerlink" href="#botocore.loaders.JSONFileLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loader JSON files.</p>
+<p>This class can load the default format of models, which is a JSON file.</p>
+<dl class="method">
+<dt id="botocore.loaders.JSONFileLoader.exists">
+<tt class="descname">exists</tt><big>(</big><em>file_path</em><big>)</big><a class="headerlink" href="#botocore.loaders.JSONFileLoader.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the file exists.</p>
+<dl class="docutils field-list" frame="void" rules="none">
+<dt class="field-name">Parameters</dt><dd class="field-body"><strong>file_path</strong> (<em>str</em>) -- The full path to the file to load without
+the '.json' extension.</dd>
+<dt class="field-name">Returns</dt><dd class="field-body">True if file path exists, False otherwise.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="botocore.loaders.JSONFileLoader.load_file">
+<tt class="descname">load_file</tt><big>(</big><em>file_path</em><big>)</big><a class="headerlink" href="#botocore.loaders.JSONFileLoader.load_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempt to load the file path.</p>
+<dl class="docutils field-list" frame="void" rules="none">
+<dt class="field-name">Parameters</dt><dd class="field-body"><strong>file_path</strong> (<em>str</em>) -- The full path to the file to load without
+the '.json' extension.</dd>
+<dt class="field-name">Returns</dt><dd class="field-body">The loaded data if it exists, otherwise None.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="botocore.loaders.Loader">
+<em class="property">class </em><tt class="descclassname">botocore.loaders.</tt><tt class="descname">Loader</tt><big>(</big><em>extra_search_paths=None</em>, <em>file_loader=None</em>, <em>cache=None</em>, <em>include_default_search_paths=True</em>, <em>include_default_extras=True</em><big>)</big><a class="headerlink" href="#botocore.loaders.Loader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find and load data models.</p>
+<p>This class will handle searching for and loading data models.</p>
+<p>The main method used here is <tt class="docutils literal"><span class="pre">load_service_model</span></tt>, which is a
+convenience method over <tt class="docutils literal"><span class="pre">load_data</span></tt> and <tt class="docutils literal"><span class="pre">determine_latest_version</span></tt>.</p>
+<dl class="attribute">
+<dt id="botocore.loaders.Loader.BUILTIN_DATA_PATH">
+<tt class="descname">BUILTIN_DATA_PATH</tt><em class="property"> = '/private/tmp/branch_fixes/ibm-cos-sdk-python-core/botocore/data'</em><a class="headerlink" href="#botocore.loaders.Loader.BUILTIN_DATA_PATH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="botocore.loaders.Loader.BUILTIN_EXTRAS_TYPES">
+<tt class="descname">BUILTIN_EXTRAS_TYPES</tt><em class="property"> = ['sdk']</em><a class="headerlink" href="#botocore.loaders.Loader.BUILTIN_EXTRAS_TYPES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="botocore.loaders.Loader.CUSTOMER_DATA_PATH">
+<tt class="descname">CUSTOMER_DATA_PATH</tt><em class="property"> = '/Users/rveitch/.aws/models'</em><a class="headerlink" href="#botocore.loaders.Loader.CUSTOMER_DATA_PATH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="botocore.loaders.Loader.FILE_LOADER_CLASS">
+<tt class="descname">FILE_LOADER_CLASS</tt><a class="headerlink" href="#botocore.loaders.Loader.FILE_LOADER_CLASS" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#botocore.loaders.JSONFileLoader" title="botocore.loaders.JSONFileLoader"><tt class="xref py py-class docutils literal"><span class="pre">JSONFileLoader</span></tt></a></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="botocore.loaders.Loader.determine_latest_version">
+<tt class="descname">determine_latest_version</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#botocore.loaders.Loader.determine_latest_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="botocore.loaders.Loader.extras_types">
+<tt class="descname">extras_types</tt><a class="headerlink" href="#botocore.loaders.Loader.extras_types" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="botocore.loaders.Loader.list_api_versions">
+<tt class="descname">list_api_versions</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#botocore.loaders.Loader.list_api_versions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="botocore.loaders.Loader.list_available_services">
+<tt class="descname">list_available_services</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#botocore.loaders.Loader.list_available_services" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="botocore.loaders.Loader.load_data">
+<tt class="descname">load_data</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#botocore.loaders.Loader.load_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="botocore.loaders.Loader.load_service_model">
+<tt class="descname">load_service_model</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#botocore.loaders.Loader.load_service_model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="botocore.loaders.Loader.search_paths">
+<tt class="descname">search_paths</tt><a class="headerlink" href="#botocore.loaders.Loader.search_paths" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="botocore.loaders.create_loader">
+<tt class="descclassname">botocore.loaders.</tt><tt class="descname">create_loader</tt><big>(</big><em>search_path_string=None</em><big>)</big><a class="headerlink" href="#botocore.loaders.create_loader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a Loader class.</p>
+<p>This factory function creates a loader given a search string path.</p>
+<dl class="docutils field-list" frame="void" rules="none">
+<dt class="field-name">Parameters</dt><dd class="field-body"><strong>search_string_path</strong> (<em>str</em>) -- The AWS_DATA_PATH value.  A string
+of data path values separated by the <tt class="docutils literal"><span class="pre">os.path.pathsep</span></tt> value,
+which is typically <tt class="docutils literal"><span class="pre">:</span></tt> on POSIX platforms and <tt class="docutils literal"><span class="pre">;</span></tt> on
+windows.</dd>
+<dt class="field-name">Returns</dt><dd class="field-body">A <tt class="docutils literal"><span class="pre">Loader</span></tt> instance.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="botocore.loaders.instance_cache">
+<tt class="descclassname">botocore.loaders.</tt><tt class="descname">instance_cache</tt><big>(</big><em>func</em><big>)</big><a class="headerlink" href="#botocore.loaders.instance_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cache the result of a method on a per instance basis.</p>
+<p>This is not a general purpose caching decorator.  In order
+for this to be used, it must be used on methods on an
+instance, and that instance <em>must</em> provide a
+<tt class="docutils literal"><span class="pre">self._cache</span></tt> dictionary.</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="services/s3.html" title="previous chapter (use the left arrow)">S3</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="response.html" title="next chapter (use the right arrow)">Response Reference</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="response.html" title="Response Reference"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="services/s3.html" title="S3"
+             >previous</a> |</li>
+        <li><a href="../index.html">botocore 1.5.26 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2013, Mitch Garnaat. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>
