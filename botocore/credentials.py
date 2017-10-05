@@ -212,11 +212,12 @@ class TokenManager(object):
     """An abstract base class for token managers.
 
     Every token manager must derive from this base class 
-    and override get_token method.
+    and override token property.
 
     """
 
-    def get_token(self):
+    @property
+    def token(self):
         """Returns a token, possibly retrieving it first.
 
         When overriden in derived classes, this method always
@@ -251,7 +252,7 @@ class DefaultTokenManager(TokenManager):
     _mandatory_refresh_timeout = 10 * 60
 
     def __init__(self, api_key_id=None, service_instance_id=None, auth_endpoint=None, time_fetcher=_local_now,
-                       auth_function=None):
+                       auth_function=None, verify=True):
         """Creates a new DefaultTokenManager object.
 
         :type api_key_id: str
@@ -275,6 +276,18 @@ class DefaultTokenManager(TokenManager):
             and token type. If not provided, a default authentication
             function will be used.
 
+        :type verify: boolean/string
+        :param verify: Whether or not to verify IAM service SSL certificates.
+            By default SSL certificates are verified.  You can provide the
+            following values:
+
+            * False - do not validate SSL certificates.  SSL will still be
+              used (unless use_ssl is False), but SSL certificates
+              will not be verified.
+            * path/to/cert/bundle.pem - A filename of the CA cert bundle to
+              uses.  You can specify this argument if you want to use a
+              different CA cert bundle than the one used by botocore.
+
         """
         if api_key_id is None and auth_function is None:
             raise RuntimeError('api_key_id and auth_function cannot both be None')
@@ -283,6 +296,7 @@ class DefaultTokenManager(TokenManager):
         self.service_instance_id = service_instance_id
         self.auth_endpoint = auth_endpoint
         self._time_fetcher = time_fetcher
+        self.verify = verify
 
         if auth_function:
             self.auth_function = auth_function
@@ -307,10 +321,10 @@ class DefaultTokenManager(TokenManager):
 
         """
         try:
-        	# This method will run on background thread forever
+            # This method will run on background thread forever
             while True:
-        	    # We just woke up and there's a token.
-	            # Will see if refresh is required and will then go back to sleep
+                # We just woke up and there's a token.
+                # Will see if refresh is required and will then go back to sleep
                 remaining = self._seconds_remaining()
                 if remaining <= self._advisory_refresh_timeout:
                     self._refresh()
@@ -326,7 +340,8 @@ class DefaultTokenManager(TokenManager):
         except Exception as e:
             logger.error("Background refresh thread encountered error: " + str(e))
 
-    def get_token(self):
+    @property
+    def token(self):
         """Returns a token, possibly retrieving it first.
 
         Always returns token. If token is not available, retrieves.
@@ -370,8 +385,8 @@ class DefaultTokenManager(TokenManager):
                 'Content-Type': "application/x-www-form-urlencoded"}
 
     def _default_auth_function(self):
-        response = requests.post(url=self._get_token_url(), data=self._get_body(), 
-                                 headers=self._get_headers(), timeout=30)
+        response = requests.post(url=self._get_token_url(), data=self._get_body(),
+                                 headers=self._get_headers(), timeout=30, verify=self.verify)
         if response.status_code != httplib.OK:
             raise CredentialRetrievalError(provider=self._get_token_url(),
                 error_msg=str('Retrieval of tokens from server failed.'))
@@ -504,7 +519,7 @@ class DefaultTokenManager(TokenManager):
 
         # Add expires_in to current system time.
         self._expiry_time = self._time_fetcher() + datetime.timedelta(seconds=data['expires_in'])
-        
+
         # Aren't currently using this, but we can later
         if 'refresh_token' in data:
             self._refresh_token = data['refresh_token']
@@ -521,9 +536,9 @@ class OAuth2Credentials(Credentials):
 
     """
 
-    def __init__(self, api_key_id=None, service_instance_id=None, auth_endpoint=None, 
+    def __init__(self, api_key_id=None, service_instance_id=None, auth_endpoint=None,
                  token_manager=None, auth_function=None,
-                 method=None, time_fetcher=_local_now):
+                 method=None, time_fetcher=_local_now, verify=True):
         """Creates a new OAuth2Credentials object.
 
         :type api_key_id: str
@@ -555,6 +570,18 @@ class OAuth2Credentials(Credentials):
         :param time_fetcher: current date and time used for calculating
             expiration time for token.
 
+        :type verify: boolean/string
+        :param verify: Whether or not to verify IAM service SSL certificates.
+            By default SSL certificates are verified.  You can provide the
+            following values:
+
+            * False - do not validate SSL certificates.  SSL will still be
+              used (unless use_ssl is False), but SSL certificates
+              will not be verified.
+            * path/to/cert/bundle.pem - A filename of the CA cert bundle to
+              uses.  You can specify this argument if you want to use a
+              different CA cert bundle than the one used by botocore.
+
         """
         self.api_key_id = api_key_id
         self.service_instance_id = service_instance_id
@@ -584,14 +611,18 @@ class OAuth2Credentials(Credentials):
             raise ValueError("Either api_key_id, auth_function or token_manager must be provided")
 
         if api_key_id or auth_function:
-            self.token_manager = DefaultTokenManager(self.api_key_id, self.service_instance_id, 
-                self.auth_endpoint, time_fetcher, self.auth_function)
+            self.token_manager = DefaultTokenManager(self.api_key_id, self.service_instance_id,
+                self.auth_endpoint, time_fetcher, self.auth_function, verify)
 
     def _normalize(self):
         if self.api_key_id:
             self.api_key_id = botocore.compat.ensure_unicode(self.api_key_id)
         if self.service_instance_id:
             self.service_instance_id = botocore.compat.ensure_unicode(self.service_instance_id)
+
+    def update_verify(self, verify):
+        if isinstance(self.token_manager, DefaultTokenManager):
+            self.token_manager.verify = verify
 
     def get_frozen_credentials(self):
         """Return immutable credentials.
@@ -627,7 +658,7 @@ class OAuth2Credentials(Credentials):
             print("Signed request:", request)
 
         """
-        token = self.token_manager.get_token()
+        token = self.token_manager.token
 
         # Signer is only interested in token, and besides, we might not even have api key
         return ReadOnlyCredentials(
@@ -1014,7 +1045,6 @@ class EnvProvider(CredentialProvider):
                 self.environ, self._mapping['ibm_api_key_id'],
                 self._mapping['ibm_service_instance_id'],
                 self._mapping['ibm_auth_endpoint'])
-            token = self._get_session_token()
             return OAuth2Credentials(api_key_id = ibm_api_key_id, service_instance_id = ibm_service_instance_id, auth_endpoint = ibm_auth_endpoint,
                                method=self.METHOD)
         elif self._mapping['access_key'] in self.environ:
