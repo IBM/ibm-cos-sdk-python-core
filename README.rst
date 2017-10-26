@@ -1,8 +1,8 @@
 ibm-cos-sdk-python-core
-========
+=======================
 
 
-A low-level interface to IBM Cloud Object Storage based on the ``botocore`` package. This
+A low-level interface to IBM Cloud Object Storage based on the `botocore <https://github.com/boto/botocore>`_ package. This
 core package is the foundation for the
 `ibm-cos-sdk-python <https://github.com/ibm/ibm-cos-sdk-core>`__ package.
 
