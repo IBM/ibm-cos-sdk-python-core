@@ -348,7 +348,7 @@ class TestSessionUserAgent(BaseSessionTest):
 
     def test_can_change_user_agent_version(self):
         self.session.user_agent_version = '24.0'
-        self.assertTrue(self.session.user_agent().startswith('Botocore/24.0'))
+        self.assertTrue(self.session.user_agent().startswith('ibm-cos-sdk-python-core/24.0'))
 
     def test_can_append_to_user_agent(self):
         self.session.user_agent_extra = 'custom-thing/other'
