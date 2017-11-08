@@ -1,4 +1,4 @@
-Botocore Topic Guides
+ibm-cos-sdk-core Topic Guides
 *********************
 
 .. toctree::
