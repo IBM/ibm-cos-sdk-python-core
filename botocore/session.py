@@ -153,7 +153,7 @@ class Session(object):
             self._events = event_hooks
         if include_builtin_handlers:
             self._register_builtin_handlers(self._events)
-        self.user_agent_name = 'Botocore'
+        self.user_agent_name = 'ibm-cos-sdk-python-core'
         self.user_agent_version = __version__
         self.user_agent_extra = ''
         # The _profile attribute is just used to cache the value

@@ -17,3 +17,11 @@ Features
 --------
 * Doc updates for IBM COS
 
+1.0.2
+=====
+
+Features
+--------
+* Added Python 3 support
+* Updated user agent
+

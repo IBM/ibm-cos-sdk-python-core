@@ -24,7 +24,10 @@
 # specific language governing permissions and limitations under the License.
 import time
 import datetime
-import httplib
+try:
+    import http.client as httplib
+except ImportError:
+    import httplib
 import json
 import logging
 import os
@@ -391,7 +394,7 @@ class DefaultTokenManager(TokenManager):
             raise CredentialRetrievalError(provider=self._get_token_url(),
                 error_msg=str('Retrieval of tokens from server failed.'))
 
-        return json.loads(response.content)
+        return json.loads(response.content.decode('utf-8'))
 
     def _refresh_needed(self, refresh_in=None):
         """Check if a refresh is needed.
