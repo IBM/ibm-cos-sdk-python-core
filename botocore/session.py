@@ -142,8 +142,6 @@ class Session(object):
             the session is created.
 
         """
-        self._ibm_service_instance_id = None
-
         self.session_var_map = copy.copy(self.SESSION_VARIABLES)
         if session_vars:
             self.session_var_map.update(session_vars)
@@ -872,11 +870,9 @@ class Session(object):
         # Precedence - if any IAM method is provided, it will be used before aws
         if ibm_api_key_id or auth_function or token_manager:
             credentials = botocore.credentials.OAuth2Credentials(api_key_id=ibm_api_key_id,
-                                                                 service_instance_id=ibm_service_instance_id,
-                                                                 auth_endpoint=ibm_auth_endpoint,
-                                                                 auth_function=auth_function,
-                                                                 token_manager=token_manager,
-                                                                 verify=verify)
+                                                             service_instance_id=ibm_service_instance_id,
+                                                             auth_endpoint=ibm_auth_endpoint,
+                                                             auth_function=auth_function, token_manager=token_manager)
         elif aws_access_key_id is not None and aws_secret_access_key is not None:
             credentials = botocore.credentials.Credentials(
                 access_key=aws_access_key_id,
@@ -890,9 +886,6 @@ class Session(object):
                                                  aws_secret_access_key))
         else:
             credentials = self.get_credentials()
-            if isinstance(credentials, botocore.credentials.OAuth2Credentials):
-                credentials.update_verify(verify=verify)
-
         endpoint_resolver = self.get_component('endpoint_resolver')
         exceptions_factory = self.get_component('exceptions_factory')
         client_creator = botocore.client.ClientCreator(
