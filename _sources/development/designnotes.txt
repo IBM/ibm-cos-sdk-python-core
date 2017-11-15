@@ -1,14 +1,14 @@
-Design Notes for Botocore
+Design Notes for ibm-cos-sdk-core
 =========================
 
 This document outlines the rationale behind various design
-decisions in botocore.
+decisions in ibm-cos-sdk-core.
 
 
 Casing of Arguments
 -------------------
 
-One of the most noticeable differences between botocore and boto
+One of the most noticeable differences between ibm-cos-sdk-core and ibm-cos-sdk
 is that the client objects 1) require parameters to be provided
 as ``**kwargs`` and 2) require the arguments typically be provided as
 ``CamelCased`` values.
@@ -22,10 +22,10 @@ In boto, the equivalent code would be::
 
     layer1.describe_table(table_name='mytable')
 
-There are several reasons why this was changed in botocore.
+There are several reasons why this was changed in ibm-cos-sdk-core.
 
 The first reason was because we wanted to have the same casing for
-inputs as well as outputs.  In both boto and botocore, the response
+inputs as well as outputs.  In both ibm-cos-sdk and ibm-cos-sdk-core, the response
 for the ``describe_table`` calls is::
 
     {'Table': {'CreationDateTime': 1393007077.387,
@@ -51,11 +51,4 @@ output.  Why not use ``snake_casing`` for input as well as output?
 We choose to use ``CamelCasing`` because this is the casing used by
 AWS services.  As a result, we don't have to do any translation from
 ``CamelCasing`` to ``snake_casing``.  We can use the response values
-exactly as they are returned from AWS services.
-
-This also means that if you are reading the AWS API documentation
-for services, the names and casing referenced there will match
-what you would provide to botocore.  For example, here's the
-corresponding API documentation for
-`dynamodb.describe_table
-<http://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_DescribeTable.html>`__.
+exactly as they are returned from IBM services.

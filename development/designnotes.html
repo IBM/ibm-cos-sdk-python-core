@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Design Notes for Botocore &mdash; botocore 1.5.26 documentation</title>
+    <title>Design Notes for ibm-cos-sdk-core &mdash; ibm-cos-sdk-core 1.1.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -23,7 +23,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.5.26',
+        VERSION:     '1.1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -32,9 +32,9 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="botocore 1.5.26 documentation" href="../index.html" />
-    <link rel="up" title="Botocore Development" href="index.html" />
-    <link rel="prev" title="Changes for Version 1.0" href="changesfor10.html" />
+    <link rel="top" title="ibm-cos-sdk-core 1.1.0 documentation" href="../index.html" />
+    <link rel="up" title="ibm-cos-sdk-core Development" href="index.html" />
+    <link rel="prev" title="ibm-cos-sdk-core Development" href="index.html" />
   
    
 
@@ -50,10 +50,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="changesfor10.html" title="Changes for Version 1.0"
+          <a href="index.html" title="ibm-cos-sdk-core Development"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">botocore 1.5.26 documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">Botocore Development</a> &raquo;</li> 
+        <li><a href="../index.html">ibm-cos-sdk-core 1.1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">ibm-cos-sdk-core Development</a> &raquo;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -63,7 +63,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">botocore 1.5.26 documentation</a>
+    ../index.html" class="text-logo">ibm-cos-sdk-core 1.1.0 documentation</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -72,17 +72,15 @@
     
     
       <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Getting Started With botocore</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Getting Started With ibm-cos-sdk-core</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/config.html">Config Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Available Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/loaders.html">Loaders Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/response.html">Response Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/stubber.html">Stubber Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../topics/index.html">Botocore Topic Guides</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">Botocore Development</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="changesfor10.html">Changes for Version 1.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changesfor10.html#changing-the-model-schema">Changing the Model Schema</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">Design Notes for Botocore</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topics/index.html">ibm-cos-sdk-core Topic Guides</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">ibm-cos-sdk-core Development</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="">Design Notes for ibm-cos-sdk-core</a></li>
 </ul>
 </li>
 </ul>
@@ -95,7 +93,7 @@
     <h2>Contents</h2>
     <div class="sidebar-localtoc">
       <ul>
-<li><a class="reference internal" href="#">Design Notes for Botocore</a><ul>
+<li><a class="reference internal" href="#">Design Notes for ibm-cos-sdk-core</a><ul>
 <li><a class="reference internal" href="#casing-of-arguments">Casing of Arguments</a></li>
 </ul>
 </li>
@@ -126,21 +124,21 @@
             <ol class="breadcrumb">
               <li><a href="../index.html">Docs</a></li>
               
-                <li><a href="index.html">Botocore Development</a></li>
+                <li><a href="index.html">ibm-cos-sdk-core Development</a></li>
               
-              <li>Design Notes for Botocore</li>
+              <li>Design Notes for ibm-cos-sdk-core</li>
             </ol>
           </div>
           
           <div class="document clearer body">
             
-  <div class="section" id="design-notes-for-botocore">
-<h1>Design Notes for Botocore<a class="headerlink" href="#design-notes-for-botocore" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="design-notes-for-ibm-cos-sdk-core">
+<h1>Design Notes for ibm-cos-sdk-core<a class="headerlink" href="#design-notes-for-ibm-cos-sdk-core" title="Permalink to this headline">¶</a></h1>
 <p>This document outlines the rationale behind various design
-decisions in botocore.</p>
+decisions in ibm-cos-sdk-core.</p>
 <div class="section" id="casing-of-arguments">
 <h2>Casing of Arguments<a class="headerlink" href="#casing-of-arguments" title="Permalink to this headline">¶</a></h2>
-<p>One of the most noticeable differences between botocore and boto
+<p>One of the most noticeable differences between ibm-cos-sdk-core and ibm-cos-sdk
 is that the client objects 1) require parameters to be provided
 as <tt class="docutils literal"><span class="pre">**kwargs</span></tt> and 2) require the arguments typically be provided as
 <tt class="docutils literal"><span class="pre">CamelCased</span></tt> values.</p>
@@ -153,9 +151,9 @@ as <tt class="docutils literal"><span class="pre">**kwargs</span></tt> and 2) re
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">layer1</span><span class="o">.</span><span class="n">describe_table</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s1">&#39;mytable&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>There are several reasons why this was changed in botocore.</p>
+<p>There are several reasons why this was changed in ibm-cos-sdk-core.</p>
 <p>The first reason was because we wanted to have the same casing for
-inputs as well as outputs.  In both boto and botocore, the response
+inputs as well as outputs.  In both ibm-cos-sdk and ibm-cos-sdk-core, the response
 for the <tt class="docutils literal"><span class="pre">describe_table</span></tt> calls is:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;Table&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;CreationDateTime&#39;</span><span class="p">:</span> <span class="mf">1393007077.387</span><span class="p">,</span>
             <span class="s1">&#39;ItemCount&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
@@ -179,12 +177,7 @@ output.  Why not use <tt class="docutils literal"><span class="pre">snake_casing
 <p>We choose to use <tt class="docutils literal"><span class="pre">CamelCasing</span></tt> because this is the casing used by
 AWS services.  As a result, we don't have to do any translation from
 <tt class="docutils literal"><span class="pre">CamelCasing</span></tt> to <tt class="docutils literal"><span class="pre">snake_casing</span></tt>.  We can use the response values
-exactly as they are returned from AWS services.</p>
-<p>This also means that if you are reading the AWS API documentation
-for services, the names and casing referenced there will match
-what you would provide to botocore.  For example, here's the
-corresponding API documentation for
-<a class="reference external" href="http://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_DescribeTable.html">dynamodb.describe_table</a>.</p>
+exactly as they are returned from IBM services.</p>
 </div>
 </div>
 
@@ -194,7 +187,7 @@ corresponding API documentation for
   <div class="footer-relations">
     
       <div class="pull-left">
-        <a class="btn btn-default" href="changesfor10.html" title="previous chapter (use the left arrow)">Changes for Version 1.0</a>
+        <a class="btn btn-default" href="index.html" title="previous chapter (use the left arrow)">ibm-cos-sdk-core Development</a>
       </div>
     
     </div>
@@ -213,10 +206,10 @@ corresponding API documentation for
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="changesfor10.html" title="Changes for Version 1.0"
+          <a href="index.html" title="ibm-cos-sdk-core Development"
              >previous</a> |</li>
-        <li><a href="../index.html">botocore 1.5.26 documentation</a> &raquo;</li>
-          <li><a href="index.html" >Botocore Development</a> &raquo;</li> 
+        <li><a href="../index.html">ibm-cos-sdk-core 1.1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" >ibm-cos-sdk-core Development</a> &raquo;</li> 
       </ul>
     </div>
 <script type="text/javascript">

@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>S3 &mdash; botocore 1.5.26 documentation</title>
+    <title>S3 &mdash; ibm-cos-sdk-core 1.1.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -23,7 +23,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '1.5.26',
+        VERSION:     '1.1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -32,7 +32,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="botocore 1.5.26 documentation" href="../../index.html" />
+    <link rel="top" title="ibm-cos-sdk-core 1.1.0 documentation" href="../../index.html" />
     <link rel="up" title="Available Services" href="../index.html" />
     <link rel="next" title="Loaders Reference" href="../loaders.html" />
     <link rel="prev" title="Available Services" href="../index.html" />
@@ -56,7 +56,7 @@
         <li class="right" >
           <a href="../index.html" title="Available Services"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../index.html">botocore 1.5.26 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">ibm-cos-sdk-core 1.1.0 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Available Services</a> &raquo;</li> 
       </ul>
     </div>
@@ -67,7 +67,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../index.html" class="text-logo">botocore 1.5.26 documentation</a>
+    ../../index.html" class="text-logo">ibm-cos-sdk-core 1.1.0 documentation</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -76,7 +76,7 @@
     
     
       <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../tutorial/index.html">Getting Started With botocore</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/index.html">Getting Started With ibm-cos-sdk-core</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../config.html">Config Reference</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Available Services</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="">S3</a></li>
@@ -85,8 +85,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../loaders.html">Loaders Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../response.html">Response Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../stubber.html">Stubber Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../topics/index.html">Botocore Topic Guides</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../development/index.html">Botocore Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/index.html">ibm-cos-sdk-core Topic Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/index.html">ibm-cos-sdk-core Development</a></li>
 </ul>
 
     
@@ -506,7 +506,9 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
     <span class="n">GrantReadACP</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">GrantWrite</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">GrantWriteACP</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">IBMServiceInstanceId</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
+    <span class="n">IBMServiceInstanceId</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
+    <span class="n">IBMSSEKPEncryptionAlgorithm</span><span class="o">=</span><span class="s1">&#39;AES256&#39;</span><span class="p">,</span>
+    <span class="n">IBMSSEKPCustomerRootKeyCrn</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -524,6 +526,8 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 <li><strong>GrantWrite</strong> (<em>string</em>) -- Allows grantee to create, overwrite, and delete any object in the bucket.</li>
 <li><strong>GrantWriteACP</strong> (<em>string</em>) -- Allows grantee to write the ACL for the applicable bucket.</li>
 <li><strong>IBMServiceInstanceId</strong> (<em>string</em>) -- The storage account who will be the owner of the bucket.</li>
+<li><strong>IBMSSEKPEncryptionAlgorithm</strong> (<em>string</em>) -- The encryption algorithm that will be used for objects stored in the newly created bucket. Defaults to 'AES256'</li>
+<li><strong>IBMSSEKPCustomerRootKeyCrn</strong> (<em>string</em>) -- Container for describing the KMS-KP Key CRN.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -2059,7 +2063,22 @@ check if an operation is pageable.</dd>
 </div>
 <dl class="docutils field-list" frame="void" rules="none">
 <dt class="field-name">Parameters</dt><dd class="field-body"><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></dd>
-<dt class="field-name">Returns</dt><dd class="field-body">None</dd>
+<dt class="field-name">Return type</dt><dd class="field-body">dict</dd>
+<dt class="field-name">Returns</dt><dd class="field-body"><strong>Response Syntax</strong><div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;IBMSSEKPEnabled&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="o">|</span><span class="bp">False</span><span class="p">,</span>
+    <span class="s1">&#39;IBMSSEKPCrkId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Response Structure</strong></p>
+<ul class="simple">
+<li><em>(dict) --</em><ul>
+<li><strong>IBMSSEKPEnabled</strong> <em>(boolean) --</em> The bucket encryption enabled or not.</li>
+<li><strong>IBMSSEKPCrkId</strong> <em>(string) --</em> CRK ID of the Bucket encryption</li>
+</ul>
+</li>
+</ul>
+</dd>
 </dl>
 </dd></dl>
 
@@ -2831,6 +2850,8 @@ check if an operation is pageable.</dd>
         <span class="p">},</span>
     <span class="p">],</span>
     <span class="s1">&#39;Name&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;IBMSSEKPEnabled&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="o">|</span><span class="bp">False</span><span class="p">,</span>
+    <span class="s1">&#39;IBMSSEKPCrkId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;Delimiter&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;MaxKeys&#39;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
@@ -2866,6 +2887,8 @@ check if an operation is pageable.</dd>
 </ul>
 </li>
 <li><strong>Name</strong> <em>(string) --</em></li>
+<li><strong>IBMSSEKPEnabled</strong> <em>(boolean) --</em> The bucket encryption enabled or not.</li>
+<li><strong>IBMSSEKPCrkId</strong> <em>(string) --</em> CRK ID of the Bucket encryption</li>
 <li><strong>Prefix</strong> <em>(string) --</em></li>
 <li><strong>Delimiter</strong> <em>(string) --</em></li>
 <li><strong>MaxKeys</strong> <em>(integer) --</em></li>
@@ -4450,6 +4473,8 @@ check if an operation is pageable.</dd>
         <span class="p">},</span>
     <span class="p">],</span>
     <span class="s1">&#39;Name&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;IBMSSEKPEnabled&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="o">|</span><span class="bp">False</span><span class="p">,</span>
+    <span class="s1">&#39;IBMSSEKPCrkId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;Delimiter&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;MaxKeys&#39;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
@@ -4491,6 +4516,10 @@ check if an operation is pageable.</dd>
 </ul>
 </li>
 <li><p class="first"><strong>Name</strong> <em>(string) --</em></p>
+</li>
+<li><p class="first"><strong>IBMSSEKPEnabled</strong> <em>(boolean) --</em> The bucket encryption enabled or not.</p>
+</li>
+<li><p class="first"><strong>IBMSSEKPCrkId</strong> <em>(string) --</em> CRK ID of the Bucket encryption</p>
 </li>
 <li><p class="first"><strong>Prefix</strong> <em>(string) --</em></p>
 </li>
@@ -4996,7 +5025,7 @@ check if an operation is pageable.</dd>
         <li class="right" >
           <a href="../index.html" title="Available Services"
              >previous</a> |</li>
-        <li><a href="../../index.html">botocore 1.5.26 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">ibm-cos-sdk-core 1.1.0 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Available Services</a> &raquo;</li> 
       </ul>
     </div>

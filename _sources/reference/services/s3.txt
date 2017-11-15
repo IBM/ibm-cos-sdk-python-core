@@ -671,7 +671,9 @@ Client
           GrantReadACP='string',
           GrantWrite='string',
           GrantWriteACP='string',
-          IBMServiceInstanceId='string'
+          IBMServiceInstanceId='string',
+          IBMSSEKPEncryptionAlgorithm='AES256',
+          IBMSSEKPCustomerRootKeyCrn='string'
       )
     :type ACL: string
     :param ACL: The canned ACL to apply to the bucket.
@@ -711,6 +713,14 @@ Client
     
     :type IBMServiceInstanceId: string
     :param IBMServiceInstanceId: The storage account who will be the owner of the bucket.
+
+    
+    :type IBMSSEKPEncryptionAlgorithm: string
+    :param IBMSSEKPEncryptionAlgorithm: The encryption algorithm that will be used for objects stored in the newly created bucket. Defaults to 'AES256'
+
+    
+    :type IBMSSEKPCustomerRootKeyCrn: string
+    :param IBMSSEKPCustomerRootKeyCrn: Container for describing the KMS-KP Key CRN.
 
     
     
@@ -2772,7 +2782,30 @@ Client
 
     
     
-    :returns: None
+    :rtype: dict
+    :returns: 
+      
+      **Response Syntax** 
+
+      
+      ::
+
+        {
+            'IBMSSEKPEnabled': True|False,
+            'IBMSSEKPCrkId': 'string'
+        }
+      **Response Structure** 
+
+      
+
+      - *(dict) --* 
+        
+
+        - **IBMSSEKPEnabled** *(boolean) --* The bucket encryption enabled or not.
+        
+
+        - **IBMSSEKPCrkId** *(string) --* CRK ID of the Bucket encryption
+    
 
   .. py:method:: head_object(**kwargs)
 
@@ -3915,6 +3948,8 @@ Client
                 },
             ],
             'Name': 'string',
+            'IBMSSEKPEnabled': True|False,
+            'IBMSSEKPCrkId': 'string',
             'Prefix': 'string',
             'Delimiter': 'string',
             'MaxKeys': 123,
@@ -3975,6 +4010,12 @@ Client
         
 
         - **Name** *(string) --* 
+        
+
+        - **IBMSSEKPEnabled** *(boolean) --* The bucket encryption enabled or not.
+        
+
+        - **IBMSSEKPCrkId** *(string) --* CRK ID of the Bucket encryption
         
 
         - **Prefix** *(string) --* 
@@ -6320,6 +6361,8 @@ The available paginators are:
                 },
             ],
             'Name': 'string',
+            'IBMSSEKPEnabled': True|False,
+            'IBMSSEKPCrkId': 'string',
             'Prefix': 'string',
             'Delimiter': 'string',
             'MaxKeys': 123,
@@ -6381,6 +6424,12 @@ The available paginators are:
         
 
         - **Name** *(string) --* 
+        
+
+        - **IBMSSEKPEnabled** *(boolean) --* The bucket encryption enabled or not.
+        
+
+        - **IBMSSEKPCrkId** *(string) --* CRK ID of the Bucket encryption
         
 
         - **Prefix** *(string) --* 
