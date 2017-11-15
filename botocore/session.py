@@ -142,6 +142,8 @@ class Session(object):
             the session is created.
 
         """
+        self._ibm_service_instance_id = None
+
         self.session_var_map = copy.copy(self.SESSION_VARIABLES)
         if session_vars:
             self.session_var_map.update(session_vars)
