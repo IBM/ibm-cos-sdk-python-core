@@ -382,6 +382,7 @@
         "requestUri":"/{Bucket}"
       },
       "input":{"shape":"HeadBucketRequest"},
+      "output":{"shape":"HeadBucketOutput"},
       "errors":[
         {"shape":"NoSuchBucket"}
       ],
@@ -1519,6 +1520,18 @@
           "documentation":"The storage account who will be the owner of the bucket.",
           "location":"header",
           "locationName":"ibm-service-instance-id"
+        },
+        "IBMSSEKPEncryptionAlgorithm":{
+          "shape":"SSEKPEncryptionAlgorithm",
+          "documentation":"The encryption algorithm that will be used for objects stored in the newly created bucket. Defaults to 'AES256'",
+          "location":"header",
+          "locationName":"ibm-sse-kp-encryption-algorithm"
+        },
+        "IBMSSEKPCustomerRootKeyCrn":{
+          "shape":"SSEKPCustomerRootKeyCrn",
+          "documentation":"Container for describing the KMS-KP Key CRN.",
+          "location":"header",
+          "locationName":"ibm-sse-kp-customer-root-key-crn"
         }
       },
       "payload":"CreateBucketConfiguration"
@@ -3011,6 +3024,24 @@
         "locationName":"Grant"
       }
     },
+    "HeadBucketOutput":{
+      "type":"structure",
+      "required":[],
+      "members":{
+        "IBMSSEKPEnabled":{
+          "shape":"SSEKPEnabled",
+          "documentation":"The bucket encryption enabled or not.",
+          "location":"header",
+          "locationName":"ibm-sse-kp-enabled"
+        },
+        "IBMSSEKPCrkId":{
+          "shape":"SSEKPCrkId",
+          "documentation":"CRK ID of the Bucket encryption",
+          "location":"header",
+          "locationName":"ibm-sse-kp-crk-id"
+        }
+      }
+    },
     "HeadBucketRequest":{
       "type":"structure",
       "required":["Bucket"],
@@ -3870,6 +3901,7 @@
     },
     "ListObjectsOutput":{
       "type":"structure",
+      "required":[],
       "members":{
         "IsTruncated":{
           "shape":"IsTruncated",
@@ -3882,6 +3914,18 @@
         },
         "Contents":{"shape":"ObjectList"},
         "Name":{"shape":"BucketName"},
+        "IBMSSEKPEnabled":{
+          "shape":"SSEKPEnabled",
+          "documentation":"The bucket encryption enabled or not.",
+          "location":"header",
+          "locationName":"ibm-sse-kp-enabled"
+        },
+        "IBMSSEKPCrkId":{
+          "shape":"SSEKPCrkId",
+          "documentation":"CRK ID of the Bucket encryption",
+          "location":"header",
+          "locationName":"ibm-sse-kp-crk-id"
+        },
         "Prefix":{"shape":"Prefix"},
         "Delimiter":{"shape":"Delimiter"},
         "MaxKeys":{"shape":"MaxKeys"},
@@ -5542,6 +5586,18 @@
       "sensitive":true
     },
     "SSECustomerKeyMD5":{"type":"string"},
+    "SSEKPCrkId":{"type":"string"},
+    "SSEKPCustomerRootKeyCrn":{
+      "type":"string",
+      "sensitive":true
+    },
+    "SSEKPEnabled":{"type":"boolean"},
+    "SSEKPEncryptionAlgorithm":{
+      "type":"string",
+      "enum":[
+        "AES256"
+      ]
+    },
     "SSEKMSKeyId":{
       "type":"string",
       "sensitive":true

@@ -1,33 +1,32 @@
 *****************************
-Getting Started With botocore
+Getting Started With ibm-cos-sdk-core
 *****************************
 
 
-The ``botocore`` package provides a low-level interface to Amazon
+The ``ibm-cos-sdk-core`` package provides a low-level interface to IBM S3
 services.  It is responsible for:
 
-* Providing access to all available services
-* Providing access to all operations within a service
+* Providing access to all operations within the S3 service
 * Marshaling all parameters for a particular operation in the correct format
 * Signing the request with the correct authentication signature
 * Receiving the response and returning the data in native Python data structures
 
-``botocore`` does not provide higher-level abstractions on top of these
+``ibm-cos-sdk-core`` does not provide higher-level abstractions on top of these
 services, operations and responses.  That is left to the application
-layer.  The goal of ``botocore`` is to handle all of the low-level details
+layer.  The goal of ``ibm-cos-sdk-core`` is to handle all of the low-level details
 of making requests and getting results from a service.
 
-The ``botocore`` package is mainly data-driven.  Each service has a JSON
+The ``ibm-cos-sdk-core`` package is mainly data-driven.  Each service has a JSON
 description which specifies all of the operations the service supports,
 all of the parameters the operation accepts, all of the documentation
 related to the service, information about supported regions and endpoints, etc.
 Because this data can be updated quickly based on the canonical description
-of these services, it's much easier to keep ``botocore`` current.
+of these services, it's much easier to keep ``ibm-cos-sdk-core`` current.
 
-Using Botocore
+Using ibm-cos-sdk-core
 ==============
 
-The first step in using botocore is to create a ``Session`` object.
+The first step in using ibm-cos-sdk-core is to create a ``Session`` object.
 ``Session`` objects then allow you to create individual clients::
 
     import botocore.session

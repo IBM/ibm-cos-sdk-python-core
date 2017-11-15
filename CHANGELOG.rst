@@ -25,3 +25,10 @@ Features
 * Added Python 3 support
 * Updated user agent
 
+1.1.0
+=====
+
+Features
+--------
+* Added Key Protect support
+
