@@ -15,17 +15,17 @@ import mock
 import datetime
 import json
 
-import botocore
-import botocore.auth
-from botocore.compat import six, urlparse, parse_qs
+import ibm_botocore
+import ibm_botocore.auth
+from ibm_botocore.compat import six, urlparse, parse_qs
 
-from botocore.credentials import Credentials
-from botocore.credentials import ReadOnlyCredentials
-from botocore.exceptions import NoRegionError, UnknownSignatureVersionError
-from botocore.exceptions import UnknownClientMethodError, ParamValidationError
-from botocore.exceptions import UnsupportedSignatureVersionError
-from botocore.signers import RequestSigner, S3PostPresigner
-from botocore.config import Config
+from ibm_botocore.credentials import Credentials
+from ibm_botocore.credentials import ReadOnlyCredentials
+from ibm_botocore.exceptions import NoRegionError, UnknownSignatureVersionError
+from ibm_botocore.exceptions import UnknownClientMethodError, ParamValidationError
+from ibm_botocore.exceptions import UnsupportedSignatureVersionError
+from ibm_botocore.signers import RequestSigner, S3PostPresigner
+from ibm_botocore.config import Config
 
 from tests import unittest
 
@@ -62,7 +62,7 @@ class TestSigner(BaseSignerTest):
 
     def test_get_auth(self):
         auth_cls = mock.Mock()
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS,
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS,
                              {'v4': auth_cls}):
             auth = self.signer.get_auth('service_name', 'region_name')
 
@@ -74,7 +74,7 @@ class TestSigner(BaseSignerTest):
 
     def test_get_auth_signature_override(self):
         auth_cls = mock.Mock()
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS,
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS,
                              {'v4-custom': auth_cls}):
             auth = self.signer.get_auth(
                 'service_name', 'region_name', signature_version='v4-custom')
@@ -93,7 +93,7 @@ class TestSigner(BaseSignerTest):
     def test_emits_choose_signer(self):
         request = mock.Mock()
 
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS,
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS,
                              {'v4': mock.Mock()}):
             self.signer.sign('operation_name', request)
 
@@ -108,7 +108,7 @@ class TestSigner(BaseSignerTest):
         auth.REQUIRES_REGION = False
         self.emitter.emit_until_response.return_value = (None, 'custom')
 
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS,
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS,
                              {'custom': auth}):
             self.signer.sign('operation_name', request)
 
@@ -118,7 +118,7 @@ class TestSigner(BaseSignerTest):
     def test_emits_before_sign(self):
         request = mock.Mock()
 
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS,
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS,
                              {'v4': mock.Mock()}):
             self.signer.sign('operation_name', request)
 
@@ -129,13 +129,13 @@ class TestSigner(BaseSignerTest):
             request_signer=self.signer)
 
     def test_disable_signing(self):
-        # Returning botocore.UNSIGNED from choose-signer disables signing!
+        # Returning ibm_botocore.UNSIGNED from choose-signer disables signing!
         request = mock.Mock()
         auth = mock.Mock()
         self.emitter.emit_until_response.return_value = (None,
-                                                         botocore.UNSIGNED)
+                                                         ibm_botocore.UNSIGNED)
 
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS,
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS,
                              {'v4': auth}):
             self.signer.sign('operation_name', request)
 
@@ -151,7 +151,7 @@ class TestSigner(BaseSignerTest):
             'context': {}
         }
 
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS,
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS,
                              {'v4': mock.Mock()}):
             self.signer.generate_presigned_url(request_dict, 'operation_name')
 
@@ -174,7 +174,7 @@ class TestSigner(BaseSignerTest):
         self.emitter.emit_until_response.return_value = (None, 'custom')
 
         auth_types_map = {'custom': mock.Mock(), 'custom-query': auth}
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS, auth_types_map):
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS, auth_types_map):
             self.signer.generate_presigned_url(request_dict, 'operation_name')
 
         auth.assert_called_with(credentials=self.fixed_credentials,
@@ -190,7 +190,7 @@ class TestSigner(BaseSignerTest):
             'context': {}
         }
         self.emitter.emit_until_response.return_value = (
-            None, botocore.UNSIGNED)
+            None, ibm_botocore.UNSIGNED)
 
         url = self.signer.generate_presigned_url(
             request_dict, 'operation_name')
@@ -209,7 +209,7 @@ class TestSigner(BaseSignerTest):
             'method': 'GET',
             'context': {}
         }
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS,
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS,
                              {'v4-query': auth}):
             presigned_url = self.signer.generate_presigned_url(
                 request_dict, operation_name='operation_name')
@@ -230,7 +230,7 @@ class TestSigner(BaseSignerTest):
             'method': 'GET',
             'context': {}
         }
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS,
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS,
                              {'v4-query': auth}):
             presigned_url = self.signer.generate_presigned_url(
                 request_dict, operation_name='operation_name',
@@ -252,7 +252,7 @@ class TestSigner(BaseSignerTest):
             'method': 'GET',
             'context': {}
         }
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS,
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS,
                              {'v4-query': auth}):
             presigned_url = self.signer.generate_presigned_url(
                 request_dict, operation_name='operation_name', expires_in=900)
@@ -289,7 +289,7 @@ class TestSigner(BaseSignerTest):
             'v4', self.credentials, self.emitter)
 
         auth_cls = mock.Mock()
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS,
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS,
                              {'v4': auth_cls}):
             auth = self.signer.get_auth('service_name', 'region_name')
             self.assertEqual(auth, auth_cls.return_value)
@@ -309,7 +309,7 @@ class TestSigner(BaseSignerTest):
             'service_name', 'region_name', 'signing_name',
             'v4', self.credentials, self.emitter)
         auth_cls = mock.Mock()
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS,
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS,
                              {'v4': auth_cls}):
             auth = self.signer.get_auth_instance(
                 'service_name', 'region_name', 'v4')
@@ -329,7 +329,7 @@ class TestSigner(BaseSignerTest):
             'v4-query': query_auth,
             'v4': auth
         }
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS, auth_types):
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS, auth_types):
             self.signer.sign('operation_name', request,
                              signing_type='standard')
         self.assertFalse(post_auth.called)
@@ -350,7 +350,7 @@ class TestSigner(BaseSignerTest):
             'v4-query': query_auth,
             'v4': auth
         }
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS, auth_types):
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS, auth_types):
             self.signer.sign('operation_name', request,
                              signing_type='presign-url')
         self.assertFalse(post_auth.called)
@@ -371,7 +371,7 @@ class TestSigner(BaseSignerTest):
             'v4-query': query_auth,
             'v4': auth
         }
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS, auth_types):
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS, auth_types):
             self.signer.sign('operation_name', request,
                              signing_type='presign-post')
         self.assertFalse(auth.called)
@@ -388,7 +388,7 @@ class TestSigner(BaseSignerTest):
         auth_types = {
             'v4': auth
         }
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS, auth_types):
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS, auth_types):
             self.signer.sign('operation_name', request, region_name='foo')
         auth.assert_called_with(
             credentials=ReadOnlyCredentials('key', 'secret', None),
@@ -402,7 +402,7 @@ class TestSigner(BaseSignerTest):
         auth_types = {
             'v4': auth
         }
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS, auth_types):
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS, auth_types):
             self.signer.sign('operation_name', request, expires_in=2)
         auth.assert_called_with(
             credentials=ReadOnlyCredentials('key', 'secret', None),
@@ -418,7 +418,7 @@ class TestSigner(BaseSignerTest):
             'v4': auth
         }
         self.emitter.emit_until_response.return_value = (None, 'custom')
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS, auth_types):
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS, auth_types):
             with self.assertRaises(UnknownSignatureVersionError):
                 self.signer.sign('operation_name', request,
                                  signing_type='standard')
@@ -430,7 +430,7 @@ class TestSigner(BaseSignerTest):
             'v4': auth
         }
         self.emitter.emit_until_response.return_value = (None, 'custom')
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS, auth_types):
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS, auth_types):
             with self.assertRaises(UnsupportedSignatureVersionError):
                 self.signer.sign('operation_name', request,
                                  signing_type='presign-url')
@@ -461,7 +461,7 @@ class TestS3PostPresigner(BaseSignerTest):
         self.auth.return_value.add_auth = self.add_auth
         self.fixed_credentials = self.credentials.get_frozen_credentials()
 
-        self.datetime_patch = mock.patch('botocore.signers.datetime')
+        self.datetime_patch = mock.patch('ibm_botocore.signers.datetime')
         self.datetime_mock = self.datetime_patch.start()
         self.fixed_date = datetime.datetime(2014, 3, 10, 17, 2, 55, 0)
         self.fixed_delta = datetime.timedelta(seconds=3600)
@@ -473,7 +473,7 @@ class TestS3PostPresigner(BaseSignerTest):
         self.datetime_patch.stop()
 
     def test_generate_presigned_post(self):
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS,
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS,
                              {'s3v4-presign-post': self.auth}):
             post_form_args = self.signer.generate_presigned_post(
                 self.request_dict)
@@ -491,7 +491,7 @@ class TestS3PostPresigner(BaseSignerTest):
         self.assertEqual(post_form_args['fields'], {})
 
     def test_generate_presigned_post_emits_choose_signer(self):
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS,
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS,
                              {'s3v4-presign-post': self.auth}):
             self.signer.generate_presigned_post(self.request_dict)
         self.emitter.emit_until_response.assert_called_with(
@@ -506,7 +506,7 @@ class TestS3PostPresigner(BaseSignerTest):
             's3v4-presign-post': self.auth,
             'custom-presign-post': auth
         }
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS, auth_types):
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS, auth_types):
             self.signer.generate_presigned_post(self.request_dict)
         auth.assert_called_with(
             credentials=self.fixed_credentials, region_name='region_name',
@@ -520,7 +520,7 @@ class TestS3PostPresigner(BaseSignerTest):
             's3v4-presign-post': self.auth,
             'custom-presign-post': auth
         }
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS, auth_types):
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS, auth_types):
             self.signer.generate_presigned_post(self.request_dict)
         self.auth.assert_called_with(
             credentials=self.fixed_credentials, region_name='region_name',
@@ -533,14 +533,14 @@ class TestS3PostPresigner(BaseSignerTest):
             's3v4-presign-post': self.auth,
             's3-query': auth
         }
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS, auth_types):
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS, auth_types):
             with self.assertRaises(UnsupportedSignatureVersionError):
                 self.signer.generate_presigned_post(self.request_dict)
 
     def test_generate_unsigned_post(self):
         self.emitter.emit_until_response.return_value = (
-            None, botocore.UNSIGNED)
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS,
+            None, ibm_botocore.UNSIGNED)
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS,
                              {'s3v4-presign-post': self.auth}):
             post_form_args = self.signer.generate_presigned_post(
                 self.request_dict)
@@ -552,7 +552,7 @@ class TestS3PostPresigner(BaseSignerTest):
             {'bucket': 'mybucket'},
             ['starts-with', '$key', 'bar']
         ]
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS,
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS,
                              {'s3v4-presign-post': self.auth}):
             self.signer.generate_presigned_post(
                 self.request_dict, conditions=conditions)
@@ -565,7 +565,7 @@ class TestS3PostPresigner(BaseSignerTest):
         self.assertEqual(ref_policy['conditions'], conditions)
 
     def test_generate_presigned_post_with_region_override(self):
-        with mock.patch.dict(botocore.auth.AUTH_TYPE_MAPS,
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS,
                              {'s3v4-presign-post': self.auth}):
             self.signer.generate_presigned_post(
                 self.request_dict, region_name='foo')
@@ -592,13 +592,13 @@ class TestS3PostPresigner(BaseSignerTest):
 
 class TestGenerateUrl(unittest.TestCase):
     def setUp(self):
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
         self.client = self.session.create_client('s3', region_name='us-east-1')
         self.bucket = 'mybucket'
         self.key = 'mykey'
         self.client_kwargs = {'Bucket': self.bucket, 'Key': self.key}
         self.generate_url_patch = mock.patch(
-            'botocore.signers.RequestSigner.generate_presigned_url')
+            'ibm_botocore.signers.RequestSigner.generate_presigned_url')
         self.generate_url_mock = self.generate_url_patch.start()
 
     def tearDown(self):
@@ -684,12 +684,12 @@ class TestGenerateUrl(unittest.TestCase):
 
 class TestGeneratePresignedPost(unittest.TestCase):
     def setUp(self):
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
         self.client = self.session.create_client('s3', region_name='us-east-1')
         self.bucket = 'mybucket'
         self.key = 'mykey'
         self.presign_post_patch = mock.patch(
-            'botocore.signers.S3PostPresigner.generate_presigned_post')
+            'ibm_botocore.signers.S3PostPresigner.generate_presigned_post')
         self.presign_post_mock = self.presign_post_patch.start()
 
     def tearDown(self):

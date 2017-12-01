@@ -13,7 +13,7 @@
 # language governing permissions and limitations under the License.
 from nose.tools import assert_equals
 
-from botocore import exceptions
+from ibm_botocore import exceptions
 
 
 def test_client_error_can_handle_missing_code_or_message():

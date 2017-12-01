@@ -21,16 +21,16 @@ import tempfile
 
 import mock
 
-import botocore.auth
-import botocore.credentials
-from botocore.compat import HTTPHeaders, urlsplit, parse_qs, six
-from botocore.awsrequest import AWSRequest
-from botocore.vendored.requests.models import Request
+import ibm_botocore.auth
+import ibm_botocore.credentials
+from ibm_botocore.compat import HTTPHeaders, urlsplit, parse_qs, six
+from ibm_botocore.awsrequest import AWSRequest
+from ibm_botocore.vendored.requests.models import Request
 
 
 class BaseTestWithFixedDate(unittest.TestCase):
     def setUp(self):
-        self.datetime_patch = mock.patch('botocore.auth.datetime')
+        self.datetime_patch = mock.patch('ibm_botocore.auth.datetime')
         self.datetime_mock = self.datetime_patch.start()
         self.fixed_date = datetime.datetime(2014, 3, 10, 17, 2, 55, 0)
         self.datetime_mock.datetime.utcnow.return_value = self.fixed_date
@@ -47,10 +47,10 @@ class TestHMACV1(unittest.TestCase):
     def setUp(self):
         access_key = '44CF9590006BF252F707'
         secret_key = 'OtxrzxIsfpFjA7SwPzILwy8Bw21TLhquhboDYROV'
-        self.credentials = botocore.credentials.Credentials(access_key,
-                                                            secret_key)
-        self.hmacv1 = botocore.auth.HmacV1Auth(self.credentials, None, None)
-        self.date_mock = mock.patch('botocore.auth.formatdate')
+        self.credentials = ibm_botocore.credentials.Credentials(access_key,
+                                                                secret_key)
+        self.hmacv1 = ibm_botocore.auth.HmacV1Auth(self.credentials, None, None)
+        self.date_mock = mock.patch('ibm_botocore.auth.formatdate')
         self.formatdate = self.date_mock.start()
         self.formatdate.return_value = 'Thu, 17 Nov 2005 18:49:58 GMT'
 
@@ -108,9 +108,9 @@ class TestHMACV1(unittest.TestCase):
             self.assertEqual(cr, '/quotes?%s' % operation)
 
     def test_sign_with_token(self):
-        credentials = botocore.credentials.Credentials(
+        credentials = ibm_botocore.credentials.Credentials(
             access_key='foo', secret_key='bar', token='baz')
-        auth = botocore.auth.HmacV1Auth(credentials)
+        auth = ibm_botocore.auth.HmacV1Auth(credentials)
         request = AWSRequest()
         request.headers['Date'] = 'Thu, 17 Nov 2005 18:49:58 GMT'
         request.headers['Content-Type'] = 'text/html'
@@ -123,9 +123,9 @@ class TestHMACV1(unittest.TestCase):
         self.assertTrue(request.headers['Authorization'].startswith('AWS '))
 
     def test_resign_with_token(self):
-        credentials = botocore.credentials.Credentials(
+        credentials = ibm_botocore.credentials.Credentials(
             access_key='foo', secret_key='bar', token='baz')
-        auth = botocore.auth.HmacV1Auth(credentials)
+        auth = ibm_botocore.auth.HmacV1Auth(credentials)
         request = AWSRequest()
         request.headers['Date'] = 'Thu, 17 Nov 2005 18:49:58 GMT'
         request.headers['Content-Type'] = 'text/html'
@@ -174,11 +174,11 @@ class TestSigV2(unittest.TestCase):
     def setUp(self):
         access_key = 'foo'
         secret_key = 'bar'
-        self.credentials = botocore.credentials.Credentials(access_key,
-                                                            secret_key)
-        self.signer = botocore.auth.SigV2Auth(self.credentials)
+        self.credentials = ibm_botocore.credentials.Credentials(access_key,
+                                                                secret_key)
+        self.signer = ibm_botocore.auth.SigV2Auth(self.credentials)
         self.time_patcher = mock.patch.object(
-            botocore.auth.time, 'gmtime',
+            ibm_botocore.auth.time, 'gmtime',
             mock.Mock(wraps=time.gmtime)
         )
         mocked_time = self.time_patcher.start()
@@ -234,10 +234,10 @@ class TestSigV3(unittest.TestCase):
     def setUp(self):
         self.access_key = 'access_key'
         self.secret_key = 'secret_key'
-        self.credentials = botocore.credentials.Credentials(self.access_key,
-                                                            self.secret_key)
-        self.auth = botocore.auth.SigV3Auth(self.credentials)
-        self.date_mock = mock.patch('botocore.auth.formatdate')
+        self.credentials = ibm_botocore.credentials.Credentials(self.access_key,
+                                                                self.secret_key)
+        self.auth = ibm_botocore.auth.SigV3Auth(self.credentials)
+        self.date_mock = mock.patch('ibm_botocore.auth.formatdate')
         self.formatdate = self.date_mock.start()
         self.formatdate.return_value = 'Thu, 17 Nov 2005 18:49:58 GMT'
 
@@ -255,9 +255,9 @@ class TestSigV3(unittest.TestCase):
              'Signature=M245fo86nVKI8rLpH4HgWs841sBTUKuwciiTpjMDgPs='))
 
     def test_resign_with_token(self):
-        credentials = botocore.credentials.Credentials(
+        credentials = ibm_botocore.credentials.Credentials(
             access_key='foo', secret_key='bar', token='baz')
-        auth = botocore.auth.SigV3Auth(credentials)
+        auth = ibm_botocore.auth.SigV3Auth(credentials)
         request = AWSRequest()
         request.headers['Date'] = 'Thu, 17 Nov 2005 18:49:58 GMT'
         request.method = 'PUT'
@@ -277,9 +277,9 @@ class TestS3SigV4Auth(BaseTestWithFixedDate):
 
     def setUp(self):
         super(TestS3SigV4Auth, self).setUp()
-        self.credentials = botocore.credentials.Credentials(
+        self.credentials = ibm_botocore.credentials.Credentials(
             access_key='foo', secret_key='bar', token='baz')
-        self.auth = botocore.auth.S3SigV4Auth(
+        self.auth = ibm_botocore.auth.S3SigV4Auth(
             self.credentials, 'ec2', 'eu-central-1')
         self.request = AWSRequest(data=six.BytesIO(b"foo bar baz"))
         self.request.method = 'PUT'
@@ -305,9 +305,9 @@ class TestS3SigV4Auth(BaseTestWithFixedDate):
         request = AWSRequest()
         request.url = 'https://s3.amazonaws.com/bucket/foo/./bar/../bar'
         request.method = 'GET'
-        credentials = botocore.credentials.Credentials('access_key',
+        credentials = ibm_botocore.credentials.Credentials('access_key',
                                                        'secret_key')
-        auth = botocore.auth.S3SigV4Auth(credentials, 's3', 'us-east-1')
+        auth = ibm_botocore.auth.S3SigV4Auth(credentials, 's3', 'us-east-1')
         auth.add_auth(request)
         self.assertTrue(
             request.headers['Authorization'].startswith('AWS4-HMAC-SHA256'))
@@ -332,9 +332,9 @@ class TestS3SigV4Auth(BaseTestWithFixedDate):
         request.url = 'https://s3.amazonaws.com/bucket/foo'
         request.method = 'PUT'
         request.headers[header] = value
-        credentials = botocore.credentials.Credentials('access_key',
+        credentials = ibm_botocore.credentials.Credentials('access_key',
                                                        'secret_key')
-        auth = botocore.auth.S3SigV4Auth(credentials, 's3', 'us-east-1')
+        auth = ibm_botocore.auth.S3SigV4Auth(credentials, 's3', 'us-east-1')
         auth.add_auth(request)
         self.assertNotIn(header, request.headers['Authorization'])
 
@@ -346,7 +346,7 @@ class TestS3SigV4Auth(BaseTestWithFixedDate):
                                     'Root=foo;Parent=bar;Sampleid=1')
 
     def test_blacklist_headers(self):
-        self._test_blacklist_header('user-agent', 'botocore/1.4.11')
+        self._test_blacklist_header('user-agent', 'ibm_botocore/1.4.11')
 
     def test_context_sets_signing_region(self):
         original_signing_region = 'eu-central-1'
@@ -406,11 +406,11 @@ class TestS3SigV4Auth(BaseTestWithFixedDate):
 
 class TestSigV4(unittest.TestCase):
     def setUp(self):
-        self.credentials = botocore.credentials.Credentials(
+        self.credentials = ibm_botocore.credentials.Credentials(
             access_key='foo', secret_key='bar')
 
     def create_signer(self, service_name='myservice', region='us-west-2'):
-        auth = botocore.auth.SigV4Auth(
+        auth = ibm_botocore.auth.SigV4Auth(
             self.credentials, service_name, region)
         return auth
 
@@ -444,7 +444,7 @@ class TestSigV4(unittest.TestCase):
         request.method = 'GET'
         auth = self.create_signer('cloudsearchdomain', 'us-west-2')
         with mock.patch.object(
-                botocore.auth.datetime, 'datetime',
+                ibm_botocore.auth.datetime, 'datetime',
                 mock.Mock(wraps=datetime.datetime)) as mock_datetime:
             original_utcnow = datetime.datetime(2014, 1, 1, 0, 0)
 
@@ -495,9 +495,9 @@ class TestSigV4Resign(BaseTestWithFixedDate):
 
     def setUp(self):
         super(TestSigV4Resign, self).setUp()
-        self.credentials = botocore.credentials.Credentials(
+        self.credentials = ibm_botocore.credentials.Credentials(
             access_key='foo', secret_key='bar', token='baz')
-        self.auth = botocore.auth.SigV4Auth(self.credentials,
+        self.auth = ibm_botocore.auth.SigV4Auth(self.credentials,
                                             'ec2', 'us-west-2')
         self.request = AWSRequest()
         self.request.method = 'PUT'
@@ -537,10 +537,10 @@ class TestS3SigV2Presign(BasePresignTest):
     def setUp(self):
         self.access_key = 'access_key'
         self.secret_key = 'secret_key'
-        self.credentials = botocore.credentials.Credentials(self.access_key,
-                                                            self.secret_key)
+        self.credentials = ibm_botocore.credentials.Credentials(self.access_key,
+                                                                self.secret_key)
         self.expires = 3000
-        self.auth = botocore.auth.HmacV1QueryAuth(
+        self.auth = ibm_botocore.auth.HmacV1QueryAuth(
             self.credentials, expires=self.expires)
 
         self.current_epoch_time = 1427427247.465591
@@ -605,7 +605,7 @@ class TestS3SigV2Presign(BasePresignTest):
                           '/YQRFdQGywXP74WrOx2ET/RUqz8=')
 
     def test_presign_with_unused_headers(self):
-        self.request.headers['user-agent'] = 'botocore'
+        self.request.headers['user-agent'] = 'ibm_botocore'
         self.auth.add_auth(self.request)
         query_string = self.get_parsed_query_string(self.request)
         self.assertNotIn('user-agent', query_string)
@@ -620,14 +620,14 @@ class TestSigV4Presign(BasePresignTest):
     def setUp(self):
         self.access_key = 'access_key'
         self.secret_key = 'secret_key'
-        self.credentials = botocore.credentials.Credentials(self.access_key,
-                                                            self.secret_key)
+        self.credentials = ibm_botocore.credentials.Credentials(self.access_key,
+                                                                self.secret_key)
         self.service_name = 'myservice'
         self.region_name = 'myregion'
-        self.auth = botocore.auth.SigV4QueryAuth(
+        self.auth = ibm_botocore.auth.SigV4QueryAuth(
             self.credentials, self.service_name, self.region_name, expires=60)
         self.datetime_patcher = mock.patch.object(
-            botocore.auth.datetime, 'datetime',
+            ibm_botocore.auth.datetime, 'datetime',
             mock.Mock(wraps=datetime.datetime)
         )
         mocked_datetime = self.datetime_patcher.start()
@@ -694,7 +694,7 @@ class TestSigV4Presign(BasePresignTest):
         self.assertIn('uploads', request.url)
 
     def test_s3_sigv4_presign(self):
-        auth = botocore.auth.S3SigV4QueryAuth(
+        auth = ibm_botocore.auth.S3SigV4QueryAuth(
             self.credentials, self.service_name, self.region_name, expires=60)
         request = AWSRequest()
         request.method = 'GET'
@@ -718,7 +718,7 @@ class TestSigV4Presign(BasePresignTest):
 
     def test_presign_with_security_token(self):
         self.credentials.token = 'security-token'
-        auth = botocore.auth.S3SigV4QueryAuth(
+        auth = ibm_botocore.auth.S3SigV4QueryAuth(
             self.credentials, self.service_name, self.region_name, expires=60)
         request = AWSRequest()
         request.method = 'GET'
@@ -775,7 +775,7 @@ class BaseS3PresignPostTest(unittest.TestCase):
     def setUp(self):
         self.access_key = 'access_key'
         self.secret_key = 'secret_key'
-        self.credentials = botocore.credentials.Credentials(
+        self.credentials = ibm_botocore.credentials.Credentials(
             self.access_key, self.secret_key)
 
         self.service_name = 'myservice'
@@ -807,7 +807,7 @@ class BaseS3PresignPostTest(unittest.TestCase):
 class TestS3SigV2Post(BaseS3PresignPostTest):
     def setUp(self):
         super(TestS3SigV2Post, self).setUp()
-        self.auth = botocore.auth.HmacV1PostAuth(self.credentials)
+        self.auth = ibm_botocore.auth.HmacV1PostAuth(self.credentials)
 
         self.current_epoch_time = 1427427247.465591
         self.time_patch = mock.patch('time.time')
@@ -836,7 +836,7 @@ class TestS3SigV2Post(BaseS3PresignPostTest):
 
     def test_presign_post_with_security_token(self):
         self.credentials.token = 'my-token'
-        self.auth = botocore.auth.HmacV1PostAuth(self.credentials)
+        self.auth = ibm_botocore.auth.HmacV1PostAuth(self.credentials)
         self.auth.add_auth(self.request)
         result_fields = self.request.context['s3-presign-post-fields']
         self.assertEqual(result_fields['x-amz-security-token'], 'my-token')
@@ -859,10 +859,10 @@ class TestS3SigV2Post(BaseS3PresignPostTest):
 class TestS3SigV4Post(BaseS3PresignPostTest):
     def setUp(self):
         super(TestS3SigV4Post, self).setUp()
-        self.auth = botocore.auth.S3SigV4PostAuth(
+        self.auth = ibm_botocore.auth.S3SigV4PostAuth(
             self.credentials, self.service_name, self.region_name)
         self.datetime_patcher = mock.patch.object(
-            botocore.auth.datetime, 'datetime',
+            ibm_botocore.auth.datetime, 'datetime',
             mock.Mock(wraps=datetime.datetime)
         )
         mocked_datetime = self.datetime_patcher.start()
@@ -899,7 +899,7 @@ class TestS3SigV4Post(BaseS3PresignPostTest):
 
     def test_presign_post_with_security_token(self):
         self.credentials.token = 'my-token'
-        self.auth = botocore.auth.S3SigV4PostAuth(
+        self.auth = ibm_botocore.auth.S3SigV4PostAuth(
             self.credentials, self.service_name, self.region_name)
         self.auth.add_auth(self.request)
         result_fields = self.request.context['s3-presign-post-fields']

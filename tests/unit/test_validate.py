@@ -2,10 +2,10 @@ from tests import unittest
 from datetime import datetime
 import decimal
 
-from botocore.compat import six
-from botocore.model import ShapeResolver
-from botocore.model import StructureShape
-from botocore.validate import ParamValidator
+from ibm_botocore.compat import six
+from ibm_botocore.model import ShapeResolver
+from ibm_botocore.model import StructureShape
+from ibm_botocore.validate import ParamValidator
 
 BOILER_PLATE_SHAPES = {
     'StringType': {

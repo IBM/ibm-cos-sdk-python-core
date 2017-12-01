@@ -20,14 +20,14 @@ import difflib
 from tests import unittest, create_session
 
 from mock import Mock
-from botocore.vendored.requests.structures import CaseInsensitiveDict
+from ibm_botocore.vendored.requests.structures import CaseInsensitiveDict
 
-import botocore.session
-from botocore import xform_name
-#from botocore.response import XmlResponse, JSONResponse, get_response
-from botocore import response
-from botocore import parsers
-from botocore.exceptions import IncompleteReadError
+import ibm_botocore.session
+from ibm_botocore import xform_name
+#from ibm_botocore.response import XmlResponse, JSONResponse, get_response
+from ibm_botocore import response
+from ibm_botocore import parsers
+from ibm_botocore.exceptions import IncompleteReadError
 
 log = logging.getLogger(__name__)
 
@@ -161,7 +161,7 @@ def _uhg_test_json_parsing():
     input_path = os.path.join(input_path, 'inputs')
     output_path = os.path.join(os.path.dirname(__file__), 'json')
     output_path = os.path.join(output_path, 'outputs')
-    session = botocore.session.get_session()
+    session = ibm_botocore.session.get_session()
     jsonfiles = glob.glob('%s/*.json' % input_path)
     service_names = set()
     for fn in jsonfiles:
@@ -185,7 +185,7 @@ def _uhg_test_json_parsing():
 #    maxDiff = None
 #
 #    def setUp(self):
-#        self.session = botocore.session.get_session()
+#        self.session = ibm_botocore.session.get_session()
 #        self.s3 = self.session.get_service('s3')
 #
 #    def test_put_object(self):

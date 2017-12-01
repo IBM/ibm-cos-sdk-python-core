@@ -13,8 +13,8 @@
 import time
 from tests import unittest
 
-import botocore.session
-from botocore.utils import ArgumentGenerator
+import ibm_botocore.session
+from ibm_botocore.utils import ArgumentGenerator
 
 
 class ArgumentGeneratorError(AssertionError):
@@ -27,7 +27,7 @@ class ArgumentGeneratorError(AssertionError):
 
 
 def test_can_generate_all_inputs():
-    session = botocore.session.get_session()
+    session = ibm_botocore.session.get_session()
     generator = ArgumentGenerator()
     for service_name in session.get_available_services():
         service_model = session.get_service_model(service_name)

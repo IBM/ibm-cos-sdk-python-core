@@ -15,14 +15,14 @@ from tests import unittest, BaseEnvVar
 
 import mock
 
-import botocore
-from botocore.compat import six
-from botocore.exceptions import ClientError, WaiterConfigError, WaiterError
-from botocore.waiter import Waiter, WaiterModel, SingleWaiterConfig
-from botocore.waiter import create_waiter_with_client
-from botocore.waiter import NormalizedOperationMethod
-from botocore.loaders import Loader
-from botocore.model import ServiceModel
+import ibm_botocore
+from ibm_botocore.compat import six
+from ibm_botocore.exceptions import ClientError, WaiterConfigError, WaiterError
+from ibm_botocore.waiter import Waiter, WaiterModel, SingleWaiterConfig
+from ibm_botocore.waiter import create_waiter_with_client
+from ibm_botocore.waiter import NormalizedOperationMethod
+from ibm_botocore.loaders import Loader
+from ibm_botocore.model import ServiceModel
 
 
 class TestWaiterModel(unittest.TestCase):
@@ -607,20 +607,20 @@ class ServiceWaiterFunctionalTest(BaseEnvVar):
     def setUp(self):
         super(ServiceWaiterFunctionalTest, self).setUp()
         self.data_path = os.path.join(
-            os.path.dirname(botocore.__file__), 'data')
+            os.path.dirname(ibm_botocore.__file__), 'data')
         self.environ['AWS_DATA_PATH'] = self.data_path
         self.loader = Loader([self.data_path])
 
     def get_waiter_model(self, service, api_version=None):
         """Get the waiter model for the service."""
-        with mock.patch('botocore.loaders.Loader.list_available_services',
+        with mock.patch('ibm_botocore.loaders.Loader.list_available_services',
                         return_value=[service]):
             return WaiterModel(self.loader.load_service_model(
                 service, type_name='waiters-2', api_version=api_version))
 
     def get_service_model(self, service, api_version=None):
         """Get the service model for the service."""
-        with mock.patch('botocore.loaders.Loader.list_available_services',
+        with mock.patch('ibm_botocore.loaders.Loader.list_available_services',
                         return_value=[service]):
             return ServiceModel(
                 self.loader.load_service_model(

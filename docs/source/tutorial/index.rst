@@ -1,9 +1,8 @@
-*****************************
-Getting Started With ibm-cos-sdk-core
-*****************************
+Getting Started With IBM COS Core Library for Python
+*************************************************
 
 
-The ``ibm-cos-sdk-core`` package provides a low-level interface to IBM S3
+The ``ibm_botocore`` package provides a low-level interface to IBM S3
 services.  It is responsible for:
 
 * Providing access to all operations within the S3 service
@@ -11,26 +10,26 @@ services.  It is responsible for:
 * Signing the request with the correct authentication signature
 * Receiving the response and returning the data in native Python data structures
 
-``ibm-cos-sdk-core`` does not provide higher-level abstractions on top of these
+``ibm_botocore`` does not provide higher-level abstractions on top of these
 services, operations and responses.  That is left to the application
-layer.  The goal of ``ibm-cos-sdk-core`` is to handle all of the low-level details
+layer.  The goal of ``ibm_botocore`` is to handle all of the low-level details
 of making requests and getting results from a service.
 
-The ``ibm-cos-sdk-core`` package is mainly data-driven.  Each service has a JSON
+The ``ibm_botocore`` package is mainly data-driven.  Each service has a JSON
 description which specifies all of the operations the service supports,
 all of the parameters the operation accepts, all of the documentation
 related to the service, information about supported regions and endpoints, etc.
 Because this data can be updated quickly based on the canonical description
-of these services, it's much easier to keep ``ibm-cos-sdk-core`` current.
+of these services, it's much easier to keep ``ibm_botocore`` current.
 
-Using ibm-cos-sdk-core
+Using IBM Botocore
 ==============
 
-The first step in using ibm-cos-sdk-core is to create a ``Session`` object.
+The first step in using ibm_botocore is to create a ``Session`` object.
 ``Session`` objects then allow you to create individual clients::
 
-    import botocore.session
-    session = botocore.session.get_session()
+    import ibm_botocore.session
+    session = ibm_botocore.session.get_session()
     client = session.create_client('ec2', region_name='us-west-2')
 
 Once you have that client created, each operation provided by the service is

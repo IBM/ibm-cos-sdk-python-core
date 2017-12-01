@@ -18,22 +18,22 @@ import mock
 import copy
 import os
 
-import botocore
-import botocore.session
-from botocore.exceptions import ParamValidationError, MD5UnavailableError
-from botocore.exceptions import AliasConflictParameterError
-from botocore.awsrequest import AWSRequest
-from botocore.compat import quote, six
-from botocore.config import Config
-from botocore.docs.bcdoc.restdoc import DocumentStructure
-from botocore.docs.params import RequestParamsDocumenter
-from botocore.docs.example import RequestExampleDocumenter
-from botocore.hooks import HierarchicalEmitter
-from botocore.model import OperationModel, ServiceModel
-from botocore.model import DenormalizedStructureBuilder
-from botocore.signers import RequestSigner
-from botocore.credentials import Credentials
-from botocore import handlers
+import ibm_botocore
+import ibm_botocore.session
+from ibm_botocore.exceptions import ParamValidationError, MD5UnavailableError
+from ibm_botocore.exceptions import AliasConflictParameterError
+from ibm_botocore.awsrequest import AWSRequest
+from ibm_botocore.compat import quote, six
+from ibm_botocore.config import Config
+from ibm_botocore.docs.bcdoc.restdoc import DocumentStructure
+from ibm_botocore.docs.params import RequestParamsDocumenter
+from ibm_botocore.docs.example import RequestExampleDocumenter
+from ibm_botocore.hooks import HierarchicalEmitter
+from ibm_botocore.model import OperationModel, ServiceModel
+from ibm_botocore.model import DenormalizedStructureBuilder
+from ibm_botocore.signers import RequestSigner
+from ibm_botocore.credentials import Credentials
+from ibm_botocore import handlers
 
 
 class TestHandlers(BaseSessionTest):
@@ -74,7 +74,7 @@ class TestHandlers(BaseSessionTest):
         self.assertEqual(converted_value, value)
 
     def test_disable_signing(self):
-        self.assertEqual(handlers.disable_signing(), botocore.UNSIGNED)
+        self.assertEqual(handlers.disable_signing(), ibm_botocore.UNSIGNED)
 
     def test_only_quote_url_path_not_version_id(self):
         params = {'CopySource': '/foo/bar++baz?versionId=123'}
@@ -489,7 +489,7 @@ class TestRetryHandlerOrder(BaseSessionTest):
             operation=operation, attempts=1, caught_exception=None)
         # This is implementation specific, but we're trying to verify that
         # the check_for_200_error is before any of the retry logic in
-        # botocore.retryhandlers.
+        # ibm_botocore.retryhandlers.
         # Technically, as long as the relative order is preserved, we don't
         # care about the absolute order.
         names = self.get_handler_names(responses)
@@ -525,7 +525,7 @@ class BaseMD5Test(BaseSessionTest):
             self._md5_available_patch.stop()
 
         self._md5_available_patch = \
-            mock.patch('botocore.compat.MD5_AVAILABLE', is_available)
+            mock.patch('ibm_botocore.compat.MD5_AVAILABLE', is_available)
         self._md5_available_patch.start()
 
 
@@ -620,7 +620,7 @@ class TestAddMD5(BaseMD5Test):
 
         context = self.get_context()
         self.set_md5_available(False)
-        with mock.patch('botocore.handlers.MD5_AVAILABLE', False):
+        with mock.patch('ibm_botocore.handlers.MD5_AVAILABLE', False):
             handlers.conditionally_calculate_md5(
                 request_dict, request_signer=request_signer, context=context)
             self.assertFalse('Content-MD5' in request_dict['headers'])

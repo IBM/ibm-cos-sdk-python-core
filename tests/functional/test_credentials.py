@@ -18,8 +18,8 @@ import time
 
 from dateutil.tz import tzlocal
 
-from botocore import credentials
-from botocore import utils
+from ibm_botocore import credentials
+from ibm_botocore import utils
 
 
 class TestCredentialRefreshRaces(unittest.TestCase):

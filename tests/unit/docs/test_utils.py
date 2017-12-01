@@ -14,12 +14,12 @@ import mock
 
 from tests import unittest
 from tests.unit.docs import BaseDocsTest
-from botocore.docs.utils import py_type_name
-from botocore.docs.utils import py_default
-from botocore.docs.utils import get_official_service_name
-from botocore.docs.utils import AutoPopulatedParam
-from botocore.docs.utils import HideParamFromOperations
-from botocore.docs.utils import AppendParamDocumentation
+from ibm_botocore.docs.utils import py_type_name
+from ibm_botocore.docs.utils import py_default
+from ibm_botocore.docs.utils import get_official_service_name
+from ibm_botocore.docs.utils import AutoPopulatedParam
+from ibm_botocore.docs.utils import HideParamFromOperations
+from ibm_botocore.docs.utils import AppendParamDocumentation
 
 
 class TestPythonTypeName(unittest.TestCase):

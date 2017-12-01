@@ -13,10 +13,10 @@
 import mock
 
 from tests.unit.docs import BaseDocsTest
-from botocore.hooks import HierarchicalEmitter
-from botocore.docs.example import ResponseExampleDocumenter
-from botocore.docs.example import RequestExampleDocumenter
-from botocore.docs.utils import DocumentedShape
+from ibm_botocore.hooks import HierarchicalEmitter
+from ibm_botocore.docs.example import ResponseExampleDocumenter
+from ibm_botocore.docs.example import RequestExampleDocumenter
+from ibm_botocore.docs.utils import DocumentedShape
 
 
 class BaseExampleDocumenterTest(BaseDocsTest):

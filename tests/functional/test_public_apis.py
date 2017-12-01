@@ -14,9 +14,9 @@ from collections import defaultdict
 
 import mock
 
-from botocore.session import Session
-from botocore.exceptions import NoCredentialsError
-from botocore import xform_name
+from ibm_botocore.session import Session
+from ibm_botocore.exceptions import NoCredentialsError
+from ibm_botocore import xform_name
 
 
 REGIONS = defaultdict(lambda: 'us-east-1')
@@ -29,7 +29,7 @@ class EarlyExit(BaseException):
 
 
 def _test_public_apis_will_not_be_signed(func, kwargs):
-    with mock.patch('botocore.endpoint.Session.send') as _send:
+    with mock.patch('ibm_botocore.endpoint.Session.send') as _send:
         _send.side_effect = EarlyExit("we don't care about response here")
         try:
             func(**kwargs)

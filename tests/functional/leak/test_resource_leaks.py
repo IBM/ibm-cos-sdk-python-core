@@ -39,7 +39,7 @@ class TestDoesNotLeakMemory(BaseClientDriverTest):
     def test_create_memory_clients_in_loop(self):
         # We need to first create clients and free then before
         # recording our memory samples.  This is because of two reasons:
-        # 1. Caching.  Some of the botocore internals will cache data, so
+        # 1. Caching.  Some of the ibm_botocore internals will cache data, so
         #    the first client created will consume more memory than subsequent
         #    clients.  We're interested in growing memory, not total
         #    memory usage (for now), so we we care about the memory in the
@@ -52,7 +52,7 @@ class TestDoesNotLeakMemory(BaseClientDriverTest):
         #    fragmentation guarantees this case is hit.  The best we can
         #    do is verify that memory that's released back to python's
         #    allocator (but not to the OS) is at least reused in subsequent
-        #    requests to create botocore clients.
+        #    requests to create ibm_botocore clients.
         self.cmd('create_multiple_clients', '200', 's3')
         self.cmd('free_clients')
         self.record_memory()

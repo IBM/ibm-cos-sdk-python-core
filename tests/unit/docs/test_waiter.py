@@ -11,8 +11,8 @@
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 from tests.unit.docs import BaseDocsTest
-from botocore.docs.waiter import WaiterDocumenter
-from botocore.waiter import WaiterModel
+from ibm_botocore.docs.waiter import WaiterDocumenter
+from ibm_botocore.waiter import WaiterModel
 
 
 class TestWaiterDocumenter(BaseDocsTest):

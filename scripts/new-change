@@ -205,8 +205,8 @@ def main():
                         default='')
     parser.add_argument('-d', '--description', dest='description',
                         default='')
-    parser.add_argument('-r', '--repo', default='boto/botocore',
-                        help='Optional repo name, e.g: boto/botocore')
+    parser.add_argument('-r', '--repo', default='boto/ibm_botocore',
+                        help='Optional repo name, e.g: boto/ibm_botocore')
     args = parser.parse_args()
     sys.exit(new_changelog_entry(args))
 

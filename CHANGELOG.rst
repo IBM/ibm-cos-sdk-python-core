@@ -32,3 +32,9 @@ Features
 --------
 * Added Key Protect support
 
+2.0.0
+=====
+
+Features
+--------
+* Namespace changes

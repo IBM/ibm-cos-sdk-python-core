@@ -17,10 +17,10 @@ import datetime
 import dateutil.tz
 from tests import unittest
 
-from botocore.model import ServiceModel
-from botocore import serialize
-from botocore.compat import six
-from botocore.exceptions import ParamValidationError
+from ibm_botocore.model import ServiceModel
+from ibm_botocore import serialize
+from ibm_botocore.compat import six
+from ibm_botocore.exceptions import ParamValidationError
 
 
 class BaseModelWithBlob(unittest.TestCase):
@@ -269,7 +269,7 @@ class TestTimestamps(unittest.TestCase):
     def test_accepts_timestamp_without_tz_info(self):
         # If a timezone/utc is not specified, assume they meant
         # UTC.  This is also the previous behavior from older versions
-        # of botocore so we want to make sure we preserve this behavior.
+        # of ibm_botocore so we want to make sure we preserve this behavior.
         request = self.serialize_to_request(
             {'Timestamp': '2014-01-01T12:12:12'})
         self.assertEqual(request['body']['Timestamp'], '2014-01-01T12:12:12Z')

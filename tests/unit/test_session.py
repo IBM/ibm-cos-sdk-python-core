@@ -12,7 +12,7 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-import botocore.config
+import ibm_botocore.config
 from tests import unittest, create_session, temporary_file
 import os
 import logging
@@ -21,14 +21,14 @@ import shutil
 
 import mock
 
-import botocore.session
-import botocore.exceptions
-from botocore.model import ServiceModel
-from botocore import client
-from botocore.hooks import HierarchicalEmitter
-from botocore.waiter import WaiterModel
-from botocore.paginate import PaginatorModel
-import botocore.loaders
+import ibm_botocore.session
+import ibm_botocore.exceptions
+from ibm_botocore.model import ServiceModel
+from ibm_botocore import client
+from ibm_botocore.hooks import HierarchicalEmitter
+from ibm_botocore.waiter import WaiterModel
+from ibm_botocore.paginate import PaginatorModel
+import ibm_botocore.loaders
 
 
 class BaseSessionTest(unittest.TestCase):
@@ -62,7 +62,7 @@ class BaseSessionTest(unittest.TestCase):
 class SessionTest(BaseSessionTest):
 
     def close_log_file_handler(self, tempdir, filename):
-        logger = logging.getLogger('botocore')
+        logger = logging.getLogger('ibm_botocore')
         handlers = logger.handlers
         for handler in handlers[:]:
             if hasattr(handler, 'stream') and handler.stream.name == filename:
@@ -125,7 +125,7 @@ class SessionTest(BaseSessionTest):
         # Given we have no profile:
         self.environ['FOO_PROFILE'] = 'profile_that_does_not_exist'
         session = create_session(session_vars=self.env_vars)
-        with self.assertRaises(botocore.exceptions.ProfileNotFound):
+        with self.assertRaises(ibm_botocore.exceptions.ProfileNotFound):
             session.get_scoped_config()
 
     def test_variable_does_not_exist(self):
@@ -169,7 +169,7 @@ class SessionTest(BaseSessionTest):
         # In this case, even though we specified default, because
         # the boto_config_empty config file does not have a default
         # profile, we should be raising an exception.
-        with self.assertRaises(botocore.exceptions.ProfileNotFound):
+        with self.assertRaises(ibm_botocore.exceptions.ProfileNotFound):
             session.get_scoped_config()
 
     def test_file_logger(self):
@@ -244,11 +244,11 @@ class SessionTest(BaseSessionTest):
     @mock.patch('logging.getLogger')
     @mock.patch('logging.FileHandler')
     def test_logger_name_can_be_passed_in(self, file_handler, get_logger):
-        self.session.set_debug_logger('botocore.hooks')
-        get_logger.assert_called_with('botocore.hooks')
+        self.session.set_debug_logger('ibm_botocore.hooks')
+        get_logger.assert_called_with('ibm_botocore.hooks')
 
-        self.session.set_file_logger('DEBUG', 'debuglog', 'botocore.service')
-        get_logger.assert_called_with('botocore.service')
+        self.session.set_file_logger('DEBUG', 'debuglog', 'ibm_botocore.service')
+        get_logger.assert_called_with('ibm_botocore.service')
         file_handler.assert_called_with('debuglog')
 
     @mock.patch('logging.getLogger')
@@ -279,7 +279,7 @@ class TestBuiltinEventHandlers(BaseSessionTest):
             ('foo', self.on_foo),
         ]
         self.foo_called = False
-        self.handler_patch = mock.patch('botocore.handlers.BUILTIN_HANDLERS',
+        self.handler_patch = mock.patch('ibm_botocore.handlers.BUILTIN_HANDLERS',
                                         self.builtin_handlers)
         self.handler_patch.start()
 
@@ -291,8 +291,8 @@ class TestBuiltinEventHandlers(BaseSessionTest):
         self.handler_patch.stop()
 
     def test_registered_builtin_handlers(self):
-        session = botocore.session.Session(self.env_vars, None,
-                                           include_builtin_handlers=True)
+        session = ibm_botocore.session.Session(self.env_vars, None,
+                                               include_builtin_handlers=True)
         session.emit('foo')
         self.assertTrue(self.foo_called)
 
@@ -447,27 +447,27 @@ class TestCreateClient(BaseSessionTest):
                          "create_client call.")
 
     def test_cred_provider_called_when_partial_creds_provided(self):
-        with self.assertRaises(botocore.exceptions.PartialCredentialsError):
+        with self.assertRaises(ibm_botocore.exceptions.PartialCredentialsError):
             self.session.create_client(
                 's3', 'us-west-2',
                 aws_access_key_id='foo',
                 aws_secret_access_key=None
             )
-        with self.assertRaises(botocore.exceptions.PartialCredentialsError):
+        with self.assertRaises(ibm_botocore.exceptions.PartialCredentialsError):
             self.session.create_client(
                 's3', 'us-west-2',
                 aws_access_key_id=None,
                 aws_secret_access_key='foo',
             )
 
-    @mock.patch('botocore.client.ClientCreator')
+    @mock.patch('ibm_botocore.client.ClientCreator')
     def test_config_passed_to_client_creator(self, client_creator):
         # Make sure there is no default set
         self.assertEqual(self.session.get_default_client_config(), None)
 
         # The config passed to the client should be the one that is used
         # in creating the client.
-        config = botocore.config.Config(region_name='us-west-2')
+        config = ibm_botocore.config.Config(region_name='us-west-2')
         self.session.create_client('s3', config=config)
         client_creator.return_value.create_client.assert_called_with(
             service_name=mock.ANY, region_name=mock.ANY, is_secure=mock.ANY,
@@ -475,9 +475,9 @@ class TestCreateClient(BaseSessionTest):
             scoped_config=mock.ANY, client_config=config,
             api_version=mock.ANY)
 
-    @mock.patch('botocore.client.ClientCreator')
+    @mock.patch('ibm_botocore.client.ClientCreator')
     def test_create_client_with_default_client_config(self, client_creator):
-        config = botocore.config.Config()
+        config = ibm_botocore.config.Config()
         self.session.set_default_client_config(config)
         self.session.create_client('s3')
 
@@ -487,10 +487,10 @@ class TestCreateClient(BaseSessionTest):
             scoped_config=mock.ANY, client_config=config,
             api_version=mock.ANY)
 
-    @mock.patch('botocore.client.ClientCreator')
+    @mock.patch('ibm_botocore.client.ClientCreator')
     def test_create_client_with_merging_client_configs(self, client_creator):
-        config = botocore.config.Config(region_name='us-west-2')
-        other_config = botocore.config.Config(region_name='us-east-1')
+        config = ibm_botocore.config.Config(region_name='us-west-2')
+        other_config = ibm_botocore.config.Config(region_name='us-east-1')
         self.session.set_default_client_config(config)
         self.session.create_client('s3', config=other_config)
 
@@ -511,7 +511,7 @@ class TestCreateClient(BaseSessionTest):
         self.assertEqual(s3_client.meta.region_name, 'us-west-2')
 
     def test_create_client_with_region_and_client_config(self):
-        config = botocore.config.Config()
+        config = ibm_botocore.config.Config()
         # Use a client config with no region configured.
         s3_client = self.session.create_client(
             's3', region_name='us-west-2', config=config)
@@ -531,7 +531,7 @@ class TestCreateClient(BaseSessionTest):
         s3_client = self.session.create_client('s3')
         self.assertEqual(s3_client.meta.region_name, 'us-west-11')
 
-    @mock.patch('botocore.client.ClientCreator')
+    @mock.patch('ibm_botocore.client.ClientCreator')
     def test_create_client_with_ca_bundle_from_config(self, client_creator):
         with temporary_file('w') as f:
             del self.environ['FOO_PROFILE']
@@ -546,21 +546,21 @@ class TestCreateClient(BaseSessionTest):
                 create_client.call_args[1]
             self.assertEqual(call_kwargs['verify'], 'config-certs.pem')
 
-    @mock.patch('botocore.client.ClientCreator')
+    @mock.patch('ibm_botocore.client.ClientCreator')
     def test_create_client_with_ca_bundle_from_env_var(self, client_creator):
         self.environ['FOO_AWS_CA_BUNDLE'] = 'env-certs.pem'
         self.session.create_client('s3', 'us-west-2')
         call_kwargs = client_creator.return_value.create_client.call_args[1]
         self.assertEqual(call_kwargs['verify'], 'env-certs.pem')
 
-    @mock.patch('botocore.client.ClientCreator')
+    @mock.patch('ibm_botocore.client.ClientCreator')
     def test_create_client_with_verify_param(self, client_creator):
         self.session.create_client(
             's3', 'us-west-2', verify='verify-certs.pem')
         call_kwargs = client_creator.return_value.create_client.call_args[1]
         self.assertEqual(call_kwargs['verify'], 'verify-certs.pem')
 
-    @mock.patch('botocore.client.ClientCreator')
+    @mock.patch('ibm_botocore.client.ClientCreator')
     def test_create_client_verify_param_overrides_all(self, client_creator):
         with temporary_file('w') as f:
             # Set the ca cert using the config file
@@ -583,13 +583,13 @@ class TestCreateClient(BaseSessionTest):
             # configurations
             self.assertEqual(call_kwargs['verify'], 'verify-certs.pem')
 
-    @mock.patch('botocore.client.ClientCreator')
+    @mock.patch('ibm_botocore.client.ClientCreator')
     def test_create_client_use_no_api_version_by_default(self, client_creator):
         self.session.create_client('myservice', 'us-west-2')
         call_kwargs = client_creator.return_value.create_client.call_args[1]
         self.assertEqual(call_kwargs['api_version'], None)
 
-    @mock.patch('botocore.client.ClientCreator')
+    @mock.patch('ibm_botocore.client.ClientCreator')
     def test_create_client_uses_api_version_from_config(self, client_creator):
         config_api_version = '2012-01-01'
         with temporary_file('w') as f:
@@ -606,7 +606,7 @@ class TestCreateClient(BaseSessionTest):
                 create_client.call_args[1]
             self.assertEqual(call_kwargs['api_version'], config_api_version)
 
-    @mock.patch('botocore.client.ClientCreator')
+    @mock.patch('ibm_botocore.client.ClientCreator')
     def test_can_specify_multiple_versions_from_config(self, client_creator):
         config_api_version = '2012-01-01'
         second_config_api_version = '2013-01-01'
@@ -633,7 +633,7 @@ class TestCreateClient(BaseSessionTest):
             self.assertEqual(
                 call_kwargs['api_version'], second_config_api_version)
 
-    @mock.patch('botocore.client.ClientCreator')
+    @mock.patch('ibm_botocore.client.ClientCreator')
     def test_param_api_version_overrides_config_value(self, client_creator):
         config_api_version = '2012-01-01'
         override_api_version = '2014-01-01'
@@ -655,7 +655,7 @@ class TestCreateClient(BaseSessionTest):
 
 class TestComponentLocator(unittest.TestCase):
     def setUp(self):
-        self.components = botocore.session.ComponentLocator()
+        self.components = ibm_botocore.session.ComponentLocator()
 
     def test_unknown_component_raises_exception(self):
         with self.assertRaises(ValueError):
@@ -718,6 +718,6 @@ class TestDefaultClientConfig(BaseSessionTest):
         self.assertEqual(self.session.get_default_client_config(), None)
 
     def test_set_and_get_client_config(self):
-        client_config = botocore.config.Config()
+        client_config = ibm_botocore.config.Config()
         self.session.set_default_client_config(client_config)
         self.assertIs(self.session.get_default_client_config(), client_config)

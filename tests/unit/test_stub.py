@@ -14,10 +14,10 @@
 from tests import unittest
 import mock
 
-from botocore.stub import Stubber
-from botocore.exceptions import ParamValidationError, StubResponseError
-from botocore.model import ServiceModel
-from botocore import hooks
+from ibm_botocore.stub import Stubber
+from ibm_botocore.exceptions import ParamValidationError, StubResponseError
+from ibm_botocore.model import ServiceModel
+from ibm_botocore import hooks
 
 
 class TestStubber(unittest.TestCase):
@@ -29,7 +29,7 @@ class TestStubber(unittest.TestCase):
         self.stubber = Stubber(self.client)
         self.validate_parameters_mock = mock.Mock()
         self.validate_parameters_patch = mock.patch(
-            'botocore.stub.validate_parameters', self.validate_parameters_mock)
+            'ibm_botocore.stub.validate_parameters', self.validate_parameters_mock)
         self.validate_parameters_patch.start()
 
     def tearDown(self):

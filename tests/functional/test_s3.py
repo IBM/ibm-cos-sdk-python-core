@@ -13,14 +13,14 @@
 from tests import unittest, mock, BaseSessionTest, create_session
 from nose.tools import assert_equal
 
-import botocore.session
-from botocore.config import Config
-from botocore.exceptions import ParamValidationError
+import ibm_botocore.session
+from ibm_botocore.config import Config
+from ibm_botocore.exceptions import ParamValidationError
 
 
 class TestS3BucketValidation(unittest.TestCase):
     def test_invalid_bucket_name_raises_error(self):
-        session = botocore.session.get_session()
+        session = ibm_botocore.session.get_session()
         s3 = session.create_client('s3')
         with self.assertRaises(ParamValidationError):
             s3.put_object(Bucket='adfgasdfadfs/bucket/name',
@@ -33,7 +33,7 @@ class BaseS3OperationTest(BaseSessionTest):
         self.region = 'us-west-2'
         self.client = self.session.create_client(
             's3', self.region)
-        self.session_send_patch = mock.patch('botocore.endpoint.Session.send')
+        self.session_send_patch = mock.patch('ibm_botocore.endpoint.Session.send')
         self.http_session_send_mock = self.session_send_patch.start()
 
     def tearDown(self):
@@ -137,8 +137,8 @@ class TestS3SigV4(BaseS3OperationTest):
         self.assertEqual(sha_header, b'UNSIGNED-PAYLOAD')
 
     def test_content_sha256_set_if_md5_is_unavailable(self):
-        with mock.patch('botocore.auth.MD5_AVAILABLE', False):
-            with mock.patch('botocore.handlers.MD5_AVAILABLE', False):
+        with mock.patch('ibm_botocore.auth.MD5_AVAILABLE', False):
+            with mock.patch('ibm_botocore.handlers.MD5_AVAILABLE', False):
                 self.client.put_object(Bucket='foo', Key='bar', Body='baz')
         sent_headers = self.get_sent_headers()
         unsigned = 'UNSIGNED-PAYLOAD'
@@ -152,7 +152,7 @@ class TestCanSendIntegerHeaders(BaseSessionTest):
     def test_int_values_with_sigv4(self):
         s3 = self.session.create_client(
             's3', config=Config(signature_version='s3v4'))
-        with mock.patch('botocore.endpoint.Session.send') as mock_send:
+        with mock.patch('ibm_botocore.endpoint.Session.send') as mock_send:
             mock_send.return_value = mock.Mock(status_code=200,
                                                content=b'',
                                                headers={})
@@ -245,7 +245,7 @@ class TestRegionRedirect(BaseS3OperationTest):
 
 class TestGeneratePresigned(BaseS3OperationTest):
     def test_generate_unauthed_url(self):
-        config = Config(signature_version=botocore.UNSIGNED)
+        config = Config(signature_version=ibm_botocore.UNSIGNED)
         client = self.session.create_client('s3', self.region, config=config)
         url = client.generate_presigned_url(
             ClientMethod='get_object',
@@ -256,7 +256,7 @@ class TestGeneratePresigned(BaseS3OperationTest):
         self.assertEqual(url, 'https://foo.s3.amazonaws.com/bar')
 
     def test_generate_unauthed_post(self):
-        config = Config(signature_version=botocore.UNSIGNED)
+        config = Config(signature_version=ibm_botocore.UNSIGNED)
         client = self.session.create_client('s3', self.region, config=config)
         parts = client.generate_presigned_post(Bucket='foo', Key='bar')
         expected = {
@@ -534,7 +534,7 @@ def _verify_expected_endpoint_url(region, bucket, key, s3_config,
         s3 = session.create_client('s3', region_name=region, use_ssl=is_secure,
                                    config=config,
                                    endpoint_url=customer_provided_endpoint)
-        with mock.patch('botocore.endpoint.Session.send') as mock_send:
+        with mock.patch('ibm_botocore.endpoint.Session.send') as mock_send:
             mock_send.return_value = http_response
             s3.put_object(Bucket=bucket,
                           Key=key, Body=b'bar')

@@ -15,9 +15,9 @@ from tests import unittest, create_session
 import mock
 from nose.tools import assert_equals, assert_raises
 
-from botocore import regions
-from botocore.client import ClientEndpointBridge
-from botocore.exceptions import NoRegionError
+from ibm_botocore import regions
+from ibm_botocore.client import ClientEndpointBridge
+from ibm_botocore.exceptions import NoRegionError
 
 
 # NOTE: sqs endpoint updated to be the CN in the SSL cert because

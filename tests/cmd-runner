@@ -69,7 +69,7 @@ Here's an example::
          <-------------------------------------------
 
 """
-import botocore.session
+import ibm_botocore.session
 import sys
 
 
@@ -77,7 +77,7 @@ class CommandRunner(object):
     DEFAULT_REGION = 'us-west-2'
 
     def __init__(self):
-        self._session = botocore.session.get_session()
+        self._session = ibm_botocore.session.get_session()
         self._clients = []
         self._waiters = []
         self._paginators = []

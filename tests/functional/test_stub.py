@@ -10,25 +10,25 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-import botocore.config
+import ibm_botocore.config
 from tests import unittest
 
-import botocore
-import botocore.session
-import botocore.stub as stub
-from botocore.stub import Stubber
-from botocore.exceptions import StubResponseError, ClientError, \
+import ibm_botocore
+import ibm_botocore.session
+import ibm_botocore.stub as stub
+from ibm_botocore.stub import Stubber
+from ibm_botocore.exceptions import StubResponseError, ClientError, \
     StubAssertionError
-from botocore.exceptions import ParamValidationError
-import botocore.client
-import botocore.retryhandler
-import botocore.translate
+from ibm_botocore.exceptions import ParamValidationError
+import ibm_botocore.client
+import ibm_botocore.retryhandler
+import ibm_botocore.translate
 
 
 class TestStubber(unittest.TestCase):
     def setUp(self):
-        session = botocore.session.get_session()
-        config = botocore.config.Config(signature_version=botocore.UNSIGNED)
+        session = ibm_botocore.session.get_session()
+        config = ibm_botocore.config.Config(signature_version=ibm_botocore.UNSIGNED)
         self.client = session.create_client('s3', config=config)
 
         self.stubber = Stubber(self.client)

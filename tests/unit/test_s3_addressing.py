@@ -18,9 +18,9 @@ import os
 from tests import BaseSessionTest
 from mock import patch, Mock
 
-from botocore.compat import OrderedDict
-from botocore.handlers import set_list_objects_encoding_type_url
-from botocore.exceptions import UnknownEndpointError
+from ibm_botocore.compat import OrderedDict
+from ibm_botocore.handlers import set_list_objects_encoding_type_url
+from ibm_botocore.exceptions import UnknownEndpointError
 
 
 class TestS3Addressing(BaseSessionTest):
@@ -41,7 +41,7 @@ class TestS3Addressing(BaseSessionTest):
                              force_hmacv1=False):
         if force_hmacv1:
             self.session.register('choose-signer', self.enable_hmacv1)
-        with patch('botocore.endpoint.BotocoreHTTPSession') as \
+        with patch('ibm_botocore.endpoint.BotocoreHTTPSession') as \
                 mock_http_session:
             mock_send = mock_http_session.return_value.send
             mock_send.return_value = self.mock_response

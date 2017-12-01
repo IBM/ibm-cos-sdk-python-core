@@ -21,9 +21,9 @@
 # IN THE SOFTWARE.
 #
 from tests import unittest
-from botocore.compat import six
-from botocore.docs.bcdoc.style import ReSTStyle
-from botocore.docs.bcdoc.restdoc import ReSTDocument
+from ibm_botocore.compat import six
+from ibm_botocore.docs.bcdoc.style import ReSTStyle
+from ibm_botocore.docs.bcdoc.restdoc import ReSTDocument
 
 
 class TestStyle(unittest.TestCase):

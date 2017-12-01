@@ -4,7 +4,7 @@ Botocore Events
 Botocore will emit events during various parts of its execution.  Users of the
 library can register handlers (callables) for these events, such that whenever
 an event is emitted, all registered handlers for the event will be called.
-This allows you to customize and extend the behavior of botocore without having
+This allows you to customize and extend the behavior of ibm_botocore without having
 to modify the internals.  This document covers this event system in detail.
 
 Session Events
@@ -18,7 +18,7 @@ to events.
 Event Types
 -----------
 
-The table below shows all of the events emitted by botocore.  In some cases,
+The table below shows all of the events emitted by ibm_botocore.  In some cases,
 the events are listed as ``<service>.<operations>.bar``, in which ``<service>``
 and ``<operation>`` are replaced with a specific service and operation, for
 example ``s3.ListObjects.bar``.

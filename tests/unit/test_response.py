@@ -16,11 +16,11 @@ import datetime
 
 from dateutil.tz import tzutc
 
-import botocore
-from botocore import response
-from botocore.compat import six
-from botocore.exceptions import IncompleteReadError
-from botocore.vendored.requests.models import Response, Request
+import ibm_botocore
+from ibm_botocore import response
+from ibm_botocore.compat import six
+from ibm_botocore.exceptions import IncompleteReadError
+from ibm_botocore.vendored.requests.models import Response, Request
 
 XMLBODY1 = (b'<?xml version="1.0" encoding="UTF-8"?><Error>'
             b'<Code>AccessDenied</Code>'
@@ -86,7 +86,7 @@ class TestGetResponse(BaseResponseTest):
         http_response.status_code = 200
         http_response.reason = 'OK'
 
-        session = botocore.session.get_session()
+        session = ibm_botocore.session.get_session()
         service_model = session.get_service_model('s3')
         operation_model = service_model.operation_model('GetObject')
 
@@ -108,7 +108,7 @@ class TestGetResponse(BaseResponseTest):
         http_response.status_code = 403
         http_response.reason = 'Forbidden'
 
-        session = botocore.session.get_session()
+        session = ibm_botocore.session.get_session()
         service_model = session.get_service_model('s3')
         operation_model = service_model.operation_model('GetObject')
 
@@ -136,7 +136,7 @@ class TestGetResponse(BaseResponseTest):
         http_response.reason = 'Forbidden'
         http_response.request = Request()
 
-        session = botocore.session.get_session()
+        session = ibm_botocore.session.get_session()
         service_model = session.get_service_model('s3')
         operation_model = service_model.operation_model('ListObjects')
 
@@ -168,7 +168,7 @@ class TestGetResponse(BaseResponseTest):
         http_response.reason = 'ok'
         http_response.request = Request()
 
-        session = botocore.session.get_session()
+        session = ibm_botocore.session.get_session()
         service_model = session.get_service_model('s3')
         operation_model = service_model.operation_model('ListObjects')
 

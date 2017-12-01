@@ -16,7 +16,7 @@ import functools
 from tests import unittest
 from functools import partial
 
-from botocore.hooks import HierarchicalEmitter, first_non_none_response
+from ibm_botocore.hooks import HierarchicalEmitter, first_non_none_response
 
 
 class TestHierarchicalEventEmitter(unittest.TestCase):

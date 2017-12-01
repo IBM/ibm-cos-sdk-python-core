@@ -12,10 +12,10 @@
 # language governing permissions and limitations under the License.
 
 from tests import unittest
-from botocore.paginate import Paginator
-from botocore.paginate import PaginatorModel
-from botocore.exceptions import PaginationError
-from botocore.compat import six
+from ibm_botocore.paginate import Paginator
+from ibm_botocore.paginate import PaginatorModel
+from ibm_botocore.exceptions import PaginationError
+from ibm_botocore.compat import six
 
 import mock
 import base64

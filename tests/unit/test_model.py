@@ -1,7 +1,7 @@
 from tests import unittest
 
-from botocore import model
-from botocore.compat import OrderedDict
+from ibm_botocore import model
+from ibm_botocore.compat import OrderedDict
 
 
 def test_missing_model_attribute_raises_exception():

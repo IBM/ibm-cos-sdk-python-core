@@ -11,10 +11,10 @@
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 from tests import unittest, mock
-from botocore.docs.docstring import LazyLoadedDocstring
-from botocore.docs.docstring import ClientMethodDocstring
-from botocore.docs.docstring import WaiterDocstring
-from botocore.docs.docstring import PaginatorDocstring
+from ibm_botocore.docs.docstring import LazyLoadedDocstring
+from ibm_botocore.docs.docstring import ClientMethodDocstring
+from ibm_botocore.docs.docstring import WaiterDocstring
+from ibm_botocore.docs.docstring import PaginatorDocstring
 
 
 class MockedLazyLoadedDocstring(LazyLoadedDocstring):
@@ -69,7 +69,7 @@ class TestLazyLoadedDocstring(unittest.TestCase):
 class TestClientMethodDocstring(unittest.TestCase):
     def test_use_correct_docstring_writer(self):
         with mock.patch(
-                'botocore.docs.docstring'
+                'ibm_botocore.docs.docstring'
                 '.document_model_driven_method') as mock_writer:
             docstring = ClientMethodDocstring()
             str(docstring)
@@ -79,7 +79,7 @@ class TestClientMethodDocstring(unittest.TestCase):
 class TestWaiterDocstring(unittest.TestCase):
     def test_use_correct_docstring_writer(self):
         with mock.patch(
-                'botocore.docs.docstring'
+                'ibm_botocore.docs.docstring'
                 '.document_wait_method') as mock_writer:
             docstring = WaiterDocstring()
             str(docstring)
@@ -89,7 +89,7 @@ class TestWaiterDocstring(unittest.TestCase):
 class TestPaginatorDocstring(unittest.TestCase):
     def test_use_correct_docstring_writer(self):
         with mock.patch(
-                'botocore.docs.docstring'
+                'ibm_botocore.docs.docstring'
                 '.document_paginate_method') as mock_writer:
             docstring = PaginatorDocstring()
             str(docstring)

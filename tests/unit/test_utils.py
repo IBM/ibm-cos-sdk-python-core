@@ -18,41 +18,41 @@ import six
 
 import mock
 
-from botocore import xform_name
-from botocore.compat import OrderedDict, json
-from botocore.awsrequest import AWSRequest
-from botocore.exceptions import InvalidExpressionError, ConfigNotFound
-from botocore.exceptions import ClientError
-from botocore.exceptions import InvalidDNSNameError, MetadataRetrievalError
-from botocore.model import ServiceModel
-from botocore.vendored import requests
-from botocore.utils import remove_dot_segments
-from botocore.utils import normalize_url_path
-from botocore.utils import validate_jmespath_for_set
-from botocore.utils import set_value_from_jmespath
-from botocore.utils import parse_key_val_file_contents
-from botocore.utils import parse_key_val_file
-from botocore.utils import parse_timestamp
-from botocore.utils import parse_to_aware_datetime
-from botocore.utils import datetime2timestamp
-from botocore.utils import CachedProperty
-from botocore.utils import ArgumentGenerator
-from botocore.utils import calculate_tree_hash
-from botocore.utils import calculate_sha256
-from botocore.utils import is_valid_endpoint_url
-from botocore.utils import fix_s3_host
-from botocore.utils import switch_to_virtual_host_style
-from botocore.utils import instance_cache
-from botocore.utils import merge_dicts
-from botocore.utils import get_service_module_name
-from botocore.utils import percent_encode_sequence
-from botocore.utils import switch_host_s3_accelerate
-from botocore.utils import deep_merge
-from botocore.utils import S3RegionRedirector
-from botocore.utils import ContainerMetadataFetcher
-from botocore.model import DenormalizedStructureBuilder
-from botocore.model import ShapeResolver
-from botocore.config import Config
+from ibm_botocore import xform_name
+from ibm_botocore.compat import OrderedDict, json
+from ibm_botocore.awsrequest import AWSRequest
+from ibm_botocore.exceptions import InvalidExpressionError, ConfigNotFound
+from ibm_botocore.exceptions import ClientError
+from ibm_botocore.exceptions import InvalidDNSNameError, MetadataRetrievalError
+from ibm_botocore.model import ServiceModel
+from ibm_botocore.vendored import requests
+from ibm_botocore.utils import remove_dot_segments
+from ibm_botocore.utils import normalize_url_path
+from ibm_botocore.utils import validate_jmespath_for_set
+from ibm_botocore.utils import set_value_from_jmespath
+from ibm_botocore.utils import parse_key_val_file_contents
+from ibm_botocore.utils import parse_key_val_file
+from ibm_botocore.utils import parse_timestamp
+from ibm_botocore.utils import parse_to_aware_datetime
+from ibm_botocore.utils import datetime2timestamp
+from ibm_botocore.utils import CachedProperty
+from ibm_botocore.utils import ArgumentGenerator
+from ibm_botocore.utils import calculate_tree_hash
+from ibm_botocore.utils import calculate_sha256
+from ibm_botocore.utils import is_valid_endpoint_url
+from ibm_botocore.utils import fix_s3_host
+from ibm_botocore.utils import switch_to_virtual_host_style
+from ibm_botocore.utils import instance_cache
+from ibm_botocore.utils import merge_dicts
+from ibm_botocore.utils import get_service_module_name
+from ibm_botocore.utils import percent_encode_sequence
+from ibm_botocore.utils import switch_host_s3_accelerate
+from ibm_botocore.utils import deep_merge
+from ibm_botocore.utils import S3RegionRedirector
+from ibm_botocore.utils import ContainerMetadataFetcher
+from ibm_botocore.model import DenormalizedStructureBuilder
+from ibm_botocore.model import ShapeResolver
+from ibm_botocore.config import Config
 
 
 class TestURINormalization(unittest.TestCase):

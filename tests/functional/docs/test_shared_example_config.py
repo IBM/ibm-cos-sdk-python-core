@@ -10,13 +10,13 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-import botocore.session
-from botocore.model import OperationNotFoundError
-from botocore.utils import parse_timestamp
+import ibm_botocore.session
+from ibm_botocore.model import OperationNotFoundError
+from ibm_botocore.utils import parse_timestamp
 
 
 def test_lint_shared_example_configs():
-    session = botocore.session.Session()
+    session = ibm_botocore.session.Session()
     loader = session.get_component('data_loader')
     services = loader.list_available_services('examples-1')
     for service in services:

@@ -12,10 +12,10 @@
 # language governing permissions and limitations under the License.
 from tests import unittest
 
-from botocore.exceptions import ClientError
-from botocore.errorfactory import BaseClientExceptions
-from botocore.errorfactory import ClientExceptionsFactory
-from botocore.model import ServiceModel
+from ibm_botocore.exceptions import ClientError
+from ibm_botocore.errorfactory import BaseClientExceptions
+from ibm_botocore.errorfactory import ClientExceptionsFactory
+from ibm_botocore.model import ServiceModel
 
 
 class TestBaseClientExceptions(unittest.TestCase):
