@@ -10,9 +10,9 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-from botocore.compat import OrderedDict
+from ibm_botocore.compat import OrderedDict
 from tests.unit.docs import BaseDocsTest
-from botocore.docs.sharedexample import SharedExampleDocumenter, \
+from ibm_botocore.docs.sharedexample import SharedExampleDocumenter, \
     document_shared_examples
 
 

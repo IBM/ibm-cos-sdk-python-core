@@ -17,11 +17,11 @@ import os
 
 from dateutil.tz import tzlocal, tzutc
 
-from botocore import credentials
-from botocore.utils import ContainerMetadataFetcher
-from botocore.credentials import EnvProvider, create_assume_role_refresher
-import botocore.exceptions
-import botocore.session
+from ibm_botocore import credentials
+from ibm_botocore.utils import ContainerMetadataFetcher
+from ibm_botocore.credentials import EnvProvider, create_assume_role_refresher
+import ibm_botocore.exceptions
+import ibm_botocore.session
 from tests import unittest, BaseEnvVar, IntegerRefresher
 
 
@@ -220,7 +220,7 @@ class TestEnvVar(BaseEnvVar):
             # Missing the AWS_SECRET_ACCESS_KEY
         }
         provider = credentials.EnvProvider(environ)
-        with self.assertRaises(botocore.exceptions.PartialCredentialsError):
+        with self.assertRaises(ibm_botocore.exceptions.PartialCredentialsError):
             provider.load()
 
 
@@ -256,7 +256,7 @@ class TestSharedCredentialsProvider(BaseEnvVar):
         provider = credentials.SharedCredentialProvider(
             creds_filename='~/.aws/creds', profile_name='default',
             ini_parser=self.ini_parser)
-        with self.assertRaises(botocore.exceptions.PartialCredentialsError):
+        with self.assertRaises(ibm_botocore.exceptions.PartialCredentialsError):
             provider.load()
 
     def test_credentials_file_exists_with_session_token(self):
@@ -305,7 +305,7 @@ class TestSharedCredentialsProvider(BaseEnvVar):
     def test_credentials_file_does_not_exist_returns_none(self):
         # It's ok if the credentials file does not exist, we should
         # just catch the appropriate errors and return None.
-        self.ini_parser.side_effect = botocore.exceptions.ConfigNotFound(
+        self.ini_parser.side_effect = ibm_botocore.exceptions.ConfigNotFound(
             path='foo')
         provider = credentials.SharedCredentialProvider(
             creds_filename='~/.aws/creds', profile_name='dev',
@@ -353,7 +353,7 @@ class TestConfigFileProvider(BaseEnvVar):
     def test_config_file_errors_ignored(self):
         # We should move on to the next provider if the config file
         # can't be found.
-        self.parser.side_effect = botocore.exceptions.ConfigNotFound(
+        self.parser.side_effect = ibm_botocore.exceptions.ConfigNotFound(
             path='cli.cfg')
         provider = credentials.ConfigProvider('cli.cfg', 'default',
                                               self.parser)
@@ -369,7 +369,7 @@ class TestConfigFileProvider(BaseEnvVar):
         parser = mock.Mock()
         parser.return_value = parsed
         provider = credentials.ConfigProvider('cli.cfg', 'default', parser)
-        with self.assertRaises(botocore.exceptions.PartialCredentialsError):
+        with self.assertRaises(ibm_botocore.exceptions.PartialCredentialsError):
             provider.load()
 
 
@@ -423,7 +423,7 @@ class TestBotoProvider(BaseEnvVar):
         self.ini_parser.assert_called_with('alternate-config.cfg')
 
     def test_no_boto_config_file_exists(self):
-        self.ini_parser.side_effect = botocore.exceptions.ConfigNotFound(
+        self.ini_parser.side_effect = ibm_botocore.exceptions.ConfigNotFound(
             path='foo')
         provider = credentials.BotoProvider(environ={},
                                             ini_parser=self.ini_parser)
@@ -440,7 +440,7 @@ class TestBotoProvider(BaseEnvVar):
         }
         provider = credentials.BotoProvider(environ={},
                                             ini_parser=ini_parser)
-        with self.assertRaises(botocore.exceptions.PartialCredentialsError):
+        with self.assertRaises(ibm_botocore.exceptions.PartialCredentialsError):
             provider.load()
 
 
@@ -525,7 +525,7 @@ class CredentialResolverTest(BaseEnvVar):
 
     def test_get_unknown_provider_raises_error(self):
         resolver = credentials.CredentialResolver(providers=[self.provider1])
-        with self.assertRaises(botocore.exceptions.UnknownCredentialError):
+        with self.assertRaises(ibm_botocore.exceptions.UnknownCredentialError):
             resolver.get_provider('unknown-foo')
 
     def test_first_credential_non_none_wins(self):
@@ -612,7 +612,7 @@ class CredentialResolverTest(BaseEnvVar):
         resolver.remove('providerFOO')
         # But an error IS raised if you try to insert after an unknown
         # provider.
-        with self.assertRaises(botocore.exceptions.UnknownCredentialError):
+        with self.assertRaises(ibm_botocore.exceptions.UnknownCredentialError):
             resolver.insert_after('providerFoo', None)
 
 
@@ -1039,7 +1039,7 @@ class TestAssumeRoleCredentialProvider(unittest.TestCase):
             mock.Mock(), cache={}, profile_name='development')
 
         # source_profile is required, we shoudl get an error.
-        with self.assertRaises(botocore.exceptions.PartialCredentialsError):
+        with self.assertRaises(ibm_botocore.exceptions.PartialCredentialsError):
             provider.load()
 
     def test_source_profile_does_not_exist(self):
@@ -1050,7 +1050,7 @@ class TestAssumeRoleCredentialProvider(unittest.TestCase):
             mock.Mock(), cache={}, profile_name='development')
 
         # source_profile is required, we shoudl get an error.
-        with self.assertRaises(botocore.exceptions.InvalidConfigError):
+        with self.assertRaises(ibm_botocore.exceptions.InvalidConfigError):
             provider.load()
 
 
@@ -1221,7 +1221,7 @@ class TestContainerProvider(BaseEnvVar):
         timeobj = datetime.now(tzlocal())
         expired_timestamp = (timeobj - timedelta(hours=23)).isoformat()
         future_timestamp = (timeobj + timedelta(hours=1)).isoformat()
-        exception = botocore.exceptions.CredentialRetrievalError
+        exception = ibm_botocore.exceptions.CredentialRetrievalError
         fetcher.retrieve_full_uri.side_effect = exception(provider='ecs-role',
                                                      error_msg='fake http error')
         with self.assertRaises(exception):
@@ -1237,8 +1237,8 @@ class TestContainerProvider(BaseEnvVar):
         fetcher = mock.Mock(spec=credentials.ContainerMetadataFetcher)
         timeobj = datetime.now(tzlocal())
         expired_timestamp = (timeobj - timedelta(hours=23)).isoformat()
-        http_exception = botocore.exceptions.MetadataRetrievalError
-        raised_exception = botocore.exceptions.CredentialRetrievalError
+        http_exception = ibm_botocore.exceptions.MetadataRetrievalError
+        raised_exception = ibm_botocore.exceptions.CredentialRetrievalError
         fetcher.retrieve_full_uri.side_effect = [
             {
                 "AccessKeyId" : "access_key_old",

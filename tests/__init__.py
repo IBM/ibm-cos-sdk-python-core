@@ -35,13 +35,13 @@ else:
     import unittest
 
 
-import botocore.loaders
-import botocore.session
-from botocore import utils
-from botocore import credentials
+import ibm_botocore.loaders
+import ibm_botocore.session
+from ibm_botocore import utils
+from ibm_botocore import credentials
 
 
-_LOADER = botocore.loaders.Loader()
+_LOADER = ibm_botocore.loaders.Loader()
 
 
 def skip_unless_has_memory_collection(cls):
@@ -70,9 +70,9 @@ def create_session(**kwargs):
     # Create a Session object.  By default,
     # the _LOADER object is used as the loader
     # so that we reused the same models across tests.
-    session = botocore.session.Session(**kwargs)
+    session = ibm_botocore.session.Session(**kwargs)
     session.register_component('data_loader', _LOADER)
-    session.set_config_variable('credentials_file', 'noexist/foo/botocore')
+    session.set_config_variable('credentials_file', 'noexist/foo/ibm_botocore')
     return session
 
 

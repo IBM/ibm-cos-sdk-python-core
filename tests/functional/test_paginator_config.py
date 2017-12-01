@@ -15,7 +15,7 @@ import string
 import jmespath
 from jmespath.exceptions import JMESPathError
 
-import botocore.session
+import ibm_botocore.session
 
 
 KNOWN_PAGE_KEYS = set(
@@ -25,7 +25,7 @@ MEMBER_NAME_CHARS = set(string.ascii_letters + string.digits)
 
 
 def test_lint_pagination_configs():
-    session = botocore.session.get_session()
+    session = ibm_botocore.session.get_session()
     loader = session.get_component('data_loader')
     services = loader.list_available_services('paginators-1')
     for service_name in services:

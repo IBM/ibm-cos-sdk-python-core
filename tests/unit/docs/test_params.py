@@ -13,10 +13,10 @@
 import mock
 
 from tests.unit.docs import BaseDocsTest
-from botocore.hooks import HierarchicalEmitter
-from botocore.docs.params import RequestParamsDocumenter
-from botocore.docs.params import ResponseParamsDocumenter
-from botocore.docs.utils import DocumentedShape
+from ibm_botocore.hooks import HierarchicalEmitter
+from ibm_botocore.docs.params import RequestParamsDocumenter
+from ibm_botocore.docs.params import ResponseParamsDocumenter
+from ibm_botocore.docs.utils import DocumentedShape
 
 
 class BaseParamsDocumenterTest(BaseDocsTest):

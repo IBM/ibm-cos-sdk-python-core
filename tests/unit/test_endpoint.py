@@ -15,16 +15,16 @@ from tests import unittest
 
 from mock import Mock, patch, sentinel
 from nose.tools import assert_equals
-from botocore.vendored.requests import ConnectionError
+from ibm_botocore.vendored.requests import ConnectionError
 
-from botocore.compat import six
-from botocore.awsrequest import AWSRequest
-from botocore.endpoint import Endpoint, DEFAULT_TIMEOUT
-from botocore.endpoint import EndpointCreator
-from botocore.endpoint import BotocoreHTTPSession
-from botocore.exceptions import EndpointConnectionError
-from botocore.exceptions import ConnectionClosedError
-from botocore.exceptions import BaseEndpointResolverError
+from ibm_botocore.compat import six
+from ibm_botocore.awsrequest import AWSRequest
+from ibm_botocore.endpoint import Endpoint, DEFAULT_TIMEOUT
+from ibm_botocore.endpoint import EndpointCreator
+from ibm_botocore.endpoint import BotocoreHTTPSession
+from ibm_botocore.exceptions import EndpointConnectionError
+from ibm_botocore.exceptions import ConnectionClosedError
+from ibm_botocore.exceptions import BaseEndpointResolverError
 
 
 def request_dict():
@@ -58,7 +58,7 @@ class TestEndpointBase(unittest.TestCase):
         self.event_emitter = Mock()
         self.event_emitter.emit.return_value = []
         self.factory_patch = patch(
-            'botocore.parsers.ResponseParserFactory')
+            'ibm_botocore.parsers.ResponseParserFactory')
         self.factory = self.factory_patch.start()
         self.endpoint = Endpoint(
             'https://ec2.us-west-2.amazonaws.com/',
@@ -129,7 +129,7 @@ class TestEndpointFeatures(TestEndpointBase):
     def test_make_request_with_context(self):
         r = request_dict()
         r['context'] = {'signing': {'region': 'us-west-2'}}
-        with patch('botocore.endpoint.Endpoint.prepare_request') as prepare:
+        with patch('ibm_botocore.endpoint.Endpoint.prepare_request') as prepare:
             self.endpoint.make_request(self.op, r)
         request = prepare.call_args[0][0]
         self.assertEqual(request.context['signing']['region'], 'us-west-2')

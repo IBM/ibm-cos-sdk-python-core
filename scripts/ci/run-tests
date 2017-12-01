@@ -16,5 +16,5 @@ def run(command):
     return check_call(command, shell=True)
 
 
-run('nosetests --with-coverage --cover-erase --cover-package botocore '
+run('nosetests --with-coverage --cover-erase --cover-package ibm_botocore '
     '--with-xunit --cover-xml -v unit/ functional/')

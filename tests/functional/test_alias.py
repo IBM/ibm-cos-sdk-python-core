@@ -10,9 +10,9 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-import botocore.session
-from botocore.stub import Stubber
-from botocore.exceptions import ParamValidationError
+import ibm_botocore.session
+from ibm_botocore.stub import Stubber
+from ibm_botocore.exceptions import ParamValidationError
 
 
 ALIAS_CASES = [
@@ -20,13 +20,13 @@ ALIAS_CASES = [
 
 
 def test_can_use_alias():
-    session = botocore.session.get_session()
+    session = ibm_botocore.session.get_session()
     for case in ALIAS_CASES:
         yield _can_use_parameter_in_client_call, session, case
 
 
 def test_can_use_original_name():
-    session = botocore.session.get_session()
+    session = ibm_botocore.session.get_session()
     for case in ALIAS_CASES:
         yield _can_use_parameter_in_client_call, session, case, False
 

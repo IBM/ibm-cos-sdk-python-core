@@ -21,8 +21,8 @@
 import mock
 from tests import unittest
 
-import botocore.docs.bcdoc.docstringparser as parser
-from botocore.docs.bcdoc.restdoc import ReSTDocument
+import ibm_botocore.docs.bcdoc.docstringparser as parser
+from ibm_botocore.docs.bcdoc.restdoc import ReSTDocument
 
 
 class TestDocStringParser(unittest.TestCase):

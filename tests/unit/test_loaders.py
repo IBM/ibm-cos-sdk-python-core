@@ -24,10 +24,10 @@ import contextlib
 import copy
 import mock
 
-from botocore.exceptions import DataNotFoundError, UnknownServiceError
-from botocore.loaders import JSONFileLoader
-from botocore.loaders import Loader, create_loader
-from botocore.loaders import ExtrasProcessor
+from ibm_botocore.exceptions import DataNotFoundError, UnknownServiceError
+from ibm_botocore.loaders import JSONFileLoader
+from ibm_botocore.loaders import Loader, create_loader
+from ibm_botocore.loaders import ExtrasProcessor
 
 from tests import BaseEnvVar
 

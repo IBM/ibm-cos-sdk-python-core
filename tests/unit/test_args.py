@@ -11,12 +11,12 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-import botocore.config
+import ibm_botocore.config
 from tests import unittest
 import mock
 
-from botocore import args
-from botocore.config import Config
+from ibm_botocore import args
+from ibm_botocore.config import Config
 
 
 class TestCreateClientArgs(unittest.TestCase):

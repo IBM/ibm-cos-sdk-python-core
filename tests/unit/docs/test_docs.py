@@ -17,8 +17,8 @@ import tempfile
 import mock
 
 from tests.unit.docs import BaseDocsTest
-from botocore.session import get_session
-from botocore.docs import generate_docs
+from ibm_botocore.session import get_session
+from ibm_botocore.docs import generate_docs
 
 
 class TestGenerateDocs(BaseDocsTest):
@@ -26,9 +26,9 @@ class TestGenerateDocs(BaseDocsTest):
         super(TestGenerateDocs, self).setUp()
         self.docs_root = tempfile.mkdtemp()
         self.loader_patch = mock.patch(
-            'botocore.session.create_loader', return_value=self.loader)
+            'ibm_botocore.session.create_loader', return_value=self.loader)
         self.available_service_patch = mock.patch(
-            'botocore.session.Session.get_available_services',
+            'ibm_botocore.session.Session.get_available_services',
             return_value=['myservice'])
         self.loader_patch.start()
         self.available_service_patch.start()

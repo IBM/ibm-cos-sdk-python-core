@@ -15,15 +15,15 @@ import json
 import tempfile
 import shutil
 
-from botocore.docs.bcdoc.restdoc import DocumentStructure
+from ibm_botocore.docs.bcdoc.restdoc import DocumentStructure
 import mock
 
 from tests import unittest
-from botocore.compat import OrderedDict
-from botocore.hooks import HierarchicalEmitter
-from botocore.model import ServiceModel, OperationModel
-from botocore.client import ClientCreator
-from botocore.loaders import Loader
+from ibm_botocore.compat import OrderedDict
+from ibm_botocore.hooks import HierarchicalEmitter
+from ibm_botocore.model import ServiceModel, OperationModel
+from ibm_botocore.client import ClientCreator
+from ibm_botocore.loaders import Loader
 
 
 class BaseDocsTest(unittest.TestCase):

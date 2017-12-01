@@ -14,7 +14,7 @@
 from tests import unittest
 import re
 import mock
-from botocore.handlers import generate_idempotent_uuid
+from ibm_botocore.handlers import generate_idempotent_uuid
 
 
 class TestIdempotencyInjection(unittest.TestCase):

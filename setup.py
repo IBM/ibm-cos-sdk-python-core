@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import botocore
+import ibm_botocore
 import sys
 
 from setuptools import setup, find_packages
@@ -26,15 +26,15 @@ if sys.version_info[:2] == (2, 6):
 
 setup(
     name='ibm-cos-sdk-core',
-    version=botocore.__version__,
+    version=ibm_botocore.__version__,
     description='Low-level, data-driven core of IBM SDK for Python',
     long_description=open('README.rst').read(),
     author='IBM',
     url='https://github.com/ibm/ibm-cos-sdk-python-core',
     scripts=[],
     packages=find_packages(exclude=['tests*']),
-    package_data={'botocore': ['data/*.json', 'data/*/*.json'],
-                  'botocore.vendored.requests': ['*.pem']},
+    package_data={'ibm_botocore': ['data/*.json', 'data/*/*.json'],
+                  'ibm_botocore.vendored.requests': ['*.pem']},
     include_package_data=True,
     install_requires=requires,
     extras_require={

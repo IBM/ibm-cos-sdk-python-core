@@ -21,8 +21,8 @@
 # IN THE SOFTWARE.
 #
 from tests import unittest
-from botocore.compat import six
-from botocore.docs.bcdoc.restdoc import ReSTDocument, DocumentStructure
+from ibm_botocore.compat import six
+from ibm_botocore.docs.bcdoc.restdoc import ReSTDocument, DocumentStructure
 
 
 class TestReSTDocument(unittest.TestCase):

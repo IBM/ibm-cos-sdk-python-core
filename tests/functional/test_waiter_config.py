@@ -12,12 +12,12 @@
 # language governing permissions and limitations under the License.
 import jmespath
 
-import botocore.session
-from botocore.utils import ArgumentGenerator
+import ibm_botocore.session
+from ibm_botocore.utils import ArgumentGenerator
 
 
 def test_lint_waiter_configs():
-    session = botocore.session.get_session()
+    session = ibm_botocore.session.get_session()
     for service_name in session.get_available_services():
         client = session.create_client(service_name, 'us-east-1')
         service_model = client.meta.service_model

@@ -12,11 +12,11 @@
 # language governing permissions and limitations under the License.
 from tests import unittest
 
-import botocore.session
+import ibm_botocore.session
 
 class TestClientMeta(unittest.TestCase):
     def setUp(self):
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
 
     def test_region_name_on_meta(self):
         client = self.session.create_client('s3', 'us-west-2')

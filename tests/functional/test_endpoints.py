@@ -13,7 +13,7 @@
 import os
 import json
 from nose.tools import assert_equal
-from botocore.session import get_session
+from ibm_botocore.session import get_session
 
 
 # Several services have names that don't match for one reason or another.
@@ -32,7 +32,7 @@ def test_endpoint_matches_service():
 
     pdir = os.path.dirname
     endpoints_path = os.path.join(pdir(pdir(pdir(__file__))),
-                                  'botocore', 'data', 'endpoints.json')
+                                  'ibm_botocore', 'data', 'endpoints.json')
     with open(endpoints_path, 'r') as f:
         data = json.loads(f.read())
     for partition in data['partitions']:

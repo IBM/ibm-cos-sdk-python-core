@@ -15,8 +15,8 @@ import os
 import mock
 
 from tests.unit.docs import BaseDocsTest
-from botocore.session import get_session
-from botocore.docs.service import ServiceDocumenter
+from ibm_botocore.session import get_session
+from ibm_botocore.docs.service import ServiceDocumenter
 
 
 class TestServiceDocumenter(BaseDocsTest):
@@ -24,7 +24,7 @@ class TestServiceDocumenter(BaseDocsTest):
         super(TestServiceDocumenter, self).setUp()
         self.add_shape_to_params('Biz', 'String')
         self.setup_client()
-        with mock.patch('botocore.session.create_loader',
+        with mock.patch('ibm_botocore.session.create_loader',
                         return_value=self.loader):
             session = get_session()
             self.service_documenter = ServiceDocumenter(

@@ -10,9 +10,9 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-from botocore import xform_name
+from ibm_botocore import xform_name
 from tests.functional.docs import BaseDocsFunctionalTest
-from botocore.docs.service import ServiceDocumenter
+from ibm_botocore.docs.service import ServiceDocumenter
 
 
 class TestStreamingBodyDocumentation(BaseDocsFunctionalTest):

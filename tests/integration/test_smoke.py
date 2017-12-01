@@ -16,11 +16,11 @@ from pprint import pformat
 import warnings
 from nose.tools import assert_equals, assert_true
 
-from botocore import xform_name
-import botocore.session
-from botocore.client import ClientError
-from botocore.vendored.requests import adapters
-from botocore.vendored.requests.exceptions import ConnectionError
+from ibm_botocore import xform_name
+import ibm_botocore.session
+from ibm_botocore.client import ClientError
+from ibm_botocore.vendored.requests import adapters
+from ibm_botocore.vendored.requests.exceptions import ConnectionError
 
 
 # Mapping of service -> api calls to try.
@@ -70,7 +70,7 @@ def _list_services(dict_entries):
 def test_can_make_request_with_client():
     # Same as test_can_make_request, but with Client objects
     # instead of service/operations.
-    session = botocore.session.get_session()
+    session = ibm_botocore.session.get_session()
     for service_name in _list_services(SMOKE_TESTS):
         client = _get_client(session, service_name)
         for operation_name in SMOKE_TESTS[service_name]:
@@ -90,7 +90,7 @@ def _make_client_call(client, operation_name, kwargs):
 
 
 def test_can_make_request_and_understand_errors_with_client():
-    session = botocore.session.get_session()
+    session = ibm_botocore.session.get_session()
     for service_name in _list_services(ERROR_TESTS):
         client = _get_client(session, service_name)
         for operation_name in ERROR_TESTS[service_name]:
@@ -111,7 +111,7 @@ def _make_error_client_call(client, operation_name, kwargs):
 
 
 def test_client_can_retry_request_properly():
-    session = botocore.session.get_session()
+    session = ibm_botocore.session.get_session()
     for service_name in _list_services(SMOKE_TESTS):
         client = _get_client(session, service_name)
         for operation_name in SMOKE_TESTS[service_name]:
@@ -129,7 +129,7 @@ def _make_client_call_with_errors(client, operation_name, kwargs):
             raise ConnectionError("Simulated ConnectionError raised.")
         else:
             return original_send(self, *args, **kwargs)
-    with mock.patch('botocore.vendored.requests.adapters.HTTPAdapter.send',
+    with mock.patch('ibm_botocore.vendored.requests.adapters.HTTPAdapter.send',
                     mock_http_adapter_send):
         try:
             response = operation(**kwargs)

@@ -15,7 +15,7 @@ import uuid
 
 _ORIGINAL = os.environ.copy()
 # These are environment variables that allow users to control
-# the location of config files used by botocore.
+# the location of config files used by ibm_botocore.
 _CONFIG_FILE_ENV_VARS = [
     'AWS_CONFIG_FILE',
     'AWS_SHARED_CREDENTIALS_FILE',

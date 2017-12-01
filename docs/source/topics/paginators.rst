@@ -4,29 +4,28 @@ Botocore Paginators
 Some AWS operations return results that are incomplete and require subsequent
 requests in order to attain the entire result set. The process of sending
 subsequent requests to continue where a previous request left off is called
-*pagination*. For example, the ``list_objects`` operation of Amazon S3
-returns up to 1000 objects at a time, and you must send subsequent requests
-with the appropriate ``Marker`` in order to retrieve the next *page* of
-results.
+*pagination*. For example, the ``list_objects`` operation of IBM S3 returns
+up to 1000 objects at a time, and you must send subsequent requests with the
+appropriate ``Marker`` in order to retrieve the next *page* of results.
 
-*Paginators* are a feature of botocore that act as an abstraction over the
+*Paginators* are a feature of ibm_botocore that act as an abstraction over the
 process of iterating over an entire result set of a truncated API operation.
 
 
 Creating Paginators
 -------------------
 
-Paginators are created via the ``get_paginator()`` method of a botocore
+Paginators are created via the ``get_paginator()`` method of a ibm_botocore
 client. The ``get_paginator()`` method accepts an operation name and returns
 a reusable ``Paginator`` object. You then call the ``paginate`` method of the
 Paginator, passing in any relevant operation parameters to apply to the
 underlying API operation. The ``paginate`` method then returns an iterable
 ``PageIterator``::
 
-    import botocore.session
+    import ibm_botocore.session
 
     # Create a session and a client
-    session = botocore.session.get_session()
+    session = ibm_botocore.session.get_session()
     client = session.create_client('s3', region_name='us-west-2')
 
     # Create a reusable Paginator
@@ -79,8 +78,8 @@ through to each underlying API call. For example,
 used to filter the paginated results by prefix server-side before sending them
 to the client::
 
-    import botocore.session
-    session = botocore.session.get_session()
+    import ibm_botocore.session
+    session = ibm_botocore.session.get_session()
     client = session.create_client('s3', region_name='us-west-2')
     paginator = client.get_paginator('list_objects')
     operation_parameters = {'Bucket': 'my-bucket',

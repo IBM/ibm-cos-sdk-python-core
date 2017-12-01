@@ -17,9 +17,9 @@ import collections
 from dateutil.tz import tzutc
 from nose.tools import assert_equal
 
-from botocore import parsers
-from botocore import model
-from botocore.compat import json
+from ibm_botocore import parsers
+from ibm_botocore import model
+from ibm_botocore.compat import json
 
 
 # HTTP responses will typically return a custom HTTP
@@ -45,7 +45,7 @@ class CustomHeaderDict(collections.MutableMapping):
         return len(self._d)
 
 
-# These tests contain botocore specific tests that either
+# These tests contain ibm_botocore specific tests that either
 # don't make sense in the protocol tests or haven't been added
 # yet.
 class TestResponseMetadataParsed(unittest.TestCase):
@@ -496,7 +496,7 @@ class TestRESTXMLResponses(unittest.TestCase):
         # This is to handle the scenario when something is modeled
         # as a structure and instead a list of structures is returned.
         # For this case, a single element from the list should be parsed
-        # For botocore, this will be the first element.
+        # For ibm_botocore, this will be the first element.
         # Currently, this logic may happen in s3's GetBucketLifecycle
         # operation.
         headers = {}

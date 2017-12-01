@@ -26,7 +26,7 @@ import os
 import logging
 import io
 import datetime
-from botocore.compat import six
+from ibm_botocore.compat import six
 from six import BytesIO
 from six.moves import BaseHTTPServer
 
@@ -34,9 +34,9 @@ import nose.tools as t
 from nose import with_setup
 import mock
 
-import botocore.auth
-from botocore.awsrequest import AWSRequest
-from botocore.credentials import Credentials
+import ibm_botocore.auth
+from ibm_botocore.awsrequest import AWSRequest
+from ibm_botocore.credentials import Credentials
 
 try:
     from urllib.parse import urlsplit
@@ -95,12 +95,12 @@ class RawHTTPRequest(BaseHTTPServer.BaseHTTPRequestHandler):
 
 def test_generator():
     datetime_patcher = mock.patch.object(
-        botocore.auth.datetime, 'datetime',
+        ibm_botocore.auth.datetime, 'datetime',
         mock.Mock(wraps=datetime.datetime)
     )
     mocked_datetime = datetime_patcher.start()
     mocked_datetime.utcnow.return_value = datetime.datetime(2011, 9, 9, 23, 36)
-    formatdate_patcher = mock.patch('botocore.auth.formatdate')
+    formatdate_patcher = mock.patch('ibm_botocore.auth.formatdate')
     formatdate = formatdate_patcher.start()
     # We have to change this because Sep 9, 2011 was actually
     # a Friday, but the tests have this set to a Monday.
@@ -148,7 +148,7 @@ def _test_signature_version_4(test_case):
     test_case = _SignatureTestCase(test_case)
     request = create_request_from_raw_request(test_case.raw_request)
 
-    auth = botocore.auth.SigV4Auth(test_case.credentials, 'host', 'us-east-1')
+    auth = ibm_botocore.auth.SigV4Auth(test_case.credentials, 'host', 'us-east-1')
 
     actual_canonical_request = auth.canonical_request(request)
     assert_equal(actual_canonical_request, test_case.canonical_request,

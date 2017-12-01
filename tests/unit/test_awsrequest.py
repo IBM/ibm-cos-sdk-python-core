@@ -22,11 +22,11 @@ import sys
 
 from mock import Mock, patch
 
-from botocore.exceptions import UnseekableStreamError
-from botocore.awsrequest import AWSRequest, AWSPreparedRequest
-from botocore.awsrequest import AWSHTTPConnection
-from botocore.awsrequest import prepare_request_dict, create_request_object
-from botocore.compat import file_type, six
+from ibm_botocore.exceptions import UnseekableStreamError
+from ibm_botocore.awsrequest import AWSRequest, AWSPreparedRequest
+from ibm_botocore.awsrequest import AWSHTTPConnection
+from ibm_botocore.awsrequest import prepare_request_dict, create_request_object
+from ibm_botocore.compat import file_type, six
 
 
 class IgnoreCloseBytesIO(io.BytesIO):
@@ -418,7 +418,7 @@ class TestAWSHTTPConnection(unittest.TestCase):
         conn.sock = s
         # Test that the standard library method was used by patching out
         # the ``_tunnel`` method and seeing if the std lib method was called.
-        with patch('botocore.vendored.requests.packages.urllib3.connection.'
+        with patch('ibm_botocore.vendored.requests.packages.urllib3.connection.'
                    'HTTPConnection._tunnel') as mock_tunnel:
             conn._tunnel()
             self.assertTrue(mock_tunnel.called)
@@ -477,7 +477,7 @@ class TestAWSHTTPConnection(unittest.TestCase):
 
 class TestPrepareRequestDict(unittest.TestCase):
     def setUp(self):
-        self.user_agent = 'botocore/1.0'
+        self.user_agent = 'ibm_botocore/1.0'
         self.endpoint_url = 'https://s3.amazonaws.com'
         self.base_request_dict = {
             'body': '',

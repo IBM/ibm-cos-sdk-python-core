@@ -14,8 +14,8 @@ from tests import unittest, temporary_file
 
 import mock
 
-import botocore.session
-from botocore.exceptions import ProfileNotFound
+import ibm_botocore.session
+from ibm_botocore.exceptions import ProfileNotFound
 
 
 class TestSession(unittest.TestCase):
@@ -23,7 +23,7 @@ class TestSession(unittest.TestCase):
         self.environ = {}
         self.env_patch = mock.patch('os.environ', self.environ)
         self.env_patch.start()
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
 
     def tearDown(self):
         self.env_patch.stop()

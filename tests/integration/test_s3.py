@@ -25,28 +25,28 @@ from contextlib import closing
 
 from nose.plugins.attrib import attr
 
-from botocore.vendored.requests import adapters
-from botocore.vendored.requests.exceptions import ConnectionError
-from botocore.compat import six, zip_longest
-import botocore.session
-import botocore.auth
-import botocore.credentials
-import botocore.vendored.requests as requests
-from botocore.config import Config
-from botocore.exceptions import ClientError
+from ibm_botocore.vendored.requests import adapters
+from ibm_botocore.vendored.requests.exceptions import ConnectionError
+from ibm_botocore.compat import six, zip_longest
+import ibm_botocore.session
+import ibm_botocore.auth
+import ibm_botocore.credentials
+import ibm_botocore.vendored.requests as requests
+from ibm_botocore.config import Config
+from ibm_botocore.exceptions import ClientError
 
 
 def random_bucketname():
     return 'botocoretest-' + random_chars(10)
 
 
-LOG = logging.getLogger('botocore.tests.integration')
+LOG = logging.getLogger('ibm_botocore.tests.integration')
 _SHARED_BUCKET = random_bucketname()
 _DEFAULT_REGION = 'us-west-2'
 
 
 def setup_module():
-    s3 = botocore.session.get_session().create_client('s3')
+    s3 = ibm_botocore.session.get_session().create_client('s3')
     waiter = s3.get_waiter('bucket_exists')
     params = {
         'Bucket': _SHARED_BUCKET,
@@ -65,7 +65,7 @@ def setup_module():
 
 
 def clear_out_bucket(bucket, region, delete_bucket=False):
-    s3 = botocore.session.get_session().create_client(
+    s3 = ibm_botocore.session.get_session().create_client(
         's3', region_name=region)
     page = s3.get_paginator('list_objects')
     # Use pages paired with batch delete_objects().
@@ -96,7 +96,7 @@ class BaseS3ClientTest(unittest.TestCase):
         self.bucket_name = _SHARED_BUCKET
         self.region = _DEFAULT_REGION
         clear_out_bucket(self.bucket_name, self.region)
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
         self.client = self.session.create_client('s3', region_name=self.region)
 
     def assert_status_code(self, response, status_code):
@@ -816,7 +816,7 @@ class TestS3SigV4Client(BaseS3ClientTest):
                 raise ConnectionError("Simulated ConnectionError raised.")
             else:
                 return original_send(self, *args, **kwargs)
-        with mock.patch('botocore.vendored.requests.adapters.HTTPAdapter.send',
+        with mock.patch('ibm_botocore.vendored.requests.adapters.HTTPAdapter.send',
                         mock_http_adapter_send):
             response = self.client.put_object(Bucket=self.bucket_name,
                                               Key='foo.txt', Body=body)

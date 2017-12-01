@@ -12,7 +12,7 @@
 # language governing permissions and limitations under the License.
 from nose.tools import assert_equals
 
-import botocore.session
+import ibm_botocore.session
 
 
 REGION = 'us-east-1'
@@ -23,7 +23,7 @@ SERVICE_TO_CLASS_NAME = {
 
 
 def test_client_has_correct_class_name():
-    session = botocore.session.get_session()
+    session = ibm_botocore.session.get_session()
     for service_name in SERVICE_TO_CLASS_NAME:
         client = session.create_client(service_name, REGION)
         yield (_assert_class_name_matches_ref_class_name, client,
