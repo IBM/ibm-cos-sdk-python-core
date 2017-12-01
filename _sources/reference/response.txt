@@ -7,5 +7,5 @@ Response Reference
 botocore.response
 -----------------
 
-.. autoclass:: botocore.response.StreamingBody
+.. autoclass:: ibm_botocore.response.StreamingBody
    :members:

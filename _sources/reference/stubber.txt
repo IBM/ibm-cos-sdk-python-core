@@ -7,5 +7,5 @@ Stubber Reference
 botocore.stub
 -------------
 
-.. autoclass:: botocore.stub.Stubber
+.. autoclass:: ibm_botocore.stub.Stubber
    :members:

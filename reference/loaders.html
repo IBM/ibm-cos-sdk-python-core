@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Loaders Reference &mdash; ibm-cos-sdk-core 1.1.0 documentation</title>
+    <title>Loaders Reference &mdash; ibm_botocore 2.0.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -23,7 +23,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.1.0',
+        VERSION:     '2.0.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -32,7 +32,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="ibm-cos-sdk-core 1.1.0 documentation" href="../index.html" />
+    <link rel="top" title="ibm_botocore 2.0.0 documentation" href="../index.html" />
     <link rel="next" title="Response Reference" href="response.html" />
     <link rel="prev" title="S3" href="services/s3.html" />
   
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="services/s3.html" title="S3"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">ibm-cos-sdk-core 1.1.0 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">ibm_botocore 2.0.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -65,7 +65,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">ibm-cos-sdk-core 1.1.0 documentation</a>
+    ../index.html" class="text-logo">ibm_botocore 2.0.0 documentation</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -74,17 +74,17 @@
     
     
       <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Getting Started With ibm-cos-sdk-core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Getting Started With IBM COS Core Library for Python</a></li>
 <li class="toctree-l1"><a class="reference internal" href="config.html">Config Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="index.html">Available Services</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Loaders Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-botocore.loaders">botocore.loaders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ibm_botocore.loaders">botocore.loaders</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="response.html">Response Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stubber.html">Stubber Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../topics/index.html">ibm-cos-sdk-core Topic Guides</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../development/index.html">ibm-cos-sdk-core Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topics/index.html">IBM COS Core Library for Python Topic Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">IBM COS Core Library for Python Development</a></li>
 </ul>
 
     
@@ -96,7 +96,7 @@
     <div class="sidebar-localtoc">
       <ul>
 <li><a class="reference internal" href="#">Loaders Reference</a><ul>
-<li><a class="reference internal" href="#module-botocore.loaders">botocore.loaders</a><ul>
+<li><a class="reference internal" href="#module-ibm_botocore.loaders">botocore.loaders</a><ul>
 <li><a class="reference internal" href="#the-search-path">The Search Path</a></li>
 <li><a class="reference internal" href="#directory-layout">Directory Layout</a></li>
 </ul>
@@ -138,11 +138,11 @@
             
   <div class="section" id="loaders-reference">
 <h1>Loaders Reference<a class="headerlink" href="#loaders-reference" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-botocore.loaders">
-<span id="botocore-loaders"></span><h2>botocore.loaders<a class="headerlink" href="#module-botocore.loaders" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-ibm_botocore.loaders">
+<span id="botocore-loaders"></span><h2>botocore.loaders<a class="headerlink" href="#module-ibm_botocore.loaders" title="Permalink to this headline">¶</a></h2>
 <p>Module for loading various model files.</p>
 <p>This module provides the classes that are used to load models used
-by botocore.  This can include:</p>
+by ibm_botocore.  This can include:</p>
 <blockquote>
 <div><ul class="simple">
 <li>Service models (e.g. the model for EC2, S3, DynamoDB, etc.)</li>
@@ -166,20 +166,20 @@ besides the default JSON loader can be used.</p>
 <h3>The Search Path<a class="headerlink" href="#the-search-path" title="Permalink to this headline">¶</a></h3>
 <p>Similar to how the PATH environment variable is to finding executables
 and the PYTHONPATH environment variable is to finding python modules
-to import, the botocore loaders have the concept of a data path exposed
+to import, the ibm_botocore loaders have the concept of a data path exposed
 through AWS_DATA_PATH.</p>
 <p>This enables end users to provide additional search paths where we
 will attempt to load models outside of the models we ship with
-botocore.  When you create a <tt class="docutils literal"><span class="pre">Loader</span></tt>, there are two paths
+ibm_botocore.  When you create a <tt class="docutils literal"><span class="pre">Loader</span></tt>, there are two paths
 automatically added to the model search path:</p>
 <blockquote>
 <div><ul class="simple">
-<li>&lt;botocore root&gt;/data/</li>
+<li>&lt;ibm_botocore root&gt;/data/</li>
 <li>~/.aws/models</li>
 </ul>
 </div></blockquote>
 <p>The first value is the path where all the model files shipped with
-botocore are located.</p>
+ibm_botocore are located.</p>
 <p>The second path is so that users can just drop new model files in
 <tt class="docutils literal"><span class="pre">~/.aws/models</span></tt> without having to mess around with the AWS_DATA_PATH.</p>
 <p>The AWS_DATA_PATH using the platform specific path separator to
@@ -229,12 +229,12 @@ information that doesn't quite fit in the original models, but is still needed
 for the sdk. For instance, additional operation parameters might be added here
 which don't represent the actual service api.</p>
 <dl class="class">
-<dt id="botocore.loaders.ExtrasProcessor">
-<em class="property">class </em><tt class="descclassname">botocore.loaders.</tt><tt class="descname">ExtrasProcessor</tt><a class="headerlink" href="#botocore.loaders.ExtrasProcessor" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.loaders.ExtrasProcessor">
+<em class="property">class </em><tt class="descclassname">ibm_botocore.loaders.</tt><tt class="descname">ExtrasProcessor</tt><a class="headerlink" href="#ibm_botocore.loaders.ExtrasProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Processes data from extras files into service models.</p>
 <dl class="method">
-<dt id="botocore.loaders.ExtrasProcessor.process">
-<tt class="descname">process</tt><big>(</big><em>original_model</em>, <em>extra_models</em><big>)</big><a class="headerlink" href="#botocore.loaders.ExtrasProcessor.process" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.loaders.ExtrasProcessor.process">
+<tt class="descname">process</tt><big>(</big><em>original_model</em>, <em>extra_models</em><big>)</big><a class="headerlink" href="#ibm_botocore.loaders.ExtrasProcessor.process" title="Permalink to this definition">¶</a></dt>
 <dd><p>Processes data from a list of loaded extras files into a model</p>
 <dl class="docutils field-list" frame="void" rules="none">
 <dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first last simple">
@@ -248,13 +248,13 @@ which don't represent the actual service api.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="botocore.loaders.JSONFileLoader">
-<em class="property">class </em><tt class="descclassname">botocore.loaders.</tt><tt class="descname">JSONFileLoader</tt><a class="headerlink" href="#botocore.loaders.JSONFileLoader" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.loaders.JSONFileLoader">
+<em class="property">class </em><tt class="descclassname">ibm_botocore.loaders.</tt><tt class="descname">JSONFileLoader</tt><a class="headerlink" href="#ibm_botocore.loaders.JSONFileLoader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loader JSON files.</p>
 <p>This class can load the default format of models, which is a JSON file.</p>
 <dl class="method">
-<dt id="botocore.loaders.JSONFileLoader.exists">
-<tt class="descname">exists</tt><big>(</big><em>file_path</em><big>)</big><a class="headerlink" href="#botocore.loaders.JSONFileLoader.exists" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.loaders.JSONFileLoader.exists">
+<tt class="descname">exists</tt><big>(</big><em>file_path</em><big>)</big><a class="headerlink" href="#ibm_botocore.loaders.JSONFileLoader.exists" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if the file exists.</p>
 <dl class="docutils field-list" frame="void" rules="none">
 <dt class="field-name">Parameters</dt><dd class="field-body"><strong>file_path</strong> (<em>str</em>) -- The full path to the file to load without
@@ -264,8 +264,8 @@ the '.json' extension.</dd>
 </dd></dl>
 
 <dl class="method">
-<dt id="botocore.loaders.JSONFileLoader.load_file">
-<tt class="descname">load_file</tt><big>(</big><em>file_path</em><big>)</big><a class="headerlink" href="#botocore.loaders.JSONFileLoader.load_file" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.loaders.JSONFileLoader.load_file">
+<tt class="descname">load_file</tt><big>(</big><em>file_path</em><big>)</big><a class="headerlink" href="#ibm_botocore.loaders.JSONFileLoader.load_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Attempt to load the file path.</p>
 <dl class="docutils field-list" frame="void" rules="none">
 <dt class="field-name">Parameters</dt><dd class="field-body"><strong>file_path</strong> (<em>str</em>) -- The full path to the file to load without
@@ -277,73 +277,73 @@ the '.json' extension.</dd>
 </dd></dl>
 
 <dl class="class">
-<dt id="botocore.loaders.Loader">
-<em class="property">class </em><tt class="descclassname">botocore.loaders.</tt><tt class="descname">Loader</tt><big>(</big><em>extra_search_paths=None</em>, <em>file_loader=None</em>, <em>cache=None</em>, <em>include_default_search_paths=True</em>, <em>include_default_extras=True</em><big>)</big><a class="headerlink" href="#botocore.loaders.Loader" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.loaders.Loader">
+<em class="property">class </em><tt class="descclassname">ibm_botocore.loaders.</tt><tt class="descname">Loader</tt><big>(</big><em>extra_search_paths=None</em>, <em>file_loader=None</em>, <em>cache=None</em>, <em>include_default_search_paths=True</em>, <em>include_default_extras=True</em><big>)</big><a class="headerlink" href="#ibm_botocore.loaders.Loader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find and load data models.</p>
 <p>This class will handle searching for and loading data models.</p>
 <p>The main method used here is <tt class="docutils literal"><span class="pre">load_service_model</span></tt>, which is a
 convenience method over <tt class="docutils literal"><span class="pre">load_data</span></tt> and <tt class="docutils literal"><span class="pre">determine_latest_version</span></tt>.</p>
 <dl class="attribute">
-<dt id="botocore.loaders.Loader.BUILTIN_DATA_PATH">
-<tt class="descname">BUILTIN_DATA_PATH</tt><em class="property"> = '/Users/rveitch/git/ibm-cos-sdk-python-core/botocore/data'</em><a class="headerlink" href="#botocore.loaders.Loader.BUILTIN_DATA_PATH" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.loaders.Loader.BUILTIN_DATA_PATH">
+<tt class="descname">BUILTIN_DATA_PATH</tt><em class="property"> = '/Users/WBHuber/Documents/ClevDev/ibm-cos-sdk-python-core/ibm_botocore/data'</em><a class="headerlink" href="#ibm_botocore.loaders.Loader.BUILTIN_DATA_PATH" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="botocore.loaders.Loader.BUILTIN_EXTRAS_TYPES">
-<tt class="descname">BUILTIN_EXTRAS_TYPES</tt><em class="property"> = ['sdk']</em><a class="headerlink" href="#botocore.loaders.Loader.BUILTIN_EXTRAS_TYPES" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.loaders.Loader.BUILTIN_EXTRAS_TYPES">
+<tt class="descname">BUILTIN_EXTRAS_TYPES</tt><em class="property"> = ['sdk']</em><a class="headerlink" href="#ibm_botocore.loaders.Loader.BUILTIN_EXTRAS_TYPES" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="botocore.loaders.Loader.CUSTOMER_DATA_PATH">
-<tt class="descname">CUSTOMER_DATA_PATH</tt><em class="property"> = '/Users/rveitch/.aws/models'</em><a class="headerlink" href="#botocore.loaders.Loader.CUSTOMER_DATA_PATH" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.loaders.Loader.CUSTOMER_DATA_PATH">
+<tt class="descname">CUSTOMER_DATA_PATH</tt><em class="property"> = '/Users/WBHuber/.aws/models'</em><a class="headerlink" href="#ibm_botocore.loaders.Loader.CUSTOMER_DATA_PATH" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="botocore.loaders.Loader.FILE_LOADER_CLASS">
-<tt class="descname">FILE_LOADER_CLASS</tt><a class="headerlink" href="#botocore.loaders.Loader.FILE_LOADER_CLASS" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference internal" href="#botocore.loaders.JSONFileLoader" title="botocore.loaders.JSONFileLoader"><tt class="xref py py-class docutils literal"><span class="pre">JSONFileLoader</span></tt></a></p>
+<dt id="ibm_botocore.loaders.Loader.FILE_LOADER_CLASS">
+<tt class="descname">FILE_LOADER_CLASS</tt><a class="headerlink" href="#ibm_botocore.loaders.Loader.FILE_LOADER_CLASS" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#ibm_botocore.loaders.JSONFileLoader" title="ibm_botocore.loaders.JSONFileLoader"><tt class="xref py py-class docutils literal"><span class="pre">JSONFileLoader</span></tt></a></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="botocore.loaders.Loader.determine_latest_version">
-<tt class="descname">determine_latest_version</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#botocore.loaders.Loader.determine_latest_version" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.loaders.Loader.determine_latest_version">
+<tt class="descname">determine_latest_version</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#ibm_botocore.loaders.Loader.determine_latest_version" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="botocore.loaders.Loader.extras_types">
-<tt class="descname">extras_types</tt><a class="headerlink" href="#botocore.loaders.Loader.extras_types" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.loaders.Loader.extras_types">
+<tt class="descname">extras_types</tt><a class="headerlink" href="#ibm_botocore.loaders.Loader.extras_types" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="botocore.loaders.Loader.list_api_versions">
-<tt class="descname">list_api_versions</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#botocore.loaders.Loader.list_api_versions" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.loaders.Loader.list_api_versions">
+<tt class="descname">list_api_versions</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#ibm_botocore.loaders.Loader.list_api_versions" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="botocore.loaders.Loader.list_available_services">
-<tt class="descname">list_available_services</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#botocore.loaders.Loader.list_available_services" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.loaders.Loader.list_available_services">
+<tt class="descname">list_available_services</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#ibm_botocore.loaders.Loader.list_available_services" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="botocore.loaders.Loader.load_data">
-<tt class="descname">load_data</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#botocore.loaders.Loader.load_data" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.loaders.Loader.load_data">
+<tt class="descname">load_data</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#ibm_botocore.loaders.Loader.load_data" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="botocore.loaders.Loader.load_service_model">
-<tt class="descname">load_service_model</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#botocore.loaders.Loader.load_service_model" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.loaders.Loader.load_service_model">
+<tt class="descname">load_service_model</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#ibm_botocore.loaders.Loader.load_service_model" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="botocore.loaders.Loader.search_paths">
-<tt class="descname">search_paths</tt><a class="headerlink" href="#botocore.loaders.Loader.search_paths" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.loaders.Loader.search_paths">
+<tt class="descname">search_paths</tt><a class="headerlink" href="#ibm_botocore.loaders.Loader.search_paths" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="function">
-<dt id="botocore.loaders.create_loader">
-<tt class="descclassname">botocore.loaders.</tt><tt class="descname">create_loader</tt><big>(</big><em>search_path_string=None</em><big>)</big><a class="headerlink" href="#botocore.loaders.create_loader" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.loaders.create_loader">
+<tt class="descclassname">ibm_botocore.loaders.</tt><tt class="descname">create_loader</tt><big>(</big><em>search_path_string=None</em><big>)</big><a class="headerlink" href="#ibm_botocore.loaders.create_loader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a Loader class.</p>
 <p>This factory function creates a loader given a search string path.</p>
 <dl class="docutils field-list" frame="void" rules="none">
@@ -356,8 +356,8 @@ windows.</dd>
 </dd></dl>
 
 <dl class="function">
-<dt id="botocore.loaders.instance_cache">
-<tt class="descclassname">botocore.loaders.</tt><tt class="descname">instance_cache</tt><big>(</big><em>func</em><big>)</big><a class="headerlink" href="#botocore.loaders.instance_cache" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.loaders.instance_cache">
+<tt class="descclassname">ibm_botocore.loaders.</tt><tt class="descname">instance_cache</tt><big>(</big><em>func</em><big>)</big><a class="headerlink" href="#ibm_botocore.loaders.instance_cache" title="Permalink to this definition">¶</a></dt>
 <dd><p>Cache the result of a method on a per instance basis.</p>
 <p>This is not a general purpose caching decorator.  In order
 for this to be used, it must be used on methods on an
@@ -402,7 +402,7 @@ instance, and that instance <em>must</em> provide a
         <li class="right" >
           <a href="services/s3.html" title="S3"
              >previous</a> |</li>
-        <li><a href="../index.html">ibm-cos-sdk-core 1.1.0 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">ibm_botocore 2.0.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
 <script type="text/javascript">

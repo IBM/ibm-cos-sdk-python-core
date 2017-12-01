@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Botocore Events &mdash; ibm-cos-sdk-core 1.1.0 documentation</title>
+    <title>Botocore Events &mdash; ibm_botocore 2.0.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -23,7 +23,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.1.0',
+        VERSION:     '2.0.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -32,10 +32,10 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="ibm-cos-sdk-core 1.1.0 documentation" href="../index.html" />
-    <link rel="up" title="ibm-cos-sdk-core Topic Guides" href="index.html" />
+    <link rel="top" title="ibm_botocore 2.0.0 documentation" href="../index.html" />
+    <link rel="up" title="IBM COS Core Library for Python Topic Guides" href="index.html" />
     <link rel="next" title="Botocore Paginators" href="paginators.html" />
-    <link rel="prev" title="ibm-cos-sdk-core Topic Guides" href="index.html" />
+    <link rel="prev" title="IBM COS Core Library for Python Topic Guides" href="index.html" />
   
    
 
@@ -54,10 +54,10 @@
           <a href="paginators.html" title="Botocore Paginators"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="ibm-cos-sdk-core Topic Guides"
+          <a href="index.html" title="IBM COS Core Library for Python Topic Guides"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">ibm-cos-sdk-core 1.1.0 documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">ibm-cos-sdk-core Topic Guides</a> &raquo;</li> 
+        <li><a href="../index.html">ibm_botocore 2.0.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">IBM COS Core Library for Python Topic Guides</a> &raquo;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -67,7 +67,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">ibm-cos-sdk-core 1.1.0 documentation</a>
+    ../index.html" class="text-logo">ibm_botocore 2.0.0 documentation</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -76,18 +76,18 @@
     
     
       <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Getting Started With ibm-cos-sdk-core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Getting Started With IBM COS Core Library for Python</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/config.html">Config Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Available Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/loaders.html">Loaders Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/response.html">Response Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/stubber.html">Stubber Reference</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">ibm-cos-sdk-core Topic Guides</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">IBM COS Core Library for Python Topic Guides</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="">Botocore Events</a></li>
 <li class="toctree-l2"><a class="reference internal" href="paginators.html">Botocore Paginators</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../development/index.html">ibm-cos-sdk-core Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">IBM COS Core Library for Python Development</a></li>
 </ul>
 
     
@@ -131,7 +131,7 @@
             <ol class="breadcrumb">
               <li><a href="../index.html">Docs</a></li>
               
-                <li><a href="index.html">ibm-cos-sdk-core Topic Guides</a></li>
+                <li><a href="index.html">IBM COS Core Library for Python Topic Guides</a></li>
               
               <li>Botocore Events</li>
             </ol>
@@ -144,7 +144,7 @@
 <p>Botocore will emit events during various parts of its execution.  Users of the
 library can register handlers (callables) for these events, such that whenever
 an event is emitted, all registered handlers for the event will be called.
-This allows you to customize and extend the behavior of botocore without having
+This allows you to customize and extend the behavior of ibm_botocore without having
 to modify the internals.  This document covers this event system in detail.</p>
 <div class="section" id="session-events">
 <h2>Session Events<a class="headerlink" href="#session-events" title="Permalink to this headline">¶</a></h2>
@@ -154,7 +154,7 @@ to events.</p>
 </div>
 <div class="section" id="event-types">
 <h2>Event Types<a class="headerlink" href="#event-types" title="Permalink to this headline">¶</a></h2>
-<p>The table below shows all of the events emitted by botocore.  In some cases,
+<p>The table below shows all of the events emitted by ibm_botocore.  In some cases,
 the events are listed as <tt class="docutils literal"><span class="pre">&lt;service&gt;.&lt;operations&gt;.bar</span></tt>, in which <tt class="docutils literal"><span class="pre">&lt;service&gt;</span></tt>
 and <tt class="docutils literal"><span class="pre">&lt;operation&gt;</span></tt> are replaced with a specific service and operation, for
 example <tt class="docutils literal"><span class="pre">s3.ListObjects.bar</span></tt>.</p>
@@ -208,7 +208,7 @@ registered.</p>
   <div class="footer-relations">
     
       <div class="pull-left">
-        <a class="btn btn-default" href="index.html" title="previous chapter (use the left arrow)">ibm-cos-sdk-core Topic Guides</a>
+        <a class="btn btn-default" href="index.html" title="previous chapter (use the left arrow)">IBM COS Core Library for Python Topic Guides</a>
       </div>
     
       <div class="pull-right">
@@ -233,10 +233,10 @@ registered.</p>
           <a href="paginators.html" title="Botocore Paginators"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="ibm-cos-sdk-core Topic Guides"
+          <a href="index.html" title="IBM COS Core Library for Python Topic Guides"
              >previous</a> |</li>
-        <li><a href="../index.html">ibm-cos-sdk-core 1.1.0 documentation</a> &raquo;</li>
-          <li><a href="index.html" >ibm-cos-sdk-core Topic Guides</a> &raquo;</li> 
+        <li><a href="../index.html">ibm_botocore 2.0.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" >IBM COS Core Library for Python Topic Guides</a> &raquo;</li> 
       </ul>
     </div>
 <script type="text/javascript">

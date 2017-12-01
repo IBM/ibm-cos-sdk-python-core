@@ -7,6 +7,6 @@ Loaders Reference
 botocore.loaders
 ----------------
 
-.. automodule:: botocore.loaders
+.. automodule:: ibm_botocore.loaders
    :members:
    :undoc-members:

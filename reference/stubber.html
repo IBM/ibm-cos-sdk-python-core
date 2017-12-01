@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Stubber Reference &mdash; ibm-cos-sdk-core 1.1.0 documentation</title>
+    <title>Stubber Reference &mdash; ibm_botocore 2.0.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -23,7 +23,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.1.0',
+        VERSION:     '2.0.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -32,8 +32,8 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="ibm-cos-sdk-core 1.1.0 documentation" href="../index.html" />
-    <link rel="next" title="ibm-cos-sdk-core Topic Guides" href="../topics/index.html" />
+    <link rel="top" title="ibm_botocore 2.0.0 documentation" href="../index.html" />
+    <link rel="next" title="IBM COS Core Library for Python Topic Guides" href="../topics/index.html" />
     <link rel="prev" title="Response Reference" href="response.html" />
   
    
@@ -50,12 +50,12 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../topics/index.html" title="ibm-cos-sdk-core Topic Guides"
+          <a href="../topics/index.html" title="IBM COS Core Library for Python Topic Guides"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="response.html" title="Response Reference"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">ibm-cos-sdk-core 1.1.0 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">ibm_botocore 2.0.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -65,7 +65,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">ibm-cos-sdk-core 1.1.0 documentation</a>
+    ../index.html" class="text-logo">ibm_botocore 2.0.0 documentation</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -74,7 +74,7 @@
     
     
       <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Getting Started With ibm-cos-sdk-core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Getting Started With IBM COS Core Library for Python</a></li>
 <li class="toctree-l1"><a class="reference internal" href="config.html">Config Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="index.html">Available Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="loaders.html">Loaders Reference</a></li>
@@ -83,8 +83,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#botocore-stub">botocore.stub</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../topics/index.html">ibm-cos-sdk-core Topic Guides</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../development/index.html">ibm-cos-sdk-core Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topics/index.html">IBM COS Core Library for Python Topic Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">IBM COS Core Library for Python Development</a></li>
 </ul>
 
     
@@ -137,19 +137,19 @@
 <div class="section" id="botocore-stub">
 <h2>botocore.stub<a class="headerlink" href="#botocore-stub" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="botocore.stub.Stubber">
-<em class="property">class </em><tt class="descclassname">botocore.stub.</tt><tt class="descname">Stubber</tt><big>(</big><em>client</em><big>)</big><a class="headerlink" href="#botocore.stub.Stubber" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.stub.Stubber">
+<em class="property">class </em><tt class="descclassname">ibm_botocore.stub.</tt><tt class="descname">Stubber</tt><big>(</big><em>client</em><big>)</big><a class="headerlink" href="#ibm_botocore.stub.Stubber" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class will allow you to stub out requests so you don't have to hit
 an endpoint to write tests. Responses are returned first in, first out.
 If operations are called out of order, or are called with no remaining
 queued responses, an error will be raised.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span>
-<span class="kn">import</span> <span class="nn">botocore.session</span>
-<span class="kn">from</span> <span class="nn">botocore.stub</span> <span class="kn">import</span> <span class="n">Stubber</span>
+<span class="kn">import</span> <span class="nn">ibm_botocore.session</span>
+<span class="kn">from</span> <span class="nn">ibm_botocore.stub</span> <span class="kn">import</span> <span class="n">Stubber</span>
 
 
-<span class="n">s3</span> <span class="o">=</span> <span class="n">botocore</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span><span class="o">.</span><span class="n">create_client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
+<span class="n">s3</span> <span class="o">=</span> <span class="n">ibm_botocore</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span><span class="o">.</span><span class="n">create_client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
 <span class="n">stubber</span> <span class="o">=</span> <span class="n">Stubber</span><span class="p">(</span><span class="n">s3</span><span class="p">)</span>
 
 <span class="n">response</span> <span class="o">=</span> <span class="p">{</span>
@@ -186,11 +186,11 @@ queued responses, an error will be raised.</p>
 activation / deactivation for you.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span>
-<span class="kn">import</span> <span class="nn">botocore.session</span>
-<span class="kn">from</span> <span class="nn">botocore.stub</span> <span class="kn">import</span> <span class="n">Stubber</span>
+<span class="kn">import</span> <span class="nn">ibm_botocore.session</span>
+<span class="kn">from</span> <span class="nn">ibm_botocore.stub</span> <span class="kn">import</span> <span class="n">Stubber</span>
 
 
-<span class="n">s3</span> <span class="o">=</span> <span class="n">botocore</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span><span class="o">.</span><span class="n">create_client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
+<span class="n">s3</span> <span class="o">=</span> <span class="n">ibm_botocore</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span><span class="o">.</span><span class="n">create_client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
 
 <span class="n">response</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;Owner&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -216,11 +216,11 @@ otherwise don't care about its value, you can use stub.ANY to ignore it in
 validation.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span>
-<span class="kn">import</span> <span class="nn">botocore.session</span>
-<span class="kn">from</span> <span class="nn">botocore.stub</span> <span class="kn">import</span> <span class="n">Stubber</span><span class="p">,</span> <span class="n">ANY</span>
+<span class="kn">import</span> <span class="nn">ibm_botocore.session</span>
+<span class="kn">from</span> <span class="nn">ibm_botocore.stub</span> <span class="kn">import</span> <span class="n">Stubber</span><span class="p">,</span> <span class="n">ANY</span>
 
 
-<span class="n">s3</span> <span class="o">=</span> <span class="n">botocore</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span><span class="o">.</span><span class="n">create_client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
+<span class="n">s3</span> <span class="o">=</span> <span class="n">ibm_botocore</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span><span class="o">.</span><span class="n">create_client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
 <span class="n">stubber</span> <span class="o">=</span> <span class="n">Stubber</span><span class="p">(</span><span class="n">s3</span><span class="p">)</span>
 
 <span class="n">response</span> <span class="o">=</span> <span class="p">{</span>
@@ -254,14 +254,14 @@ validation.</p>
 </pre></div>
 </div>
 <dl class="method">
-<dt id="botocore.stub.Stubber.activate">
-<tt class="descname">activate</tt><big>(</big><big>)</big><a class="headerlink" href="#botocore.stub.Stubber.activate" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.stub.Stubber.activate">
+<tt class="descname">activate</tt><big>(</big><big>)</big><a class="headerlink" href="#ibm_botocore.stub.Stubber.activate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Activates the stubber on the client</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="botocore.stub.Stubber.add_client_error">
-<tt class="descname">add_client_error</tt><big>(</big><em>method</em>, <em>service_error_code=''</em>, <em>service_message=''</em>, <em>http_status_code=400</em>, <em>service_error_meta=None</em>, <em>expected_params=None</em><big>)</big><a class="headerlink" href="#botocore.stub.Stubber.add_client_error" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.stub.Stubber.add_client_error">
+<tt class="descname">add_client_error</tt><big>(</big><em>method</em>, <em>service_error_code=''</em>, <em>service_message=''</em>, <em>http_status_code=400</em>, <em>service_error_meta=None</em>, <em>expected_params=None</em><big>)</big><a class="headerlink" href="#ibm_botocore.stub.Stubber.add_client_error" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds a <tt class="docutils literal"><span class="pre">ClientError</span></tt> to the response queue.</p>
 <dl class="docutils field-list" frame="void" rules="none">
 <dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first last simple">
@@ -285,8 +285,8 @@ in validation.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="botocore.stub.Stubber.add_response">
-<tt class="descname">add_response</tt><big>(</big><em>method</em>, <em>service_response</em>, <em>expected_params=None</em><big>)</big><a class="headerlink" href="#botocore.stub.Stubber.add_response" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.stub.Stubber.add_response">
+<tt class="descname">add_response</tt><big>(</big><em>method</em>, <em>service_response</em>, <em>expected_params=None</em><big>)</big><a class="headerlink" href="#ibm_botocore.stub.Stubber.add_response" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds a service response to the response queue. This will be validated
 against the service model to ensure correctness. It should be noted,
 however, that while missing attributes are often considered correct,
@@ -310,14 +310,14 @@ in validation. stub.ANY is only valid for top level params.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="botocore.stub.Stubber.assert_no_pending_responses">
-<tt class="descname">assert_no_pending_responses</tt><big>(</big><big>)</big><a class="headerlink" href="#botocore.stub.Stubber.assert_no_pending_responses" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.stub.Stubber.assert_no_pending_responses">
+<tt class="descname">assert_no_pending_responses</tt><big>(</big><big>)</big><a class="headerlink" href="#ibm_botocore.stub.Stubber.assert_no_pending_responses" title="Permalink to this definition">¶</a></dt>
 <dd><p>Asserts that all expected calls were made.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="botocore.stub.Stubber.deactivate">
-<tt class="descname">deactivate</tt><big>(</big><big>)</big><a class="headerlink" href="#botocore.stub.Stubber.deactivate" title="Permalink to this definition">¶</a></dt>
+<dt id="ibm_botocore.stub.Stubber.deactivate">
+<tt class="descname">deactivate</tt><big>(</big><big>)</big><a class="headerlink" href="#ibm_botocore.stub.Stubber.deactivate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deactivates the stubber on the client</p>
 </dd></dl>
 
@@ -336,7 +336,7 @@ in validation. stub.ANY is only valid for top level params.</li>
       </div>
     
       <div class="pull-right">
-        <a class="btn btn-default" href="../topics/index.html" title="next chapter (use the right arrow)">ibm-cos-sdk-core Topic Guides</a>
+        <a class="btn btn-default" href="../topics/index.html" title="next chapter (use the right arrow)">IBM COS Core Library for Python Topic Guides</a>
       </div>
     </div>
     <div class="clearer"></div>
@@ -354,12 +354,12 @@ in validation. stub.ANY is only valid for top level params.</li>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../topics/index.html" title="ibm-cos-sdk-core Topic Guides"
+          <a href="../topics/index.html" title="IBM COS Core Library for Python Topic Guides"
              >next</a> |</li>
         <li class="right" >
           <a href="response.html" title="Response Reference"
              >previous</a> |</li>
-        <li><a href="../index.html">ibm-cos-sdk-core 1.1.0 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">ibm_botocore 2.0.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
 <script type="text/javascript">
