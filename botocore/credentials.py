@@ -231,7 +231,6 @@ class TokenManager(object):
         """
         return None
 
-
 class DefaultTokenManager(TokenManager):
     """A default implementation of token manager.
 
@@ -250,11 +249,15 @@ class DefaultTokenManager(TokenManager):
 
     API_TOKEN_URL = 'https://iam.ng.bluemix.net/oidc/token'
 
-    _advisory_refresh_timeout = 15 * 60
-    _mandatory_refresh_timeout = 10 * 60
+    _advisory_refresh_timeout = 0
+    _mandatory_refresh_timeout = 0
 
-    def __init__(self, api_key_id=None, service_instance_id=None, auth_endpoint=None, time_fetcher=_local_now,
-                       auth_function=None):
+    def __init__(self, 
+                 api_key_id=None,
+                 service_instance_id=None,
+                 auth_endpoint=None,
+                 time_fetcher=_local_now,
+                 auth_function=None):
         """Creates a new DefaultTokenManager object.
 
         :type api_key_id: str
@@ -300,8 +303,15 @@ class DefaultTokenManager(TokenManager):
         self._refresh_lock = threading.Lock()
 
         self._background_thread = None
+        self._background_thread_wakeup_event = threading.Event()
 
-    def _background_refresher(self):
+    def wakeup_refresh_thread(self):
+        """
+        Force the background thread to wakeup and refresh
+        """
+        self._background_thread_wakeup_event.set()
+
+    def _background_refresher(self, wakeup_event):
         """Refreshes token that's about to expire.
 
         Runs on background thread and sleeps until _advisory_refresh_timeout
@@ -310,22 +320,23 @@ class DefaultTokenManager(TokenManager):
 
         """
         try:
-        	# This method will run on background thread forever
+            # This method will run on background thread forever
             while True:
-        	    # We just woke up and there's a token.
-	            # Will see if refresh is required and will then go back to sleep
+                # We just woke up and there's a token.
+                # Will see if refresh is required and will then go back to sleep
                 remaining = self._seconds_remaining()
                 if remaining <= self._advisory_refresh_timeout:
-                    self._refresh()
+                    self._refresh(can_retry=False)
 
                 new_remaining = self._seconds_remaining() - self._advisory_refresh_timeout
-                logger.debug('Background refresh thread going to sleep for ' + str(new_remaining) + ' seconds')
-
-                # I got this issue once and can't reproduce it anymore
                 if new_remaining <= 0:
-                    logger.error('Background refresh thread has negative value with remaining seconds ' + str(self._seconds_remaining()))
+                    logger.error('Background thread : Time remaining is negative.. sleep 5 seconds')
+                    new_remaining = 30
 
-                time.sleep(new_remaining)
+                logger.debug('Background refresh thread going to sleep for ' + str(new_remaining) + ' seconds')
+                wakeup_event.clear()
+                wakeup_event.wait(new_remaining)
+
         except Exception as e:
             logger.error("Background refresh thread encountered error: " + str(e))
 
@@ -339,14 +350,17 @@ class DefaultTokenManager(TokenManager):
         :return: A string representing valid token.
 
         """
-        self._refresh()
+        self._refresh(can_retry=True)
+        self._set_refresh_timeouts()
 
-        # Make sure only one thread creates background thread.
-        with self._refresh_lock:
-            if not self._background_thread:
-                self._background_thread = threading.Thread(target=self._background_refresher, args=())
-                self._background_thread.daemon = True
-                self._background_thread.start()
+        if self._refresh_lock.acquire(False):
+            try:
+                if not self._background_thread:
+                    self._background_thread = threading.Thread(target=self._background_refresher, args=(self._background_thread_wakeup_event,))
+                    self._background_thread.daemon = True
+                    self._background_thread.start()
+            finally:
+                self._refresh_lock.release()
 
         return self._token
 
@@ -373,11 +387,14 @@ class DefaultTokenManager(TokenManager):
                 'Content-Type': "application/x-www-form-urlencoded"}
 
     def _default_auth_function(self):
-        response = requests.post(url=self._get_token_url(), data=self._get_body(), 
-                                 headers=self._get_headers(), timeout=30)
+        response = requests.post(
+                                 url=self._get_token_url(),
+                                 data=self._get_body(),
+                                 headers=self._get_headers(), timeout=2)
+
         if response.status_code != httplib.OK:
-            raise CredentialRetrievalError(provider=self._get_token_url(),
-                error_msg=str('Retrieval of tokens from server failed.'))
+            _msg = 'HttpCode({code}) - Retrieval of tokens from server failed.'.format(code=response.status_code)
+            raise CredentialRetrievalError(provider=self._get_token_url(), error_msg=_msg)
 
         return json.loads(response.content.decode('utf-8'))
 
@@ -422,7 +439,7 @@ class DefaultTokenManager(TokenManager):
         # Checks if the current credentials are expired.
         return self._refresh_needed(refresh_in=0)
 
-    def _refresh(self):
+    def _refresh(self, can_retry=False):
         """Initiates mandatory or advisory refresh, if needed,
 
         This method makes sure that refresh is done in critical section,
@@ -452,7 +469,7 @@ class DefaultTokenManager(TokenManager):
                     return
                 is_mandatory_refresh = self._refresh_needed(
                     self._mandatory_refresh_timeout)
-                self._protected_refresh(is_mandatory=is_mandatory_refresh)
+                self._protected_refresh(is_mandatory=is_mandatory_refresh, can_retry=can_retry)
                 return
             finally:
                 self._refresh_lock.release()
@@ -462,31 +479,38 @@ class DefaultTokenManager(TokenManager):
             with self._refresh_lock:
                 if not self._refresh_needed(self._mandatory_refresh_timeout):
                     return
-                self._protected_refresh(is_mandatory=True)
+                self._protected_refresh(is_mandatory=True, can_retry=can_retry)
 
-    def _protected_refresh(self, is_mandatory):
+    def _protected_refresh(self, is_mandatory, can_retry):
         """Performs mandatory or advisory refresh.
 
         Precondition: this method should only be called if you've acquired
         the self._refresh_lock.
-        
         """
-        try:
-            metadata = self.auth_function()
-        except Exception as e:
-            period_name = 'mandatory' if is_mandatory else 'advisory'
-            logger.warning("Refreshing temporary credentials failed "
-                       "during %s refresh period.",
-                       period_name, exc_info=True)
-            if is_mandatory:
-                # If this is a mandatory refresh, then
-                # all errors that occur when we attempt to refresh
-                # credentials are propagated back to the user.
-                raise
-            # Otherwise we'll just return.
-            # The end result will be that we'll use the current
-            # set of temporary credentials we have.
-            return
+        _total_attempts = 3 if can_retry else 1
+        while True:
+            try:
+                metadata = self.auth_function()
+                break
+            except Exception as e:
+                _total_attempts -= 1
+                if _total_attempts > 0:
+                    logger.debug("Retrying auth call")
+                    time.sleep(1)
+                else:
+                    period_name = 'mandatory' if is_mandatory else 'advisory'
+                    logger.warning("Refreshing temporary credentials failed "
+                                   "during %s refresh period.",
+                                   period_name, exc_info=True)
+                    if is_mandatory:
+                        # If this is a mandatory refresh, then
+                        # all errors that occur when we attempt to refresh
+                        # credentials are propagated back to the user.
+                        raise
+                    # Otherwise we'll just return.
+                    # The end result will be that we'll use the current
+                    # set of temporary credentials we have.
+                    return
 
         # Now set returned value, no matter in which way they came back.
         self._set_from_data(metadata)
@@ -507,7 +531,7 @@ class DefaultTokenManager(TokenManager):
 
         # Add expires_in to current system time.
         self._expiry_time = self._time_fetcher() + datetime.timedelta(seconds=data['expires_in'])
-        
+
         # Aren't currently using this, but we can later
         if 'refresh_token' in data:
             self._refresh_token = data['refresh_token']
@@ -516,6 +540,23 @@ class DefaultTokenManager(TokenManager):
 
         logger.debug("Retrieved credentials will expire at: %s", self._expiry_time)
 
+    def _set_refresh_timeouts(self):
+        """
+        Set the advisory  timeout to 25% of remaining time - usually 15 minutes on 1 hour expiry
+        Set the mandatory timeout to 17% of remaining time - usually 10 minutes on 1 hour expiry
+        """
+        # only want to set this once
+        if self._advisory_refresh_timeout != 0:
+            return
+
+        if self._expiry_time and self._token:
+            _secs = self._seconds_remaining()
+            self._advisory_refresh_timeout = int(_secs / (100 / 25))
+            self._mandatory_refresh_timeout = int(_secs / (100 / 17))
+            logger.debug('Refresh Timeouts set to Advisory(' +
+                         str(self._advisory_refresh_timeout) +
+                         ') Mandatory(' +
+                         str(self._mandatory_refresh_timeout) + ')')
 
 class OAuth2Credentials(Credentials):
     """
