@@ -94,6 +94,9 @@ class Session(object):
         'ca_bundle': ('ca_bundle', 'AWS_CA_BUNDLE', None, None),
         'api_versions': ('api_versions', None, {}, None),
 
+        # This is the COS credentials file amongst sdks.
+        'cos_credentials_file': (None, 'COS_CREDENTIALS_FILE', '~/.bluemix/cos_credentials', None),
+
         # This is the shared credentials file amongst sdks.
         'credentials_file': (None, 'AWS_SHARED_CREDENTIALS_FILE',
                              '~/.aws/credentials', None),
@@ -446,15 +449,15 @@ class Session(object):
         :param token: An option session token used by STS session
             credentials.
 
-        :type api_key_id: str
-        :param api_key_id: IBM api key used for IAM authentication.
+        :type ibm_api_key_id: str
+        :param ibm_api_key_id: IBM api key used for IAM authentication.
 
-        :type service_instance_id: str
-        :param service_instance_id: Service Instance ID used for
+        :type ibm_service_instance_id: str
+        :param ibm_service_instance_id: Service Instance ID used for
             PUT bucket and GET service requests.
 
-        :type auth_endpoint: str
-        :param auth_endpoint: URL used for IAM authentication.
+        :type ibm_auth_endpoint: str
+        :param ibm_auth_endpoint: URL used for IAM authentication.
 
         :type token_manager: TokenManager
         :param token_manager: custom token manager to use.
@@ -466,13 +469,13 @@ class Session(object):
         """
         if ibm_api_key_id or auth_function or token_manager:
             self._credentials = botocore.credentials.OAuth2Credentials(api_key_id=ibm_api_key_id,
-                                                             service_instance_id=ibm_service_instance_id,
-                                                             auth_endpoint=ibm_auth_endpoint,
-                                                             auth_function=auth_function, token_manager=token_manager)
+                                                                           service_instance_id=ibm_service_instance_id,
+                                                                           auth_endpoint=ibm_auth_endpoint,
+                                                                           auth_function=auth_function, token_manager=token_manager)
         else:
             self._credentials = botocore.credentials.Credentials(access_key,
-                                                             secret_key,
-                                                             token)
+                                                                     secret_key,
+                                                                     token)
 
     def get_credentials(self):
         """
@@ -747,7 +750,7 @@ class Session(object):
 
     def create_client(self, service_name, region_name=None, api_version=None,
                       use_ssl=True, verify=None, endpoint_url=None,
-                      aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None, 
+                      aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None,
                       ibm_api_key_id=None, ibm_service_instance_id=None, ibm_auth_endpoint=None,
                       auth_function=None, token_manager=None, config=None):
         """Create a botocore client.
@@ -806,15 +809,15 @@ class Session(object):
         :param aws_session_token: The session token to use when creating
             the client.  Same semantics as aws_access_key_id above.
 
-        :type api_key_id: str
-        :param api_key_id: IBM api key used for IAM authentication.
+        :type ibm_api_key_id: str
+        :param ibm_api_key_id: IBM api key used for IAM authentication.
 
-        :type service_instance_id: str
-        :param service_instance_id: Service Instance ID used for
+        :type ibm_service_instance_id: str
+        :param ibm_service_instance_id: Service Instance ID used for
             PUT bucket and GET service requests.
 
-        :type auth_endpoint: str
-        :param auth_endpoint: URL used for IAM authentication.
+        :type ibm_auth_endpoint: str
+        :param ibm_auth_endpoint: URL used for IAM authentication.
 
         :type token_manager: TokenManager
         :param token_manager: custom token manager to use.
@@ -872,9 +875,11 @@ class Session(object):
         # Precedence - if any IAM method is provided, it will be used before aws
         if ibm_api_key_id or auth_function or token_manager:
             credentials = botocore.credentials.OAuth2Credentials(api_key_id=ibm_api_key_id,
-                                                             service_instance_id=ibm_service_instance_id,
-                                                             auth_endpoint=ibm_auth_endpoint,
-                                                             auth_function=auth_function, token_manager=token_manager)
+                                                                     service_instance_id=ibm_service_instance_id,
+                                                                     auth_endpoint=ibm_auth_endpoint,
+                                                                     auth_function=auth_function,
+                                                                     token_manager=token_manager,
+                                                                     verify=verify)
         elif aws_access_key_id is not None and aws_secret_access_key is not None:
             credentials = botocore.credentials.Credentials(
                 access_key=aws_access_key_id,
@@ -888,6 +893,12 @@ class Session(object):
                                                  aws_secret_access_key))
         else:
             credentials = self.get_credentials()
+            if isinstance(credentials, botocore.credentials.OAuth2Credentials):
+                if isinstance(credentials.token_manager, botocore.credentials.DefaultTokenManager):
+                    credentials.token_manager.set_verify(verify)
+                # load values that can be used for setting values in CreateBucket,ListBuckets
+                ibm_service_instance_id = credentials.service_instance_id
+
         endpoint_resolver = self.get_component('endpoint_resolver')
         exceptions_factory = self.get_component('exceptions_factory')
         client_creator = botocore.client.ClientCreator(
@@ -917,6 +928,7 @@ class Session(object):
         """
         if 'IBMServiceInstanceId' in params:
             return
+
         if self._ibm_service_instance_id:
             params['IBMServiceInstanceId'] = self._ibm_service_instance_id
 

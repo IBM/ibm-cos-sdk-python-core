@@ -69,6 +69,7 @@ class ClientCreator(object):
             service_model, region_name, is_secure, endpoint_url,
             verify, credentials, scoped_config, client_config, endpoint_bridge)
         service_client = cls(**client_args)
+        self._register_retries(service_client)
         self._register_s3_events(service_client, endpoint_bridge, endpoint_url)
         return service_client
 
@@ -92,11 +93,10 @@ class ClientCreator(object):
         json_model = self._loader.load_service_model(service_name, 'service-2',
                                                      api_version=api_version)
         service_model = ServiceModel(json_model, service_name=service_name)
-        self._register_retries(service_model)
         return service_model
 
-    def _register_retries(self, service_model):
-        endpoint_prefix = service_model.endpoint_prefix
+    def _register_retries(self, client):
+        endpoint_prefix = client.meta.service_model.endpoint_prefix
 
         # First, we load the entire retry config for all services,
         # then pull out just the information we need.
@@ -106,15 +106,17 @@ class ClientCreator(object):
 
         retry_config = self._retry_config_translator.build_retry_config(
             endpoint_prefix, original_config.get('retry', {}),
-            original_config.get('definitions', {}))
+            original_config.get('definitions', {}),
+            client.meta.config.retries
+        )
 
         logger.debug("Registering retry handlers for service: %s",
-                     service_model.service_name)
+                     client.meta.service_model.service_name)
         handler = self._retry_handler_factory.create_retry_handler(
             retry_config, endpoint_prefix)
         unique_id = 'retry-config-%s' % endpoint_prefix
-        self._event_emitter.register('needs-retry.%s' % endpoint_prefix,
-                                     handler, unique_id=unique_id)
+        client.meta.events.register('needs-retry.%s' % endpoint_prefix,
+                                    handler, unique_id=unique_id)
 
     def _register_s3_events(self, client, endpoint_bridge, endpoint_url):
         if client.meta.service_model.service_name != 's3':
@@ -322,7 +324,7 @@ class ClientEndpointBridge(object):
                 # Use the sslCommonName over the hostname for Python 2.6 compat.
                 hostname = resolved.get('sslCommonName', resolved.get('hostname'))
                 endpoint_url = self._make_url(hostname, is_secure,
-                                            resolved.get('protocols', []))
+                                              resolved.get('protocols', []))
         signature_version = self._resolve_signature_version(
             service_name, resolved)
         signing_name = self._resolve_signing_name(service_name, resolved)
