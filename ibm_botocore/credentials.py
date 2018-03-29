@@ -69,13 +69,17 @@ def create_credential_resolver(session):
     """
     profile_name = session.get_config_variable('profile') or 'default'
     credential_file = session.get_config_variable('credentials_file')
+    cos_credentials_file = session.get_config_variable('cos_credentials_file')
     config_file = session.get_config_variable('config_file')
     metadata_timeout = session.get_config_variable('metadata_service_timeout')
     num_attempts = session.get_config_variable('metadata_service_num_attempts')
 
     env_provider = EnvProvider()
+    cos_provider = IbmCosCredentialsProvider(ibm_credentials_filename=cos_credentials_file)
+
     providers = [
         env_provider,
+        cos_provider,
         AssumeRoleProvider(
             load_config=lambda: session.full_config,
             client_creator=session.create_client,
@@ -118,6 +122,8 @@ def create_credential_resolver(session):
         # EnvProvider does not return credentials, which is what we want
         # in this scenario.
         providers.remove(env_provider)
+        providers.remove(cos_provider)
+
         logger.debug('Skipping environment variable credential check'
                      ' because profile name was explicitly set.')
 
@@ -254,12 +260,14 @@ class DefaultTokenManager(TokenManager):
     _advisory_refresh_timeout = 0
     _mandatory_refresh_timeout = 0
 
-    def __init__(self, 
+    def __init__(self,
                  api_key_id=None,
                  service_instance_id=None,
                  auth_endpoint=None,
                  time_fetcher=_local_now,
-                 auth_function=None):
+                 auth_function=None,
+                 verify=True):
+
         """Creates a new DefaultTokenManager object.
 
         :type api_key_id: str
@@ -282,7 +290,18 @@ class DefaultTokenManager(TokenManager):
             and returns json with token, refresh token, expiry time
             and token type. If not provided, a default authentication
             function will be used.
+                :type verify: boolean/string
 
+        :param verify: Whether or not to verify IAM service SSL certificates.
+            By default SSL certificates are verified.  You can provide the
+            following values:
+
+            * False - do not validate SSL certificates.  SSL will still be
+              used (unless use_ssl is False), but SSL certificates
+              will not be verified.
+            * path/to/cert/bundle.pem - A filename of the CA cert bundle to
+              uses.  You can specify this argument if you want to use a
+              different CA cert bundle than the one used by botocore.
         """
         if api_key_id is None and auth_function is None:
             raise RuntimeError('api_key_id and auth_function cannot both be None')
@@ -291,6 +310,7 @@ class DefaultTokenManager(TokenManager):
         self.service_instance_id = service_instance_id
         self.auth_endpoint = auth_endpoint
         self._time_fetcher = time_fetcher
+        self.set_verify(verify)
 
         if auth_function:
             self.auth_function = auth_function
@@ -366,6 +386,12 @@ class DefaultTokenManager(TokenManager):
 
         return self._token
 
+    def set_verify(self, verify):
+        self._verify = verify
+
+    def get_verify(self):
+        return self._verify
+
     def _seconds_remaining(self):
         delta = self._expiry_time - self._time_fetcher()
         return total_seconds(delta)
@@ -392,7 +418,9 @@ class DefaultTokenManager(TokenManager):
         response = requests.post(
                                  url=self._get_token_url(),
                                  data=self._get_body(),
-                                 headers=self._get_headers(), timeout=2)
+                                 headers=self._get_headers(),
+                                 timeout=5,
+                                 verify=self.get_verify())
 
         if response.status_code != httplib.OK:
             _msg = 'HttpCode({code}) - Retrieval of tokens from server failed.'.format(code=response.status_code)
@@ -568,9 +596,15 @@ class OAuth2Credentials(Credentials):
 
     """
 
-    def __init__(self, api_key_id=None, service_instance_id=None, auth_endpoint=None, 
-                 token_manager=None, auth_function=None,
-                 method=None, time_fetcher=_local_now):
+    def __init__(self,
+                 api_key_id=None,
+                 service_instance_id=None,
+                 auth_endpoint=None,
+                 token_manager=None,
+                 auth_function=None,
+                 method=None,
+                 time_fetcher=_local_now,
+                 verify=True):
         """Creates a new OAuth2Credentials object.
 
         :type api_key_id: str
@@ -602,6 +636,16 @@ class OAuth2Credentials(Credentials):
         :param time_fetcher: current date and time used for calculating
             expiration time for token.
 
+        :param verify: Whether or not to verify IAM service SSL certificates.
+            By default SSL certificates are verified.  You can provide the
+            following values:
+
+            * False - do not validate SSL certificates.  SSL will still be
+              used (unless use_ssl is False), but SSL certificates
+              will not be verified.
+            * path/to/cert/bundle.pem - A filename of the CA cert bundle to
+              uses.  You can specify this argument if you want to use a
+              different CA cert bundle than the one used by botocore.
         """
         self.api_key_id = api_key_id
         self.service_instance_id = service_instance_id
@@ -631,8 +675,12 @@ class OAuth2Credentials(Credentials):
             raise ValueError("Either api_key_id, auth_function or token_manager must be provided")
 
         if api_key_id or auth_function:
-            self.token_manager = DefaultTokenManager(self.api_key_id, self.service_instance_id, 
-                self.auth_endpoint, time_fetcher, self.auth_function)
+            self.token_manager = DefaultTokenManager(self.api_key_id,
+                                                     self.service_instance_id,
+                                                     self.auth_endpoint,
+                                                     time_fetcher,
+                                                     self.auth_function,
+                                                     verify)
 
     def _normalize(self):
         if self.api_key_id:
@@ -956,15 +1004,11 @@ class CredentialProvider(object):
     def _extract_creds_from_mapping(self, mapping, *key_names):
         found = []
         for key_name in key_names:
-            # ibm_service_instance_id and ibm_auth_endpoint are optional; append None in list
-            if key_name in ['ibm_service_instance_id', 'ibm_auth_endpoint'] and key_name not in mapping:
-                found.append(None)
-            else:
-                try:
-                    found.append(mapping[key_name])
-                except KeyError:
-                    raise PartialCredentialsError(provider=self.METHOD,
-                                                  cred_var=key_name)
+            try:
+                found.append(mapping[key_name])
+            except KeyError:
+                raise PartialCredentialsError(provider=self.METHOD,
+                                              cred_var=key_name)
         return found
 
 
@@ -982,8 +1026,7 @@ class InstanceMetadataProvider(CredentialProvider):
         metadata = fetcher.retrieve_iam_role_credentials()
         if not metadata:
             return None
-        logger.debug('Found credentials from IAM Role: %s',
-                    metadata['role_name'])
+        logger.debug('Found credentials from IAM Role: %s', metadata['role_name'])
         # We manually set the data here, since we already made the request &
         # have it. When the expiry is hit, the credentials will auto-refresh
         # themselves.
@@ -1057,13 +1100,15 @@ class EnvProvider(CredentialProvider):
         """
         if self._mapping['ibm_api_key_id'] in self.environ:
             logger.info('Found IBM credentials in environment variables.')
-            ibm_api_key_id, ibm_service_instance_id, ibm_auth_endpoint  = self._extract_creds_from_mapping(
+            ibm_api_key_id, ibm_service_instance_id, ibm_auth_endpoint = self._extract_creds_from_mapping(
                 self.environ, self._mapping['ibm_api_key_id'],
                 self._mapping['ibm_service_instance_id'],
                 self._mapping['ibm_auth_endpoint'])
             token = self._get_session_token()
-            return OAuth2Credentials(api_key_id = ibm_api_key_id, service_instance_id = ibm_service_instance_id, auth_endpoint = ibm_auth_endpoint,
-                               method=self.METHOD)
+            return OAuth2Credentials(api_key_id=ibm_api_key_id,
+                                     service_instance_id=ibm_service_instance_id,
+                                     auth_endpoint=ibm_auth_endpoint,
+                                     method=self.METHOD)
         elif self._mapping['access_key'] in self.environ:
             logger.info('Found credentials in environment variables.')
             access_key, secret_key = self._extract_creds_from_mapping(
@@ -1113,8 +1158,10 @@ class OriginalEC2Provider(CredentialProvider):
                 ibm_service_instance_id = creds[self.IBM_COS_SERVICE_INSTANCE_ID]
                 ibm_auth_endpoint = creds[self.IBM_COS_AUTH_ENDPOINT]
                 # EC2 creds file doesn't support session tokens.
-                return OAuth2Credentials(api_key_id = ibm_api_key_id, service_instance_id = ibm_service_instance_id, auth_endpoint = ibm_auth_endpoint,
-                               method=self.METHOD)
+                return OAuth2Credentials(api_key_id=ibm_api_key_id,
+                                         service_instance_id=ibm_service_instance_id,
+                                         auth_endpoint=ibm_auth_endpoint,
+                                         method=self.METHOD)
             elif self.ACCESS_KEY in creds:
                 logger.info('Found credentials in AWS_CREDENTIAL_FILE.')
                 access_key = creds[self.ACCESS_KEY]
@@ -1138,7 +1185,7 @@ class SharedCredentialProvider(CredentialProvider):
     # so we support both.
     TOKENS = ['aws_security_token', 'aws_session_token']
 
-    def __init__(self, creds_filename, profile_name=None, ini_parser=None):
+    def __init__(self, creds_filename, profile_name=None, ini_parser=None, hmac_takes_precedence=False):
         self._creds_filename = creds_filename
         if profile_name is None:
             profile_name = 'default'
@@ -1146,6 +1193,17 @@ class SharedCredentialProvider(CredentialProvider):
         if ini_parser is None:
             ini_parser = ibm_botocore.configloader.raw_config_parse
         self._ini_parser = ini_parser
+        self._hmac_takes_precedence = hmac_takes_precedence
+
+    def load_ibm_cos_credentials(self, config):
+        if self._hmac_takes_precedence and self.ACCESS_KEY in config:
+            logger.info('HMAC takes precedence.')
+            return False
+
+        return self.IBM_COS_API_KEY_ID in config
+
+    def load_hmac_credentials(self, config):
+        return self.ACCESS_KEY in config
 
     def load(self):
         try:
@@ -1154,17 +1212,19 @@ class SharedCredentialProvider(CredentialProvider):
             return None
         if self._profile_name in available_creds:
             config = available_creds[self._profile_name]
-            if self.IBM_COS_API_KEY_ID in config:
-                logger.info("Found IBM credentials in shared credentials file: %s",
+            if self.load_ibm_cos_credentials(config):
+                logger.info("Found IBMCOS credentials in shared credentials file: %s",
                             self._creds_filename)
-                ibm_api_key_id, ibm_service_instance_id, ibm_auth_endpoint  = self._extract_creds_from_mapping(
+                ibm_api_key_id, ibm_service_instance_id, ibm_auth_endpoint = self._extract_creds_from_mapping(
                     config, self.IBM_COS_API_KEY_ID,
                     self.IBM_COS_SERVICE_INSTANCE_ID,
                     self.IBM_COS_AUTH_ENDPOINT)
                 token = self._get_session_token(config)
-                return OAuth2Credentials(api_key_id = ibm_api_key_id, service_instance_id = ibm_service_instance_id, auth_endpoint = ibm_auth_endpoint,
-                               method=self.METHOD)
-            elif self.ACCESS_KEY in config:
+                return OAuth2Credentials(api_key_id=ibm_api_key_id,
+                                         service_instance_id=ibm_service_instance_id,
+                                         auth_endpoint=ibm_auth_endpoint,
+                                         method=self.METHOD)
+            elif self.load_hmac_credentials(config):
                 logger.info("Found credentials in shared credentials file: %s",
                             self._creds_filename)
                 access_key, secret_key = self._extract_creds_from_mapping(
@@ -1179,6 +1239,59 @@ class SharedCredentialProvider(CredentialProvider):
         for token_envvar in self.TOKENS:
             if token_envvar in config:
                 return config[token_envvar]
+
+
+class IbmCosCredentialsProvider(SharedCredentialProvider):
+
+    def __init__(self, ibm_credentials_filename):
+        self.METHOD = 'ibm-cos-credentials-file'
+        SharedCredentialProvider.__init__(self,
+                                          ibm_credentials_filename,
+                                          self.METHOD,
+                                          self.load_ibm_credentials_filename,
+                                          True)
+
+    def get_data(self, path):
+        if not os.path.isfile(path):
+            raise ibm_botocore.exceptions.ConfigNotFound(path=path)
+
+        with open(path, 'r') as f:
+            return json.load(f)
+
+    def load_ibm_credentials_filename(self, ibm_credentials_filename):
+        config = {}
+        path = ibm_credentials_filename
+        if path is not None:
+            path = os.path.expanduser(path)
+            _data = self.get_data(path)
+
+            try:
+                def set_dic_value(_sec, _name, _dic, _name1, _name2=None):
+                    if _name1 in _dic.keys():
+                        if not _name2:
+                            _sec[_name] = _dic[_name1]
+                        else:
+                            _dic2 = _dic[_name1]
+                            if _name2 in _dic2.keys():
+                                _sec[_name] = _dic2[_name2]
+
+                _sec = config[self.METHOD] = {}
+                set_dic_value(_sec, 'aws_access_key_id',        _data, 'cos_hmac_keys', 'access_key_id')
+                set_dic_value(_sec, 'aws_secret_access_key',    _data, 'cos_hmac_keys', 'secret_access_key')
+                set_dic_value(_sec, 'ibm_service_instance_id',  _data, 'resource_instance_id')
+                set_dic_value(_sec, 'ibm_api_key_id',           _data, 'apikey')
+                set_dic_value(_sec, 'ibm_kp_root_key_crn',      _data, 'iam_serviceid_crn')
+
+                # this is for testing - if the value is set in the file then use it
+                # otherwise the default endpoint is used -- 'https://iam.ng.bluemix.net/oidc/token'
+                set_dic_value(_sec, 'ibm_auth_endpoint',        _data, 'iam_auth_endpoint')
+                if 'ibm_auth_endpoint' not in _sec.keys():
+                    _sec['ibm_auth_endpoint'] = None
+
+            except Exception as e:
+                raise ibm_botocore.exceptions.ConfigParseError(path=ibm_credentials_filename)
+
+        return config
 
 
 class ConfigProvider(CredentialProvider):
@@ -1224,11 +1337,13 @@ class ConfigProvider(CredentialProvider):
             if self.IBM_COS_API_KEY_ID in profile_config:
                 logger.info("IBM Credentials found in AWS config file: %s",
                             self._config_filename)
-                ibm_api_key_id, ibm_service_instance_id, ibm_auth_endpoint  = self._extract_creds_from_mapping(
+                ibm_api_key_id, ibm_service_instance_id, ibm_auth_endpoint = self._extract_creds_from_mapping(
                     profile_config, self.IBM_COS_API_KEY_ID, self.IBM_COS_SERVICE_INSTANCE_ID, self.IBM_COS_AUTH_ENDPOINT)
                 token = self._get_session_token(profile_config)
-                return OAuth2Credentials(api_key_id = ibm_api_key_id, service_instance_id = ibm_service_instance_id, auth_endpoint = ibm_auth_endpoint,
-                               method=self.METHOD)
+                return OAuth2Credentials(api_key_id=ibm_api_key_id,
+                                         service_instance_id=ibm_service_instance_id,
+                                         auth_endpoint=ibm_auth_endpoint,
+                                         method=self.METHOD)
             elif self.ACCESS_KEY in profile_config:
                 logger.info("Credentials found in AWS config file: %s",
                             self._config_filename)
@@ -1282,14 +1397,16 @@ class BotoProvider(CredentialProvider):
             if 'Credentials' in config:
                 credentials = config['Credentials']
                 if self.IBM_COS_API_KEY_ID in credentials:
-                    logger.info("Found IBM credentials in boto config file: %s",
-                            filename)
-                    ibm_api_key_id, ibm_service_instance_id, ibm_auth_endpoint  = self._extract_creds_from_mapping(
-                    credentials, self.IBM_COS_API_KEY_ID,
-                        self.IBM_COS_SERVICE_INSTANCE_ID,
-                        self.IBM_COS_AUTH_ENDPOINT)
-                    return OAuth2Credentials(api_key_id = ibm_api_key_id, service_instance_id = ibm_service_instance_id, auth_endpoint = ibm_auth_endpoint,
-                               method=self.METHOD)
+                    logger.info("Found IBM credentials in boto config file: %s", filename)
+                    ibm_api_key_id, ibm_service_instance_id, ibm_auth_endpoint = self._extract_creds_from_mapping(credentials,
+                                                                                                                  self.IBM_COS_API_KEY_ID,
+                                                                                                                  self.IBM_COS_SERVICE_INSTANCE_ID,
+                                                                                                                  self.IBM_COS_AUTH_ENDPOINT)
+
+                    return OAuth2Credentials(api_key_id=ibm_api_key_id,
+                                             service_instance_id=ibm_service_instance_id,
+                                             auth_endpoint=ibm_auth_endpoint,
+                                             method=self.METHOD)
                 elif self.ACCESS_KEY in credentials:
                     logger.info("Found credentials in boto config file: %s",
                                 filename)

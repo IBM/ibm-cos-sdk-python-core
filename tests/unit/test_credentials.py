@@ -314,6 +314,109 @@ class TestSharedCredentialsProvider(BaseEnvVar):
         self.assertIsNone(creds)
 
 
+class TestIbmCosCredentialsProvider(BaseEnvVar):
+    def setUp(self):
+        super(TestIbmCosCredentialsProvider, self).setUp()
+
+
+    def get_json(self):
+        return { 
+                  'apikey': 'vibm_api_key_id', 
+                  'cos_hmac_keys': 
+                   { 
+                    'access_key_id': 'vaws_access_key_id', 
+                    'secret_access_key': 'vaws_secret_access_key' 
+                   },
+                  'endpoints': 'vendpoints', 
+                  'iam_auth_endpoint': 'viam_auth_endpoint', 
+                  'iam_apikey_description': '', 
+                  'iam_apikey_name': '', 
+                  'iam_role_crn': '', 
+                  'iam_serviceid_crn': 'vibm_kp_root_key_crn', 
+                  'resource_instance_id': 'vibm_service_instance_id' 
+                }  
+              
+    def remove_json_item(self,_json, _name):
+        del _json[_name]
+
+    def create_ibm_provider(self, _json):
+        provider = ibm_botocore.credentials.IbmCosCredentialsProvider(ibm_credentials_filename='~/.aws/ibm_creds')
+        provider.get_data = mock.MagicMock(return_value= _json)
+        return provider   
+        
+    def validate_token_manager(self, creds, api_key_id, service_instance_id, endpoint):
+        self.assertEqual(creds.token_manager.api_key_id,            api_key_id)
+        self.assertEqual(creds.token_manager.service_instance_id,   service_instance_id)
+        self.assertEqual(creds.token_manager._get_token_url(),      endpoint)
+
+    def test_credential_file_loads_IAM_credentials(self):
+        provider = self.create_ibm_provider(self.get_json())
+            
+        creds = provider.load()
+        self.assertIsNotNone(creds)
+
+        self.assertEqual(creds.service_instance_id, "vibm_service_instance_id") 
+        self.assertEqual(creds.api_key_id,          "vibm_api_key_id")
+        self.assertEqual(creds.auth_endpoint,       "viam_auth_endpoint")
+        self.assertEqual(creds.method,              "ibm-cos-credentials-file")
+        
+        self.validate_token_manager(creds, "vibm_api_key_id", "vibm_service_instance_id", "viam_auth_endpoint")
+        
+    def test_credential_file_loads_IAM_credentials_default_endpoint(self):
+        _json = self.get_json()
+        self.remove_json_item(_json, "iam_auth_endpoint")
+        
+        provider = self.create_ibm_provider(_json)
+            
+        creds = provider.load()
+        self.assertIsNotNone(creds)
+
+        self.assertEqual(creds.service_instance_id, "vibm_service_instance_id") 
+        self.assertEqual(creds.api_key_id,          "vibm_api_key_id")
+        self.assertIsNone(creds.auth_endpoint)
+        self.assertEqual(creds.method,              "ibm-cos-credentials-file")
+        
+        # test to show that we are setting the default endpoint
+        self.validate_token_manager(creds, "vibm_api_key_id", 
+                                           "vibm_service_instance_id",
+                                           ibm_botocore.credentials.DefaultTokenManager.API_TOKEN_URL)
+
+
+    def test_credential_file_loads_AWS_credentials(self):
+        
+        _json = self.get_json()
+        self.remove_json_item(_json, "apikey")
+        self.remove_json_item(_json, "resource_instance_id")
+        self.remove_json_item(_json, "endpoints")
+
+        provider = self.create_ibm_provider(_json)
+
+        creds = provider.load()
+        self.assertIsNotNone(creds)
+
+        self.assertEqual(creds.access_key,   "vaws_access_key_id") 
+        self.assertEqual(creds.secret_key,   "vaws_secret_access_key")
+        self.assertEqual(creds.method,       "ibm-cos-credentials-file")
+
+    def test_partial_creds_raise_error(self):
+        
+        _json = self.get_json()
+        self.remove_json_item(_json, "resource_instance_id")
+        provider = self.create_ibm_provider(_json)
+            
+        with self.assertRaises(ibm_botocore.exceptions.PartialCredentialsError):
+            provider.load()
+
+    def test_credentials_file_does_not_exist_returns_none(self):
+        # It's ok if the credentials file does not exist, we should
+        # just catch the appropriate errors and return None.
+        provider = self.create_ibm_provider(self.get_json())
+        provider.get_data.side_effect = ibm_botocore.exceptions.ConfigNotFound(path='foo')
+
+        creds = provider.load()
+        self.assertIsNone(creds)
+
+
 class TestConfigFileProvider(BaseEnvVar):
 
     def setUp(self):
