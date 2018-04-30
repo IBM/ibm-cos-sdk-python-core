@@ -1004,13 +1004,15 @@ class CredentialProvider(object):
     def _extract_creds_from_mapping(self, mapping, *key_names):
         found = []
         for key_name in key_names:
-            try:
-                found.append(mapping[key_name])
-            except KeyError:
-                raise PartialCredentialsError(provider=self.METHOD,
-                                              cred_var=key_name)
-        return found
-
+            # ibm_service_instance_id and ibm_auth_endpoint are optional; append None in list
+            if key_name.lower() in ['ibm_service_instance_id','ibm_auth_endpoint'] and key_name not in mapping:
+                found.append(None)
+            else:
+                try:
+                    found.append(mapping[key_name])
+                except KeyError:
+                    raise PartialCredentialsError(provider=self.METHOD, cred_var=key_name)
+        return found 
 
 class InstanceMetadataProvider(CredentialProvider):
     METHOD = 'iam-role'
