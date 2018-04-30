@@ -16,23 +16,6 @@
         "CommonPrefixes"
       ]
     },
-    "ListObjectVersions": {
-      "more_results": "IsTruncated",
-      "limit_key": "MaxKeys",
-      "output_token": [
-        "NextKeyMarker",
-        "NextVersionIdMarker"
-      ],
-      "input_token": [
-        "KeyMarker",
-        "VersionIdMarker"
-      ],
-      "result_key": [
-        "Versions",
-        "DeleteMarkers",
-        "CommonPrefixes"
-      ]
-    },
     "ListObjects": {
       "more_results": "IsTruncated",
       "limit_key": "MaxKeys",

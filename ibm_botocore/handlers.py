@@ -289,7 +289,8 @@ def document_copy_source_form(section, event_name, **kwargs):
         value_portion = param_line.get_section('member-value')
         value_portion.clear_text()
         value_portion.write("'string' or {'Bucket': 'string', "
-                            "'Key': 'string', 'VersionId': 'string'}")
+#                            "'Key': 'string', 'VersionId': 'string'}")
+                            "'Key': 'string'}")
     elif 'request-params' in event_name:
         param_section = section.get_section('CopySource')
         type_section = param_section.get_section('param-type')
@@ -298,16 +299,23 @@ def document_copy_source_form(section, event_name, **kwargs):
         doc_section = param_section.get_section('param-documentation')
         doc_section.clear_text()
         doc_section.write(
-            "The name of the source bucket, key name of the source object, "
-            "and optional version ID of the source object.  You can either "
-            "provide this value as a string or a dictionary.  The "
-            "string form is {bucket}/{key} or "
-            "{bucket}/{key}?versionId={versionId} if you want to copy a "
-            "specific version.  You can also provide this value as a "
+#            "The name of the source bucket, key name of the source object, "
+#            "and optional version ID of the source object.  You can either "
+#            "provide this value as a string or a dictionary.  The "
+#            "string form is {bucket}/{key} or "
+#            "{bucket}/{key}?versionId={versionId} if you want to copy a "
+#            "specific version.  You can also provide this value as a "
+#            "dictionary.  The dictionary format is recommended over "
+#            "the string format because it is more explicit.  The dictionary "
+#            "format is: {'Bucket': 'bucket', 'Key': 'key', 'VersionId': 'id'}."
+#            "  Note that the VersionId key is optional and may be omitted."
+
+            "The name of the source bucket, key name of the source object"
+            "You can either provide this value as a string or a dictionary.  The "
+            "string form is {bucket}/{key}.  You can also provide this value as a "
             "dictionary.  The dictionary format is recommended over "
             "the string format because it is more explicit.  The dictionary "
-            "format is: {'Bucket': 'bucket', 'Key': 'key', 'VersionId': 'id'}."
-            "  Note that the VersionId key is optional and may be omitted."
+            "format is: {'Bucket': 'bucket', 'Key': 'key'}."
         )
 
 

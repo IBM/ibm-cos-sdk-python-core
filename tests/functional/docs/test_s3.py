@@ -28,11 +28,14 @@ class TestS3Docs(BaseDocsFunctionalTest):
             param_name='CopySourceSSECustomerKeyMD5')
 
     def test_hides_content_md5_when_impossible_to_provide(self):
-        modified_methods = ['delete_objects', 'put_bucket_acl',
-                            'put_bucket_cors', 'put_bucket_tagging',
+        modified_methods = ['delete_objects', 
+                            'put_bucket_acl',
+                            'put_bucket_cors', 
+                            'put_bucket_tagging',
                             'put_bucket_replication', 
-                            'put_bucket_request_payment', 'put_object_acl',
-                            'put_bucket_versioning']
+                            'put_bucket_request_payment', 
+                            'put_object_acl']
+                            #'put_bucket_versioning']
         service_contents = ServiceDocumenter(
             's3', self._session).document_service()
         for method_name in modified_methods:
