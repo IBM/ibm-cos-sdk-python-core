@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>S3 &mdash; ibm_botocore 2.1.0 documentation</title>
+    <title>S3 &mdash; ibm_botocore 2.1.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -23,7 +23,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '2.1.0',
+        VERSION:     '2.1.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -32,7 +32,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="ibm_botocore 2.1.0 documentation" href="../../index.html" />
+    <link rel="top" title="ibm_botocore 2.1.1 documentation" href="../../index.html" />
     <link rel="up" title="Available Services" href="../index.html" />
     <link rel="next" title="Loaders Reference" href="../loaders.html" />
     <link rel="prev" title="Available Services" href="../index.html" />
@@ -56,7 +56,7 @@
         <li class="right" >
           <a href="../index.html" title="Available Services"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../index.html">ibm_botocore 2.1.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">ibm_botocore 2.1.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Available Services</a> &raquo;</li> 
       </ul>
     </div>
@@ -67,7 +67,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../index.html" class="text-logo">ibm_botocore 2.1.0 documentation</a>
+    ../../index.html" class="text-logo">ibm_botocore 2.1.1 documentation</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -176,10 +176,8 @@
 <li><a class="reference internal" href="#S3.Client.delete_bucket_metrics_configuration" title="S3.Client.delete_bucket_metrics_configuration"><tt class="xref py py-meth docutils literal"><span class="pre">delete_bucket_metrics_configuration()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.delete_bucket_policy" title="S3.Client.delete_bucket_policy"><tt class="xref py py-meth docutils literal"><span class="pre">delete_bucket_policy()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.delete_bucket_replication" title="S3.Client.delete_bucket_replication"><tt class="xref py py-meth docutils literal"><span class="pre">delete_bucket_replication()</span></tt></a></li>
-<li><a class="reference internal" href="#S3.Client.delete_bucket_tagging" title="S3.Client.delete_bucket_tagging"><tt class="xref py py-meth docutils literal"><span class="pre">delete_bucket_tagging()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.delete_bucket_website" title="S3.Client.delete_bucket_website"><tt class="xref py py-meth docutils literal"><span class="pre">delete_bucket_website()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.delete_object" title="S3.Client.delete_object"><tt class="xref py py-meth docutils literal"><span class="pre">delete_object()</span></tt></a></li>
-<li><a class="reference internal" href="#S3.Client.delete_object_tagging" title="S3.Client.delete_object_tagging"><tt class="xref py py-meth docutils literal"><span class="pre">delete_object_tagging()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.delete_objects" title="S3.Client.delete_objects"><tt class="xref py py-meth docutils literal"><span class="pre">delete_objects()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.generate_presigned_post" title="S3.Client.generate_presigned_post"><tt class="xref py py-meth docutils literal"><span class="pre">generate_presigned_post()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.generate_presigned_url" title="S3.Client.generate_presigned_url"><tt class="xref py py-meth docutils literal"><span class="pre">generate_presigned_url()</span></tt></a></li>
@@ -192,11 +190,8 @@
 <li><a class="reference internal" href="#S3.Client.get_bucket_metrics_configuration" title="S3.Client.get_bucket_metrics_configuration"><tt class="xref py py-meth docutils literal"><span class="pre">get_bucket_metrics_configuration()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.get_bucket_replication" title="S3.Client.get_bucket_replication"><tt class="xref py py-meth docutils literal"><span class="pre">get_bucket_replication()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.get_bucket_request_payment" title="S3.Client.get_bucket_request_payment"><tt class="xref py py-meth docutils literal"><span class="pre">get_bucket_request_payment()</span></tt></a></li>
-<li><a class="reference internal" href="#S3.Client.get_bucket_tagging" title="S3.Client.get_bucket_tagging"><tt class="xref py py-meth docutils literal"><span class="pre">get_bucket_tagging()</span></tt></a></li>
-<li><a class="reference internal" href="#S3.Client.get_bucket_versioning" title="S3.Client.get_bucket_versioning"><tt class="xref py py-meth docutils literal"><span class="pre">get_bucket_versioning()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.get_object" title="S3.Client.get_object"><tt class="xref py py-meth docutils literal"><span class="pre">get_object()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.get_object_acl" title="S3.Client.get_object_acl"><tt class="xref py py-meth docutils literal"><span class="pre">get_object_acl()</span></tt></a></li>
-<li><a class="reference internal" href="#S3.Client.get_object_tagging" title="S3.Client.get_object_tagging"><tt class="xref py py-meth docutils literal"><span class="pre">get_object_tagging()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.get_object_torrent" title="S3.Client.get_object_torrent"><tt class="xref py py-meth docutils literal"><span class="pre">get_object_torrent()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.get_paginator" title="S3.Client.get_paginator"><tt class="xref py py-meth docutils literal"><span class="pre">get_paginator()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.get_waiter" title="S3.Client.get_waiter"><tt class="xref py py-meth docutils literal"><span class="pre">get_waiter()</span></tt></a></li>
@@ -207,7 +202,6 @@
 <li><a class="reference internal" href="#S3.Client.list_bucket_metrics_configurations" title="S3.Client.list_bucket_metrics_configurations"><tt class="xref py py-meth docutils literal"><span class="pre">list_bucket_metrics_configurations()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.list_buckets" title="S3.Client.list_buckets"><tt class="xref py py-meth docutils literal"><span class="pre">list_buckets()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.list_multipart_uploads" title="S3.Client.list_multipart_uploads"><tt class="xref py py-meth docutils literal"><span class="pre">list_multipart_uploads()</span></tt></a></li>
-<li><a class="reference internal" href="#S3.Client.list_object_versions" title="S3.Client.list_object_versions"><tt class="xref py py-meth docutils literal"><span class="pre">list_object_versions()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.list_objects" title="S3.Client.list_objects"><tt class="xref py py-meth docutils literal"><span class="pre">list_objects()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.list_objects_v2" title="S3.Client.list_objects_v2"><tt class="xref py py-meth docutils literal"><span class="pre">list_objects_v2()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.list_parts" title="S3.Client.list_parts"><tt class="xref py py-meth docutils literal"><span class="pre">list_parts()</span></tt></a></li>
@@ -219,11 +213,8 @@
 <li><a class="reference internal" href="#S3.Client.put_bucket_metrics_configuration" title="S3.Client.put_bucket_metrics_configuration"><tt class="xref py py-meth docutils literal"><span class="pre">put_bucket_metrics_configuration()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.put_bucket_replication" title="S3.Client.put_bucket_replication"><tt class="xref py py-meth docutils literal"><span class="pre">put_bucket_replication()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.put_bucket_request_payment" title="S3.Client.put_bucket_request_payment"><tt class="xref py py-meth docutils literal"><span class="pre">put_bucket_request_payment()</span></tt></a></li>
-<li><a class="reference internal" href="#S3.Client.put_bucket_tagging" title="S3.Client.put_bucket_tagging"><tt class="xref py py-meth docutils literal"><span class="pre">put_bucket_tagging()</span></tt></a></li>
-<li><a class="reference internal" href="#S3.Client.put_bucket_versioning" title="S3.Client.put_bucket_versioning"><tt class="xref py py-meth docutils literal"><span class="pre">put_bucket_versioning()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.put_object" title="S3.Client.put_object"><tt class="xref py py-meth docutils literal"><span class="pre">put_object()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.put_object_acl" title="S3.Client.put_object_acl"><tt class="xref py py-meth docutils literal"><span class="pre">put_object_acl()</span></tt></a></li>
-<li><a class="reference internal" href="#S3.Client.put_object_tagging" title="S3.Client.put_object_tagging"><tt class="xref py py-meth docutils literal"><span class="pre">put_object_tagging()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.upload_part" title="S3.Client.upload_part"><tt class="xref py py-meth docutils literal"><span class="pre">upload_part()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.upload_part_copy" title="S3.Client.upload_part_copy"><tt class="xref py py-meth docutils literal"><span class="pre">upload_part_copy()</span></tt></a></li>
 </ul>
@@ -246,7 +237,7 @@
 <li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
 <li><strong>Key</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
 <li><strong>UploadId</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests. Documentation on downloading objects from requester pays buckets can be found at <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html">http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html</a></li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -322,7 +313,7 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 </ul>
 </li>
 <li><strong>UploadId</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests. Documentation on downloading objects from requester pays buckets can be found at <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html">http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html</a></li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -335,7 +326,6 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
     <span class="s1">&#39;Expiration&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;ETag&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;ServerSideEncryption&#39;</span><span class="p">:</span> <span class="s1">&#39;AES256&#39;</span><span class="o">|</span><span class="s1">&#39;aws:kms&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;VersionId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;SSEKMSKeyId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;RequestCharged&#39;</span><span class="p">:</span> <span class="s1">&#39;requester&#39;</span>
 <span class="p">}</span>
@@ -350,7 +340,6 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 <li><strong>Expiration</strong> <em>(string) --</em> If the object expiration is configured, this will contain the expiration date (expiry-date) and rule ID (rule-id). The value of rule-id is URL encoded.</li>
 <li><strong>ETag</strong> <em>(string) --</em> Entity tag of the object.</li>
 <li><strong>ServerSideEncryption</strong> <em>(string) --</em> The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).</li>
-<li><strong>VersionId</strong> <em>(string) --</em> Version of the object.</li>
 <li><strong>SSEKMSKeyId</strong> <em>(string) --</em> If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.</li>
 <li><strong>RequestCharged</strong> <em>(string) --</em> If present, indicates that the requester was successfully charged for the request.</li>
 </ul>
@@ -374,7 +363,7 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
     <span class="n">ContentEncoding</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">ContentLanguage</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">ContentType</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">CopySource</span><span class="o">=</span><span class="s1">&#39;string&#39;</span> <span class="ow">or</span> <span class="p">{</span><span class="s1">&#39;Bucket&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="s1">&#39;VersionId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">},</span>
+    <span class="n">CopySource</span><span class="o">=</span><span class="s1">&#39;string&#39;</span> <span class="ow">or</span> <span class="p">{</span><span class="s1">&#39;Bucket&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">},</span>
     <span class="n">CopySourceIfMatch</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">CopySourceIfModifiedSince</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
     <span class="n">CopySourceIfNoneMatch</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
@@ -389,7 +378,6 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
         <span class="s1">&#39;string&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
     <span class="p">},</span>
     <span class="n">MetadataDirective</span><span class="o">=</span><span class="s1">&#39;COPY&#39;</span><span class="o">|</span><span class="s1">&#39;REPLACE&#39;</span><span class="p">,</span>
-    <span class="n">TaggingDirective</span><span class="o">=</span><span class="s1">&#39;COPY&#39;</span><span class="o">|</span><span class="s1">&#39;REPLACE&#39;</span><span class="p">,</span>
     <span class="n">ServerSideEncryption</span><span class="o">=</span><span class="s1">&#39;AES256&#39;</span><span class="o">|</span><span class="s1">&#39;aws:kms&#39;</span><span class="p">,</span>
     <span class="n">StorageClass</span><span class="o">=</span><span class="s1">&#39;STANDARD&#39;</span><span class="o">|</span><span class="s1">&#39;REDUCED_REDUNDANCY&#39;</span><span class="o">|</span><span class="s1">&#39;STANDARD_IA&#39;</span><span class="p">,</span>
     <span class="n">WebsiteRedirectLocation</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
@@ -398,8 +386,7 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
     <span class="n">SSEKMSKeyId</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">CopySourceSSECustomerAlgorithm</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">CopySourceSSECustomerKey</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">RequestPayer</span><span class="o">=</span><span class="s1">&#39;requester&#39;</span><span class="p">,</span>
-    <span class="n">Tagging</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
+    <span class="n">RequestPayer</span><span class="o">=</span><span class="s1">&#39;requester&#39;</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -412,7 +399,7 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 <li><strong>ContentEncoding</strong> (<em>string</em>) -- Specifies what content encodings have been applied to the object and thus what decoding mechanisms must be applied to obtain the media-type referenced by the Content-Type header field.</li>
 <li><strong>ContentLanguage</strong> (<em>string</em>) -- The language the content is in.</li>
 <li><strong>ContentType</strong> (<em>string</em>) -- A standard MIME type describing the format of the object data.</li>
-<li><strong>CopySource</strong> (<em>str or dict</em>) -- <strong>[REQUIRED]</strong> The name of the source bucket, key name of the source object, and optional version ID of the source object.  You can either provide this value as a string or a dictionary.  The string form is {bucket}/{key} or {bucket}/{key}?versionId={versionId} if you want to copy a specific version.  You can also provide this value as a dictionary.  The dictionary format is recommended over the string format because it is more explicit.  The dictionary format is: {'Bucket': 'bucket', 'Key': 'key', 'VersionId': 'id'}.  Note that the VersionId key is optional and may be omitted.</li>
+<li><strong>CopySource</strong> (<em>str or dict</em>) -- <strong>[REQUIRED]</strong> The name of the source bucket, key name of the source objectYou can either provide this value as a string or a dictionary.  The string form is {bucket}/{key}.  You can also provide this value as a dictionary.  The dictionary format is recommended over the string format because it is more explicit.  The dictionary format is: {'Bucket': 'bucket', 'Key': 'key'}.</li>
 <li><strong>CopySourceIfMatch</strong> (<em>string</em>) -- Copies the object if its entity tag (ETag) matches the specified tag.</li>
 <li><strong>CopySourceIfModifiedSince</strong> (<em>datetime</em>) -- Copies the object if it has been modified since the specified time.</li>
 <li><strong>CopySourceIfNoneMatch</strong> (<em>string</em>) -- Copies the object if its entity tag (ETag) is different than the specified ETag.</li>
@@ -432,19 +419,17 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 </ul>
 </li>
 <li><strong>MetadataDirective</strong> (<em>string</em>) -- Specifies whether the metadata is copied from the source object or replaced with metadata provided in the request.</li>
-<li><strong>TaggingDirective</strong> (<em>string</em>) -- Specifies whether the object tag-set are copied from the source object or replaced with tag-set provided in the request.</li>
 <li><strong>ServerSideEncryption</strong> (<em>string</em>) -- The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).</li>
 <li><strong>StorageClass</strong> (<em>string</em>) -- The type of storage to use for the object. Defaults to 'STANDARD'.</li>
 <li><strong>WebsiteRedirectLocation</strong> (<em>string</em>) -- If the bucket is configured as a website, redirects requests for this object to another object in the same bucket or to an external URL. Amazon S3 stores the value of this header in the object metadata.</li>
 <li><strong>SSECustomerAlgorithm</strong> (<em>string</em>) -- Specifies the algorithm to use to when encrypting the object (e.g., AES256).</li>
 <li><strong>SSECustomerKey</strong> (<em>string</em>) -- Specifies the customer-provided encryption key for Amazon S3 to use in encrypting data. This value is used to store the object and then it is discarded; Amazon does not store the encryption key. The key must be appropriate for use with the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm header.</li>
 <li><strong>SSECustomerKeyMD5</strong> (<em>string</em>) -- Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure the encryption key was transmitted without error.      Please note that this parameter is automatically populated if it is not provided. Including this parameter is not required</li>
-<li><strong>SSEKMSKeyId</strong> (<em>string</em>) -- Specifies the AWS KMS key ID to use for object encryption. All GET and PUT requests for an object protected by AWS KMS will fail if not made via SSL or using SigV4. Documentation on configuring any of the officially supported AWS SDKs and CLI can be found at <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingAWSSDK.html#specify-signature-version">http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingAWSSDK.html#specify-signature-version</a></li>
+<li><strong>SSEKMSKeyId</strong> (<em>string</em>) -- Specifies the AWS KMS key ID to use for object encryption. All GET and PUT requests for an object protected by AWS KMS will fail if not made via SSL or using SigV4.</li>
 <li><strong>CopySourceSSECustomerAlgorithm</strong> (<em>string</em>) -- Specifies the algorithm to use when decrypting the source object (e.g., AES256).</li>
 <li><strong>CopySourceSSECustomerKey</strong> (<em>string</em>) -- Specifies the customer-provided encryption key for Amazon S3 to use to decrypt the source object. The encryption key provided in this header must be one that was used when the source object was created.</li>
 <li><strong>CopySourceSSECustomerKeyMD5</strong> (<em>string</em>) -- Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure the encryption key was transmitted without error.      Please note that this parameter is automatically populated if it is not provided. Including this parameter is not required</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests. Documentation on downloading objects from requester pays buckets can be found at <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html">http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html</a></li>
-<li><strong>Tagging</strong> (<em>string</em>) -- The tag-set for the object destination object this value must be used in conjunction with the TaggingDirective. The tag-set must be encoded as URL Query parameters</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -456,8 +441,6 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
         <span class="s1">&#39;LastModified&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="p">},</span>
     <span class="s1">&#39;Expiration&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;CopySourceVersionId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;VersionId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;ServerSideEncryption&#39;</span><span class="p">:</span> <span class="s1">&#39;AES256&#39;</span><span class="o">|</span><span class="s1">&#39;aws:kms&#39;</span><span class="p">,</span>
     <span class="s1">&#39;SSECustomerAlgorithm&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;SSECustomerKeyMD5&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
@@ -475,8 +458,6 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 </ul>
 </li>
 <li><strong>Expiration</strong> <em>(string) --</em> If the object expiration is configured, the response includes this header.</li>
-<li><strong>CopySourceVersionId</strong> <em>(string) --</em></li>
-<li><strong>VersionId</strong> <em>(string) --</em> Version ID of the newly created copy.</li>
 <li><strong>ServerSideEncryption</strong> <em>(string) --</em> The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).</li>
 <li><strong>SSECustomerAlgorithm</strong> <em>(string) --</em> If server-side encryption with a customer-provided encryption key was requested, the response will include this header confirming the encryption algorithm used.</li>
 <li><strong>SSECustomerKeyMD5</strong> <em>(string) --</em> If server-side encryption with a customer-provided encryption key was requested, the response will include this header to provide round trip message integrity verification of the customer-provided encryption key.</li>
@@ -612,8 +593,8 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 <li><strong>SSECustomerAlgorithm</strong> (<em>string</em>) -- Specifies the algorithm to use to when encrypting the object (e.g., AES256).</li>
 <li><strong>SSECustomerKey</strong> (<em>string</em>) -- Specifies the customer-provided encryption key for Amazon S3 to use in encrypting data. This value is used to store the object and then it is discarded; Amazon does not store the encryption key. The key must be appropriate for use with the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm header.</li>
 <li><strong>SSECustomerKeyMD5</strong> (<em>string</em>) -- Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure the encryption key was transmitted without error.      Please note that this parameter is automatically populated if it is not provided. Including this parameter is not required</li>
-<li><strong>SSEKMSKeyId</strong> (<em>string</em>) -- Specifies the AWS KMS key ID to use for object encryption. All GET and PUT requests for an object protected by AWS KMS will fail if not made via SSL or using SigV4. Documentation on configuring any of the officially supported AWS SDKs and CLI can be found at <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingAWSSDK.html#specify-signature-version">http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingAWSSDK.html#specify-signature-version</a></li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests. Documentation on downloading objects from requester pays buckets can be found at <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html">http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html</a></li>
+<li><strong>SSEKMSKeyId</strong> (<em>string</em>) -- Specifies the AWS KMS key ID to use for object encryption. All GET and PUT requests for an object protected by AWS KMS will fail if not made via SSL or using SigV4.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -801,22 +782,6 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 </dd></dl>
 
 <dl class="method">
-<dt id="S3.Client.delete_bucket_tagging">
-<tt class="descname">delete_bucket_tagging</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.delete_bucket_tagging" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deletes the tags from the bucket.</p>
-<p><strong>Request Syntax</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">delete_bucket_tagging</span><span class="p">(</span>
-    <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></dd>
-<dt class="field-name">Returns</dt><dd class="field-body">None</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
 <dt id="S3.Client.delete_bucket_website">
 <tt class="descname">delete_bucket_website</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.delete_bucket_website" title="Permalink to this definition">¶</a></dt>
 <dd><p>This operation removes the website configuration from the bucket.</p>
@@ -841,7 +806,6 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
     <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">Key</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">MFA</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">VersionId</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">RequestPayer</span><span class="o">=</span><span class="s1">&#39;requester&#39;</span>
 <span class="p">)</span>
 </pre></div>
@@ -851,8 +815,7 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 <li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
 <li><strong>Key</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
 <li><strong>MFA</strong> (<em>string</em>) -- The concatenation of the authentication device's serial number, a space, and the value that is displayed on your authentication device.</li>
-<li><strong>VersionId</strong> (<em>string</em>) -- VersionId used to reference a specific version of the object.</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests. Documentation on downloading objects from requester pays buckets can be found at <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html">http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html</a></li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -860,7 +823,6 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 <dt class="field-name">Returns</dt><dd class="field-body"><p class="first last"><p><strong>Response Syntax</strong></p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s1">&#39;DeleteMarker&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="o">|</span><span class="bp">False</span><span class="p">,</span>
-    <span class="s1">&#39;VersionId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;RequestCharged&#39;</span><span class="p">:</span> <span class="s1">&#39;requester&#39;</span>
 <span class="p">}</span>
 </pre></div>
@@ -869,47 +831,7 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 <ul class="simple">
 <li><em>(dict) --</em><ul>
 <li><strong>DeleteMarker</strong> <em>(boolean) --</em> Specifies whether the versioned object that was permanently deleted was (true) or was not (false) a delete marker.</li>
-<li><strong>VersionId</strong> <em>(string) --</em> Returns the version ID of the delete marker created as a result of the DELETE operation.</li>
 <li><strong>RequestCharged</strong> <em>(string) --</em> If present, indicates that the requester was successfully charged for the request.</li>
-</ul>
-</li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="S3.Client.delete_object_tagging">
-<tt class="descname">delete_object_tagging</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.delete_object_tagging" title="Permalink to this definition">¶</a></dt>
-<dd><p>Removes the tag-set from an existing object.</p>
-<p><strong>Request Syntax</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">delete_object_tagging</span><span class="p">(</span>
-    <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">Key</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">VersionId</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
-<li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
-<li><strong>Key</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
-<li><strong>VersionId</strong> (<em>string</em>) -- The versionId of the object that the tag-set will be removed from.</li>
-</ul>
-</dd>
-<dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
-</dd>
-<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last"><p><strong>Response Syntax</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s1">&#39;VersionId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Response Structure</strong></p>
-<ul class="simple">
-<li><em>(dict) --</em><ul>
-<li><strong>VersionId</strong> <em>(string) --</em> The versionId of the object the tag-set was removed from.</li>
 </ul>
 </li>
 </ul>
@@ -928,8 +850,7 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
     <span class="n">Delete</span><span class="o">=</span><span class="p">{</span>
         <span class="s1">&#39;Objects&#39;</span><span class="p">:</span> <span class="p">[</span>
             <span class="p">{</span>
-                <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;VersionId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
+                <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
             <span class="p">},</span>
         <span class="p">],</span>
         <span class="s1">&#39;Quiet&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="o">|</span><span class="bp">False</span>
@@ -947,7 +868,6 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 <li><strong>Objects</strong> <em>(list) --</em> <strong>[REQUIRED]</strong><ul>
 <li><em>(dict) --</em><ul>
 <li><strong>Key</strong> <em>(string) --</em> <strong>[REQUIRED]</strong> Key name of the object to delete.</li>
-<li><strong>VersionId</strong> <em>(string) --</em> VersionId for the specific version of the object to delete.</li>
 </ul>
 </li>
 </ul>
@@ -956,7 +876,7 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 </ul>
 </li>
 <li><strong>MFA</strong> (<em>string</em>) -- The concatenation of the authentication device's serial number, a space, and the value that is displayed on your authentication device.</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests. Documentation on downloading objects from requester pays buckets can be found at <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html">http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html</a></li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -966,16 +886,13 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
     <span class="s1">&#39;Deleted&#39;</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
             <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;VersionId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;DeleteMarker&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="o">|</span><span class="bp">False</span><span class="p">,</span>
-            <span class="s1">&#39;DeleteMarkerVersionId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
+            <span class="s1">&#39;DeleteMarker&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="o">|</span><span class="bp">False</span>
         <span class="p">},</span>
     <span class="p">],</span>
     <span class="s1">&#39;RequestCharged&#39;</span><span class="p">:</span> <span class="s1">&#39;requester&#39;</span><span class="p">,</span>
     <span class="s1">&#39;Errors&#39;</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
             <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;VersionId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
             <span class="s1">&#39;Code&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
             <span class="s1">&#39;Message&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
         <span class="p">},</span>
@@ -989,9 +906,7 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 <li><strong>Deleted</strong> <em>(list) --</em><ul>
 <li><em>(dict) --</em><ul>
 <li><strong>Key</strong> <em>(string) --</em></li>
-<li><strong>VersionId</strong> <em>(string) --</em></li>
 <li><strong>DeleteMarker</strong> <em>(boolean) --</em></li>
-<li><strong>DeleteMarkerVersionId</strong> <em>(string) --</em></li>
 </ul>
 </li>
 </ul>
@@ -1000,7 +915,6 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 <li><strong>Errors</strong> <em>(list) --</em><ul>
 <li><em>(dict) --</em><ul>
 <li><strong>Key</strong> <em>(string) --</em></li>
-<li><strong>VersionId</strong> <em>(string) --</em></li>
 <li><strong>Code</strong> <em>(string) --</em></li>
 <li><strong>Message</strong> <em>(string) --</em></li>
 </ul>
@@ -1225,13 +1139,7 @@ default, the http method is whatever is used in the method's model.</li>
                 <span class="s1">&#39;Value&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
             <span class="p">},</span>
             <span class="s1">&#39;And&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Tags&#39;</span><span class="p">:</span> <span class="p">[</span>
-                    <span class="p">{</span>
-                        <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;Value&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
-                    <span class="p">},</span>
-                <span class="p">]</span>
+                <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
             <span class="p">}</span>
         <span class="p">},</span>
         <span class="s1">&#39;StorageClassAnalysis&#39;</span><span class="p">:</span> <span class="p">{</span>
@@ -1265,14 +1173,6 @@ default, the http method is whatever is used in the method's model.</li>
 </li>
 <li><strong>And</strong> <em>(dict) --</em> A conjunction (logical AND) of predicates, which is used in evaluating an analytics filter. The operator must have at least two predicates.<ul>
 <li><strong>Prefix</strong> <em>(string) --</em> The prefix to use when evaluating an AND predicate.</li>
-<li><strong>Tags</strong> <em>(list) --</em> The list of tags to use when evaluating an AND predicate.<ul>
-<li><em>(dict) --</em><ul>
-<li><strong>Key</strong> <em>(string) --</em> Name of the tag.</li>
-<li><strong>Value</strong> <em>(string) --</em> Value of the tag.</li>
-</ul>
-</li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -1406,7 +1306,6 @@ default, the http method is whatever is used in the method's model.</li>
             <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
         <span class="p">},</span>
         <span class="s1">&#39;Id&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;IncludedObjectVersions&#39;</span><span class="p">:</span> <span class="s1">&#39;All&#39;</span><span class="o">|</span><span class="s1">&#39;Current&#39;</span><span class="p">,</span>
         <span class="s1">&#39;OptionalFields&#39;</span><span class="p">:</span> <span class="p">[</span>
             <span class="s1">&#39;Size&#39;</span><span class="o">|</span><span class="s1">&#39;LastModifiedDate&#39;</span><span class="o">|</span><span class="s1">&#39;StorageClass&#39;</span><span class="o">|</span><span class="s1">&#39;ETag&#39;</span><span class="o">|</span><span class="s1">&#39;IsMultipartUploaded&#39;</span><span class="o">|</span><span class="s1">&#39;ReplicationStatus&#39;</span><span class="p">,</span>
         <span class="p">],</span>
@@ -1437,7 +1336,6 @@ default, the http method is whatever is used in the method's model.</li>
 </ul>
 </li>
 <li><strong>Id</strong> <em>(string) --</em> The ID used to identify the inventory configuration.</li>
-<li><strong>IncludedObjectVersions</strong> <em>(string) --</em> Specifies which object version(s) to included in the inventory results.</li>
 <li><strong>OptionalFields</strong> <em>(list) --</em> Contains the optional fields that are included in the inventory results.<ul>
 <li><em>(string) --</em></li>
 </ul>
@@ -1515,13 +1413,7 @@ default, the http method is whatever is used in the method's model.</li>
                 <span class="s1">&#39;Value&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
             <span class="p">},</span>
             <span class="s1">&#39;And&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Tags&#39;</span><span class="p">:</span> <span class="p">[</span>
-                    <span class="p">{</span>
-                        <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;Value&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
-                    <span class="p">},</span>
-                <span class="p">]</span>
+                <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -1542,14 +1434,6 @@ default, the http method is whatever is used in the method's model.</li>
 </li>
 <li><strong>And</strong> <em>(dict) --</em> A conjunction (logical AND) of predicates, which is used in evaluating a metrics filter. The operator must have at least two predicates, and an object must match all of the predicates in order for the filter to apply.<ul>
 <li><strong>Prefix</strong> <em>(string) --</em> The prefix used when evaluating an AND predicate.</li>
-<li><strong>Tags</strong> <em>(list) --</em> The list of tags used when evaluating an AND predicate.<ul>
-<li><em>(dict) --</em><ul>
-<li><strong>Key</strong> <em>(string) --</em> Name of the tag.</li>
-<li><strong>Value</strong> <em>(string) --</em> Value of the tag.</li>
-</ul>
-</li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -1653,78 +1537,6 @@ default, the http method is whatever is used in the method's model.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="S3.Client.get_bucket_tagging">
-<tt class="descname">get_bucket_tagging</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.get_bucket_tagging" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the tag set associated with the bucket.</p>
-<p><strong>Request Syntax</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_bucket_tagging</span><span class="p">(</span>
-    <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></dd>
-<dt class="field-name">Return type</dt><dd class="field-body">dict</dd>
-<dt class="field-name">Returns</dt><dd class="field-body"><strong>Response Syntax</strong><div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s1">&#39;TagSet&#39;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span>
-            <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;Value&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
-        <span class="p">},</span>
-    <span class="p">]</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Response Structure</strong></p>
-<ul class="simple">
-<li><em>(dict) --</em><ul>
-<li><strong>TagSet</strong> <em>(list) --</em><ul>
-<li><em>(dict) --</em><ul>
-<li><strong>Key</strong> <em>(string) --</em> Name of the tag.</li>
-<li><strong>Value</strong> <em>(string) --</em> Value of the tag.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="S3.Client.get_bucket_versioning">
-<tt class="descname">get_bucket_versioning</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.get_bucket_versioning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the versioning state of a bucket.</p>
-<p><strong>Request Syntax</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_bucket_versioning</span><span class="p">(</span>
-    <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></dd>
-<dt class="field-name">Return type</dt><dd class="field-body">dict</dd>
-<dt class="field-name">Returns</dt><dd class="field-body"><strong>Response Syntax</strong><div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s1">&#39;Status&#39;</span><span class="p">:</span> <span class="s1">&#39;Enabled&#39;</span><span class="o">|</span><span class="s1">&#39;Suspended&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MFADelete&#39;</span><span class="p">:</span> <span class="s1">&#39;Enabled&#39;</span><span class="o">|</span><span class="s1">&#39;Disabled&#39;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Response Structure</strong></p>
-<ul class="simple">
-<li><em>(dict) --</em><ul>
-<li><strong>Status</strong> <em>(string) --</em> The versioning state of the bucket.</li>
-<li><strong>MFADelete</strong> <em>(string) --</em> Specifies whether MFA delete is enabled in the bucket versioning configuration. This element is only returned if the bucket has been configured with MFA delete. If the bucket has never been so configured, this element is not returned.</li>
-</ul>
-</li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
 <dt id="S3.Client.get_object">
 <tt class="descname">get_object</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.get_object" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves objects from Amazon S3.</p>
@@ -1743,7 +1555,6 @@ default, the http method is whatever is used in the method's model.</li>
     <span class="n">ResponseContentLanguage</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">ResponseContentType</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">ResponseExpires</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-    <span class="n">VersionId</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">SSECustomerAlgorithm</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">SSECustomerKey</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">RequestPayer</span><span class="o">=</span><span class="s1">&#39;requester&#39;</span><span class="p">,</span>
@@ -1766,11 +1577,10 @@ default, the http method is whatever is used in the method's model.</li>
 <li><strong>ResponseContentLanguage</strong> (<em>string</em>) -- Sets the Content-Language header of the response.</li>
 <li><strong>ResponseContentType</strong> (<em>string</em>) -- Sets the Content-Type header of the response.</li>
 <li><strong>ResponseExpires</strong> (<em>datetime</em>) -- Sets the Expires header of the response.</li>
-<li><strong>VersionId</strong> (<em>string</em>) -- VersionId used to reference a specific version of the object.</li>
 <li><strong>SSECustomerAlgorithm</strong> (<em>string</em>) -- Specifies the algorithm to use to when encrypting the object (e.g., AES256).</li>
 <li><strong>SSECustomerKey</strong> (<em>string</em>) -- Specifies the customer-provided encryption key for Amazon S3 to use in encrypting data. This value is used to store the object and then it is discarded; Amazon does not store the encryption key. The key must be appropriate for use with the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm header.</li>
 <li><strong>SSECustomerKeyMD5</strong> (<em>string</em>) -- Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure the encryption key was transmitted without error.      Please note that this parameter is automatically populated if it is not provided. Including this parameter is not required</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests. Documentation on downloading objects from requester pays buckets can be found at <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html">http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html</a></li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
 <li><strong>PartNumber</strong> (<em>integer</em>) -- Part number of the object being read. This is a positive integer between 1 and 10,000. Effectively performs a 'ranged' GET request for the part specified. Useful for downloading just a part of an object.</li>
 </ul>
 </dd>
@@ -1787,7 +1597,6 @@ default, the http method is whatever is used in the method's model.</li>
     <span class="s1">&#39;ContentLength&#39;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
     <span class="s1">&#39;ETag&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;MissingMeta&#39;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
-    <span class="s1">&#39;VersionId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;CacheControl&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;ContentDisposition&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;ContentEncoding&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
@@ -1806,8 +1615,7 @@ default, the http method is whatever is used in the method's model.</li>
     <span class="s1">&#39;StorageClass&#39;</span><span class="p">:</span> <span class="s1">&#39;STANDARD&#39;</span><span class="o">|</span><span class="s1">&#39;REDUCED_REDUNDANCY&#39;</span><span class="o">|</span><span class="s1">&#39;STANDARD_IA&#39;</span><span class="p">,</span>
     <span class="s1">&#39;RequestCharged&#39;</span><span class="p">:</span> <span class="s1">&#39;requester&#39;</span><span class="p">,</span>
     <span class="s1">&#39;ReplicationStatus&#39;</span><span class="p">:</span> <span class="s1">&#39;COMPLETE&#39;</span><span class="o">|</span><span class="s1">&#39;PENDING&#39;</span><span class="o">|</span><span class="s1">&#39;FAILED&#39;</span><span class="o">|</span><span class="s1">&#39;REPLICA&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;PartsCount&#39;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
-    <span class="s1">&#39;TagCount&#39;</span><span class="p">:</span> <span class="mi">123</span>
+    <span class="s1">&#39;PartsCount&#39;</span><span class="p">:</span> <span class="mi">123</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1823,7 +1631,6 @@ default, the http method is whatever is used in the method's model.</li>
 <li><strong>ContentLength</strong> <em>(integer) --</em> Size of the body in bytes.</li>
 <li><strong>ETag</strong> <em>(string) --</em> An ETag is an opaque identifier assigned by a web server to a specific version of a resource found at a URL</li>
 <li><strong>MissingMeta</strong> <em>(integer) --</em> This is set to the number of metadata entries not returned in x-amz-meta headers. This can happen if you create metadata using an API like SOAP that supports more flexible metadata than the REST API. For example, using SOAP, you can create metadata whose values are not legal HTTP headers.</li>
-<li><strong>VersionId</strong> <em>(string) --</em> Version of the object.</li>
 <li><strong>CacheControl</strong> <em>(string) --</em> Specifies caching behavior along the request/reply chain.</li>
 <li><strong>ContentDisposition</strong> <em>(string) --</em> Specifies presentational information for the object.</li>
 <li><strong>ContentEncoding</strong> <em>(string) --</em> Specifies what content encodings have been applied to the object and thus what decoding mechanisms must be applied to obtain the media-type referenced by the Content-Type header field.</li>
@@ -1847,7 +1654,6 @@ default, the http method is whatever is used in the method's model.</li>
 <li><strong>RequestCharged</strong> <em>(string) --</em> If present, indicates that the requester was successfully charged for the request.</li>
 <li><strong>ReplicationStatus</strong> <em>(string) --</em></li>
 <li><strong>PartsCount</strong> <em>(integer) --</em> The count of parts this object has.</li>
-<li><strong>TagCount</strong> <em>(integer) --</em> The number of tags, if any, on the object.</li>
 </ul>
 </li>
 </ul>
@@ -1864,7 +1670,6 @@ default, the http method is whatever is used in the method's model.</li>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_object_acl</span><span class="p">(</span>
     <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">Key</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">VersionId</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">RequestPayer</span><span class="o">=</span><span class="s1">&#39;requester&#39;</span>
 <span class="p">)</span>
 </pre></div>
@@ -1873,8 +1678,7 @@ default, the http method is whatever is used in the method's model.</li>
 <dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
 <li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
 <li><strong>Key</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
-<li><strong>VersionId</strong> (<em>string</em>) -- VersionId used to reference a specific version of the object.</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests. Documentation on downloading objects from requester pays buckets can be found at <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html">http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html</a></li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -1934,59 +1738,6 @@ default, the http method is whatever is used in the method's model.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="S3.Client.get_object_tagging">
-<tt class="descname">get_object_tagging</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.get_object_tagging" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the tag-set of an object.</p>
-<p><strong>Request Syntax</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_object_tagging</span><span class="p">(</span>
-    <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">Key</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">VersionId</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
-<li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
-<li><strong>Key</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
-<li><strong>VersionId</strong> (<em>string</em>) -- </li>
-</ul>
-</dd>
-<dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
-</dd>
-<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last"><p><strong>Response Syntax</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s1">&#39;VersionId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;TagSet&#39;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span>
-            <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;Value&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
-        <span class="p">},</span>
-    <span class="p">]</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Response Structure</strong></p>
-<ul class="simple">
-<li><em>(dict) --</em><ul>
-<li><strong>VersionId</strong> <em>(string) --</em></li>
-<li><strong>TagSet</strong> <em>(list) --</em><ul>
-<li><em>(dict) --</em><ul>
-<li><strong>Key</strong> <em>(string) --</em> Name of the tag.</li>
-<li><strong>Value</strong> <em>(string) --</em> Value of the tag.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
 <dt id="S3.Client.get_object_torrent">
 <tt class="descname">get_object_torrent</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.get_object_torrent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return torrent files from a bucket.</p>
@@ -2002,7 +1753,7 @@ default, the http method is whatever is used in the method's model.</li>
 <dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
 <li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
 <li><strong>Key</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests. Documentation on downloading objects from requester pays buckets can be found at <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html">http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html</a></li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -2095,7 +1846,6 @@ check if an operation is pageable.</dd>
     <span class="n">IfUnmodifiedSince</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
     <span class="n">Key</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">Range</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">VersionId</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">SSECustomerAlgorithm</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">SSECustomerKey</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">RequestPayer</span><span class="o">=</span><span class="s1">&#39;requester&#39;</span><span class="p">,</span>
@@ -2112,11 +1862,10 @@ check if an operation is pageable.</dd>
 <li><strong>IfUnmodifiedSince</strong> (<em>datetime</em>) -- Return the object only if it has not been modified since the specified time, otherwise return a 412 (precondition failed).</li>
 <li><strong>Key</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
 <li><strong>Range</strong> (<em>string</em>) -- Downloads the specified range bytes of an object. For more information about the HTTP Range header, go to <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35">http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35</a>.</li>
-<li><strong>VersionId</strong> (<em>string</em>) -- VersionId used to reference a specific version of the object.</li>
 <li><strong>SSECustomerAlgorithm</strong> (<em>string</em>) -- Specifies the algorithm to use to when encrypting the object (e.g., AES256).</li>
 <li><strong>SSECustomerKey</strong> (<em>string</em>) -- Specifies the customer-provided encryption key for Amazon S3 to use in encrypting data. This value is used to store the object and then it is discarded; Amazon does not store the encryption key. The key must be appropriate for use with the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm header.</li>
 <li><strong>SSECustomerKeyMD5</strong> (<em>string</em>) -- Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure the encryption key was transmitted without error.      Please note that this parameter is automatically populated if it is not provided. Including this parameter is not required</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests. Documentation on downloading objects from requester pays buckets can be found at <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html">http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html</a></li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
 <li><strong>PartNumber</strong> (<em>integer</em>) -- Part number of the object being read. This is a positive integer between 1 and 10,000. Effectively performs a 'ranged' HEAD request for the part specified. Useful querying about the size of the part and the number of parts in this object.</li>
 </ul>
 </dd>
@@ -2132,7 +1881,6 @@ check if an operation is pageable.</dd>
     <span class="s1">&#39;ContentLength&#39;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
     <span class="s1">&#39;ETag&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;MissingMeta&#39;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
-    <span class="s1">&#39;VersionId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;CacheControl&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;ContentDisposition&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;ContentEncoding&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
@@ -2165,7 +1913,6 @@ check if an operation is pageable.</dd>
 <li><strong>ContentLength</strong> <em>(integer) --</em> Size of the body in bytes.</li>
 <li><strong>ETag</strong> <em>(string) --</em> An ETag is an opaque identifier assigned by a web server to a specific version of a resource found at a URL</li>
 <li><strong>MissingMeta</strong> <em>(integer) --</em> This is set to the number of metadata entries not returned in x-amz-meta headers. This can happen if you create metadata using an API like SOAP that supports more flexible metadata than the REST API. For example, using SOAP, you can create metadata whose values are not legal HTTP headers.</li>
-<li><strong>VersionId</strong> <em>(string) --</em> Version of the object.</li>
 <li><strong>CacheControl</strong> <em>(string) --</em> Specifies caching behavior along the request/reply chain.</li>
 <li><strong>ContentDisposition</strong> <em>(string) --</em> Specifies presentational information for the object.</li>
 <li><strong>ContentEncoding</strong> <em>(string) --</em> Specifies what content encodings have been applied to the object and thus what decoding mechanisms must be applied to obtain the media-type referenced by the Content-Type header field.</li>
@@ -2230,13 +1977,7 @@ check if an operation is pageable.</dd>
                     <span class="s1">&#39;Value&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
                 <span class="p">},</span>
                 <span class="s1">&#39;And&#39;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;Tags&#39;</span><span class="p">:</span> <span class="p">[</span>
-                        <span class="p">{</span>
-                            <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-                            <span class="s1">&#39;Value&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
-                        <span class="p">},</span>
-                    <span class="p">]</span>
+                    <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
                 <span class="p">}</span>
             <span class="p">},</span>
             <span class="s1">&#39;StorageClassAnalysis&#39;</span><span class="p">:</span> <span class="p">{</span>
@@ -2275,14 +2016,6 @@ check if an operation is pageable.</dd>
 </li>
 <li><strong>And</strong> <em>(dict) --</em> A conjunction (logical AND) of predicates, which is used in evaluating an analytics filter. The operator must have at least two predicates.<ul>
 <li><strong>Prefix</strong> <em>(string) --</em> The prefix to use when evaluating an AND predicate.</li>
-<li><strong>Tags</strong> <em>(list) --</em> The list of tags to use when evaluating an AND predicate.<ul>
-<li><em>(dict) --</em><ul>
-<li><strong>Key</strong> <em>(string) --</em> Name of the tag.</li>
-<li><strong>Value</strong> <em>(string) --</em> Value of the tag.</li>
-</ul>
-</li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -2353,7 +2086,6 @@ check if an operation is pageable.</dd>
                 <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
             <span class="p">},</span>
             <span class="s1">&#39;Id&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;IncludedObjectVersions&#39;</span><span class="p">:</span> <span class="s1">&#39;All&#39;</span><span class="o">|</span><span class="s1">&#39;Current&#39;</span><span class="p">,</span>
             <span class="s1">&#39;OptionalFields&#39;</span><span class="p">:</span> <span class="p">[</span>
                 <span class="s1">&#39;Size&#39;</span><span class="o">|</span><span class="s1">&#39;LastModifiedDate&#39;</span><span class="o">|</span><span class="s1">&#39;StorageClass&#39;</span><span class="o">|</span><span class="s1">&#39;ETag&#39;</span><span class="o">|</span><span class="s1">&#39;IsMultipartUploaded&#39;</span><span class="o">|</span><span class="s1">&#39;ReplicationStatus&#39;</span><span class="p">,</span>
             <span class="p">],</span>
@@ -2389,7 +2121,6 @@ check if an operation is pageable.</dd>
 </ul>
 </li>
 <li><strong>Id</strong> <em>(string) --</em> The ID used to identify the inventory configuration.</li>
-<li><strong>IncludedObjectVersions</strong> <em>(string) --</em> Specifies which object version(s) to included in the inventory results.</li>
 <li><strong>OptionalFields</strong> <em>(list) --</em> Contains the optional fields that are included in the inventory results.<ul>
 <li><em>(string) --</em></li>
 </ul>
@@ -2446,13 +2177,7 @@ check if an operation is pageable.</dd>
                     <span class="s1">&#39;Value&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
                 <span class="p">},</span>
                 <span class="s1">&#39;And&#39;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;Tags&#39;</span><span class="p">:</span> <span class="p">[</span>
-                        <span class="p">{</span>
-                            <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-                            <span class="s1">&#39;Value&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
-                        <span class="p">},</span>
-                    <span class="p">]</span>
+                    <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">},</span>
@@ -2478,14 +2203,6 @@ check if an operation is pageable.</dd>
 </li>
 <li><strong>And</strong> <em>(dict) --</em> A conjunction (logical AND) of predicates, which is used in evaluating a metrics filter. The operator must have at least two predicates, and an object must match all of the predicates in order for the filter to apply.<ul>
 <li><strong>Prefix</strong> <em>(string) --</em> The prefix used when evaluating an AND predicate.</li>
-<li><strong>Tags</strong> <em>(list) --</em> The list of tags used when evaluating an AND predicate.<ul>
-<li><em>(dict) --</em><ul>
-<li><strong>Key</strong> <em>(string) --</em> Name of the tag.</li>
-<li><strong>Value</strong> <em>(string) --</em> Value of the tag.</li>
-</ul>
-</li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -2649,143 +2366,6 @@ check if an operation is pageable.</dd>
 </li>
 </ul>
 </li>
-<li><strong>CommonPrefixes</strong> <em>(list) --</em><ul>
-<li><em>(dict) --</em><ul>
-<li><strong>Prefix</strong> <em>(string) --</em></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><strong>EncodingType</strong> <em>(string) --</em> Encoding type used by Amazon S3 to encode object keys in the response.</li>
-</ul>
-</li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="S3.Client.list_object_versions">
-<tt class="descname">list_object_versions</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.list_object_versions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns metadata about all of the versions of objects in a bucket.</p>
-<p><strong>Request Syntax</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_object_versions</span><span class="p">(</span>
-    <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">Delimiter</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">EncodingType</span><span class="o">=</span><span class="s1">&#39;url&#39;</span><span class="p">,</span>
-    <span class="n">KeyMarker</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">MaxKeys</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span>
-    <span class="n">Prefix</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">VersionIdMarker</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
-<li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
-<li><strong>Delimiter</strong> (<em>string</em>) -- A delimiter is a character you use to group keys.</li>
-<li><strong>EncodingType</strong> (<em>string</em>) -- Requests Amazon S3 to encode the object keys in the response and specifies the encoding method to use. An object key may contain any Unicode character; however, XML 1.0 parser cannot parse some characters, such as characters with an ASCII value from 0 to 10. For characters that are not supported in XML 1.0, you can add this parameter to request that Amazon S3 encode the keys in the response.</li>
-<li><strong>KeyMarker</strong> (<em>string</em>) -- Specifies the key to start with when listing objects in a bucket.</li>
-<li><strong>MaxKeys</strong> (<em>integer</em>) -- Sets the maximum number of keys returned in the response. The response might contain fewer keys but will never contain more.</li>
-<li><strong>Prefix</strong> (<em>string</em>) -- Limits the response to keys that begin with the specified prefix.</li>
-<li><strong>VersionIdMarker</strong> (<em>string</em>) -- Specifies the object version you want to start listing from.</li>
-</ul>
-</dd>
-<dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
-</dd>
-<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last"><p><strong>Response Syntax</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s1">&#39;IsTruncated&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="o">|</span><span class="bp">False</span><span class="p">,</span>
-    <span class="s1">&#39;KeyMarker&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;VersionIdMarker&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;NextKeyMarker&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;NextVersionIdMarker&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Versions&#39;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span>
-            <span class="s1">&#39;ETag&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;Size&#39;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
-            <span class="s1">&#39;StorageClass&#39;</span><span class="p">:</span> <span class="s1">&#39;STANDARD&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;VersionId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;IsLatest&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="o">|</span><span class="bp">False</span><span class="p">,</span>
-            <span class="s1">&#39;LastModified&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-            <span class="s1">&#39;Owner&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;DisplayName&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;ID&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-    <span class="p">],</span>
-    <span class="s1">&#39;DeleteMarkers&#39;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span>
-            <span class="s1">&#39;Owner&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;DisplayName&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;ID&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
-            <span class="p">},</span>
-            <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;VersionId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;IsLatest&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="o">|</span><span class="bp">False</span><span class="p">,</span>
-            <span class="s1">&#39;LastModified&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="p">},</span>
-    <span class="p">],</span>
-    <span class="s1">&#39;Name&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Delimiter&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MaxKeys&#39;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
-    <span class="s1">&#39;CommonPrefixes&#39;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span>
-            <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
-        <span class="p">},</span>
-    <span class="p">],</span>
-    <span class="s1">&#39;EncodingType&#39;</span><span class="p">:</span> <span class="s1">&#39;url&#39;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Response Structure</strong></p>
-<ul class="simple">
-<li><em>(dict) --</em><ul>
-<li><strong>IsTruncated</strong> <em>(boolean) --</em> A flag that indicates whether or not Amazon S3 returned all of the results that satisfied the search criteria. If your results were truncated, you can make a follow-up paginated request using the NextKeyMarker and NextVersionIdMarker response parameters as a starting place in another request to return the rest of the results.</li>
-<li><strong>KeyMarker</strong> <em>(string) --</em> Marks the last Key returned in a truncated response.</li>
-<li><strong>VersionIdMarker</strong> <em>(string) --</em></li>
-<li><strong>NextKeyMarker</strong> <em>(string) --</em> Use this value for the key marker request parameter in a subsequent request.</li>
-<li><strong>NextVersionIdMarker</strong> <em>(string) --</em> Use this value for the next version id marker parameter in a subsequent request.</li>
-<li><strong>Versions</strong> <em>(list) --</em><ul>
-<li><em>(dict) --</em><ul>
-<li><strong>ETag</strong> <em>(string) --</em></li>
-<li><strong>Size</strong> <em>(integer) --</em> Size in bytes of the object.</li>
-<li><strong>StorageClass</strong> <em>(string) --</em> The class of storage used to store the object.</li>
-<li><strong>Key</strong> <em>(string) --</em> The object key.</li>
-<li><strong>VersionId</strong> <em>(string) --</em> Version ID of an object.</li>
-<li><strong>IsLatest</strong> <em>(boolean) --</em> Specifies whether the object is (true) or is not (false) the latest version of an object.</li>
-<li><strong>LastModified</strong> <em>(datetime) --</em> Date and time the object was last modified.</li>
-<li><strong>Owner</strong> <em>(dict) --</em><ul>
-<li><strong>DisplayName</strong> <em>(string) --</em></li>
-<li><strong>ID</strong> <em>(string) --</em></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><strong>DeleteMarkers</strong> <em>(list) --</em><ul>
-<li><em>(dict) --</em><ul>
-<li><strong>Owner</strong> <em>(dict) --</em><ul>
-<li><strong>DisplayName</strong> <em>(string) --</em></li>
-<li><strong>ID</strong> <em>(string) --</em></li>
-</ul>
-</li>
-<li><strong>Key</strong> <em>(string) --</em> The object key.</li>
-<li><strong>VersionId</strong> <em>(string) --</em> Version ID of an object.</li>
-<li><strong>IsLatest</strong> <em>(boolean) --</em> Specifies whether the object is (true) or is not (false) the latest version of an object.</li>
-<li><strong>LastModified</strong> <em>(datetime) --</em> Date and time the object was last modified.</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><strong>Name</strong> <em>(string) --</em></li>
-<li><strong>Prefix</strong> <em>(string) --</em></li>
-<li><strong>Delimiter</strong> <em>(string) --</em></li>
-<li><strong>MaxKeys</strong> <em>(integer) --</em></li>
 <li><strong>CommonPrefixes</strong> <em>(list) --</em><ul>
 <li><em>(dict) --</em><ul>
 <li><strong>Prefix</strong> <em>(string) --</em></li>
@@ -3040,7 +2620,7 @@ check if an operation is pageable.</dd>
 <li><strong>MaxParts</strong> (<em>integer</em>) -- Sets the maximum number of parts to return.</li>
 <li><strong>PartNumberMarker</strong> (<em>integer</em>) -- Specifies the part after which listing should begin. Only parts with higher part numbers will be listed.</li>
 <li><strong>UploadId</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong> Upload ID identifying the multipart upload whose parts are being listed.</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests. Documentation on downloading objects from requester pays buckets can be found at <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html">http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html</a></li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -3237,13 +2817,7 @@ check if an operation is pageable.</dd>
                 <span class="s1">&#39;Value&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
             <span class="p">},</span>
             <span class="s1">&#39;And&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Tags&#39;</span><span class="p">:</span> <span class="p">[</span>
-                    <span class="p">{</span>
-                        <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;Value&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
-                    <span class="p">},</span>
-                <span class="p">]</span>
+                <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
             <span class="p">}</span>
         <span class="p">},</span>
         <span class="s1">&#39;StorageClassAnalysis&#39;</span><span class="p">:</span> <span class="p">{</span>
@@ -3279,14 +2853,6 @@ check if an operation is pageable.</dd>
 </li>
 <li><strong>And</strong> <em>(dict) --</em> A conjunction (logical AND) of predicates, which is used in evaluating an analytics filter. The operator must have at least two predicates.<ul>
 <li><strong>Prefix</strong> <em>(string) --</em> The prefix to use when evaluating an AND predicate.</li>
-<li><strong>Tags</strong> <em>(list) --</em> The list of tags to use when evaluating an AND predicate.<ul>
-<li><em>(dict) --</em><ul>
-<li><strong>Key</strong> <em>(string) --</em> <strong>[REQUIRED]</strong> Name of the tag.</li>
-<li><strong>Value</strong> <em>(string) --</em> <strong>[REQUIRED]</strong> Value of the tag.</li>
-</ul>
-</li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -3406,7 +2972,6 @@ check if an operation is pageable.</dd>
             <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
         <span class="p">},</span>
         <span class="s1">&#39;Id&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;IncludedObjectVersions&#39;</span><span class="p">:</span> <span class="s1">&#39;All&#39;</span><span class="o">|</span><span class="s1">&#39;Current&#39;</span><span class="p">,</span>
         <span class="s1">&#39;OptionalFields&#39;</span><span class="p">:</span> <span class="p">[</span>
             <span class="s1">&#39;Size&#39;</span><span class="o">|</span><span class="s1">&#39;LastModifiedDate&#39;</span><span class="o">|</span><span class="s1">&#39;StorageClass&#39;</span><span class="o">|</span><span class="s1">&#39;ETag&#39;</span><span class="o">|</span><span class="s1">&#39;IsMultipartUploaded&#39;</span><span class="o">|</span><span class="s1">&#39;ReplicationStatus&#39;</span><span class="p">,</span>
         <span class="p">],</span>
@@ -3439,7 +3004,6 @@ check if an operation is pageable.</dd>
 </ul>
 </li>
 <li><strong>Id</strong> <em>(string) --</em> <strong>[REQUIRED]</strong> The ID used to identify the inventory configuration.</li>
-<li><strong>IncludedObjectVersions</strong> <em>(string) --</em> <strong>[REQUIRED]</strong> Specifies which object version(s) to included in the inventory results.</li>
 <li><strong>OptionalFields</strong> <em>(list) --</em> Contains the optional fields that are included in the inventory results.<ul>
 <li><em>(string) --</em></li>
 </ul>
@@ -3474,13 +3038,7 @@ check if an operation is pageable.</dd>
                 <span class="s1">&#39;Value&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
             <span class="p">},</span>
             <span class="s1">&#39;And&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Tags&#39;</span><span class="p">:</span> <span class="p">[</span>
-                    <span class="p">{</span>
-                        <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;Value&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
-                    <span class="p">},</span>
-                <span class="p">]</span>
+                <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -3503,14 +3061,6 @@ check if an operation is pageable.</dd>
 </li>
 <li><strong>And</strong> <em>(dict) --</em> A conjunction (logical AND) of predicates, which is used in evaluating a metrics filter. The operator must have at least two predicates, and an object must match all of the predicates in order for the filter to apply.<ul>
 <li><strong>Prefix</strong> <em>(string) --</em> The prefix used when evaluating an AND predicate.</li>
-<li><strong>Tags</strong> <em>(list) --</em> The list of tags used when evaluating an AND predicate.<ul>
-<li><em>(dict) --</em><ul>
-<li><strong>Key</strong> <em>(string) --</em> <strong>[REQUIRED]</strong> Name of the tag.</li>
-<li><strong>Value</strong> <em>(string) --</em> <strong>[REQUIRED]</strong> Value of the tag.</li>
-</ul>
-</li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -3580,7 +3130,7 @@ check if an operation is pageable.</dd>
 <dl class="method">
 <dt id="S3.Client.put_bucket_request_payment">
 <tt class="descname">put_bucket_request_payment</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.put_bucket_request_payment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the request payment configuration for a bucket. By default, the bucket owner pays for downloads from the bucket. This configuration parameter enables the bucket owner (only) to specify that the person requesting the download will be charged for the download. Documentation on requester pays buckets can be found at <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/RequesterPaysBuckets.html">http://docs.aws.amazon.com/AmazonS3/latest/dev/RequesterPaysBuckets.html</a></p>
+<dd><p>Sets the request payment configuration for a bucket. By default, the bucket owner pays for downloads from the bucket. This configuration parameter enables the bucket owner (only) to specify that the person requesting the download will be charged for the download.</p>
 <p><strong>Request Syntax</strong></p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">put_bucket_request_payment</span><span class="p">(</span>
     <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
@@ -3596,78 +3146,6 @@ check if an operation is pageable.</dd>
 <li><strong>RequestPaymentConfiguration</strong> (<em>dict</em>) -- <p><strong>[REQUIRED]</strong></p>
 <ul>
 <li><strong>Payer</strong> <em>(string) --</em> <strong>[REQUIRED]</strong> Specifies who pays for the download and request fees.</li>
-</ul>
-</li>
-</ul>
-</dd>
-<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last">None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="S3.Client.put_bucket_tagging">
-<tt class="descname">put_bucket_tagging</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.put_bucket_tagging" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the tags for a bucket.</p>
-<p><strong>Request Syntax</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">put_bucket_tagging</span><span class="p">(</span>
-    <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">Tagging</span><span class="o">=</span><span class="p">{</span>
-        <span class="s1">&#39;TagSet&#39;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="p">{</span>
-                <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Value&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
-            <span class="p">},</span>
-        <span class="p">]</span>
-    <span class="p">}</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
-<li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
-<li><strong>Tagging</strong> (<em>dict</em>) -- <p><strong>[REQUIRED]</strong></p>
-<ul>
-<li><strong>TagSet</strong> <em>(list) --</em> <strong>[REQUIRED]</strong><ul>
-<li><em>(dict) --</em><ul>
-<li><strong>Key</strong> <em>(string) --</em> <strong>[REQUIRED]</strong> Name of the tag.</li>
-<li><strong>Value</strong> <em>(string) --</em> <strong>[REQUIRED]</strong> Value of the tag.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</dd>
-<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last">None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="S3.Client.put_bucket_versioning">
-<tt class="descname">put_bucket_versioning</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.put_bucket_versioning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the versioning state of an existing bucket. To set the versioning state, you must be the bucket owner.</p>
-<p><strong>Request Syntax</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">put_bucket_versioning</span><span class="p">(</span>
-    <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">MFA</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">VersioningConfiguration</span><span class="o">=</span><span class="p">{</span>
-        <span class="s1">&#39;MFADelete&#39;</span><span class="p">:</span> <span class="s1">&#39;Enabled&#39;</span><span class="o">|</span><span class="s1">&#39;Disabled&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;Status&#39;</span><span class="p">:</span> <span class="s1">&#39;Enabled&#39;</span><span class="o">|</span><span class="s1">&#39;Suspended&#39;</span>
-    <span class="p">}</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
-<li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
-<li><strong>MFA</strong> (<em>string</em>) -- The concatenation of the authentication device's serial number, a space, and the value that is displayed on your authentication device.</li>
-<li><strong>VersioningConfiguration</strong> (<em>dict</em>) -- <p><strong>[REQUIRED]</strong></p>
-<ul>
-<li><strong>MFADelete</strong> <em>(string) --</em> Specifies whether MFA delete is enabled in the bucket versioning configuration. This element is only returned if the bucket has been configured with MFA delete. If the bucket has never been so configured, this element is not returned.</li>
-<li><strong>Status</strong> <em>(string) --</em> The versioning state of the bucket.</li>
 </ul>
 </li>
 </ul>
@@ -3708,8 +3186,7 @@ check if an operation is pageable.</dd>
     <span class="n">SSECustomerAlgorithm</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">SSECustomerKey</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">SSEKMSKeyId</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">RequestPayer</span><span class="o">=</span><span class="s1">&#39;requester&#39;</span><span class="p">,</span>
-    <span class="n">Tagging</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
+    <span class="n">RequestPayer</span><span class="o">=</span><span class="s1">&#39;requester&#39;</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -3745,9 +3222,8 @@ check if an operation is pageable.</dd>
 <li><strong>SSECustomerAlgorithm</strong> (<em>string</em>) -- Specifies the algorithm to use to when encrypting the object (e.g., AES256).</li>
 <li><strong>SSECustomerKey</strong> (<em>string</em>) -- Specifies the customer-provided encryption key for Amazon S3 to use in encrypting data. This value is used to store the object and then it is discarded; Amazon does not store the encryption key. The key must be appropriate for use with the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm header.</li>
 <li><strong>SSECustomerKeyMD5</strong> (<em>string</em>) -- Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure the encryption key was transmitted without error.      Please note that this parameter is automatically populated if it is not provided. Including this parameter is not required</li>
-<li><strong>SSEKMSKeyId</strong> (<em>string</em>) -- Specifies the AWS KMS key ID to use for object encryption. All GET and PUT requests for an object protected by AWS KMS will fail if not made via SSL or using SigV4. Documentation on configuring any of the officially supported AWS SDKs and CLI can be found at <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingAWSSDK.html#specify-signature-version">http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingAWSSDK.html#specify-signature-version</a></li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests. Documentation on downloading objects from requester pays buckets can be found at <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html">http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html</a></li>
-<li><strong>Tagging</strong> (<em>string</em>) -- The tag-set for the object. The tag-set must be encoded as URL Query parameters</li>
+<li><strong>SSEKMSKeyId</strong> (<em>string</em>) -- Specifies the AWS KMS key ID to use for object encryption. All GET and PUT requests for an object protected by AWS KMS will fail if not made via SSL or using SigV4.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -3757,7 +3233,6 @@ check if an operation is pageable.</dd>
     <span class="s1">&#39;Expiration&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;ETag&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;ServerSideEncryption&#39;</span><span class="p">:</span> <span class="s1">&#39;AES256&#39;</span><span class="o">|</span><span class="s1">&#39;aws:kms&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;VersionId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;SSECustomerAlgorithm&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;SSECustomerKeyMD5&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;SSEKMSKeyId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
@@ -3771,7 +3246,6 @@ check if an operation is pageable.</dd>
 <li><strong>Expiration</strong> <em>(string) --</em> If the object expiration is configured, this will contain the expiration date (expiry-date) and rule ID (rule-id). The value of rule-id is URL encoded.</li>
 <li><strong>ETag</strong> <em>(string) --</em> Entity tag for the uploaded object.</li>
 <li><strong>ServerSideEncryption</strong> <em>(string) --</em> The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).</li>
-<li><strong>VersionId</strong> <em>(string) --</em> Version of the object.</li>
 <li><strong>SSECustomerAlgorithm</strong> <em>(string) --</em> If server-side encryption with a customer-provided encryption key was requested, the response will include this header confirming the encryption algorithm used.</li>
 <li><strong>SSECustomerKeyMD5</strong> <em>(string) --</em> If server-side encryption with a customer-provided encryption key was requested, the response will include this header to provide round trip message integrity verification of the customer-provided encryption key.</li>
 <li><strong>SSEKMSKeyId</strong> <em>(string) --</em> If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.</li>
@@ -3816,8 +3290,7 @@ check if an operation is pageable.</dd>
     <span class="n">GrantWrite</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">GrantWriteACP</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">Key</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">RequestPayer</span><span class="o">=</span><span class="s1">&#39;requester&#39;</span><span class="p">,</span>
-    <span class="n">VersionId</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
+    <span class="n">RequestPayer</span><span class="o">=</span><span class="s1">&#39;requester&#39;</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -3854,8 +3327,7 @@ check if an operation is pageable.</dd>
 <li><strong>GrantWrite</strong> (<em>string</em>) -- Allows grantee to create, overwrite, and delete any object in the bucket.</li>
 <li><strong>GrantWriteACP</strong> (<em>string</em>) -- Allows grantee to write the ACL for the applicable bucket.</li>
 <li><strong>Key</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests. Documentation on downloading objects from requester pays buckets can be found at <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html">http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html</a></li>
-<li><strong>VersionId</strong> (<em>string</em>) -- VersionId used to reference a specific version of the object.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -3870,67 +3342,6 @@ check if an operation is pageable.</dd>
 <ul class="simple">
 <li><em>(dict) --</em><ul>
 <li><strong>RequestCharged</strong> <em>(string) --</em> If present, indicates that the requester was successfully charged for the request.</li>
-</ul>
-</li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="S3.Client.put_object_tagging">
-<tt class="descname">put_object_tagging</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.put_object_tagging" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the supplied tag-set to an object that already exists in a bucket</p>
-<p><strong>Request Syntax</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">put_object_tagging</span><span class="p">(</span>
-    <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">Key</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">VersionId</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">ContentMD5</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">Tagging</span><span class="o">=</span><span class="p">{</span>
-        <span class="s1">&#39;TagSet&#39;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="p">{</span>
-                <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Value&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
-            <span class="p">},</span>
-        <span class="p">]</span>
-    <span class="p">}</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
-<li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
-<li><strong>Key</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
-<li><strong>VersionId</strong> (<em>string</em>) -- </li>
-<li><strong>ContentMD5</strong> (<em>string</em>) -- </li>
-<li><strong>Tagging</strong> (<em>dict</em>) -- <p><strong>[REQUIRED]</strong></p>
-<ul>
-<li><strong>TagSet</strong> <em>(list) --</em> <strong>[REQUIRED]</strong><ul>
-<li><em>(dict) --</em><ul>
-<li><strong>Key</strong> <em>(string) --</em> <strong>[REQUIRED]</strong> Name of the tag.</li>
-<li><strong>Value</strong> <em>(string) --</em> <strong>[REQUIRED]</strong> Value of the tag.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</dd>
-<dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
-</dd>
-<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last"><p><strong>Response Syntax</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s1">&#39;VersionId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Response Structure</strong></p>
-<ul class="simple">
-<li><em>(dict) --</em><ul>
-<li><strong>VersionId</strong> <em>(string) --</em></li>
 </ul>
 </li>
 </ul>
@@ -3971,7 +3382,7 @@ check if an operation is pageable.</dd>
 <li><strong>SSECustomerAlgorithm</strong> (<em>string</em>) -- Specifies the algorithm to use to when encrypting the object (e.g., AES256).</li>
 <li><strong>SSECustomerKey</strong> (<em>string</em>) -- Specifies the customer-provided encryption key for Amazon S3 to use in encrypting data. This value is used to store the object and then it is discarded; Amazon does not store the encryption key. The key must be appropriate for use with the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm header. This must be the same encryption key specified in the initiate multipart upload request.</li>
 <li><strong>SSECustomerKeyMD5</strong> (<em>string</em>) -- Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure the encryption key was transmitted without error.      Please note that this parameter is automatically populated if it is not provided. Including this parameter is not required</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests. Documentation on downloading objects from requester pays buckets can be found at <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html">http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html</a></li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -4011,7 +3422,7 @@ check if an operation is pageable.</dd>
 <p><strong>Request Syntax</strong></p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">upload_part_copy</span><span class="p">(</span>
     <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">CopySource</span><span class="o">=</span><span class="s1">&#39;string&#39;</span> <span class="ow">or</span> <span class="p">{</span><span class="s1">&#39;Bucket&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="s1">&#39;VersionId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">},</span>
+    <span class="n">CopySource</span><span class="o">=</span><span class="s1">&#39;string&#39;</span> <span class="ow">or</span> <span class="p">{</span><span class="s1">&#39;Bucket&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">},</span>
     <span class="n">CopySourceIfMatch</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">CopySourceIfModifiedSince</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
     <span class="n">CopySourceIfNoneMatch</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
@@ -4031,7 +3442,7 @@ check if an operation is pageable.</dd>
 <dl class="docutils field-list" frame="void" rules="none">
 <dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
 <li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
-<li><strong>CopySource</strong> (<em>str or dict</em>) -- <strong>[REQUIRED]</strong> The name of the source bucket, key name of the source object, and optional version ID of the source object.  You can either provide this value as a string or a dictionary.  The string form is {bucket}/{key} or {bucket}/{key}?versionId={versionId} if you want to copy a specific version.  You can also provide this value as a dictionary.  The dictionary format is recommended over the string format because it is more explicit.  The dictionary format is: {'Bucket': 'bucket', 'Key': 'key', 'VersionId': 'id'}.  Note that the VersionId key is optional and may be omitted.</li>
+<li><strong>CopySource</strong> (<em>str or dict</em>) -- <strong>[REQUIRED]</strong> The name of the source bucket, key name of the source objectYou can either provide this value as a string or a dictionary.  The string form is {bucket}/{key}.  You can also provide this value as a dictionary.  The dictionary format is recommended over the string format because it is more explicit.  The dictionary format is: {'Bucket': 'bucket', 'Key': 'key'}.</li>
 <li><strong>CopySourceIfMatch</strong> (<em>string</em>) -- Copies the object if its entity tag (ETag) matches the specified tag.</li>
 <li><strong>CopySourceIfModifiedSince</strong> (<em>datetime</em>) -- Copies the object if it has been modified since the specified time.</li>
 <li><strong>CopySourceIfNoneMatch</strong> (<em>string</em>) -- Copies the object if its entity tag (ETag) is different than the specified ETag.</li>
@@ -4046,14 +3457,13 @@ check if an operation is pageable.</dd>
 <li><strong>CopySourceSSECustomerAlgorithm</strong> (<em>string</em>) -- Specifies the algorithm to use when decrypting the source object (e.g., AES256).</li>
 <li><strong>CopySourceSSECustomerKey</strong> (<em>string</em>) -- Specifies the customer-provided encryption key for Amazon S3 to use to decrypt the source object. The encryption key provided in this header must be one that was used when the source object was created.</li>
 <li><strong>CopySourceSSECustomerKeyMD5</strong> (<em>string</em>) -- Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure the encryption key was transmitted without error.      Please note that this parameter is automatically populated if it is not provided. Including this parameter is not required</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests. Documentation on downloading objects from requester pays buckets can be found at <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html">http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html</a></li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
 </dd>
 <dt class="field-name">Returns</dt><dd class="field-body"><p class="first last"><p><strong>Response Syntax</strong></p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s1">&#39;CopySourceVersionId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;CopyPartResult&#39;</span><span class="p">:</span> <span class="p">{</span>
         <span class="s1">&#39;ETag&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
         <span class="s1">&#39;LastModified&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
@@ -4069,7 +3479,6 @@ check if an operation is pageable.</dd>
 <p><strong>Response Structure</strong></p>
 <ul class="simple">
 <li><em>(dict) --</em><ul>
-<li><strong>CopySourceVersionId</strong> <em>(string) --</em> The version of the source object that was copied, if you have enabled versioning on the source bucket.</li>
 <li><strong>CopyPartResult</strong> <em>(dict) --</em><ul>
 <li><strong>ETag</strong> <em>(string) --</em> Entity tag of the object.</li>
 <li><strong>LastModified</strong> <em>(datetime) --</em> Date and time at which the object was uploaded.</li>
@@ -4096,7 +3505,6 @@ check if an operation is pageable.</dd>
 <p>The available paginators are:</p>
 <ul class="simple">
 <li><a class="reference internal" href="#S3.Paginator.ListMultipartUploads" title="S3.Paginator.ListMultipartUploads"><tt class="xref py py-class docutils literal"><span class="pre">S3.Paginator.ListMultipartUploads</span></tt></a></li>
-<li><a class="reference internal" href="#S3.Paginator.ListObjectVersions" title="S3.Paginator.ListObjectVersions"><tt class="xref py py-class docutils literal"><span class="pre">S3.Paginator.ListObjectVersions</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Paginator.ListObjects" title="S3.Paginator.ListObjects"><tt class="xref py py-class docutils literal"><span class="pre">S3.Paginator.ListObjects</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Paginator.ListObjectsV2" title="S3.Paginator.ListObjectsV2"><tt class="xref py py-class docutils literal"><span class="pre">S3.Paginator.ListObjectsV2</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Paginator.ListParts" title="S3.Paginator.ListParts"><tt class="xref py py-class docutils literal"><span class="pre">S3.Paginator.ListParts</span></tt></a></li>
@@ -4218,172 +3626,6 @@ check if an operation is pageable.</dd>
 </ul>
 </li>
 </ul>
-</li>
-<li><p class="first"><strong>CommonPrefixes</strong> <em>(list) --</em></p>
-<ul class="simple">
-<li><em>(dict) --</em><ul>
-<li><strong>Prefix</strong> <em>(string) --</em></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p class="first"><strong>EncodingType</strong> <em>(string) --</em> Encoding type used by Amazon S3 to encode object keys in the response.</p>
-</li>
-<li><p class="first"><strong>NextToken</strong> <em>(string) --</em></p>
-<p>A token to resume pagination.</p>
-</li>
-</ul>
-</li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="S3.Paginator.ListObjectVersions">
-<em class="property">class </em><tt class="descclassname">S3.Paginator.</tt><tt class="descname">ListObjectVersions</tt><a class="headerlink" href="#S3.Paginator.ListObjectVersions" title="Permalink to this definition">¶</a></dt>
-<dd><div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">paginator</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_paginator</span><span class="p">(</span><span class="s1">&#39;list_object_versions&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<dl class="method">
-<dt id="S3.Paginator.ListObjectVersions.paginate">
-<tt class="descname">paginate</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Paginator.ListObjectVersions.paginate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates an iterator that will paginate through responses from <a class="reference internal" href="#S3.Client.list_object_versions" title="S3.Client.list_object_versions"><tt class="xref py py-meth docutils literal"><span class="pre">S3.Client.list_object_versions()</span></tt></a>.</p>
-<p><strong>Request Syntax</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response_iterator</span> <span class="o">=</span> <span class="n">paginator</span><span class="o">.</span><span class="n">paginate</span><span class="p">(</span>
-    <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">Delimiter</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">EncodingType</span><span class="o">=</span><span class="s1">&#39;url&#39;</span><span class="p">,</span>
-    <span class="n">Prefix</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">PaginationConfig</span><span class="o">=</span><span class="p">{</span>
-        <span class="s1">&#39;MaxItems&#39;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
-        <span class="s1">&#39;PageSize&#39;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
-        <span class="s1">&#39;StartingToken&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
-    <span class="p">}</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
-<li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
-<li><strong>Delimiter</strong> (<em>string</em>) -- A delimiter is a character you use to group keys.</li>
-<li><strong>EncodingType</strong> (<em>string</em>) -- Requests Amazon S3 to encode the object keys in the response and specifies the encoding method to use. An object key may contain any Unicode character; however, XML 1.0 parser cannot parse some characters, such as characters with an ASCII value from 0 to 10. For characters that are not supported in XML 1.0, you can add this parameter to request that Amazon S3 encode the keys in the response.</li>
-<li><strong>Prefix</strong> (<em>string</em>) -- Limits the response to keys that begin with the specified prefix.</li>
-<li><strong>PaginationConfig</strong> (<em>dict</em>) -- <p>A dictionary that provides parameters to control pagination.</p>
-<ul>
-<li><strong>MaxItems</strong> <em>(integer) --</em><p>The total number of items to return. If the total number of items available is more than the value specified in max-items then a <tt class="docutils literal"><span class="pre">NextToken</span></tt> will be provided in the output that you can use to resume pagination.</p>
-</li>
-<li><strong>PageSize</strong> <em>(integer) --</em><p>The size of each page.</p>
-</li>
-<li><strong>StartingToken</strong> <em>(string) --</em><p>A token to specify where to start paginating. This is the <tt class="docutils literal"><span class="pre">NextToken</span></tt> from a previous response.</p>
-</li>
-</ul>
-</li>
-</ul>
-</dd>
-<dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
-</dd>
-<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last"><p><strong>Response Syntax</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s1">&#39;IsTruncated&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="o">|</span><span class="bp">False</span><span class="p">,</span>
-    <span class="s1">&#39;KeyMarker&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;VersionIdMarker&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Versions&#39;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span>
-            <span class="s1">&#39;ETag&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;Size&#39;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
-            <span class="s1">&#39;StorageClass&#39;</span><span class="p">:</span> <span class="s1">&#39;STANDARD&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;VersionId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;IsLatest&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="o">|</span><span class="bp">False</span><span class="p">,</span>
-            <span class="s1">&#39;LastModified&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-            <span class="s1">&#39;Owner&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;DisplayName&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;ID&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-    <span class="p">],</span>
-    <span class="s1">&#39;DeleteMarkers&#39;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span>
-            <span class="s1">&#39;Owner&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;DisplayName&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;ID&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
-            <span class="p">},</span>
-            <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;VersionId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;IsLatest&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="o">|</span><span class="bp">False</span><span class="p">,</span>
-            <span class="s1">&#39;LastModified&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="p">},</span>
-    <span class="p">],</span>
-    <span class="s1">&#39;Name&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Delimiter&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MaxKeys&#39;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
-    <span class="s1">&#39;CommonPrefixes&#39;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span>
-            <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
-        <span class="p">},</span>
-    <span class="p">],</span>
-    <span class="s1">&#39;EncodingType&#39;</span><span class="p">:</span> <span class="s1">&#39;url&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;NextToken&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Response Structure</strong></p>
-<ul>
-<li><p class="first"><em>(dict) --</em></p>
-<ul>
-<li><p class="first"><strong>IsTruncated</strong> <em>(boolean) --</em> A flag that indicates whether or not Amazon S3 returned all of the results that satisfied the search criteria. If your results were truncated, you can make a follow-up paginated request using the NextKeyMarker and NextVersionIdMarker response parameters as a starting place in another request to return the rest of the results.</p>
-</li>
-<li><p class="first"><strong>KeyMarker</strong> <em>(string) --</em> Marks the last Key returned in a truncated response.</p>
-</li>
-<li><p class="first"><strong>VersionIdMarker</strong> <em>(string) --</em></p>
-</li>
-<li><p class="first"><strong>Versions</strong> <em>(list) --</em></p>
-<ul class="simple">
-<li><em>(dict) --</em><ul>
-<li><strong>ETag</strong> <em>(string) --</em></li>
-<li><strong>Size</strong> <em>(integer) --</em> Size in bytes of the object.</li>
-<li><strong>StorageClass</strong> <em>(string) --</em> The class of storage used to store the object.</li>
-<li><strong>Key</strong> <em>(string) --</em> The object key.</li>
-<li><strong>VersionId</strong> <em>(string) --</em> Version ID of an object.</li>
-<li><strong>IsLatest</strong> <em>(boolean) --</em> Specifies whether the object is (true) or is not (false) the latest version of an object.</li>
-<li><strong>LastModified</strong> <em>(datetime) --</em> Date and time the object was last modified.</li>
-<li><strong>Owner</strong> <em>(dict) --</em><ul>
-<li><strong>DisplayName</strong> <em>(string) --</em></li>
-<li><strong>ID</strong> <em>(string) --</em></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p class="first"><strong>DeleteMarkers</strong> <em>(list) --</em></p>
-<ul class="simple">
-<li><em>(dict) --</em><ul>
-<li><strong>Owner</strong> <em>(dict) --</em><ul>
-<li><strong>DisplayName</strong> <em>(string) --</em></li>
-<li><strong>ID</strong> <em>(string) --</em></li>
-</ul>
-</li>
-<li><strong>Key</strong> <em>(string) --</em> The object key.</li>
-<li><strong>VersionId</strong> <em>(string) --</em> Version ID of an object.</li>
-<li><strong>IsLatest</strong> <em>(boolean) --</em> Specifies whether the object is (true) or is not (false) the latest version of an object.</li>
-<li><strong>LastModified</strong> <em>(datetime) --</em> Date and time the object was last modified.</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p class="first"><strong>Name</strong> <em>(string) --</em></p>
-</li>
-<li><p class="first"><strong>Prefix</strong> <em>(string) --</em></p>
-</li>
-<li><p class="first"><strong>Delimiter</strong> <em>(string) --</em></p>
-</li>
-<li><p class="first"><strong>MaxKeys</strong> <em>(integer) --</em></p>
 </li>
 <li><p class="first"><strong>CommonPrefixes</strong> <em>(list) --</em></p>
 <ul class="simple">
@@ -4722,7 +3964,7 @@ check if an operation is pageable.</dd>
 <li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
 <li><strong>Key</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
 <li><strong>UploadId</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong> Upload ID identifying the multipart upload whose parts are being listed.</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests. Documentation on downloading objects from requester pays buckets can be found at <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html">http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html</a></li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
 <li><strong>PaginationConfig</strong> (<em>dict</em>) -- <p>A dictionary that provides parameters to control pagination.</p>
 <ul>
 <li><strong>MaxItems</strong> <em>(integer) --</em><p>The total number of items to return. If the total number of items available is more than the value specified in max-items then a <tt class="docutils literal"><span class="pre">NextToken</span></tt> will be provided in the output that you can use to resume pagination.</p>
@@ -4906,7 +4148,6 @@ check if an operation is pageable.</dd>
     <span class="n">IfUnmodifiedSince</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
     <span class="n">Key</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">Range</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">VersionId</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">SSECustomerAlgorithm</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">SSECustomerKey</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">RequestPayer</span><span class="o">=</span><span class="s1">&#39;requester&#39;</span><span class="p">,</span>
@@ -4923,11 +4164,10 @@ check if an operation is pageable.</dd>
 <li><strong>IfUnmodifiedSince</strong> (<em>datetime</em>) -- Return the object only if it has not been modified since the specified time, otherwise return a 412 (precondition failed).</li>
 <li><strong>Key</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
 <li><strong>Range</strong> (<em>string</em>) -- Downloads the specified range bytes of an object. For more information about the HTTP Range header, go to <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35">http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35</a>.</li>
-<li><strong>VersionId</strong> (<em>string</em>) -- VersionId used to reference a specific version of the object.</li>
 <li><strong>SSECustomerAlgorithm</strong> (<em>string</em>) -- Specifies the algorithm to use to when encrypting the object (e.g., AES256).</li>
 <li><strong>SSECustomerKey</strong> (<em>string</em>) -- Specifies the customer-provided encryption key for Amazon S3 to use in encrypting data. This value is used to store the object and then it is discarded; Amazon does not store the encryption key. The key must be appropriate for use with the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm header.</li>
 <li><strong>SSECustomerKeyMD5</strong> (<em>string</em>) -- Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure the encryption key was transmitted without error.      Please note that this parameter is automatically populated if it is not provided. Including this parameter is not required</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests. Documentation on downloading objects from requester pays buckets can be found at <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html">http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html</a></li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
 <li><strong>PartNumber</strong> (<em>integer</em>) -- Part number of the object being read. This is a positive integer between 1 and 10,000. Effectively performs a 'ranged' HEAD request for the part specified. Useful querying about the size of the part and the number of parts in this object.</li>
 </ul>
 </dd>
@@ -4957,7 +4197,6 @@ check if an operation is pageable.</dd>
     <span class="n">IfUnmodifiedSince</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
     <span class="n">Key</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">Range</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">VersionId</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">SSECustomerAlgorithm</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">SSECustomerKey</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">RequestPayer</span><span class="o">=</span><span class="s1">&#39;requester&#39;</span><span class="p">,</span>
@@ -4974,11 +4213,10 @@ check if an operation is pageable.</dd>
 <li><strong>IfUnmodifiedSince</strong> (<em>datetime</em>) -- Return the object only if it has not been modified since the specified time, otherwise return a 412 (precondition failed).</li>
 <li><strong>Key</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
 <li><strong>Range</strong> (<em>string</em>) -- Downloads the specified range bytes of an object. For more information about the HTTP Range header, go to <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35">http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35</a>.</li>
-<li><strong>VersionId</strong> (<em>string</em>) -- VersionId used to reference a specific version of the object.</li>
 <li><strong>SSECustomerAlgorithm</strong> (<em>string</em>) -- Specifies the algorithm to use to when encrypting the object (e.g., AES256).</li>
 <li><strong>SSECustomerKey</strong> (<em>string</em>) -- Specifies the customer-provided encryption key for Amazon S3 to use in encrypting data. This value is used to store the object and then it is discarded; Amazon does not store the encryption key. The key must be appropriate for use with the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm header.</li>
 <li><strong>SSECustomerKeyMD5</strong> (<em>string</em>) -- Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure the encryption key was transmitted without error.      Please note that this parameter is automatically populated if it is not provided. Including this parameter is not required</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests. Documentation on downloading objects from requester pays buckets can be found at <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html">http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html</a></li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
 <li><strong>PartNumber</strong> (<em>integer</em>) -- Part number of the object being read. This is a positive integer between 1 and 10,000. Effectively performs a 'ranged' HEAD request for the part specified. Useful querying about the size of the part and the number of parts in this object.</li>
 </ul>
 </dd>
@@ -5025,7 +4263,7 @@ check if an operation is pageable.</dd>
         <li class="right" >
           <a href="../index.html" title="Available Services"
              >previous</a> |</li>
-        <li><a href="../../index.html">ibm_botocore 2.1.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">ibm_botocore 2.1.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Available Services</a> &raquo;</li> 
       </ul>
     </div>
