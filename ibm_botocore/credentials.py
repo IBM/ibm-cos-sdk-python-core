@@ -22,7 +22,7 @@
 # Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
 # an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
-import traceback
+import atexit
 import time
 import datetime
 try:
@@ -241,24 +241,20 @@ class TokenManager(object):
 
 class DefaultTokenManager(TokenManager):
     """A default implementation of token manager.
-
     Retreives token on first use and holds it in memory
     for further use. Background thread tries to refresh token
     prior to its expiration, so that main thread is always
     non-blocking and performant.
-
     :ivar API_TOKEN_URL: Default URL for IAM authentication.
     :ivar _advisory_refresh_timeout: The time at which we'll attempt to refresh, but not
         block if someone else is refreshing.
     :ivar _mandatory_refresh_timeout: The time at which all threads will block waiting for
         refreshed credentials.
-
     """
-
     API_TOKEN_URL = 'https://iam.ng.bluemix.net/oidc/token'
-
     _advisory_refresh_timeout = 0
     _mandatory_refresh_timeout = 0
+    REFRESH_OVERRIDE_IN_SECS = 0 # force refresh in this number of secs
 
     def __init__(self,
                  api_key_id=None,
@@ -269,33 +265,26 @@ class DefaultTokenManager(TokenManager):
                  verify=True):
 
         """Creates a new DefaultTokenManager object.
-
         :type api_key_id: str
         :param api_key_id: IBM api key used for IAM authentication.
-
         :type service_instance_id: str
         :param service_instance_id: Service Instance ID used for
             PUT bucket and GET service requests.
-
         :type auth_endpoint: str
         :param auth_endpoint: URL used for IAM authentication. If not provided,
             API_TOKEN_URL will be used.
-
         :type time_fetcher: datetime
         :param time_fetcher: current date and time used for calculating
             expiration time for token.
-
         :type auth_function: function
         :param auth_function: function that does custom authentication
             and returns json with token, refresh token, expiry time
             and token type. If not provided, a default authentication
             function will be used.
                 :type verify: boolean/string
-
         :param verify: Whether or not to verify IAM service SSL certificates.
             By default SSL certificates are verified.  You can provide the
             following values:
-
             * False - do not validate SSL certificates.  SSL will still be
               used (unless use_ssl is False), but SSL certificates
               will not be verified.
@@ -317,98 +306,144 @@ class DefaultTokenManager(TokenManager):
         else:
             self.auth_function = self._default_auth_function
 
-        self._token = None
-        self._refresh_token = None
-        self._token_type = None
-        self._expiry_time = None
-
         self._refresh_lock = threading.Lock()
+        self._token_update_lock = threading.Lock()
+        self._set_cache_token()
 
         self._background_thread = None
         self._background_thread_wakeup_event = threading.Event()
+        self._background_thread_stopped_event = threading.Event()
+        self._initial_token_set_event = threading.Event()
+        self._shutdown = False
+        atexit.register(self._cleanup)
 
+
+    def _cleanup(self):
+        """
+        Cleaup resources 
+        """
+        self.stop_refresh_thread()
+        
+    def stop_refresh_thread(self):
+        """
+        Stop the background thread
+        """
+        if not self._shutdown:
+            self._shutdown = True
+            if self._background_thread:
+                if self._background_thread.isAlive():
+                    self.wakeup_refresh_thread()
+                    self._background_thread_stopped_event.wait(3)
+        
     def wakeup_refresh_thread(self):
         """
         Force the background thread to wakeup and refresh
         """
         self._background_thread_wakeup_event.set()
 
-    def _background_refresher(self, wakeup_event):
+    def _background_refresher(self):
         """Refreshes token that's about to expire.
-
         Runs on background thread and sleeps until _advisory_refresh_timeout
-        seconds before token expiration when it wakes and
-        refreshes token.
-
+        seconds before token expiration when it wakes and refreshes the token.
         """
+
+        # This method will run on background thread forever
+        # or until an exception forces an exit
         try:
-            # This method will run on background thread forever
-            while True:
+            while not self._shutdown:
                 # We just woke up and there's a token.
                 # Will see if refresh is required and will then go back to sleep
                 remaining = self._seconds_remaining()
                 if remaining <= self._advisory_refresh_timeout:
-                    self._refresh(can_retry=False)
+                    self._refresh()
 
                 new_remaining = self._seconds_remaining() - self._advisory_refresh_timeout
-                if new_remaining <= 0:
-                    logger.error('Background thread : Time remaining is negative.. sleep 5 seconds')
-                    new_remaining = 30
+                if new_remaining <= 5: # must be at least five seconds
+                    new_remaining = 5 # possible expired token let the _refresh method throw an exception, if required
 
                 logger.debug('Background refresh thread going to sleep for ' + str(new_remaining) + ' seconds')
-                wakeup_event.clear()
-                wakeup_event.wait(new_remaining)
-
+                self._background_thread_wakeup_event.clear()
+                self._background_thread_wakeup_event.wait(new_remaining)
         except Exception as e:
-            logger.error("Background refresh thread encountered error: " + str(e))
+             logger.error("Exiting background refresh thread: " + str(e))
+            
+        self._background_thread_stopped_event.set()
 
     def get_token(self):
         """Returns a token, possibly retrieving it first.
-
         Always returns token. If token is not available, retrieves.
         It also spawns background thread that makes sure that token
         never expires.
-
         :return: A string representing valid token.
-
         """
-        self._refresh(can_retry=True)
-        self._set_refresh_timeouts()
+        if not self._get_cache_token():
+            if self._refresh_lock.acquire(False):
+                self._initial_token_set_event.clear();
+                try:
+                    if not self._get_cache_token(): # try again another thread may have refreshed it
+                        self._get_initial_token()
+                        self._initial_token_set_event.set();
 
-        if self._refresh_lock.acquire(False):
-            try:
-                if not self._background_thread:
-                    self._background_thread = threading.Thread(target=self._background_refresher, args=(self._background_thread_wakeup_event,))
-                    self._background_thread.daemon = True
-                    self._background_thread.start()
-            finally:
-                self._refresh_lock.release()
+                        if self._background_thread:
+                            # check to see if the thread is still running
+                            if not self._background_thread.isAlive():
+                                self._background_thread = None
+                        
+                        if not self._background_thread:
+                            self._background_thread = threading.Thread(target=self._background_refresher)
+                            self._background_thread.daemon = True
+                            self._background_thread.start()
+                finally:
+                    self._initial_token_set_event.set(); 
+                    self._refresh_lock.release()
+            else:
+                self._initial_token_set_event.wait(5);
 
-        return self._token
+        return self._get_cache_token()
 
     def set_verify(self, verify):
+        """ Turn on/off ssl cert verify 
+        """
         self._verify = verify
 
     def get_verify(self):
+        """ True/False - get if ssl cert verify is enabled 
+        """
         return self._verify
 
     def _seconds_remaining(self):
+        """ Seconds to expiry time 
+        """
+        if not self._expiry_time:
+            return -1
         delta = self._expiry_time - self._time_fetcher()
         return total_seconds(delta)
 
     def _get_token_url(self):
+        """ Get the IAM server url if set 
+        If not set use the default usl
+        """
         if self.auth_endpoint:
             return self.auth_endpoint
         else:
             return DefaultTokenManager.API_TOKEN_URL
 
-    def _get_body(self):
-        # TODO, add support for refresh_token here, when we know how to use it
-        return {u'grant_type': u'urn:ibm:params:oauth:grant-type:apikey',
-                u'response_type': u'cloud_iam',
-                u'apikey': self.api_key_id}
+    def _get_data(self):
+        """ Get the data posted to IAM server
+        If refresh token exists request a token refresh
+        """
+        if self._get_cache_refresh_token():
+            return {u'grant_type': u'refresh_token',
+                    u'response_type': u'cloud_iam',
+                    u'refresh_token': self._get_cache_refresh_token()}
+        else:
+            return {u'grant_type': u'urn:ibm:params:oauth:grant-type:apikey',
+                    u'response_type': u'cloud_iam',
+                    u'apikey': self.api_key_id}
 
     def _get_headers(self):
+        """ Get the http headers sent to IAM server
+        """
         return {'accept': "application/json",
                 'authorization': "Basic Yng6Yng=",
                 'cache-control': "no-cache",
@@ -417,7 +452,7 @@ class DefaultTokenManager(TokenManager):
     def _default_auth_function(self):
         response = requests.post(
                                  url=self._get_token_url(),
-                                 data=self._get_body(),
+                                 data=self._get_data(),
                                  headers=self._get_headers(),
                                  timeout=5,
                                  verify=self.get_verify())
@@ -430,25 +465,20 @@ class DefaultTokenManager(TokenManager):
 
     def _refresh_needed(self, refresh_in=None):
         """Check if a refresh is needed.
-
         A refresh is needed if the expiry time associated
         with the temporary credentials is less than the
         provided ``refresh_in``.  If ``time_delta`` is not
         provided, ``self.advisory_refresh_needed`` will be used.
-
         For example, if your temporary credentials expire
         in 10 minutes and the provided ``refresh_in`` is
         ``15 * 60``, then this function will return ``True``.
-
         :type refresh_in: int
         :param refresh_in: The number of seconds before the
             credentials expire in which refresh attempts should
             be made.
-
         :return: True if refresh neeeded, False otherwise.
-
         """
-        if self._token is None:
+        if self._get_cache_token() is None:
             return True
 
         if self._expiry_time is None:
@@ -466,12 +496,12 @@ class DefaultTokenManager(TokenManager):
         return True
 
     def _is_expired(self):
-        # Checks if the current credentials are expired.
-        return self._refresh_needed(refresh_in=0)
+        """  Checks if the current credentials are expired.
+        """
+        return self._seconds_remaining() <= 0
 
-    def _refresh(self, can_retry=False):
+    def _refresh(self):
         """Initiates mandatory or advisory refresh, if needed,
-
         This method makes sure that refresh is done in critical section,
         if refresh is needed:
         - if lock can be acquired, mandatory or advisory refresh
@@ -481,7 +511,6 @@ class DefaultTokenManager(TokenManager):
         - if lock cannot be acquired and refresh is mandatory, be block
         until lock can be acquired (although at that point somebody else
         probably did the refresh)
-
         """
         # In the common case where we don't need a refresh, we
         # can immediately exit and not require acquiring the
@@ -499,7 +528,7 @@ class DefaultTokenManager(TokenManager):
                     return
                 is_mandatory_refresh = self._refresh_needed(
                     self._mandatory_refresh_timeout)
-                self._protected_refresh(is_mandatory=is_mandatory_refresh, can_retry=can_retry)
+                self._protected_refresh(is_mandatory=is_mandatory_refresh)
                 return
             finally:
                 self._refresh_lock.release()
@@ -509,15 +538,36 @@ class DefaultTokenManager(TokenManager):
             with self._refresh_lock:
                 if not self._refresh_needed(self._mandatory_refresh_timeout):
                     return
-                self._protected_refresh(is_mandatory=True, can_retry=can_retry)
+                self._protected_refresh(is_mandatory=True)
 
-    def _protected_refresh(self, is_mandatory, can_retry):
+    
+    def _protected_refresh(self, is_mandatory):
         """Performs mandatory or advisory refresh.
-
         Precondition: this method should only be called if you've acquired
         the self._refresh_lock.
         """
-        _total_attempts = 3 if can_retry else 1
+        try:
+            metadata = self.auth_function()
+        except Exception as e:
+            period_name = 'mandatory' if is_mandatory else 'advisory'
+            logger.warning("Refreshing temporary credentials failed "
+                           "during %s refresh period.",
+                           period_name, exc_info=True)
+            
+            if is_mandatory:
+                if self._is_expired():
+                    self._set_cache_token() # clear the cache
+                    raise
+
+            # if token hasnt expired continue to use it
+            return
+        
+        self._set_from_data(metadata)
+
+    def _get_initial_token(self, retry_count=3, retry_delay=1):
+        """ get the inital token - if it fails raise exception
+        """
+        _total_attempts = retry_count
         while True:
             try:
                 metadata = self.auth_function()
@@ -526,60 +576,77 @@ class DefaultTokenManager(TokenManager):
                 _total_attempts -= 1
                 if _total_attempts > 0:
                     logger.debug("Retrying auth call")
-                    time.sleep(1)
+                    time.sleep(retry_delay)
                 else:
-                    period_name = 'mandatory' if is_mandatory else 'advisory'
-                    logger.warning("Refreshing temporary credentials failed "
-                                   "during %s refresh period.",
-                                   period_name, exc_info=True)
-                    if is_mandatory:
-                        # If this is a mandatory refresh, then
-                        # all errors that occur when we attempt to refresh
-                        # credentials are propagated back to the user.
-                        raise
-                    # Otherwise we'll just return.
-                    # The end result will be that we'll use the current
-                    # set of temporary credentials we have.
-                    return
-
-        # Now set returned value, no matter in which way they came back.
+                    logger.warning("Problem fetching initial IAM token.", exc_info=True)
+                    self._set_cache_token() # clear the cache
+                    raise
+        
         self._set_from_data(metadata)
+        self._set_refresh_timeouts()
 
-        if self._is_expired():
-            # We successfully refreshed credentials but for whatever
-            # reason, our refreshing function returned credentials
-            # that are still expired.  In this scenario, the only
-            # thing we can do is let the user know and raise
-            # an exception.
-            msg = ("Credentials were refreshed, but the "
-                   "refreshed credentials are still expired.")
-            logger.warning(msg)
-            raise RuntimeError(msg)
+    def _get_cache_refresh_token(self): 
+        """ get the cached refresh token from previous call to IAM server
+        """  
+        return self._refresh_token
+
+       
+    def _get_cache_token(self): 
+        """ get the cached access token from previous call to IAM server
+        """  
+        with self._token_update_lock:
+            if self._token:
+                if self._seconds_remaining() <= 0:
+                    return None
+                
+            return self._token
+
+
+    def _set_cache_token(self, 
+                          access_token=None, 
+                          refresh_token=None, 
+                          token_type=None, 
+                          refresh_in_secs=None):
+        """ cache token and expiry date details retrieved in call to IAM server
+        if the token is expired raise an exception and return error to user
+        """  
+        with self._token_update_lock:
+            self._token = access_token
+            self._refresh_token = refresh_token
+            self._token_type = token_type
+            
+            if refresh_in_secs is None:
+                self._expiry_time = None
+            else:        
+                _refresh_in_secs = self.REFRESH_OVERRIDE_IN_SECS if self.REFRESH_OVERRIDE_IN_SECS > 0 else refresh_in_secs
+                # Add expires_in to current system time.
+                self._expiry_time = self._time_fetcher() + datetime.timedelta(seconds=_refresh_in_secs)
+
+                if self._is_expired():
+                    self._token = None
+                    self._refresh_token = None
+                    self._token_type = None
+                    self._expiry_time = None
+                    
+                    msg = ("Credentials fetched ok : but are expired.")
+                    logger.warning(msg)
+                    raise RuntimeError(msg)
+                    
+                logger.debug("Retrieved credentials will expire at: %s", self._expiry_time)
+
 
     def _set_from_data(self, data):
-        self._token = data['access_token']
-
-        # Add expires_in to current system time.
-        self._expiry_time = self._time_fetcher() + datetime.timedelta(seconds=data['expires_in'])
-
-        # Aren't currently using this, but we can later
-        if 'refresh_token' in data:
-            self._refresh_token = data['refresh_token']
-
-        self._token_type = data['token_type']
-
-        logger.debug("Retrieved credentials will expire at: %s", self._expiry_time)
+        """ extract required values from metadata returned from IAM server
+        """
+        _refresh_token = data['refresh_token'] if 'refresh_token' in data  else None
+        self._set_cache_token(data['access_token'], _refresh_token, data['token_type'], data['expires_in'])        
 
     def _set_refresh_timeouts(self):
         """
         Set the advisory  timeout to 25% of remaining time - usually 15 minutes on 1 hour expiry
         Set the mandatory timeout to 17% of remaining time - usually 10 minutes on 1 hour expiry
         """
-        # only want to set this once
-        if self._advisory_refresh_timeout != 0:
-            return
-
-        if self._expiry_time and self._token:
+        if self._expiry_time:
             _secs = self._seconds_remaining()
             self._advisory_refresh_timeout = int(_secs / (100 / 25))
             self._mandatory_refresh_timeout = int(_secs / (100 / 17))
