@@ -144,68 +144,68 @@ an endpoint to write tests. Responses are returned first in, first out.
 If operations are called out of order, or are called with no remaining
 queued responses, an error will be raised.</p>
 <p><strong>Example:</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">ibm_botocore.session</span>
 <span class="kn">from</span> <span class="nn">ibm_botocore.stub</span> <span class="kn">import</span> <span class="n">Stubber</span>
 
 
-<span class="n">s3</span> <span class="o">=</span> <span class="n">ibm_botocore</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span><span class="o">.</span><span class="n">create_client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
+<span class="n">s3</span> <span class="o">=</span> <span class="n">ibm_botocore</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span><span class="o">.</span><span class="n">create_client</span><span class="p">(</span><span class="s">&#39;s3&#39;</span><span class="p">)</span>
 <span class="n">stubber</span> <span class="o">=</span> <span class="n">Stubber</span><span class="p">(</span><span class="n">s3</span><span class="p">)</span>
 
 <span class="n">response</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;IsTruncated&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
-    <span class="s1">&#39;Name&#39;</span><span class="p">:</span> <span class="s1">&#39;test-bucket&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MaxKeys&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Contents&#39;</span><span class="p">:</span> <span class="p">[{</span>
-        <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;test.txt&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;ETag&#39;</span><span class="p">:</span> <span class="s1">&#39;&quot;abc123&quot;&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;StorageClass&#39;</span><span class="p">:</span> <span class="s1">&#39;STANDARD&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;LastModified&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
-        <span class="s1">&#39;Owner&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;ID&#39;</span><span class="p">:</span> <span class="s1">&#39;abc123&#39;</span><span class="p">,</span> <span class="s1">&#39;DisplayName&#39;</span><span class="p">:</span> <span class="s1">&#39;myname&#39;</span><span class="p">},</span>
-        <span class="s1">&#39;Size&#39;</span><span class="p">:</span> <span class="mi">14814</span>
+    <span class="s">&#39;IsTruncated&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+    <span class="s">&#39;Name&#39;</span><span class="p">:</span> <span class="s">&#39;test-bucket&#39;</span><span class="p">,</span>
+    <span class="s">&#39;MaxKeys&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span> <span class="s">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;</span><span class="p">,</span>
+    <span class="s">&#39;Contents&#39;</span><span class="p">:</span> <span class="p">[{</span>
+        <span class="s">&#39;Key&#39;</span><span class="p">:</span> <span class="s">&#39;test.txt&#39;</span><span class="p">,</span>
+        <span class="s">&#39;ETag&#39;</span><span class="p">:</span> <span class="s">&#39;&quot;abc123&quot;&#39;</span><span class="p">,</span>
+        <span class="s">&#39;StorageClass&#39;</span><span class="p">:</span> <span class="s">&#39;STANDARD&#39;</span><span class="p">,</span>
+        <span class="s">&#39;LastModified&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
+        <span class="s">&#39;Owner&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;ID&#39;</span><span class="p">:</span> <span class="s">&#39;abc123&#39;</span><span class="p">,</span> <span class="s">&#39;DisplayName&#39;</span><span class="p">:</span> <span class="s">&#39;myname&#39;</span><span class="p">},</span>
+        <span class="s">&#39;Size&#39;</span><span class="p">:</span> <span class="mi">14814</span>
     <span class="p">}],</span>
-    <span class="s1">&#39;EncodingType&#39;</span><span class="p">:</span> <span class="s1">&#39;url&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;ResponseMetadata&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;RequestId&#39;</span><span class="p">:</span> <span class="s1">&#39;abc123&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;HTTPStatusCode&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
-        <span class="s1">&#39;HostId&#39;</span><span class="p">:</span> <span class="s1">&#39;abc123&#39;</span>
+    <span class="s">&#39;EncodingType&#39;</span><span class="p">:</span> <span class="s">&#39;url&#39;</span><span class="p">,</span>
+    <span class="s">&#39;ResponseMetadata&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&#39;RequestId&#39;</span><span class="p">:</span> <span class="s">&#39;abc123&#39;</span><span class="p">,</span>
+        <span class="s">&#39;HTTPStatusCode&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+        <span class="s">&#39;HostId&#39;</span><span class="p">:</span> <span class="s">&#39;abc123&#39;</span>
     <span class="p">},</span>
-    <span class="s1">&#39;Marker&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span>
+    <span class="s">&#39;Marker&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;</span>
 <span class="p">}</span>
 
-<span class="n">expected_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Bucket&#39;</span><span class="p">:</span> <span class="s1">&#39;test-bucket&#39;</span><span class="p">}</span>
+<span class="n">expected_params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;Bucket&#39;</span><span class="p">:</span> <span class="s">&#39;test-bucket&#39;</span><span class="p">}</span>
 
-<span class="n">stubber</span><span class="o">.</span><span class="n">add_response</span><span class="p">(</span><span class="s1">&#39;list_objects&#39;</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">expected_params</span><span class="p">)</span>
+<span class="n">stubber</span><span class="o">.</span><span class="n">add_response</span><span class="p">(</span><span class="s">&#39;list_objects&#39;</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">expected_params</span><span class="p">)</span>
 <span class="n">stubber</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
 
-<span class="n">service_response</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">list_objects</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;test-bucket&#39;</span><span class="p">)</span>
+<span class="n">service_response</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">list_objects</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s">&#39;test-bucket&#39;</span><span class="p">)</span>
 <span class="k">assert</span> <span class="n">service_response</span> <span class="o">==</span> <span class="n">response</span>
 </pre></div>
 </div>
 <p>This class can also be called as a context manager, which will handle
 activation / deactivation for you.</p>
 <p><strong>Example:</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">ibm_botocore.session</span>
 <span class="kn">from</span> <span class="nn">ibm_botocore.stub</span> <span class="kn">import</span> <span class="n">Stubber</span>
 
 
-<span class="n">s3</span> <span class="o">=</span> <span class="n">ibm_botocore</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span><span class="o">.</span><span class="n">create_client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
+<span class="n">s3</span> <span class="o">=</span> <span class="n">ibm_botocore</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span><span class="o">.</span><span class="n">create_client</span><span class="p">(</span><span class="s">&#39;s3&#39;</span><span class="p">)</span>
 
 <span class="n">response</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;Owner&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;ID&quot;</span><span class="p">:</span> <span class="s2">&quot;foo&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;DisplayName&quot;</span><span class="p">:</span> <span class="s2">&quot;bar&quot;</span>
+    <span class="s">&quot;Owner&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;ID&quot;</span><span class="p">:</span> <span class="s">&quot;foo&quot;</span><span class="p">,</span>
+        <span class="s">&quot;DisplayName&quot;</span><span class="p">:</span> <span class="s">&quot;bar&quot;</span>
     <span class="p">},</span>
-    <span class="s2">&quot;Buckets&quot;</span><span class="p">:</span> <span class="p">[{</span>
-        <span class="s2">&quot;CreationDate&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
-        <span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="s2">&quot;baz&quot;</span>
+    <span class="s">&quot;Buckets&quot;</span><span class="p">:</span> <span class="p">[{</span>
+        <span class="s">&quot;CreationDate&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
+        <span class="s">&quot;Name&quot;</span><span class="p">:</span> <span class="s">&quot;baz&quot;</span>
     <span class="p">}]</span>
 <span class="p">}</span>
 
 
 <span class="k">with</span> <span class="n">Stubber</span><span class="p">(</span><span class="n">s3</span><span class="p">)</span> <span class="k">as</span> <span class="n">stubber</span><span class="p">:</span>
-    <span class="n">stubber</span><span class="o">.</span><span class="n">add_response</span><span class="p">(</span><span class="s1">&#39;list_buckets&#39;</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">stubber</span><span class="o">.</span><span class="n">add_response</span><span class="p">(</span><span class="s">&#39;list_buckets&#39;</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="p">{})</span>
     <span class="n">service_response</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">list_buckets</span><span class="p">()</span>
 
 <span class="k">assert</span> <span class="n">service_response</span> <span class="o">==</span> <span class="n">response</span>
@@ -215,40 +215,40 @@ activation / deactivation for you.</p>
 otherwise don't care about its value, you can use stub.ANY to ignore it in
 validation.</p>
 <p><strong>Example:</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">ibm_botocore.session</span>
 <span class="kn">from</span> <span class="nn">ibm_botocore.stub</span> <span class="kn">import</span> <span class="n">Stubber</span><span class="p">,</span> <span class="n">ANY</span>
 
 
-<span class="n">s3</span> <span class="o">=</span> <span class="n">ibm_botocore</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span><span class="o">.</span><span class="n">create_client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
+<span class="n">s3</span> <span class="o">=</span> <span class="n">ibm_botocore</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span><span class="o">.</span><span class="n">create_client</span><span class="p">(</span><span class="s">&#39;s3&#39;</span><span class="p">)</span>
 <span class="n">stubber</span> <span class="o">=</span> <span class="n">Stubber</span><span class="p">(</span><span class="n">s3</span><span class="p">)</span>
 
 <span class="n">response</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;IsTruncated&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
-    <span class="s1">&#39;Name&#39;</span><span class="p">:</span> <span class="s1">&#39;test-bucket&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MaxKeys&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Contents&#39;</span><span class="p">:</span> <span class="p">[{</span>
-        <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="s1">&#39;test.txt&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;ETag&#39;</span><span class="p">:</span> <span class="s1">&#39;&quot;abc123&quot;&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;StorageClass&#39;</span><span class="p">:</span> <span class="s1">&#39;STANDARD&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;LastModified&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
-        <span class="s1">&#39;Owner&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;ID&#39;</span><span class="p">:</span> <span class="s1">&#39;abc123&#39;</span><span class="p">,</span> <span class="s1">&#39;DisplayName&#39;</span><span class="p">:</span> <span class="s1">&#39;myname&#39;</span><span class="p">},</span>
-        <span class="s1">&#39;Size&#39;</span><span class="p">:</span> <span class="mi">14814</span>
+    <span class="s">&#39;IsTruncated&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+    <span class="s">&#39;Name&#39;</span><span class="p">:</span> <span class="s">&#39;test-bucket&#39;</span><span class="p">,</span>
+    <span class="s">&#39;MaxKeys&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span> <span class="s">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;</span><span class="p">,</span>
+    <span class="s">&#39;Contents&#39;</span><span class="p">:</span> <span class="p">[{</span>
+        <span class="s">&#39;Key&#39;</span><span class="p">:</span> <span class="s">&#39;test.txt&#39;</span><span class="p">,</span>
+        <span class="s">&#39;ETag&#39;</span><span class="p">:</span> <span class="s">&#39;&quot;abc123&quot;&#39;</span><span class="p">,</span>
+        <span class="s">&#39;StorageClass&#39;</span><span class="p">:</span> <span class="s">&#39;STANDARD&#39;</span><span class="p">,</span>
+        <span class="s">&#39;LastModified&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
+        <span class="s">&#39;Owner&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;ID&#39;</span><span class="p">:</span> <span class="s">&#39;abc123&#39;</span><span class="p">,</span> <span class="s">&#39;DisplayName&#39;</span><span class="p">:</span> <span class="s">&#39;myname&#39;</span><span class="p">},</span>
+        <span class="s">&#39;Size&#39;</span><span class="p">:</span> <span class="mi">14814</span>
     <span class="p">}],</span>
-    <span class="s1">&#39;EncodingType&#39;</span><span class="p">:</span> <span class="s1">&#39;url&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;ResponseMetadata&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;RequestId&#39;</span><span class="p">:</span> <span class="s1">&#39;abc123&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;HTTPStatusCode&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
-        <span class="s1">&#39;HostId&#39;</span><span class="p">:</span> <span class="s1">&#39;abc123&#39;</span>
+    <span class="s">&#39;EncodingType&#39;</span><span class="p">:</span> <span class="s">&#39;url&#39;</span><span class="p">,</span>
+    <span class="s">&#39;ResponseMetadata&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&#39;RequestId&#39;</span><span class="p">:</span> <span class="s">&#39;abc123&#39;</span><span class="p">,</span>
+        <span class="s">&#39;HTTPStatusCode&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+        <span class="s">&#39;HostId&#39;</span><span class="p">:</span> <span class="s">&#39;abc123&#39;</span>
     <span class="p">},</span>
-    <span class="s1">&#39;Marker&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span>
+    <span class="s">&#39;Marker&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;</span>
 <span class="p">}</span>
 
-<span class="n">expected_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Bucket&#39;</span><span class="p">:</span> <span class="n">ANY</span><span class="p">}</span>
-<span class="n">stubber</span><span class="o">.</span><span class="n">add_response</span><span class="p">(</span><span class="s1">&#39;list_objects&#39;</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">expected_params</span><span class="p">)</span>
+<span class="n">expected_params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;Bucket&#39;</span><span class="p">:</span> <span class="n">ANY</span><span class="p">}</span>
+<span class="n">stubber</span><span class="o">.</span><span class="n">add_response</span><span class="p">(</span><span class="s">&#39;list_objects&#39;</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">expected_params</span><span class="p">)</span>
 
 <span class="k">with</span> <span class="n">stubber</span><span class="p">:</span>
-    <span class="n">service_response</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">list_objects</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;test-bucket&#39;</span><span class="p">)</span>
+    <span class="n">service_response</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">list_objects</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s">&#39;test-bucket&#39;</span><span class="p">)</span>
 
 <span class="k">assert</span> <span class="n">service_response</span> <span class="o">==</span> <span class="n">response</span>
 </pre></div>

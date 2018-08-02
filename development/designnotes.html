@@ -143,26 +143,26 @@ is that the client objects 1) require parameters to be provided
 as <tt class="docutils literal"><span class="pre">**kwargs</span></tt> and 2) require the arguments typically be provided as
 <tt class="docutils literal"><span class="pre">CamelCased</span></tt> values.</p>
 <p>For example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">ddb</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">create_client</span><span class="p">(</span><span class="s1">&#39;dynamodb&#39;</span><span class="p">)</span>
-<span class="n">ddb</span><span class="o">.</span><span class="n">describe_table</span><span class="p">(</span><span class="n">TableName</span><span class="o">=</span><span class="s1">&#39;mytable&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">ddb</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">create_client</span><span class="p">(</span><span class="s">&#39;dynamodb&#39;</span><span class="p">)</span>
+<span class="n">ddb</span><span class="o">.</span><span class="n">describe_table</span><span class="p">(</span><span class="n">TableName</span><span class="o">=</span><span class="s">&#39;mytable&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In boto, the equivalent code would be:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">layer1</span><span class="o">.</span><span class="n">describe_table</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s1">&#39;mytable&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">layer1</span><span class="o">.</span><span class="n">describe_table</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s">&#39;mytable&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>There are several reasons why this was changed in ibm_botocore.</p>
 <p>The first reason was because we wanted to have the same casing for
 inputs as well as outputs.  In both ibm_boto3 and ibm_botocore, the response
 for the <tt class="docutils literal"><span class="pre">describe_table</span></tt> calls is:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;Table&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;CreationDateTime&#39;</span><span class="p">:</span> <span class="mf">1393007077.387</span><span class="p">,</span>
-            <span class="s1">&#39;ItemCount&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="s1">&#39;KeySchema&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;HashKeyElement&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;AttributeName&#39;</span><span class="p">:</span> <span class="s1">&#39;foo&#39;</span><span class="p">,</span>
-                                             <span class="s1">&#39;AttributeType&#39;</span><span class="p">:</span> <span class="s1">&#39;S&#39;</span><span class="p">}},</span>
-            <span class="s1">&#39;ProvisionedThroughput&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;ReadCapacityUnits&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-                                      <span class="s1">&#39;WriteCapacityUnits&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
-            <span class="s1">&#39;TableName&#39;</span><span class="p">:</span> <span class="s1">&#39;testtable&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;TableStatus&#39;</span><span class="p">:</span> <span class="s1">&#39;ACTIVE&#39;</span><span class="p">}}</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&#39;Table&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;CreationDateTime&#39;</span><span class="p">:</span> <span class="mf">1393007077.387</span><span class="p">,</span>
+            <span class="s">&#39;ItemCount&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s">&#39;KeySchema&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;HashKeyElement&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;AttributeName&#39;</span><span class="p">:</span> <span class="s">&#39;foo&#39;</span><span class="p">,</span>
+                                             <span class="s">&#39;AttributeType&#39;</span><span class="p">:</span> <span class="s">&#39;S&#39;</span><span class="p">}},</span>
+            <span class="s">&#39;ProvisionedThroughput&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;ReadCapacityUnits&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                                      <span class="s">&#39;WriteCapacityUnits&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+            <span class="s">&#39;TableName&#39;</span><span class="p">:</span> <span class="s">&#39;testtable&#39;</span><span class="p">,</span>
+            <span class="s">&#39;TableStatus&#39;</span><span class="p">:</span> <span class="s">&#39;ACTIVE&#39;</span><span class="p">}}</span>
 </pre></div>
 </div>
 <p>Notice that the response is <tt class="docutils literal"><span class="pre">CamelCased</span></tt>.  This makes it more difficult
