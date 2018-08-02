@@ -26,7 +26,9 @@ import os
 import re
 import logging
 
-__version__ = '2.1.3'
+
+__author__ = 'IBM'
+__version__ = '2.1.4.dev1'
 
 
 class NullHandler(logging.Handler):
