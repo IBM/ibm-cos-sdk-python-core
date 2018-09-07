@@ -96,6 +96,9 @@ Client
   *   :py:meth:`get_bucket_inventory_configuration`
 
   
+  *   :py:meth:`get_bucket_lifecycle_configuration`
+
+  
   *   :py:meth:`get_bucket_location`
 
   
@@ -168,6 +171,9 @@ Client
   *   :py:meth:`put_bucket_inventory_configuration`
 
   
+  *   :py:meth:`put_bucket_lifecycle_configuration`
+
+  
   *   :py:meth:`put_bucket_metrics_configuration`
 
   
@@ -181,6 +187,9 @@ Client
 
   
   *   :py:meth:`put_object_acl`
+
+  
+  *   :py:meth:`restore_object`
 
   
   *   :py:meth:`upload_part`
@@ -1767,6 +1776,92 @@ Client
       
     
 
+  .. py:method:: get_bucket_lifecycle_configuration(**kwargs)
+
+    Returns the lifecycle configuration information set on the bucket.
+
+    **Request Syntax** 
+    ::
+
+      response = client.get_bucket_lifecycle_configuration(
+          Bucket='string'
+      )
+    :type Bucket: string
+    :param Bucket: **[REQUIRED]** 
+
+    
+    
+    :rtype: dict
+    :returns: 
+      
+      **Response Syntax** 
+
+      
+      ::
+
+        {
+            'Rules': [
+                {
+                    'ID': 'string',
+                    'Filter': {
+                        'Prefix': 'string'
+                    },
+                    'Status': 'Enabled'|'Disabled',
+                    'Transitions': [
+                        {
+                            'Date': datetime(2015, 1, 1),
+                            'Days': 123,
+                            'StorageClass': 'GLACIER'
+                        },
+                    ]
+                },
+            ]
+        }
+      **Response Structure** 
+
+      
+
+      - *(dict) --* 
+        
+
+        - **Rules** *(list) --* Currently only one Rule allowed.
+          
+
+          - *(dict) --* 
+            
+
+            - **ID** *(string) --* Unique identifier for the rule. The value cannot be longer than 255 characters.
+            
+
+            - **Filter** *(dict) --* The Filter is used to identify objects that a Lifecycle Rule applies to. Currently not supported.
+              
+
+              - **Prefix** *(string) --* Empty prefix allowed only.
+          
+            
+
+            - **Status** *(string) --* If 'Enabled', the rule is currently being applied. If 'Disabled', the rule is not currently being applied.
+            
+
+            - **Transitions** *(list) --* Currently only one Transition allowed.
+              
+
+              - *(dict) --* 
+                
+
+                - **Date** *(datetime) --* Indicates at what date the object is to be moved or deleted. Should be in GMT ISO 8601 Format.
+                
+
+                - **Days** *(integer) --* Indicates the lifetime, in days, of the objects that are subject to the rule. The value must be a non-zero positive integer.
+                
+
+                - **StorageClass** *(string) --* The class of storage used to store the object.
+            
+          
+        
+      
+    
+
   .. py:method:: get_bucket_location(**kwargs)
 
     Returns the region the bucket resides in.
@@ -2533,6 +2628,8 @@ Client
             'DeleteMarker': True|False,
             'AcceptRanges': 'string',
             'Expiration': 'string',
+            'IbmTransition': 'string',
+            'IbmRestoredCopyStorageClass': 'string',
             'Restore': 'string',
             'LastModified': datetime(2015, 1, 1),
             'ContentLength': 123,
@@ -2571,6 +2668,12 @@ Client
         
 
         - **Expiration** *(string) --* If the object expiration is configured (see PUT Bucket lifecycle), the response includes this header. It includes the expiry-date and rule-id key value pairs providing object expiration information. The value of the rule-id is URL encoded.
+        
+
+        - **IbmTransition** *(string) --* This header is only included if an object has transition metadata. This header will indicate the transition storage class and time of transition. If this header and the x-amz-restore header are both included, this header will indicate the time at which the object was originally archived.
+        
+
+        - **IbmRestoredCopyStorageClass** *(string) --* This header is only included if an object has transition metadata. This header will indicate the transition storage class and time of transition. If this header and the x-amz-restore header are both included, this header will indicate the time at which the object was originally archived.
         
 
         - **Restore** *(string) --* Provides information about object restoration operation and expiration time of the restored object copy.
@@ -4173,6 +4276,84 @@ Client
     
     :returns: None
 
+  .. py:method:: put_bucket_lifecycle_configuration(**kwargs)
+
+    Sets lifecycle configuration for your bucket. If a lifecycle configuration exists, it replaces it.
+
+    **Request Syntax** 
+    ::
+
+      response = client.put_bucket_lifecycle_configuration(
+          Bucket='string',
+          LifecycleConfiguration={
+              'Rules': [
+                  {
+                      'ID': 'string',
+                      'Filter': {
+                          'Prefix': 'string'
+                      },
+                      'Status': 'Enabled'|'Disabled',
+                      'Transitions': [
+                          {
+                              'Date': datetime(2015, 1, 1),
+                              'Days': 123,
+                              'StorageClass': 'GLACIER'
+                          },
+                      ]
+                  },
+              ]
+          }
+      )
+    :type Bucket: string
+    :param Bucket: **[REQUIRED]** 
+
+    
+    :type LifecycleConfiguration: dict
+    :param LifecycleConfiguration: 
+
+    
+      - **Rules** *(list) --* **[REQUIRED]** Currently only one Rule allowed.
+
+      
+        - *(dict) --* 
+
+        
+          - **ID** *(string) --* Unique identifier for the rule. The value cannot be longer than 255 characters.
+
+          
+          - **Filter** *(dict) --* **[REQUIRED]** The Filter is used to identify objects that a Lifecycle Rule applies to. Currently not supported.
+
+          
+            - **Prefix** *(string) --* Empty prefix allowed only.
+
+            
+          
+          - **Status** *(string) --* **[REQUIRED]** If 'Enabled', the rule is currently being applied. If 'Disabled', the rule is not currently being applied.
+
+          
+          - **Transitions** *(list) --* **[REQUIRED]** Currently only one Transition allowed.
+
+          
+            - *(dict) --* 
+
+            
+              - **Date** *(datetime) --* Indicates at what date the object is to be moved or deleted. Should be in GMT ISO 8601 Format.
+
+              
+              - **Days** *(integer) --* Indicates the lifetime, in days, of the objects that are subject to the rule. The value must be a non-zero positive integer.
+
+              
+              - **StorageClass** *(string) --* The class of storage used to store the object.
+
+              
+            
+        
+        
+    
+    
+    
+    :returns: None
+
   .. py:method:: put_bucket_metrics_configuration(**kwargs)
 
     Sets a metrics configuration (specified by the metrics configuration ID) for the bucket.
@@ -4663,6 +4844,49 @@ Client
 
         - **RequestCharged** *(string) --* If present, indicates that the requester was successfully charged for the request.
     
+
+  .. py:method:: restore_object(**kwargs)
+
+    Restores an archived copy of an object back into Amazon S3
+
+    **Request Syntax** 
+    ::
+
+      response = client.restore_object(
+          Bucket='string',
+          Key='string',
+          RestoreRequest={
+              'Days': 123,
+              'GlacierJobParameters': {
+                  'Tier': 'Bulk'
+              }
+          }
+      )
+    :type Bucket: string
+    :param Bucket: **[REQUIRED]** 
+
+    
+    :type Key: string
+    :param Key: **[REQUIRED]** 
+
+    
+    :type RestoreRequest: dict
+    :param RestoreRequest: 
+
+    
+      - **Days** *(integer) --* **[REQUIRED]** Lifetime of the active copy in days
+
+      
+      - **GlacierJobParameters** *(dict) --* Glacier related prameters pertaining to this job.
+
+      
+        - **Tier** *(string) --* **[REQUIRED]** Glacier retrieval tier at which the restore will be processed.
+
+        
+      
+    
+    
+    :returns: None
 
   .. py:method:: upload_part(**kwargs)
 
