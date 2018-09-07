@@ -31,7 +31,7 @@ class TestS3Docs(BaseDocsFunctionalTest):
         modified_methods = ['delete_objects', 
                             'put_bucket_acl',
                             'put_bucket_cors', 
-                            'put_bucket_tagging',
+                            'put_bucket_lifecycle_configuration', 
                             'put_bucket_replication', 
                             'put_bucket_request_payment', 
                             'put_object_acl']
@@ -47,7 +47,7 @@ class TestS3Docs(BaseDocsFunctionalTest):
     def test_copy_source_documented_as_union_type(self):
         content  = self.get_docstring_for_method('s3', 'copy_object')
         dict_form = (
-            "{'Bucket': 'string', 'Key': 'string', 'VersionId': 'string'}")
+            "{'Bucket': 'string', 'Key': 'string'}")
         self.assert_contains_line(
             "CopySource='string' or %s" % dict_form, content)
 

@@ -52,6 +52,43 @@ class TestOnlyAsciiCharsAllowed(BaseS3OperationTest):
                     'goodkey': 'good', 'non-ascii': u'\u2713'})
 
 
+class TestS3GetBucketLifecycle(BaseS3OperationTest):
+    def test_single_lifecycle_transition(self):
+        http_response = mock.Mock()
+        http_response.status_code = 200
+        http_response.content = (
+            '<?xml version="1.0" ?>'
+            '<LifecycleConfiguration xmlns="http://s3.amazonaws.'
+            'com/doc/2006-03-01/">'
+            '	<Rule>'
+            '		<ID>transitionRule</ID>'
+            '		<Filter>'
+            '			<Prefix>foo</Prefix>'
+            '		</Filter>'
+            '		<Status>Enabled</Status>'
+            '		<Transition>'
+            '			<Days>40</Days>'
+            '			<StorageClass>GLACIER</StorageClass>'
+            '		</Transition>'
+            '	</Rule>'
+            '</LifecycleConfiguration>'
+        ).encode('utf-8')
+        http_response.headers = {}
+        self.http_session_send_mock.return_value = http_response
+        s3 = self.session.create_client('s3')
+        response = s3.get_bucket_lifecycle_configuration(Bucket='mybucket')
+        # Each Transition member should have at least one of the
+        # transitions provided.
+        self.assertEqual(
+            response['Rules'][0]['Transitions'][0],
+            {'Days': 40, 'StorageClass': 'GLACIER'}
+        )
+        self.assertEqual(
+            response['Rules'][0]['Filter'],
+            {'Prefix': ''}
+        )
+
+
 class TestS3PutObject(BaseS3OperationTest):
     def test_500_error_with_non_xml_body(self):
         # Note: This exact test case may not be applicable from

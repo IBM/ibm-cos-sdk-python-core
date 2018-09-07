@@ -119,6 +119,7 @@
       "input":{"shape":"DeleteBucketInventoryConfigurationRequest"},
       "documentation":"Deletes an inventory configuration (identified by the inventory ID) from the bucket."
     },
+    
     "DeleteBucketLifecycle":{
       "name":"DeleteBucketLifecycle",
       "http":{
@@ -129,6 +130,7 @@
       "__documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/RESTBucketDELETElifecycle.html",
       "documentation":"Deletes the lifecycle configuration from the bucket."
     },
+
     "DeleteBucketMetricsConfiguration":{
       "name":"DeleteBucketMetricsConfiguration",
       "http":{
@@ -242,6 +244,18 @@
       "output":{"shape":"GetBucketInventoryConfigurationOutput"},
       "documentation":"Returns an inventory configuration (identified by the inventory ID) from the bucket."
     },
+    
+    "GetBucketLifecycleConfiguration":{
+      "name":"GetBucketLifecycleConfiguration",
+      "http":{
+        "method":"GET",
+        "requestUri":"/{Bucket}?lifecycle"
+      },
+      "input":{"shape":"GetBucketLifecycleConfigurationRequest"},
+      "output":{"shape":"GetBucketLifecycleConfigurationOutput"},
+      "documentation":"Returns the lifecycle configuration information set on the bucket."
+    },
+    
     "GetBucketLocation":{
       "name":"GetBucketLocation",
       "http":{
@@ -490,6 +504,17 @@
       "input":{"shape":"PutBucketInventoryConfigurationRequest"},
       "documentation":"Adds an inventory configuration (identified by the inventory ID) from the bucket."
     },
+   
+    "PutBucketLifecycleConfiguration":{
+      "name":"PutBucketLifecycleConfiguration",
+      "http":{
+        "method":"PUT",
+        "requestUri":"/{Bucket}?lifecycle"
+      },
+      "input":{"shape":"PutBucketLifecycleConfigurationRequest"},
+      "documentation":"Sets lifecycle configuration for your bucket. If a lifecycle configuration exists, it replaces it."
+    },
+    
     "PutBucketMetricsConfiguration":{
       "name":"PutBucketMetricsConfiguration",
       "http":{
@@ -542,6 +567,21 @@
       ],
       "__documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/RESTObjectPUTacl.html",
       "documentation":"uses the acl subresource to set the access control list (ACL) permissions for an object that already exists in a bucket"
+    },
+    "RestoreObject":{
+      "name":"RestoreObject",
+      "http":{
+        "method":"POST",
+        "requestUri":"/{Bucket}/{Key+}?restore"
+      },
+      "input":{"shape":"RestoreObjectRequest"},
+      "_output":{"shape":"RestoreObjectOutput"},
+      "errors":[
+        {"shape":"ObjectAlreadyInActiveTierError"}
+      ],
+      "__documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/RESTObjectRestore.html",
+      "documentation":"Restores an archived copy of an object back into Amazon S3",
+      "alias":"PostObjectRestore"
     },
     "UploadPart":{
       "name":"UploadPart",
@@ -2127,26 +2167,6 @@
         }
       }
     },
-    "GetBucketLifecycleOutput":{
-      "type":"structure",
-      "members":{
-        "Rules":{
-          "shape":"Rules",
-          "locationName":"Rule"
-        }
-      }
-    },
-    "GetBucketLifecycleRequest":{
-      "type":"structure",
-      "required":["Bucket"],
-      "members":{
-        "Bucket":{
-          "shape":"BucketName",
-          "location":"uri",
-          "locationName":"Bucket"
-        }
-      }
-    },
     "GetBucketLocationOutput":{
       "type":"structure",
       "members":{
@@ -2766,6 +2786,18 @@
           "location":"header",
           "locationName":"x-amz-expiration"
         },
+        "IbmTransition":{
+          "shape":"IbmTransition",
+          "documentation":"This header is only included if an object has transition metadata.  This header will indicate the transition storage class and time of transition.  If this header and the x-amz-restore header are both included, this header will indicate the time at which the object was originally archived.",
+          "location":"header",
+          "locationName":"x-ibm-transition"
+        },
+        "IbmRestoredCopyStorageClass":{
+          "shape":"IbmRestoredCopyStorageClass",
+          "documentation":"This header is only included if an object has transition metadata.  This header will indicate the transition storage class and time of transition.  If this header and the x-amz-restore header are both included, this header will indicate the time at which the object was originally archived.",
+          "location":"header",
+          "locationName":"x-ibm-restored-copy-storage-class"
+        },
         "Restore":{
           "shape":"Restore",
           "documentation":"Provides information about object restoration operation and expiration time of the restored object copy.",
@@ -3160,16 +3192,8 @@
       "flattened":true
     },
     "LastModified":{"type":"timestamp"},
-    "LifecycleConfiguration":{
-      "type":"structure",
-      "required":["Rules"],
-      "members":{
-        "Rules":{
-          "shape":"Rules",
-          "locationName":"Rule"
-        }
-      }
-    },
+    "IbmTransition":{"type":"string"},
+    "IbmRestoredCopyStorageClass":{"type":"string"},
     "LifecycleExpiration":{
       "type":"structure",
       "members":{
@@ -3187,6 +3211,47 @@
         }
       }
     },
+    "LifecycleRule":{
+      "type":"structure",
+      "required":[
+       "Filter", 
+       "Status",
+       "Transitions"
+       ],
+      "members":{
+       "ID":{
+          "shape":"ID",
+          "documentation":"Unique identifier for the rule. The value cannot be longer than 255 characters."
+        },
+        "Filter":{"shape":"LifecycleRuleFilter"},
+        "Status":{
+          "shape":"ExpirationStatus",
+          "documentation":"If 'Enabled', the rule is currently being applied. If 'Disabled', the rule is not currently being applied."
+        },
+        "Transitions":{
+          "shape":"TransitionList",
+          "locationName":"Transition",
+          "documentation":"Currently only one Transition allowed."
+        }
+      }
+    },
+    "LifecycleRuleFilter":{
+      "type":"structure",
+      "members":{
+        "Prefix":{
+          "shape":"Prefix",
+          "documentation":"Empty prefix allowed only."
+        }
+      },
+      "documentation":"The Filter is used to identify objects that a Lifecycle Rule applies to. Currently not supported."
+    },
+    "LifecycleRules":{
+      "type":"list",
+      "member":{"shape":"LifecycleRule"},
+      "flattened":true,
+      "documentation":"Currently only one Rule allowed."
+    },
+
     "ListBucketAnalyticsConfigurationsOutput":{
       "type":"structure",
       "members":{
@@ -4213,6 +4278,23 @@
       },
       "payload":"InventoryConfiguration"
     },
+    "PutBucketLifecycleConfigurationRequest":{
+      "type":"structure",
+      "required":["Bucket"],
+      "members":{
+        "Bucket":{
+          "shape":"BucketName",
+          "location":"uri",
+          "locationName":"Bucket"
+        },
+        "LifecycleConfiguration":{
+          "shape":"BucketLifecycleConfiguration",
+          "locationName":"LifecycleConfiguration",
+          "xmlNamespace":{"uri":"http://s3.amazonaws.com/doc/2006-03-01/"}
+        }
+      },
+      "payload":"LifecycleConfiguration"
+    },
     "PutBucketMetricsConfigurationRequest":{
       "type":"structure",
       "required":[
@@ -4808,11 +4890,6 @@
           "shape":"RestoreRequest",
           "locationName":"RestoreRequest",
           "xmlNamespace":{"uri":"http://s3.amazonaws.com/doc/2006-03-01/"}
-        },
-        "RequestPayer":{
-          "shape":"RequestPayer",
-          "location":"header",
-          "locationName":"x-amz-request-payer"
         }
       },
       "payload":"RestoreRequest"
@@ -4972,9 +5049,7 @@
     "Tier":{
       "type":"string",
       "enum":[
-        "Standard",
-        "Bulk",
-        "Expedited"
+        "Bulk"
       ]
     },
     "Token":{"type":"string"},
@@ -5049,8 +5124,7 @@
     "TransitionStorageClass":{
       "type":"string",
       "enum":[
-        "GLACIER",
-        "STANDARD_IA"
+        "GLACIER"
       ]
     },
     "Type":{
