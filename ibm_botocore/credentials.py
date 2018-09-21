@@ -266,22 +266,32 @@ class DefaultTokenManager(TokenManager):
 
         """Creates a new DefaultTokenManager object.
         :type api_key_id: str
+
         :param api_key_id: IBM api key used for IAM authentication.
+
         :type service_instance_id: str
+
         :param service_instance_id: Service Instance ID used for
             PUT bucket and GET service requests.
+
         :type auth_endpoint: str
+
         :param auth_endpoint: URL used for IAM authentication. If not provided,
             API_TOKEN_URL will be used.
+
         :type time_fetcher: datetime
+        
         :param time_fetcher: current date and time used for calculating
             expiration time for token.
+
         :type auth_function: function
+
         :param auth_function: function that does custom authentication
             and returns json with token, refresh token, expiry time
             and token type. If not provided, a default authentication
             function will be used.
                 :type verify: boolean/string
+
         :param verify: Whether or not to verify IAM service SSL certificates.
             By default SSL certificates are verified.  You can provide the
             following values:
@@ -654,6 +664,49 @@ class DefaultTokenManager(TokenManager):
                          str(self._advisory_refresh_timeout) +
                          ') Mandatory(' +
                          str(self._mandatory_refresh_timeout) + ')')
+
+
+class DelegatedTokenManager(DefaultTokenManager):
+    """ Requests and processes IAM delegate tokens
+        Delegate token refreshed every six days """
+    def __init__(self, 
+                 api_key_id=None,
+                 service_instance_id=None,
+                 auth_endpoint=None,
+                 time_fetcher=_local_now,
+                 auth_function=None,
+                 verify=True,
+                 receiver_client_ids=None):
+
+        super(DelegatedTokenManager, self).__init__(api_key_id, 
+                                                    service_instance_id,
+                                                    auth_endpoint,
+                                                    time_fetcher,
+                                                    auth_function,
+                                                    verify)
+
+        self._receiver_client_ids = receiver_client_ids
+
+    def _get_data(self):
+        """ Get the data posted to IAM server
+        There is currenty no refresh functionality
+        """
+        data = {u'grant_type': u'urn:ibm:params:oauth:grant-type:apikey',
+                u'response_type': u'delegated_refresh_token',
+                u'apikey': self.api_key_id}
+
+        if self._receiver_client_ids is not None:
+            data[u'receiver_client_ids'] = u'%s' % self._receiver_client_ids
+
+        return data
+        
+    def _set_from_data(self, data):
+        """ extract required values from metadata returned from IAM server """
+        _REFRESH_SIX_DAYS_IN_SECS = 518400  #refresh delgate token every 6days
+        self._set_cache_token(data['delegated_refresh_token'], 
+                              None,
+                              data.get('token_type'),
+                              _REFRESH_SIX_DAYS_IN_SECS)
 
 
 class OAuth2Credentials(Credentials):

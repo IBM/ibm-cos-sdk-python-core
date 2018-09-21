@@ -223,6 +223,17 @@
       "output":{"shape":"GetBucketAnalyticsConfigurationOutput"},
       "documentation":"Gets an analytics configuration for the bucket (specified by the analytics configuration ID)."
     },
+    "GetBucketAspera":{
+      "name":"GetBucketAspera",
+      "http":{
+        "method":"GET",
+        "requestUri":"/{Bucket}?faspConnectionInfo"
+      },
+      "input":{"shape":"GetBucketAsperaRequest"},
+      "output":{"shape":"GetBucketAsperaOutput"},
+      "documentationUrl":"",
+      "documentation":"Gets Aspera access and secret keys for the bucket."
+    },
     "GetBucketCors":{
       "name":"GetBucketCors",
       "http":{
@@ -790,6 +801,17 @@
     "AnalyticsS3ExportFileFormat":{
       "type":"string",
       "enum":["CSV"]
+    },
+    "AccessKey":{
+      "type":"structure",
+      "members":{
+        "Id":{"shape":"ID"},
+        "Secret":{"shape":"Secret"}
+      }
+    },
+    "ATSEndpoint":{
+      "type":"string",
+      "sensitive":true
     },
     "Body":{"type":"blob"},
     "Bucket":{
@@ -2055,6 +2077,30 @@
       }
     },
     "GetBucketAclRequest":{
+      "type":"structure",
+      "required":["Bucket"],
+      "members":{
+        "Bucket":{
+          "shape":"BucketName",
+          "location":"uri",
+          "locationName":"Bucket"
+        }
+      }
+    },
+    "GetBucketAsperaOutput":{
+      "type":"structure",
+      "members":{
+        "AccessKey":{
+          "shape":"AccessKey",
+          "documentation":"Aspera Access Key."
+        },
+        "ATSEndpoint":{
+          "shape":"ATSEndpoint",
+          "documentation":"Aspera endpoint."
+        }
+      }
+    },
+    "GetBucketAsperaRequest":{
       "type":"structure",
       "required":["Bucket"],
       "members":{
@@ -4929,6 +4975,10 @@
         "shape":"RoutingRule",
         "locationName":"RoutingRule"
       }
+    },
+    "Secret":{
+      "type":"string",
+      "sensitive":true
     },
     "S3KeyFilter":{
       "type":"structure",
