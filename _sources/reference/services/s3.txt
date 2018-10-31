@@ -1896,7 +1896,7 @@ Client
             - **Status** *(string) --* If 'Enabled', the rule is currently being applied. If 'Disabled', the rule is not currently being applied.
             
 
-            - **Transitions** *(list) --* Currently only one Transition allowed.
+            - **Transitions** *(list) --* Currently only one Transition allowed, also Date and Days fields are mutually exclusive.
               
 
               - *(dict) --* 
@@ -4384,7 +4384,7 @@ Client
           - **Status** *(string) --* **[REQUIRED]** If 'Enabled', the rule is currently being applied. If 'Disabled', the rule is not currently being applied.
 
           
-          - **Transitions** *(list) --* **[REQUIRED]** Currently only one Transition allowed.
+          - **Transitions** *(list) --* **[REQUIRED]** Currently only one Transition allowed, also Date and Days fields are mutually exclusive.
 
           
             - *(dict) --* 
