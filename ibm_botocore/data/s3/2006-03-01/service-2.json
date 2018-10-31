@@ -3318,7 +3318,7 @@
         "Transitions":{
           "shape":"TransitionList",
           "locationName":"Transition",
-          "documentation":"Currently only one Transition allowed."
+          "documentation":"Currently only one Transition allowed, also Date and Days fields are mutually exclusive."
         }
       }
     },

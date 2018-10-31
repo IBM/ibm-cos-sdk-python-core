@@ -105,3 +105,11 @@ class TestCreateClientArgs(unittest.TestCase):
             {'use_dualstack_endpoint': True}
         )
 
+    def test_proxies_from_client_config_forwarded_to_endpoint_creator(self):
+        proxies = {'http': 'http://foo.bar:1234',
+                   'https': 'https://foo.bar:4321'}
+        config = botocore.config.Config(proxies=proxies)
+        with mock.patch('botocore.args.EndpointCreator') as m:
+            self.call_get_client_args(client_config=config)
+            self.assert_create_endpoint_call(m, proxies=proxies)
+

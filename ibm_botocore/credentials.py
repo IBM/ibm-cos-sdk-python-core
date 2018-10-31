@@ -33,7 +33,7 @@ import json
 import logging
 import os
 import getpass
-import requests
+import ibm_botocore.vendored.requests as requests
 import threading
 from collections import namedtuple
 
