@@ -693,10 +693,12 @@ BUILTIN_HANDLERS = [
     ('before-call.s3.PutBucketLogging', conditionally_calculate_md5),
     ('before-call.s3.PutBucketNotification', conditionally_calculate_md5),
     ('before-call.s3.PutBucketPolicy', conditionally_calculate_md5),
+    ('before-call.s3.PutBucketProtectionConfiguration', calculate_md5),
     ('before-call.s3.PutBucketRequestPayment', conditionally_calculate_md5),
     ('before-call.s3.PutBucketVersioning', conditionally_calculate_md5),
     ('before-call.s3.PutBucketWebsite', conditionally_calculate_md5),
     ('before-call.s3.PutObjectAcl', conditionally_calculate_md5),
+    ('before-call.s3.CompleteMultipartUpload', conditionally_calculate_md5),
 
     ('before-parameter-build.s3.CopyObject',
      handle_copy_source_param),

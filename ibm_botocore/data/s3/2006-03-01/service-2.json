@@ -27,6 +27,15 @@
       "__documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/mpUploadAbort.html",
       "documentation":"<p>Aborts a multipart upload.</p><p>To verify that all parts have been removed, so you don't get charged for the part storage, you should call the List Parts operation and ensure the parts list is empty.</p>"
     },
+    "AddLegalHold":{
+      "name":"AddLegalHold",
+      "http":{
+        "method":"POST",
+        "requestUri":"/{Bucket}/{Key+}?legalHold&add={RetentionLegalHoldId}"
+      },
+      "input":{"shape":"LegalHoldRequest"},
+      "documentation":"Add a legal hold on an object. The legal hold identifiers are stored in the object metadata along with the timestamp of when they are POSTed to the object. The presence of any legal hold identifiers prevents the modification or deletion of the object data, even if the retention period has expired. Legal Holds can only be added to objects in a bucket with a protection policy. Otherwise a 400 error will be returned."
+    },
     "CompleteMultipartUpload":{
       "name":"CompleteMultipartUpload",
       "http":{
@@ -119,7 +128,6 @@
       "input":{"shape":"DeleteBucketInventoryConfigurationRequest"},
       "documentation":"Deletes an inventory configuration (identified by the inventory ID) from the bucket."
     },
-    
     "DeleteBucketLifecycle":{
       "name":"DeleteBucketLifecycle",
       "http":{
@@ -130,7 +138,6 @@
       "__documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/RESTBucketDELETElifecycle.html",
       "documentation":"Deletes the lifecycle configuration from the bucket."
     },
-
     "DeleteBucketMetricsConfiguration":{
       "name":"DeleteBucketMetricsConfiguration",
       "http":{
@@ -169,6 +176,15 @@
       "__documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/RESTBucketDELETEwebsite.html",
       "documentation":"This operation removes the website configuration from the bucket."
     },
+    "DeleteLegalHold":{
+      "name":"DeleteLegalHold",
+      "http":{
+        "method":"POST",
+        "requestUri":"/{Bucket}/{Key+}?legalHold&remove={RetentionLegalHoldId}"
+      },
+      "input":{"shape":"LegalHoldRequest"},
+      "documentation":"Remove Legal hold on an object. The legal hold identifiers are stored in the object metadata along with the timestamp of when they are POSTed to the object. The presence of any legal hold identifiers prevents the modification or deletion of the object data, even if the retention period has expired."
+    },
     "DeleteObject":{
       "name":"DeleteObject",
       "http":{
@@ -191,6 +207,15 @@
       "__documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/multiobjectdeleteapi.html",
       "documentation":"This operation enables you to delete multiple objects from a bucket using a single HTTP request. You may specify up to 1000 keys.",
       "alias":"DeleteMultipleObjects"
+    },
+    "ExtendObjectRetention":{
+      "name":"ExtendObjectRetention",
+      "http":{
+        "method":"POST",
+        "requestUri":"/{Bucket}/{Key+}?extendRetention"
+      },
+      "input":{"shape":"ExtendObjectRetentionRequest"},
+      "documentation": "This implementation of the POST operation uses the extendRetention sub-resource to extend the retention period of a protected object in a protected vault."
     },
     "GetBucketAccelerateConfiguration":{
       "name":"GetBucketAccelerateConfiguration",
@@ -255,7 +280,6 @@
       "output":{"shape":"GetBucketInventoryConfigurationOutput"},
       "documentation":"Returns an inventory configuration (identified by the inventory ID) from the bucket."
     },
-    
     "GetBucketLifecycleConfiguration":{
       "name":"GetBucketLifecycleConfiguration",
       "http":{
@@ -266,7 +290,6 @@
       "output":{"shape":"GetBucketLifecycleConfigurationOutput"},
       "documentation":"Returns the lifecycle configuration information set on the bucket."
     },
-    
     "GetBucketLocation":{
       "name":"GetBucketLocation",
       "http":{
@@ -287,6 +310,16 @@
       "input":{"shape":"GetBucketMetricsConfigurationRequest"},
       "output":{"shape":"GetBucketMetricsConfigurationOutput"},
       "documentation":"Gets a metrics configuration (specified by the metrics configuration ID) from the bucket."
+    },
+    "GetBucketProtectionConfiguration":{
+      "name":"GetBucketProtectionConfiguration",
+      "http":{
+        "method":"GET",
+        "requestUri":"/{Bucket}?protection"
+      },
+      "input":{"shape":"GetBucketProtectionConfigurationRequest"},
+      "output":{"shape":"GetBucketProtectionConfigurationOutput"},
+      "documentation":"Returns the protection configuration of a bucket.EnablePermanentRetention flag will only be returned if the flag is set to true for a bucket."
     },
     "GetBucketReplication":{
       "name":"GetBucketReplication",
@@ -418,6 +451,16 @@
       "documentation":"Returns a list of all buckets owned by the authenticated sender of the request.",
       "alias":"GetService"
     },
+    "ListLegalHolds":{
+      "name":"ListLegalHolds",
+      "http":{
+        "method":"GET",
+        "requestUri":"/{Bucket}/{Key+}?legalHold"
+      },
+      "input":{"shape":"ListLegalHoldsRequest"},
+      "output":{"shape":"ListLegalHoldsOutput"},
+      "documentation":"Returns a list of legal holds on an object"
+    },
     "ListMultipartUploads":{
       "name":"ListMultipartUploads",
       "http":{
@@ -477,6 +520,15 @@
       "input":{"shape":"PutBucketAccelerateConfigurationRequest"},
       "documentation":"Sets the accelerate configuration of an existing bucket."
     },
+    "PutBucketProtectionConfiguration":{
+      "name":"PutBucketProtectionConfiguration",
+      "http":{
+        "method":"PUT",
+        "requestUri":"/{Bucket}?protection"
+      },
+      "input":{"shape":"PutBucketProtectionConfigurationRequest"},
+      "documentation":"Sets the protection configuration of an existing bucket. EnablePermanentRetention is optional and if not included is considered to be false. Once set to true, must be included in any subsequent PUT Bucket?protection requests for that bucket."
+    },
     "PutBucketAcl":{
       "name":"PutBucketAcl",
       "http":{
@@ -515,7 +567,6 @@
       "input":{"shape":"PutBucketInventoryConfigurationRequest"},
       "documentation":"Adds an inventory configuration (identified by the inventory ID) from the bucket."
     },
-   
     "PutBucketLifecycleConfiguration":{
       "name":"PutBucketLifecycleConfiguration",
       "http":{
@@ -525,7 +576,6 @@
       "input":{"shape":"PutBucketLifecycleConfigurationRequest"},
       "documentation":"Sets lifecycle configuration for your bucket. If a lifecycle configuration exists, it replaces it."
     },
-    
     "PutBucketMetricsConfiguration":{
       "name":"PutBucketMetricsConfiguration",
       "http":{
@@ -692,6 +742,7 @@
       }
     },
     "AccountId":{"type":"string"},
+    "AdditionalRetentionPeriod":{"type":"integer"},
     "AllowedHeader":{"type":"string"},
     "AllowedHeaders":{
       "type":"list",
@@ -938,6 +989,40 @@
       ]
     },
     "BucketName":{"type":"string"},
+    "BucketProtectionDefaultRetention":{
+      "type":"structure",
+      "required":["Days"],
+      "members":{
+        "Days":{
+          "shape":"Days"
+        }
+      }
+    },
+    "BucketProtectionMaximumRetention":{
+      "type":"structure",
+      "required":["Days"],
+      "members":{
+        "Days":{
+          "shape":"Days"
+        }
+      }
+    },
+    "BucketProtectionMinimumRetention":{
+      "type":"structure",
+      "required":["Days"],
+      "members":{
+        "Days":{
+          "shape":"Days"
+        }
+      }
+    },
+    "BucketProtectionStatus":{
+      "type":"string",
+      "enum":[
+        "Retention"
+      ]
+    },
+    "BucketProtectionEnablePermanentRetention":{"type":"boolean"},
     "Buckets":{
       "type":"list",
       "member":{
@@ -1091,6 +1176,24 @@
           "shape":"RequestPayer",
           "location":"header",
           "locationName":"x-amz-request-payer"
+        },
+        "RetentionExpirationDate":{
+          "shape":"RetentionExpirationDate",
+          "documentation":"Date on which it will be legal to delete or modify the object. You can only specify this or the Retention-Period header. If both are specified a 400 error will be returned. If neither is specified the bucket's DefaultRetention period will be used.",
+          "location":"header",
+          "locationName":"Retention-Expiration-Date"
+        },
+        "RetentionLegalHoldId":{
+          "shape":"RetentionLegalHoldID",
+          "documentation":"A single legal hold to apply to the object. A legal hold is a character long string of max length 64. The object cannot be overwritten or deleted until all legal holds associated with the object are removed.",
+          "location":"header",
+          "locationName":"Retention-Legal-Hold-ID"
+        },
+        "RetentionPeriod":{
+          "shape":"RetentionPeriod",
+          "documentation": "Retention period to store on the object in seconds. RetentionPeriod and RetentionExpirationDate are mutually exclusive, if neither is specified the bucket's DefaultRetentionPeriod value will be used. **Indefinite retention(-1)** is a valid value. **Permanent retention(-2)**, is valid only if permanent retention is enabled for the bucket.  **0** is a valid value if the bucket's MinimumRetention period is also 0." ,
+          "location":"header",
+          "locationName":"Retention-Period"
         }
       },
       "payload":"MultipartUpload"
@@ -1309,6 +1412,30 @@
           "documentation":"Specifies whether the metadata is copied from the source object or replaced with metadata provided in the request.",
           "location":"header",
           "locationName":"x-amz-metadata-directive"
+        },
+        "RetentionDirective":{
+          "shape":"RetentionDirective",
+          "documentation":"This header controls how the Protection state of the source object is copied to the destination object.If copied, the retention period and all legal holds are copied onto the new object. The legal hold date's is set to the date of the copy.",
+          "location":"header",
+          "locationName":"Retention-Directive"
+        },
+        "RetentionExpirationDate":{
+          "shape":"RetentionExpirationDate",
+          "documentation":"Date on which it will be legal to delete or modify the object. This field can only be specified if Retention-Directive is REPLACE. You can only specify this or the Retention-Period header. If both are specified a 400 error will be returned. If neither is specified the bucket's DefaultRetention period will be used. ",
+          "location":"header",
+          "locationName":"Retention-Expiration-Date"
+        },
+        "RetentionLegalHoldId":{
+          "shape":"RetentionLegalHoldID",
+          "documentation":"A single legal hold to apply to the object. This field can only be specified if Retention-Directive is REPLACE. A legal hold is a character long string of max length 64. The object cannot be overwritten or deleted until all legal holds associated with the object are removed.",
+          "location":"header",
+          "locationName":"Retention-Legal-Hold-ID"
+        },
+        "RetentionPeriod":{
+          "shape":"RetentionPeriod",
+          "documentation":"Retention period to store on the object in seconds. This field can only be specified if Retention-Directive is REPLACE. If this field and Retention-Expiration-Date are specified a 400 error is returned. If neither is specified the bucket's DefaultRetention period will be used. 0 is a legal value assuming the bucket's minimum retention period is also 0.",
+          "location":"header",
+          "locationName":"Retention-Period"
         },
         "ServerSideEncryption":{
           "shape":"ServerSideEncryption",
@@ -2059,6 +2186,54 @@
       "member":{"shape":"ExposeHeader"},
       "flattened":true
     },
+    "ExtendObjectRetentionRequest":{
+      "type":"structure",
+      "required":[
+        "Bucket",
+        "Key"
+      ],
+      "members":{
+        "Bucket":{
+          "shape":"BucketName",
+          "location":"uri",
+          "locationName":"Bucket"
+        },
+        "Key":{
+          "shape":"ObjectKey",
+          "location":"uri",
+          "locationName":"Key"
+        },
+        "AdditionalRetentionPeriod":{
+          "shape":"AdditionalRetentionPeriod",
+          "documentation":"Additional time, in seconds, to add to the existing retention period for the object. If this field and New-Retention-Time and/or New-Retention-Expiration-Date are specified, a 400 error will be returned. If none of the Request Headers are specified, a 400 error will be returned to the user. The retention period of an object may be extended up to bucket maximum retention period from the time of the request.",
+          "location":"header",
+          "locationName":"Additional-Retention-Period"
+        },
+        "ExtendRetentionFromCurrentTime":{
+          "shape":"ExtendRetentionFromCurrentTime",
+          "documentation":"Retention Period in seconds. The Retention will be enforced from the object creation time until current time + the value in this header. This value has to be within the ranges defined for the bucket. If this field and Additional-Retention-Period and/or New-Retention-Period and/or New-Retentiion-Expiration-Date are specified, a 400 error will be returned. If none of the Request Headers are specified, a 400 error will be returned to the user. The retention period of an object may be extended up to bucket maximum retention period from the time of the request.",
+          "location":"header",
+          "locationName":"Extend-Retention-From-Current-Time"
+        },
+        "NewRetentionExpirationDate":{
+          "shape":"NewRetentionExpirationDate",
+          "documentation":"A new retention date to use for the object in place of the existing retention date.  If this value is less than the existing value stored for the object, a 400 error will be returned.  If this field and Additional-Retention-Period and/or New-Retention-Period and/or Extend-Retention-From-Current-Time are specified, a 400 error will be returned. If none of the Request Headers are specified, a 400 error will be returned to the user. The retention period of an object may be extended up to bucket maximum retention period from the time of the request.",
+          "location":"header",
+          "locationName":"New-Retention-Expiration-Date"
+        },
+        "NewRetentionPeriod":{
+          "shape":"NewRetentionPeriod",
+          "documentation":"Retention period, in seconds, to use for the object in place of the existing retention period stored for the object.  If this value is less than the existing value stored for the object, a 400 error will be returned.  If this field and Additional-Retention-Period and/or New-Retention-Expiration-Date and/or Extend-Retention-From-Current-Time are specified, a 400 error will be returned. If none of the Request Headers are specified, a 400 error will be returned to the user. The retention period of an object may be extended up to bucket maximum retention period from the time of the request.",
+          "location":"header",
+          "locationName":"New-Retention-Period"
+        }
+      },
+      "documentation":"Container for making extensions to object retention"
+    },
+    "ExtendRetentionFromCurrentTime":{
+      "type":"integer",
+      "documentation":"Retention Period in seconds for the object.  The Retention will be enforced from the current time until current time + the value in this header.  This value has to be within the ranges defined for the bucket."
+    },
     "FetchOwner":{"type":"boolean"},
     "FilterRule":{
       "type":"structure",
@@ -2352,6 +2527,24 @@
         }
       }
     },
+    "GetBucketProtectionConfigurationOutput":{
+      "type":"structure",
+      "members":{
+        "ProtectionConfiguration":{"shape":"ProtectionConfiguration"}
+      },
+      "payload":"ProtectionConfiguration"
+    },
+    "GetBucketProtectionConfigurationRequest":{
+      "type":"structure",
+      "required":["Bucket"],
+      "members":{
+        "Bucket":{
+          "shape":"BucketName",
+          "location":"uri",
+          "locationName":"Bucket"
+        }
+      }
+    },
     "GetBucketReplicationOutput":{
       "type":"structure",
       "members":{
@@ -2564,6 +2757,24 @@
           "documentation":"A map of metadata to store with the object in S3.",
           "location":"headers",
           "locationName":"x-amz-meta-"
+        },
+        "RetentionExpirationDate":{
+          "shape":"RetentionExpirationDate",
+          "documentation":"Date on which it will be legal to delete or modify the object. You can only specify this or the Retention-Period header. If both are specified a 400 error will be returned. If neither is specified the bucket's DefaultRetention period will be used. ",
+          "location":"header",
+          "locationName":"Retention-Expiration-Date"
+        },
+        "RetentionLegalHoldCount":{
+          "shape":"RetentionLegalHoldCount",
+          "documentation":"Returns the count of legal holds on the object. If there are no legal holds, the header is not returned",
+          "location":"header",
+          "locationName":"Retention-Legal-Hold-Count"
+        },
+        "RetentionPeriod":{
+          "shape":"RetentionPeriod",
+          "documentation":"Retention period to store on the object in seconds. If this field and Retention-Expiration-Date are specified a 400 error is returned. If neither is specified the bucket's DefaultRetention period will be used. 0 is a legal value assuming the bucket's minimum retention period is also 0.",
+          "location":"header",
+          "locationName":"Retention-Period"
         },
         "SSECustomerAlgorithm":{
           "shape":"SSECustomerAlgorithm",
@@ -2969,6 +3180,24 @@
           "location":"headers",
           "locationName":"x-amz-meta-"
         },
+        "RetentionExpirationDate":{
+          "shape":"RetentionExpirationDate",
+          "documentation":"Date on which it will be legal to delete or modify the object. You can only specify this or the Retention-Period header. If both are specified a 400 error will be returned. If neither is specified the bucket's DefaultRetention period will be used. ",
+          "location":"header",
+          "locationName":"Retention-Expiration-Date"
+        },
+        "RetentionLegalHoldCount":{
+          "shape":"RetentionLegalHoldCount",
+          "documentation":"Returns the count of legal holds on the object. If there are no legal holds, the header is not returned",
+          "location":"header",
+          "locationName":"Retention-Legal-Hold-Count"
+        },
+        "RetentionPeriod":{
+          "shape":"RetentionPeriod",
+          "documentation":"Retention period to store on the object in seconds. If this field and Retention-Expiration-Date are specified a 400 error is returned. If neither is specified the bucket's DefaultRetention period will be used. 0 is a legal value assuming the bucket's minimum retention period is also 0.",
+          "location":"header",
+          "locationName":"Retention-Period"
+        },
         "SSECustomerAlgorithm":{
           "shape":"SSECustomerAlgorithm",
           "documentation":"If server-side encryption with a customer-provided encryption key was requested, the response will include this header confirming the encryption algorithm used.",
@@ -3281,22 +3510,45 @@
     "LastModified":{"type":"timestamp"},
     "IbmTransition":{"type":"string"},
     "IbmRestoredCopyStorageClass":{"type":"string"},
-    "LifecycleExpiration":{
+    "LegalHold":{
       "type":"structure",
       "members":{
         "Date":{
-          "shape":"Date",
-          "documentation":"Indicates at what date the object is to be moved or deleted. Should be in GMT ISO 8601 Format."
+          "shape":"Date"
         },
-        "Days":{
-          "shape":"Days",
-          "documentation":"Indicates the lifetime, in days, of the objects that are subject to the rule. The value must be a non-zero positive integer."
-        },
-        "ExpiredObjectDeleteMarker":{
-          "shape":"ExpiredObjectDeleteMarker",
-          "documentation":"Indicates whether Amazon S3 will remove a delete marker with no noncurrent versions. If set to true, the delete marker will be expired; if set to false the policy takes no action. This cannot be specified with Days or Date in a Lifecycle Expiration Policy."
+        "ID":{
+          "shape":"LegalHoldID"
         }
       }
+    },
+    "LegalHoldID":{"type":"string"},
+    "LegalHoldRequest":{
+      "type":"structure",
+      "required":[
+        "Bucket",
+        "Key",
+        "RetentionLegalHoldId"
+      ],
+      "members":{
+        "Bucket":{
+          "shape":"BucketName",
+          "location":"uri",
+          "locationName":"Bucket"
+        },
+        "Key":{
+          "shape":"ObjectKey",
+          "location":"uri",
+          "locationName":"Key"
+        },
+        "RetentionLegalHoldId":{
+          "shape":"RetentionLegalHoldID",
+          "location":"uri"
+        }
+      }
+    },
+    "LegalHolds":{
+      "type": "list",
+      "member":{"shape":"LegalHold"}
     },
     "LifecycleRule":{
       "type":"structure",
@@ -3338,7 +3590,6 @@
       "flattened":true,
       "documentation":"Currently only one Rule allowed."
     },
-
     "ListBucketAnalyticsConfigurationsOutput":{
       "type":"structure",
       "members":{
@@ -3522,6 +3773,44 @@
           "documentation":"The owning storage account. All buckets owned by this storage account are returned.",
           "location":"header",
           "locationName":"ibm-service-instance-id"
+        }
+      }
+    },
+    "ListLegalHoldsOutput":{
+      "type":"structure",
+      "members":{
+        "CreateTime":{
+          "shape":"Date"
+        },
+        "LegalHolds":{
+          "shape":"LegalHolds"
+        },
+        "RetentionPeriod":{
+          "shape":"RetentionPeriod",
+          "documentation":"Retention period in seconds."
+        },
+        "RetentionPeriodExpirationDate":{
+          "shape":"RetentionPeriodExpirationDate",
+          "documentation":"Date on which the retention period will expire."
+        }
+      }
+    },
+    "ListLegalHoldsRequest":{
+      "type":"structure",
+      "required":[
+        "Bucket",
+        "Key"
+      ],
+      "members":{
+        "Bucket":{
+          "shape":"BucketName",
+          "location":"uri",
+          "locationName":"Bucket"
+        },
+        "Key":{
+          "shape":"ObjectKey",
+          "location":"uri",
+          "locationName":"Key"
         }
       }
     },
@@ -4002,6 +4291,14 @@
       "member":{"shape":"MultipartUpload"},
       "flattened":true
     },
+    "NewRetentionExpirationDate":{
+      "type":"timestamp",
+      "timestampFormat":"iso8601"
+    },
+    "NewRetentionPeriod":{
+      "type":"integer",
+      "documentation":"Retention period, in seconds, to use for the object in place of the existing retention period stored for the object. If this value is less than the existing value stored for the object, a 400 error will be returned. If this field and Additional-Retention-Period and/or New-Retention-Expiration-Date are specified, a 400 error will be returned. If none of the Request Headers are specified, a 400 error will be returned."
+    },
     "NextKeyMarker":{"type":"string"},
     "NextMarker":{"type":"string"},
     "NextPartNumberMarker":{"type":"integer"},
@@ -4195,6 +4492,37 @@
     },
     "Policy":{"type":"string"},
     "Prefix":{"type":"string"},
+    "ProtectionConfiguration":{
+      "type":"structure",
+      "required":[
+        "Status",
+        "MinimumRetention",
+        "DefaultRetention",
+        "MaximumRetention"
+      ],
+      "members":{
+        "Status":{
+          "shape":"BucketProtectionStatus",
+          "documentation":"Retention status of a bucket."
+        },
+        "MinimumRetention":{
+          "shape":"BucketProtectionMinimumRetention",
+          "documentation":"Minimum retention period for an object, if a PUT of an object specifies a shorter retention period the PUT object will fail."
+        },
+        "DefaultRetention":{
+          "shape":"BucketProtectionDefaultRetention",
+          "documentation":"Default retention period for an object, if a PUT of an object does not specify a retention period this value will be converted to seconds and used."
+        },
+        "MaximumRetention":{
+          "shape":"BucketProtectionMaximumRetention",
+          "documentation":"Maximum retention period for an object, if a PUT of an object specifies a longer retention period the PUT object will fail."
+        },
+        "EnablePermanentRetention":{
+          "shape":"BucketProtectionEnablePermanentRetention",
+          "documentation":"Enable permanent retention for an object."
+        }
+      }
+    },
     "Protocol":{
       "type":"string",
       "enum":[
@@ -4410,6 +4738,26 @@
         }
       },
       "payload":"MetricsConfiguration"
+    },
+    "PutBucketProtectionConfigurationRequest":{
+      "type":"structure",
+      "required":[
+        "Bucket",
+        "ProtectionConfiguration"
+      ],
+      "members":{
+        "Bucket":{
+          "shape":"BucketName",
+          "location":"uri",
+          "locationName":"Bucket"
+        },
+        "ProtectionConfiguration":{
+          "shape":"ProtectionConfiguration",
+          "documentation":"Container for setting retention settings.",
+          "locationName":"ProtectionConfiguration"
+        }
+      },
+      "payload":"ProtectionConfiguration"
     },
     "PutBucketReplicationRequest":{
       "type":"structure",
@@ -4721,6 +5069,24 @@
           "location":"headers",
           "locationName":"x-amz-meta-"
         },
+        "RetentionExpirationDate":{
+          "shape":"RetentionExpirationDate",
+          "documentation":"Date on which it will be legal to delete or modify the object. You can only specify this or the Retention-Period header. If both are specified a 400 error will be returned. If neither is specified the bucket's DefaultRetention period will be used.",
+          "location":"header",
+          "locationName":"Retention-Expiration-Date"
+        },
+        "RetentionLegalHoldId":{
+          "shape":"RetentionLegalHoldID",
+          "documentation":"A single legal hold to apply to the object. A legal hold is a character long string of max length 64. The object cannot be overwritten or deleted until all legal holds associated with the object are removed.",
+          "location":"header",
+          "locationName":"Retention-Legal-Hold-ID"
+        },
+        "RetentionPeriod":{
+          "shape":"RetentionPeriod",
+          "documentation":"Retention period to store on the object in seconds. If this field and Retention-Expiration-Date are specified a 400 error is returned. If neither is specified the bucket's DefaultRetention period will be used. 0 is a legal value assuming the bucket's minimum retention period is also 0.",
+          "location":"header",
+          "locationName":"Retention-Period"
+        },
         "ServerSideEncryption":{
           "shape":"ServerSideEncryption",
           "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).",
@@ -4994,6 +5360,29 @@
           "documentation":"Glacier related prameters pertaining to this job."
         }
       }
+    },
+    "RetentionDirective":{
+      "type":"string",
+      "enum":[
+        "COPY",
+        "REPLACE"
+      ]
+    },
+    "RetentionExpirationDate":{
+      "type":"timestamp",
+      "timestampFormat":"iso8601"
+    },
+    "RetentionPeriodExpirationDate":{
+      "type":"timestamp",
+      "timestampFormat":"iso8601"
+    },
+    "RetentionLegalHoldCount": {
+      "type": "integer"
+    },
+    "RetentionLegalHoldID":{"type":"string"},
+    "RetentionPeriod":{
+      "type":"integer",
+      "documentation":"Retention period to store on the object in seconds. The object can be neither overwritten nor deleted until the amount of time specified in the retention period has elapsed. If this field and Retention-Expiration-Date are specified a 400 error is returned. If neither is specified the bucket's DefaultRetention period will be used. 0 is a legal value assuming the bucket's minimum retention period is also 0."
     },
     "Role":{"type":"string"},
     "RoutingRule":{
