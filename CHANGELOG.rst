@@ -12,10 +12,6 @@ Features
 --------
 * Immutable Object Storage
 
-Defect Fixes
-------------
-* COSSDK-45125: https://github.ibm.com/objectstore/objectstorage-issues/issues/533
-
 2.3.3
 =====
 
