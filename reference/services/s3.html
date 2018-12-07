@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>S3 &mdash; ibm_botocore 2.3.3 documentation</title>
+    <title>S3 &mdash; ibm_botocore 2.4.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -23,7 +23,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '2.3.3',
+        VERSION:     '2.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -32,7 +32,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="ibm_botocore 2.3.3 documentation" href="../../index.html" />
+    <link rel="top" title="ibm_botocore 2.4.0 documentation" href="../../index.html" />
     <link rel="up" title="Available Services" href="../index.html" />
     <link rel="next" title="Loaders Reference" href="../loaders.html" />
     <link rel="prev" title="Available Services" href="../index.html" />
@@ -56,7 +56,7 @@
         <li class="right" >
           <a href="../index.html" title="Available Services"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../index.html">ibm_botocore 2.3.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">ibm_botocore 2.4.0 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Available Services</a> &raquo;</li> 
       </ul>
     </div>
@@ -67,7 +67,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../index.html" class="text-logo">ibm_botocore 2.3.3 documentation</a>
+    ../../index.html" class="text-logo">ibm_botocore 2.4.0 documentation</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -163,6 +163,7 @@
 <p>These are the available methods:</p>
 <ul class="simple">
 <li><a class="reference internal" href="#S3.Client.abort_multipart_upload" title="S3.Client.abort_multipart_upload"><tt class="xref py py-meth docutils literal"><span class="pre">abort_multipart_upload()</span></tt></a></li>
+<li><a class="reference internal" href="#S3.Client.add_legal_hold" title="S3.Client.add_legal_hold"><tt class="xref py py-meth docutils literal"><span class="pre">add_legal_hold()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.can_paginate" title="S3.Client.can_paginate"><tt class="xref py py-meth docutils literal"><span class="pre">can_paginate()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.complete_multipart_upload" title="S3.Client.complete_multipart_upload"><tt class="xref py py-meth docutils literal"><span class="pre">complete_multipart_upload()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.copy_object" title="S3.Client.copy_object"><tt class="xref py py-meth docutils literal"><span class="pre">copy_object()</span></tt></a></li>
@@ -177,8 +178,10 @@
 <li><a class="reference internal" href="#S3.Client.delete_bucket_policy" title="S3.Client.delete_bucket_policy"><tt class="xref py py-meth docutils literal"><span class="pre">delete_bucket_policy()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.delete_bucket_replication" title="S3.Client.delete_bucket_replication"><tt class="xref py py-meth docutils literal"><span class="pre">delete_bucket_replication()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.delete_bucket_website" title="S3.Client.delete_bucket_website"><tt class="xref py py-meth docutils literal"><span class="pre">delete_bucket_website()</span></tt></a></li>
+<li><a class="reference internal" href="#S3.Client.delete_legal_hold" title="S3.Client.delete_legal_hold"><tt class="xref py py-meth docutils literal"><span class="pre">delete_legal_hold()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.delete_object" title="S3.Client.delete_object"><tt class="xref py py-meth docutils literal"><span class="pre">delete_object()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.delete_objects" title="S3.Client.delete_objects"><tt class="xref py py-meth docutils literal"><span class="pre">delete_objects()</span></tt></a></li>
+<li><a class="reference internal" href="#S3.Client.extend_object_retention" title="S3.Client.extend_object_retention"><tt class="xref py py-meth docutils literal"><span class="pre">extend_object_retention()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.generate_presigned_post" title="S3.Client.generate_presigned_post"><tt class="xref py py-meth docutils literal"><span class="pre">generate_presigned_post()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.generate_presigned_url" title="S3.Client.generate_presigned_url"><tt class="xref py py-meth docutils literal"><span class="pre">generate_presigned_url()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.get_bucket_accelerate_configuration" title="S3.Client.get_bucket_accelerate_configuration"><tt class="xref py py-meth docutils literal"><span class="pre">get_bucket_accelerate_configuration()</span></tt></a></li>
@@ -190,6 +193,7 @@
 <li><a class="reference internal" href="#S3.Client.get_bucket_lifecycle_configuration" title="S3.Client.get_bucket_lifecycle_configuration"><tt class="xref py py-meth docutils literal"><span class="pre">get_bucket_lifecycle_configuration()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.get_bucket_location" title="S3.Client.get_bucket_location"><tt class="xref py py-meth docutils literal"><span class="pre">get_bucket_location()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.get_bucket_metrics_configuration" title="S3.Client.get_bucket_metrics_configuration"><tt class="xref py py-meth docutils literal"><span class="pre">get_bucket_metrics_configuration()</span></tt></a></li>
+<li><a class="reference internal" href="#S3.Client.get_bucket_protection_configuration" title="S3.Client.get_bucket_protection_configuration"><tt class="xref py py-meth docutils literal"><span class="pre">get_bucket_protection_configuration()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.get_bucket_replication" title="S3.Client.get_bucket_replication"><tt class="xref py py-meth docutils literal"><span class="pre">get_bucket_replication()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.get_bucket_request_payment" title="S3.Client.get_bucket_request_payment"><tt class="xref py py-meth docutils literal"><span class="pre">get_bucket_request_payment()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.get_object" title="S3.Client.get_object"><tt class="xref py py-meth docutils literal"><span class="pre">get_object()</span></tt></a></li>
@@ -203,6 +207,7 @@
 <li><a class="reference internal" href="#S3.Client.list_bucket_inventory_configurations" title="S3.Client.list_bucket_inventory_configurations"><tt class="xref py py-meth docutils literal"><span class="pre">list_bucket_inventory_configurations()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.list_bucket_metrics_configurations" title="S3.Client.list_bucket_metrics_configurations"><tt class="xref py py-meth docutils literal"><span class="pre">list_bucket_metrics_configurations()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.list_buckets" title="S3.Client.list_buckets"><tt class="xref py py-meth docutils literal"><span class="pre">list_buckets()</span></tt></a></li>
+<li><a class="reference internal" href="#S3.Client.list_legal_holds" title="S3.Client.list_legal_holds"><tt class="xref py py-meth docutils literal"><span class="pre">list_legal_holds()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.list_multipart_uploads" title="S3.Client.list_multipart_uploads"><tt class="xref py py-meth docutils literal"><span class="pre">list_multipart_uploads()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.list_objects" title="S3.Client.list_objects"><tt class="xref py py-meth docutils literal"><span class="pre">list_objects()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.list_objects_v2" title="S3.Client.list_objects_v2"><tt class="xref py py-meth docutils literal"><span class="pre">list_objects_v2()</span></tt></a></li>
@@ -214,6 +219,7 @@
 <li><a class="reference internal" href="#S3.Client.put_bucket_inventory_configuration" title="S3.Client.put_bucket_inventory_configuration"><tt class="xref py py-meth docutils literal"><span class="pre">put_bucket_inventory_configuration()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.put_bucket_lifecycle_configuration" title="S3.Client.put_bucket_lifecycle_configuration"><tt class="xref py py-meth docutils literal"><span class="pre">put_bucket_lifecycle_configuration()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.put_bucket_metrics_configuration" title="S3.Client.put_bucket_metrics_configuration"><tt class="xref py py-meth docutils literal"><span class="pre">put_bucket_metrics_configuration()</span></tt></a></li>
+<li><a class="reference internal" href="#S3.Client.put_bucket_protection_configuration" title="S3.Client.put_bucket_protection_configuration"><tt class="xref py py-meth docutils literal"><span class="pre">put_bucket_protection_configuration()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.put_bucket_replication" title="S3.Client.put_bucket_replication"><tt class="xref py py-meth docutils literal"><span class="pre">put_bucket_replication()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.put_bucket_request_payment" title="S3.Client.put_bucket_request_payment"><tt class="xref py py-meth docutils literal"><span class="pre">put_bucket_request_payment()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.put_object" title="S3.Client.put_object"><tt class="xref py py-meth docutils literal"><span class="pre">put_object()</span></tt></a></li>
@@ -265,6 +271,30 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="S3.Client.add_legal_hold">
+<tt class="descname">add_legal_hold</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.add_legal_hold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a legal hold on an object. The legal hold identifiers are stored in the object metadata along with the timestamp of when they are POSTed to the object. The presence of any legal hold identifiers prevents the modification or deletion of the object data, even if the retention period has expired. Legal Holds can only be added to objects in a bucket with a protection policy. Otherwise a 400 error will be returned.</p>
+<p><strong>Request Syntax</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_legal_hold</span><span class="p">(</span>
+    <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
+    <span class="n">Key</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
+    <span class="n">RetentionLegalHoldId</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<dl class="docutils field-list" frame="void" rules="none">
+<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
+<li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
+<li><strong>Key</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
+<li><strong>RetentionLegalHoldId</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
+</ul>
+</dd>
+<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last">None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="S3.Client.can_paginate">
 <tt class="descname">can_paginate</tt><big>(</big><em>operation_name</em><big>)</big><a class="headerlink" href="#S3.Client.can_paginate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if an operation can be paginated.</p>
@@ -297,7 +327,10 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
         <span class="p">]</span>
     <span class="p">},</span>
     <span class="n">UploadId</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">RequestPayer</span><span class="o">=</span><span class="s1">&#39;requester&#39;</span>
+    <span class="n">RequestPayer</span><span class="o">=</span><span class="s1">&#39;requester&#39;</span><span class="p">,</span>
+    <span class="n">RetentionExpirationDate</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">RetentionLegalHoldId</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
+    <span class="n">RetentionPeriod</span><span class="o">=</span><span class="mi">123</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -318,6 +351,9 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 </li>
 <li><strong>UploadId</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
 <li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
+<li><strong>RetentionExpirationDate</strong> (<em>datetime</em>) -- Date on which it will be legal to delete or modify the object. You can only specify this or the Retention-Period header. If both are specified a 400 error will be returned. If neither is specified the bucket's DefaultRetention period will be used.</li>
+<li><strong>RetentionLegalHoldId</strong> (<em>string</em>) -- A single legal hold to apply to the object. A legal hold is a character long string of max length 64. The object cannot be overwritten or deleted until all legal holds associated with the object are removed.</li>
+<li><strong>RetentionPeriod</strong> (<em>integer</em>) -- Retention period to store on the object in seconds. RetentionPeriod and RetentionExpirationDate are mutually exclusive, if neither is specified the bucket's DefaultRetentionPeriod value will be used. <strong>Indefinite retention(-1)</strong> is a valid value. <strong>Permanent retention(-2)</strong>, is valid only if permanent retention is enabled for the bucket. <strong>0</strong> is a valid value if the bucket's MinimumRetention period is also 0.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -382,6 +418,10 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
         <span class="s1">&#39;string&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
     <span class="p">},</span>
     <span class="n">MetadataDirective</span><span class="o">=</span><span class="s1">&#39;COPY&#39;</span><span class="o">|</span><span class="s1">&#39;REPLACE&#39;</span><span class="p">,</span>
+    <span class="n">RetentionDirective</span><span class="o">=</span><span class="s1">&#39;COPY&#39;</span><span class="o">|</span><span class="s1">&#39;REPLACE&#39;</span><span class="p">,</span>
+    <span class="n">RetentionExpirationDate</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">RetentionLegalHoldId</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
+    <span class="n">RetentionPeriod</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span>
     <span class="n">ServerSideEncryption</span><span class="o">=</span><span class="s1">&#39;AES256&#39;</span><span class="o">|</span><span class="s1">&#39;aws:kms&#39;</span><span class="p">,</span>
     <span class="n">StorageClass</span><span class="o">=</span><span class="s1">&#39;STANDARD&#39;</span><span class="o">|</span><span class="s1">&#39;REDUCED_REDUNDANCY&#39;</span><span class="o">|</span><span class="s1">&#39;STANDARD_IA&#39;</span><span class="p">,</span>
     <span class="n">WebsiteRedirectLocation</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
@@ -423,6 +463,10 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 </ul>
 </li>
 <li><strong>MetadataDirective</strong> (<em>string</em>) -- Specifies whether the metadata is copied from the source object or replaced with metadata provided in the request.</li>
+<li><strong>RetentionDirective</strong> (<em>string</em>) -- This header controls how the Protection state of the source object is copied to the destination object.If copied, the retention period and all legal holds are copied onto the new object. The legal hold date's is set to the date of the copy.</li>
+<li><strong>RetentionExpirationDate</strong> (<em>datetime</em>) -- Date on which it will be legal to delete or modify the object. This field can only be specified if Retention-Directive is REPLACE. You can only specify this or the Retention-Period header. If both are specified a 400 error will be returned. If neither is specified the bucket's DefaultRetention period will be used.</li>
+<li><strong>RetentionLegalHoldId</strong> (<em>string</em>) -- A single legal hold to apply to the object. This field can only be specified if Retention-Directive is REPLACE. A legal hold is a character long string of max length 64. The object cannot be overwritten or deleted until all legal holds associated with the object are removed.</li>
+<li><strong>RetentionPeriod</strong> (<em>integer</em>) -- Retention period to store on the object in seconds. This field can only be specified if Retention-Directive is REPLACE. If this field and Retention-Expiration-Date are specified a 400 error is returned. If neither is specified the bucket's DefaultRetention period will be used. 0 is a legal value assuming the bucket's minimum retention period is also 0.</li>
 <li><strong>ServerSideEncryption</strong> (<em>string</em>) -- The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).</li>
 <li><strong>StorageClass</strong> (<em>string</em>) -- The type of storage to use for the object. Defaults to 'STANDARD'.</li>
 <li><strong>WebsiteRedirectLocation</strong> (<em>string</em>) -- If the bucket is configured as a website, redirects requests for this object to another object in the same bucket or to an external URL. Amazon S3 stores the value of this header in the object metadata.</li>
@@ -802,6 +846,30 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 </dd></dl>
 
 <dl class="method">
+<dt id="S3.Client.delete_legal_hold">
+<tt class="descname">delete_legal_hold</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.delete_legal_hold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove Legal hold on an object. The legal hold identifiers are stored in the object metadata along with the timestamp of when they are POSTed to the object. The presence of any legal hold identifiers prevents the modification or deletion of the object data, even if the retention period has expired.</p>
+<p><strong>Request Syntax</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">delete_legal_hold</span><span class="p">(</span>
+    <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
+    <span class="n">Key</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
+    <span class="n">RetentionLegalHoldId</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<dl class="docutils field-list" frame="void" rules="none">
+<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
+<li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
+<li><strong>Key</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
+<li><strong>RetentionLegalHoldId</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
+</ul>
+</dd>
+<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last">None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="S3.Client.delete_object">
 <tt class="descname">delete_object</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.delete_object" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes the null version (if there is one) of an object and inserts a delete marker, which becomes the latest version of the object. If there isn't a null version, Amazon S3 does not remove any objects.</p>
@@ -929,6 +997,36 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 </li>
 </ul>
 </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="S3.Client.extend_object_retention">
+<tt class="descname">extend_object_retention</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.extend_object_retention" title="Permalink to this definition">¶</a></dt>
+<dd><p>This implementation of the POST operation uses the extendRetention sub-resource to extend the retention period of a protected object in a protected vault.</p>
+<p><strong>Request Syntax</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">extend_object_retention</span><span class="p">(</span>
+    <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
+    <span class="n">Key</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
+    <span class="n">AdditionalRetentionPeriod</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span>
+    <span class="n">ExtendRetentionFromCurrentTime</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span>
+    <span class="n">NewRetentionExpirationDate</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">NewRetentionPeriod</span><span class="o">=</span><span class="mi">123</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<dl class="docutils field-list" frame="void" rules="none">
+<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
+<li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
+<li><strong>Key</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
+<li><strong>AdditionalRetentionPeriod</strong> (<em>integer</em>) -- Additional time, in seconds, to add to the existing retention period for the object. If this field and New-Retention-Time and/or New-Retention-Expiration-Date are specified, a 400 error will be returned. If none of the Request Headers are specified, a 400 error will be returned to the user. The retention period of an object may be extended up to bucket maximum retention period from the time of the request.</li>
+<li><strong>ExtendRetentionFromCurrentTime</strong> (<em>integer</em>) -- Retention Period in seconds. The Retention will be enforced from the object creation time until current time + the value in this header. This value has to be within the ranges defined for the bucket. If this field and Additional-Retention-Period and/or New-Retention-Period and/or New-Retentiion-Expiration-Date are specified, a 400 error will be returned. If none of the Request Headers are specified, a 400 error will be returned to the user. The retention period of an object may be extended up to bucket maximum retention period from the time of the request.</li>
+<li><strong>NewRetentionExpirationDate</strong> (<em>datetime</em>) -- A new retention date to use for the object in place of the existing retention date. If this value is less than the existing value stored for the object, a 400 error will be returned. If this field and Additional-Retention-Period and/or New-Retention-Period and/or Extend-Retention-From-Current-Time are specified, a 400 error will be returned. If none of the Request Headers are specified, a 400 error will be returned to the user. The retention period of an object may be extended up to bucket maximum retention period from the time of the request.</li>
+<li><strong>NewRetentionPeriod</strong> (<em>integer</em>) -- Retention period, in seconds, to use for the object in place of the existing retention period stored for the object. If this value is less than the existing value stored for the object, a 400 error will be returned. If this field and Additional-Retention-Period and/or New-Retention-Expiration-Date and/or Extend-Retention-From-Current-Time are specified, a 400 error will be returned. If none of the Request Headers are specified, a 400 error will be returned to the user. The retention period of an object may be extended up to bucket maximum retention period from the time of the request.</li>
+</ul>
+</dd>
+<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last">None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1555,6 +1653,63 @@ default, the http method is whatever is used in the method's model.</li>
 </dd></dl>
 
 <dl class="method">
+<dt id="S3.Client.get_bucket_protection_configuration">
+<tt class="descname">get_bucket_protection_configuration</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.get_bucket_protection_configuration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the protection configuration of a bucket.EnablePermanentRetention flag will only be returned if the flag is set to true for a bucket.</p>
+<p><strong>Request Syntax</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_bucket_protection_configuration</span><span class="p">(</span>
+    <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<dl class="docutils field-list" frame="void" rules="none">
+<dt class="field-name">Parameters</dt><dd class="field-body"><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></dd>
+<dt class="field-name">Return type</dt><dd class="field-body">dict</dd>
+<dt class="field-name">Returns</dt><dd class="field-body"><strong>Response Syntax</strong><div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;ProtectionConfiguration&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;Status&#39;</span><span class="p">:</span> <span class="s1">&#39;Retention&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;MinimumRetention&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;Days&#39;</span><span class="p">:</span> <span class="mi">123</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;DefaultRetention&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;Days&#39;</span><span class="p">:</span> <span class="mi">123</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;MaximumRetention&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;Days&#39;</span><span class="p">:</span> <span class="mi">123</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;EnablePermanentRetention&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="o">|</span><span class="bp">False</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Response Structure</strong></p>
+<ul class="simple">
+<li><em>(dict) --</em><ul>
+<li><strong>ProtectionConfiguration</strong> <em>(dict) --</em><ul>
+<li><strong>Status</strong> <em>(string) --</em> Retention status of a bucket.</li>
+<li><strong>MinimumRetention</strong> <em>(dict) --</em> Minimum retention period for an object, if a PUT of an object specifies a shorter retention period the PUT object will fail.<ul>
+<li><strong>Days</strong> <em>(integer) --</em></li>
+</ul>
+</li>
+<li><strong>DefaultRetention</strong> <em>(dict) --</em> Default retention period for an object, if a PUT of an object does not specify a retention period this value will be converted to seconds and used.<ul>
+<li><strong>Days</strong> <em>(integer) --</em></li>
+</ul>
+</li>
+<li><strong>MaximumRetention</strong> <em>(dict) --</em> Maximum retention period for an object, if a PUT of an object specifies a longer retention period the PUT object will fail.<ul>
+<li><strong>Days</strong> <em>(integer) --</em></li>
+</ul>
+</li>
+<li><strong>EnablePermanentRetention</strong> <em>(boolean) --</em> Enable permanent retention for an object.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="S3.Client.get_bucket_replication">
 <tt class="descname">get_bucket_replication</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.get_bucket_replication" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the replication configuration of a bucket.</p>
@@ -1715,6 +1870,9 @@ default, the http method is whatever is used in the method's model.</li>
     <span class="s1">&#39;Metadata&#39;</span><span class="p">:</span> <span class="p">{</span>
         <span class="s1">&#39;string&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
     <span class="p">},</span>
+    <span class="s1">&#39;RetentionExpirationDate&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="s1">&#39;RetentionLegalHoldCount&#39;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
+    <span class="s1">&#39;RetentionPeriod&#39;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
     <span class="s1">&#39;SSECustomerAlgorithm&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;SSECustomerKeyMD5&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;SSEKMSKeyId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
@@ -1753,6 +1911,9 @@ default, the http method is whatever is used in the method's model.</li>
 </li>
 </ul>
 </li>
+<li><strong>RetentionExpirationDate</strong> <em>(datetime) --</em> Date on which it will be legal to delete or modify the object. You can only specify this or the Retention-Period header. If both are specified a 400 error will be returned. If neither is specified the bucket's DefaultRetention period will be used.</li>
+<li><strong>RetentionLegalHoldCount</strong> <em>(integer) --</em> Returns the count of legal holds on the object. If there are no legal holds, the header is not returned</li>
+<li><strong>RetentionPeriod</strong> <em>(integer) --</em> Retention period to store on the object in seconds. If this field and Retention-Expiration-Date are specified a 400 error is returned. If neither is specified the bucket's DefaultRetention period will be used. 0 is a legal value assuming the bucket's minimum retention period is also 0.</li>
 <li><strong>SSECustomerAlgorithm</strong> <em>(string) --</em> If server-side encryption with a customer-provided encryption key was requested, the response will include this header confirming the encryption algorithm used.</li>
 <li><strong>SSECustomerKeyMD5</strong> <em>(string) --</em> If server-side encryption with a customer-provided encryption key was requested, the response will include this header to provide round trip message integrity verification of the customer-provided encryption key.</li>
 <li><strong>SSEKMSKeyId</strong> <em>(string) --</em> If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.</li>
@@ -2000,6 +2161,9 @@ check if an operation is pageable.</dd>
     <span class="s1">&#39;Metadata&#39;</span><span class="p">:</span> <span class="p">{</span>
         <span class="s1">&#39;string&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
     <span class="p">},</span>
+    <span class="s1">&#39;RetentionExpirationDate&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="s1">&#39;RetentionLegalHoldCount&#39;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
+    <span class="s1">&#39;RetentionPeriod&#39;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
     <span class="s1">&#39;SSECustomerAlgorithm&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;SSECustomerKeyMD5&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="s1">&#39;SSEKMSKeyId&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
@@ -2038,6 +2202,9 @@ check if an operation is pageable.</dd>
 </li>
 </ul>
 </li>
+<li><strong>RetentionExpirationDate</strong> <em>(datetime) --</em> Date on which it will be legal to delete or modify the object. You can only specify this or the Retention-Period header. If both are specified a 400 error will be returned. If neither is specified the bucket's DefaultRetention period will be used.</li>
+<li><strong>RetentionLegalHoldCount</strong> <em>(integer) --</em> Returns the count of legal holds on the object. If there are no legal holds, the header is not returned</li>
+<li><strong>RetentionPeriod</strong> <em>(integer) --</em> Retention period to store on the object in seconds. If this field and Retention-Expiration-Date are specified a 400 error is returned. If neither is specified the bucket's DefaultRetention period will be used. 0 is a legal value assuming the bucket's minimum retention period is also 0.</li>
 <li><strong>SSECustomerAlgorithm</strong> <em>(string) --</em> If server-side encryption with a customer-provided encryption key was requested, the response will include this header confirming the encryption algorithm used.</li>
 <li><strong>SSECustomerKeyMD5</strong> <em>(string) --</em> If server-side encryption with a customer-provided encryption key was requested, the response will include this header to provide round trip message integrity verification of the customer-provided encryption key.</li>
 <li><strong>SSEKMSKeyId</strong> <em>(string) --</em> If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.</li>
@@ -2375,6 +2542,61 @@ check if an operation is pageable.</dd>
 </ul>
 </li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="S3.Client.list_legal_holds">
+<tt class="descname">list_legal_holds</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.list_legal_holds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of legal holds on an object</p>
+<p><strong>Request Syntax</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_legal_holds</span><span class="p">(</span>
+    <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
+    <span class="n">Key</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<dl class="docutils field-list" frame="void" rules="none">
+<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
+<li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
+<li><strong>Key</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
+</ul>
+</dd>
+<dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
+</dd>
+<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last"><p><strong>Response Syntax</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;CreateTime&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="s1">&#39;LegalHolds&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;Date&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="s1">&#39;ID&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+    <span class="s1">&#39;RetentionPeriod&#39;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
+    <span class="s1">&#39;RetentionPeriodExpirationDate&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Response Structure</strong></p>
+<ul class="simple">
+<li><em>(dict) --</em><ul>
+<li><strong>CreateTime</strong> <em>(datetime) --</em></li>
+<li><strong>LegalHolds</strong> <em>(list) --</em><ul>
+<li><em>(dict) --</em><ul>
+<li><strong>Date</strong> <em>(datetime) --</em></li>
+<li><strong>ID</strong> <em>(string) --</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>RetentionPeriod</strong> <em>(integer) --</em> Retention period in seconds.</li>
+<li><strong>RetentionPeriodExpirationDate</strong> <em>(datetime) --</em> Date on which the retention period will expire.</li>
+</ul>
+</li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3247,6 +3469,57 @@ check if an operation is pageable.</dd>
 </dd></dl>
 
 <dl class="method">
+<dt id="S3.Client.put_bucket_protection_configuration">
+<tt class="descname">put_bucket_protection_configuration</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.put_bucket_protection_configuration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the protection configuration of an existing bucket. EnablePermanentRetention is optional and if not included is considered to be false. Once set to true, must be included in any subsequent PUT Bucket?protection requests for that bucket.</p>
+<p><strong>Request Syntax</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">put_bucket_protection_configuration</span><span class="p">(</span>
+    <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
+    <span class="n">ProtectionConfiguration</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;Status&#39;</span><span class="p">:</span> <span class="s1">&#39;Retention&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;MinimumRetention&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;Days&#39;</span><span class="p">:</span> <span class="mi">123</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;DefaultRetention&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;Days&#39;</span><span class="p">:</span> <span class="mi">123</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;MaximumRetention&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;Days&#39;</span><span class="p">:</span> <span class="mi">123</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;EnablePermanentRetention&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="o">|</span><span class="bp">False</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<dl class="docutils field-list" frame="void" rules="none">
+<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
+<li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
+<li><strong>ProtectionConfiguration</strong> (<em>dict</em>) -- <p><strong>[REQUIRED]</strong> Container for setting retention settings.</p>
+<ul>
+<li><strong>Status</strong> <em>(string) --</em> <strong>[REQUIRED]</strong> Retention status of a bucket.</li>
+<li><strong>MinimumRetention</strong> <em>(dict) --</em> <strong>[REQUIRED]</strong> Minimum retention period for an object, if a PUT of an object specifies a shorter retention period the PUT object will fail.<ul>
+<li><strong>Days</strong> <em>(integer) --</em> <strong>[REQUIRED]</strong></li>
+</ul>
+</li>
+<li><strong>DefaultRetention</strong> <em>(dict) --</em> <strong>[REQUIRED]</strong> Default retention period for an object, if a PUT of an object does not specify a retention period this value will be converted to seconds and used.<ul>
+<li><strong>Days</strong> <em>(integer) --</em> <strong>[REQUIRED]</strong></li>
+</ul>
+</li>
+<li><strong>MaximumRetention</strong> <em>(dict) --</em> <strong>[REQUIRED]</strong> Maximum retention period for an object, if a PUT of an object specifies a longer retention period the PUT object will fail.<ul>
+<li><strong>Days</strong> <em>(integer) --</em> <strong>[REQUIRED]</strong></li>
+</ul>
+</li>
+<li><strong>EnablePermanentRetention</strong> <em>(boolean) --</em> Enable permanent retention for an object.</li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last">None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="S3.Client.put_bucket_replication">
 <tt class="descname">put_bucket_replication</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.put_bucket_replication" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a new replication configuration (or replaces an existing one, if present).</p>
@@ -3352,6 +3625,9 @@ check if an operation is pageable.</dd>
     <span class="n">Metadata</span><span class="o">=</span><span class="p">{</span>
         <span class="s1">&#39;string&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
     <span class="p">},</span>
+    <span class="n">RetentionExpirationDate</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">RetentionLegalHoldId</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
+    <span class="n">RetentionPeriod</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span>
     <span class="n">ServerSideEncryption</span><span class="o">=</span><span class="s1">&#39;AES256&#39;</span><span class="o">|</span><span class="s1">&#39;aws:kms&#39;</span><span class="p">,</span>
     <span class="n">StorageClass</span><span class="o">=</span><span class="s1">&#39;STANDARD&#39;</span><span class="o">|</span><span class="s1">&#39;REDUCED_REDUNDANCY&#39;</span><span class="o">|</span><span class="s1">&#39;STANDARD_IA&#39;</span><span class="p">,</span>
     <span class="n">WebsiteRedirectLocation</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
@@ -3388,6 +3664,9 @@ check if an operation is pageable.</dd>
 </li>
 </ul>
 </li>
+<li><strong>RetentionExpirationDate</strong> (<em>datetime</em>) -- Date on which it will be legal to delete or modify the object. You can only specify this or the Retention-Period header. If both are specified a 400 error will be returned. If neither is specified the bucket's DefaultRetention period will be used.</li>
+<li><strong>RetentionLegalHoldId</strong> (<em>string</em>) -- A single legal hold to apply to the object. A legal hold is a character long string of max length 64. The object cannot be overwritten or deleted until all legal holds associated with the object are removed.</li>
+<li><strong>RetentionPeriod</strong> (<em>integer</em>) -- Retention period to store on the object in seconds. If this field and Retention-Expiration-Date are specified a 400 error is returned. If neither is specified the bucket's DefaultRetention period will be used. 0 is a legal value assuming the bucket's minimum retention period is also 0.</li>
 <li><strong>ServerSideEncryption</strong> (<em>string</em>) -- The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).</li>
 <li><strong>StorageClass</strong> (<em>string</em>) -- The type of storage to use for the object. Defaults to 'STANDARD'.</li>
 <li><strong>WebsiteRedirectLocation</strong> (<em>string</em>) -- If the bucket is configured as a website, redirects requests for this object to another object in the same bucket or to an external URL. Amazon S3 stores the value of this header in the object metadata.</li>
@@ -4471,7 +4750,7 @@ check if an operation is pageable.</dd>
         <li class="right" >
           <a href="../index.html" title="Available Services"
              >previous</a> |</li>
-        <li><a href="../../index.html">ibm_botocore 2.3.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">ibm_botocore 2.4.0 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Available Services</a> &raquo;</li> 
       </ul>
     </div>
