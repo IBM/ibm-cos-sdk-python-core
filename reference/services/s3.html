@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>S3 &mdash; ibm_botocore 2.4.0 documentation</title>
+    <title>S3 &mdash; ibm_botocore 2.4.2.dev1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -23,7 +23,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '2.4.0',
+        VERSION:     '2.4.2.dev1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -32,7 +32,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="ibm_botocore 2.4.0 documentation" href="../../index.html" />
+    <link rel="top" title="ibm_botocore 2.4.2.dev1 documentation" href="../../index.html" />
     <link rel="up" title="Available Services" href="../index.html" />
     <link rel="next" title="Loaders Reference" href="../loaders.html" />
     <link rel="prev" title="Available Services" href="../index.html" />
@@ -56,7 +56,7 @@
         <li class="right" >
           <a href="../index.html" title="Available Services"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../index.html">ibm_botocore 2.4.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">ibm_botocore 2.4.2.dev1 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Available Services</a> &raquo;</li> 
       </ul>
     </div>
@@ -67,7 +67,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../index.html" class="text-logo">ibm_botocore 2.4.0 documentation</a>
+    ../../index.html" class="text-logo">ibm_botocore 2.4.2.dev1 documentation</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -195,7 +195,6 @@
 <li><a class="reference internal" href="#S3.Client.get_bucket_metrics_configuration" title="S3.Client.get_bucket_metrics_configuration"><tt class="xref py py-meth docutils literal"><span class="pre">get_bucket_metrics_configuration()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.get_bucket_protection_configuration" title="S3.Client.get_bucket_protection_configuration"><tt class="xref py py-meth docutils literal"><span class="pre">get_bucket_protection_configuration()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.get_bucket_replication" title="S3.Client.get_bucket_replication"><tt class="xref py py-meth docutils literal"><span class="pre">get_bucket_replication()</span></tt></a></li>
-<li><a class="reference internal" href="#S3.Client.get_bucket_request_payment" title="S3.Client.get_bucket_request_payment"><tt class="xref py py-meth docutils literal"><span class="pre">get_bucket_request_payment()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.get_object" title="S3.Client.get_object"><tt class="xref py py-meth docutils literal"><span class="pre">get_object()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.get_object_acl" title="S3.Client.get_object_acl"><tt class="xref py py-meth docutils literal"><span class="pre">get_object_acl()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.get_object_torrent" title="S3.Client.get_object_torrent"><tt class="xref py py-meth docutils literal"><span class="pre">get_object_torrent()</span></tt></a></li>
@@ -221,7 +220,6 @@
 <li><a class="reference internal" href="#S3.Client.put_bucket_metrics_configuration" title="S3.Client.put_bucket_metrics_configuration"><tt class="xref py py-meth docutils literal"><span class="pre">put_bucket_metrics_configuration()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.put_bucket_protection_configuration" title="S3.Client.put_bucket_protection_configuration"><tt class="xref py py-meth docutils literal"><span class="pre">put_bucket_protection_configuration()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.put_bucket_replication" title="S3.Client.put_bucket_replication"><tt class="xref py py-meth docutils literal"><span class="pre">put_bucket_replication()</span></tt></a></li>
-<li><a class="reference internal" href="#S3.Client.put_bucket_request_payment" title="S3.Client.put_bucket_request_payment"><tt class="xref py py-meth docutils literal"><span class="pre">put_bucket_request_payment()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.put_object" title="S3.Client.put_object"><tt class="xref py py-meth docutils literal"><span class="pre">put_object()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.put_object_acl" title="S3.Client.put_object_acl"><tt class="xref py py-meth docutils literal"><span class="pre">put_object_acl()</span></tt></a></li>
 <li><a class="reference internal" href="#S3.Client.restore_object" title="S3.Client.restore_object"><tt class="xref py py-meth docutils literal"><span class="pre">restore_object()</span></tt></a></li>
@@ -247,7 +245,7 @@
 <li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
 <li><strong>Key</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
 <li><strong>UploadId</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Ignored by COS if present.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -350,7 +348,7 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 </ul>
 </li>
 <li><strong>UploadId</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Ignored by COS if present.</li>
 <li><strong>RetentionExpirationDate</strong> (<em>datetime</em>) -- Date on which it will be legal to delete or modify the object. You can only specify this or the Retention-Period header. If both are specified a 400 error will be returned. If neither is specified the bucket's DefaultRetention period will be used.</li>
 <li><strong>RetentionLegalHoldId</strong> (<em>string</em>) -- A single legal hold to apply to the object. A legal hold is a character long string of max length 64. The object cannot be overwritten or deleted until all legal holds associated with the object are removed.</li>
 <li><strong>RetentionPeriod</strong> (<em>integer</em>) -- Retention period to store on the object in seconds. RetentionPeriod and RetentionExpirationDate are mutually exclusive, if neither is specified the bucket's DefaultRetentionPeriod value will be used. <strong>Indefinite retention(-1)</strong> is a valid value. <strong>Permanent retention(-2)</strong>, is valid only if permanent retention is enabled for the bucket. <strong>0</strong> is a valid value if the bucket's MinimumRetention period is also 0.</li>
@@ -379,8 +377,8 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 <li><strong>Key</strong> <em>(string) --</em></li>
 <li><strong>Expiration</strong> <em>(string) --</em> If the object expiration is configured, this will contain the expiration date (expiry-date) and rule ID (rule-id). The value of rule-id is URL encoded.</li>
 <li><strong>ETag</strong> <em>(string) --</em> Entity tag of the object.</li>
-<li><strong>ServerSideEncryption</strong> <em>(string) --</em> The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).</li>
-<li><strong>SSEKMSKeyId</strong> <em>(string) --</em> If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.</li>
+<li><strong>ServerSideEncryption</strong> <em>(string) --</em> The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).</li>
+<li><strong>SSEKMSKeyId</strong> <em>(string) --</em> Not returned by COS.</li>
 <li><strong>RequestCharged</strong> <em>(string) --</em> If present, indicates that the requester was successfully charged for the request.</li>
 </ul>
 </li>
@@ -467,17 +465,17 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 <li><strong>RetentionExpirationDate</strong> (<em>datetime</em>) -- Date on which it will be legal to delete or modify the object. This field can only be specified if Retention-Directive is REPLACE. You can only specify this or the Retention-Period header. If both are specified a 400 error will be returned. If neither is specified the bucket's DefaultRetention period will be used.</li>
 <li><strong>RetentionLegalHoldId</strong> (<em>string</em>) -- A single legal hold to apply to the object. This field can only be specified if Retention-Directive is REPLACE. A legal hold is a character long string of max length 64. The object cannot be overwritten or deleted until all legal holds associated with the object are removed.</li>
 <li><strong>RetentionPeriod</strong> (<em>integer</em>) -- Retention period to store on the object in seconds. This field can only be specified if Retention-Directive is REPLACE. If this field and Retention-Expiration-Date are specified a 400 error is returned. If neither is specified the bucket's DefaultRetention period will be used. 0 is a legal value assuming the bucket's minimum retention period is also 0.</li>
-<li><strong>ServerSideEncryption</strong> (<em>string</em>) -- The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).</li>
+<li><strong>ServerSideEncryption</strong> (<em>string</em>) -- The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).</li>
 <li><strong>StorageClass</strong> (<em>string</em>) -- The type of storage to use for the object. Defaults to 'STANDARD'.</li>
 <li><strong>WebsiteRedirectLocation</strong> (<em>string</em>) -- If the bucket is configured as a website, redirects requests for this object to another object in the same bucket or to an external URL. Amazon S3 stores the value of this header in the object metadata.</li>
 <li><strong>SSECustomerAlgorithm</strong> (<em>string</em>) -- Specifies the algorithm to use to when encrypting the object (e.g., AES256).</li>
 <li><strong>SSECustomerKey</strong> (<em>string</em>) -- Specifies the customer-provided encryption key for Amazon S3 to use in encrypting data. This value is used to store the object and then it is discarded; Amazon does not store the encryption key. The key must be appropriate for use with the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm header.</li>
 <li><strong>SSECustomerKeyMD5</strong> (<em>string</em>) -- Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure the encryption key was transmitted without error.      Please note that this parameter is automatically populated if it is not provided. Including this parameter is not required</li>
-<li><strong>SSEKMSKeyId</strong> (<em>string</em>) -- Specifies the AWS KMS key ID to use for object encryption. All GET and PUT requests for an object protected by AWS KMS will fail if not made via SSL or using SigV4.</li>
+<li><strong>SSEKMSKeyId</strong> (<em>string</em>) -- Ignored by COS if present.</li>
 <li><strong>CopySourceSSECustomerAlgorithm</strong> (<em>string</em>) -- Specifies the algorithm to use when decrypting the source object (e.g., AES256).</li>
 <li><strong>CopySourceSSECustomerKey</strong> (<em>string</em>) -- Specifies the customer-provided encryption key for Amazon S3 to use to decrypt the source object. The encryption key provided in this header must be one that was used when the source object was created.</li>
 <li><strong>CopySourceSSECustomerKeyMD5</strong> (<em>string</em>) -- Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure the encryption key was transmitted without error.      Please note that this parameter is automatically populated if it is not provided. Including this parameter is not required</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Ignored by COS if present.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -506,10 +504,10 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 </ul>
 </li>
 <li><strong>Expiration</strong> <em>(string) --</em> If the object expiration is configured, the response includes this header.</li>
-<li><strong>ServerSideEncryption</strong> <em>(string) --</em> The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).</li>
+<li><strong>ServerSideEncryption</strong> <em>(string) --</em> The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).</li>
 <li><strong>SSECustomerAlgorithm</strong> <em>(string) --</em> If server-side encryption with a customer-provided encryption key was requested, the response will include this header confirming the encryption algorithm used.</li>
 <li><strong>SSECustomerKeyMD5</strong> <em>(string) --</em> If server-side encryption with a customer-provided encryption key was requested, the response will include this header to provide round trip message integrity verification of the customer-provided encryption key.</li>
-<li><strong>SSEKMSKeyId</strong> <em>(string) --</em> If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.</li>
+<li><strong>SSEKMSKeyId</strong> <em>(string) --</em> Not returned by COS.</li>
 <li><strong>RequestCharged</strong> <em>(string) --</em> If present, indicates that the requester was successfully charged for the request.</li>
 </ul>
 </li>
@@ -635,14 +633,14 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 </li>
 </ul>
 </li>
-<li><strong>ServerSideEncryption</strong> (<em>string</em>) -- The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).</li>
+<li><strong>ServerSideEncryption</strong> (<em>string</em>) -- The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).</li>
 <li><strong>StorageClass</strong> (<em>string</em>) -- The type of storage to use for the object. Defaults to 'STANDARD'.</li>
 <li><strong>WebsiteRedirectLocation</strong> (<em>string</em>) -- If the bucket is configured as a website, redirects requests for this object to another object in the same bucket or to an external URL. Amazon S3 stores the value of this header in the object metadata.</li>
 <li><strong>SSECustomerAlgorithm</strong> (<em>string</em>) -- Specifies the algorithm to use to when encrypting the object (e.g., AES256).</li>
 <li><strong>SSECustomerKey</strong> (<em>string</em>) -- Specifies the customer-provided encryption key for Amazon S3 to use in encrypting data. This value is used to store the object and then it is discarded; Amazon does not store the encryption key. The key must be appropriate for use with the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm header.</li>
 <li><strong>SSECustomerKeyMD5</strong> (<em>string</em>) -- Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure the encryption key was transmitted without error.      Please note that this parameter is automatically populated if it is not provided. Including this parameter is not required</li>
-<li><strong>SSEKMSKeyId</strong> (<em>string</em>) -- Specifies the AWS KMS key ID to use for object encryption. All GET and PUT requests for an object protected by AWS KMS will fail if not made via SSL or using SigV4.</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
+<li><strong>SSEKMSKeyId</strong> (<em>string</em>) -- Ignored by COS if present.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Ignored by COS if present.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -670,10 +668,10 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 <li><strong>Bucket</strong> <em>(string) --</em> Name of the bucket to which the multipart upload was initiated.</li>
 <li><strong>Key</strong> <em>(string) --</em> Object key for which the multipart upload was initiated.</li>
 <li><strong>UploadId</strong> <em>(string) --</em> ID for the initiated multipart upload.</li>
-<li><strong>ServerSideEncryption</strong> <em>(string) --</em> The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).</li>
+<li><strong>ServerSideEncryption</strong> <em>(string) --</em> The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).</li>
 <li><strong>SSECustomerAlgorithm</strong> <em>(string) --</em> If server-side encryption with a customer-provided encryption key was requested, the response will include this header confirming the encryption algorithm used.</li>
 <li><strong>SSECustomerKeyMD5</strong> <em>(string) --</em> If server-side encryption with a customer-provided encryption key was requested, the response will include this header to provide round trip message integrity verification of the customer-provided encryption key.</li>
-<li><strong>SSEKMSKeyId</strong> <em>(string) --</em> If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.</li>
+<li><strong>SSEKMSKeyId</strong> <em>(string) --</em> Not returned by COS.</li>
 <li><strong>RequestCharged</strong> <em>(string) --</em> If present, indicates that the requester was successfully charged for the request.</li>
 </ul>
 </li>
@@ -686,7 +684,7 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 <dl class="method">
 <dt id="S3.Client.delete_bucket">
 <tt class="descname">delete_bucket</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.delete_bucket" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deletes the bucket. All objects (including all object versions and Delete Markers) in the bucket must be deleted before the bucket itself can be deleted.</p>
+<dd><p>Deletes the bucket. All objects in the bucket must be deleted before the bucket itself can be deleted.</p>
 <p><strong>Request Syntax</strong></p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">delete_bucket</span><span class="p">(</span>
     <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
@@ -872,7 +870,7 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 <dl class="method">
 <dt id="S3.Client.delete_object">
 <tt class="descname">delete_object</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.delete_object" title="Permalink to this definition">¶</a></dt>
-<dd><p>Removes the null version (if there is one) of an object and inserts a delete marker, which becomes the latest version of the object. If there isn't a null version, Amazon S3 does not remove any objects.</p>
+<dd><p>Removes an object. If the object doesn't exist, Amazon S3 does not remove any objects.</p>
 <p><strong>Request Syntax</strong></p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">delete_object</span><span class="p">(</span>
     <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
@@ -887,7 +885,7 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 <li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
 <li><strong>Key</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
 <li><strong>MFA</strong> (<em>string</em>) -- The concatenation of the authentication device's serial number, a space, and the value that is displayed on your authentication device.</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Ignored by COS if present.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -902,8 +900,8 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 <p><strong>Response Structure</strong></p>
 <ul class="simple">
 <li><em>(dict) --</em><ul>
-<li><strong>DeleteMarker</strong> <em>(boolean) --</em> Specifies whether the versioned object that was permanently deleted was (true) or was not (false) a delete marker.</li>
-<li><strong>RequestCharged</strong> <em>(string) --</em> If present, indicates that the requester was successfully charged for the request.</li>
+<li><strong>DeleteMarker</strong> <em>(boolean) --</em> Not returned by COS.</li>
+<li><strong>RequestCharged</strong> <em>(string) --</em> Not returned by COS.</li>
 </ul>
 </li>
 </ul>
@@ -948,7 +946,7 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 </ul>
 </li>
 <li><strong>MFA</strong> (<em>string</em>) -- The concatenation of the authentication device's serial number, a space, and the value that is displayed on your authentication device.</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Ignored by COS if present.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -1769,35 +1767,6 @@ default, the http method is whatever is used in the method's model.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="S3.Client.get_bucket_request_payment">
-<tt class="descname">get_bucket_request_payment</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.get_bucket_request_payment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the request payment configuration of a bucket.</p>
-<p><strong>Request Syntax</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_bucket_request_payment</span><span class="p">(</span>
-    <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></dd>
-<dt class="field-name">Return type</dt><dd class="field-body">dict</dd>
-<dt class="field-name">Returns</dt><dd class="field-body"><strong>Response Syntax</strong><div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s1">&#39;Payer&#39;</span><span class="p">:</span> <span class="s1">&#39;Requester&#39;</span><span class="o">|</span><span class="s1">&#39;BucketOwner&#39;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Response Structure</strong></p>
-<ul class="simple">
-<li><em>(dict) --</em><ul>
-<li><strong>Payer</strong> <em>(string) --</em> Specifies who pays for the download and request fees.</li>
-</ul>
-</li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
 <dt id="S3.Client.get_object">
 <tt class="descname">get_object</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.get_object" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves objects from Amazon S3.</p>
@@ -1841,7 +1810,7 @@ default, the http method is whatever is used in the method's model.</li>
 <li><strong>SSECustomerAlgorithm</strong> (<em>string</em>) -- Specifies the algorithm to use to when encrypting the object (e.g., AES256).</li>
 <li><strong>SSECustomerKey</strong> (<em>string</em>) -- Specifies the customer-provided encryption key for Amazon S3 to use in encrypting data. This value is used to store the object and then it is discarded; Amazon does not store the encryption key. The key must be appropriate for use with the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm header.</li>
 <li><strong>SSECustomerKeyMD5</strong> (<em>string</em>) -- Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure the encryption key was transmitted without error.      Please note that this parameter is automatically populated if it is not provided. Including this parameter is not required</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Ignored by COS if present.</li>
 <li><strong>PartNumber</strong> (<em>integer</em>) -- Part number of the object being read. This is a positive integer between 1 and 10,000. Effectively performs a 'ranged' GET request for the part specified. Useful for downloading just a part of an object.</li>
 </ul>
 </dd>
@@ -1887,7 +1856,7 @@ default, the http method is whatever is used in the method's model.</li>
 <ul class="simple">
 <li><em>(dict) --</em><ul>
 <li><strong>Body</strong> (<a class="reference internal" href="../response.html#ibm_botocore.response.StreamingBody" title="ibm_botocore.response.StreamingBody"><tt class="xref py py-class docutils literal"><span class="pre">StreamingBody</span></tt></a>) -- Object data.</li>
-<li><strong>DeleteMarker</strong> <em>(boolean) --</em> Specifies whether the object retrieved was (true) or was not (false) a Delete Marker. If false, this response header does not appear in the response.</li>
+<li><strong>DeleteMarker</strong> <em>(boolean) --</em> Not returned by COS.</li>
 <li><strong>AcceptRanges</strong> <em>(string) --</em></li>
 <li><strong>Expiration</strong> <em>(string) --</em> If the object expiration is configured (see PUT Bucket lifecycle), the response includes this header. It includes the expiry-date and rule-id key value pairs providing object expiration information. The value of the rule-id is URL encoded.</li>
 <li><strong>Restore</strong> <em>(string) --</em> Provides information about object restoration operation and expiration time of the restored object copy.</li>
@@ -1903,7 +1872,7 @@ default, the http method is whatever is used in the method's model.</li>
 <li><strong>ContentType</strong> <em>(string) --</em> A standard MIME type describing the format of the object data.</li>
 <li><strong>Expires</strong> <em>(datetime) --</em> The date and time at which the object is no longer cacheable.</li>
 <li><strong>WebsiteRedirectLocation</strong> <em>(string) --</em> If the bucket is configured as a website, redirects requests for this object to another object in the same bucket or to an external URL. Amazon S3 stores the value of this header in the object metadata.</li>
-<li><strong>ServerSideEncryption</strong> <em>(string) --</em> The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).</li>
+<li><strong>ServerSideEncryption</strong> <em>(string) --</em> The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).</li>
 <li><strong>Metadata</strong> <em>(dict) --</em> A map of metadata to store with the object in S3.<ul>
 <li><em>(string) --</em><ul>
 <li><em>(string) --</em></li>
@@ -1916,7 +1885,7 @@ default, the http method is whatever is used in the method's model.</li>
 <li><strong>RetentionPeriod</strong> <em>(integer) --</em> Retention period to store on the object in seconds. If this field and Retention-Expiration-Date are specified a 400 error is returned. If neither is specified the bucket's DefaultRetention period will be used. 0 is a legal value assuming the bucket's minimum retention period is also 0.</li>
 <li><strong>SSECustomerAlgorithm</strong> <em>(string) --</em> If server-side encryption with a customer-provided encryption key was requested, the response will include this header confirming the encryption algorithm used.</li>
 <li><strong>SSECustomerKeyMD5</strong> <em>(string) --</em> If server-side encryption with a customer-provided encryption key was requested, the response will include this header to provide round trip message integrity verification of the customer-provided encryption key.</li>
-<li><strong>SSEKMSKeyId</strong> <em>(string) --</em> If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.</li>
+<li><strong>SSEKMSKeyId</strong> <em>(string) --</em> Ignored by COS if present.</li>
 <li><strong>StorageClass</strong> <em>(string) --</em></li>
 <li><strong>RequestCharged</strong> <em>(string) --</em> If present, indicates that the requester was successfully charged for the request.</li>
 <li><strong>ReplicationStatus</strong> <em>(string) --</em></li>
@@ -1945,7 +1914,7 @@ default, the http method is whatever is used in the method's model.</li>
 <dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
 <li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
 <li><strong>Key</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Ignored by COS if present.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -2020,7 +1989,7 @@ default, the http method is whatever is used in the method's model.</li>
 <dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
 <li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
 <li><strong>Key</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Ignored by COS if present.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -2059,7 +2028,7 @@ call <tt class="docutils literal"><span class="pre">client.get_paginator(&quot;c
 <dt class="field-name">Raises OperationNotPageableError</dt><dd class="field-body">Raised if the operation is not
 pageable.  You can use the <tt class="docutils literal"><span class="pre">client.can_paginate</span></tt> method to
 check if an operation is pageable.</dd>
-<dt class="field-name">Return type</dt><dd class="field-body">L{botocore.paginate.Paginator}</dd>
+<dt class="field-name">Return type</dt><dd class="field-body">L{ibm_botocore.paginate.Paginator}</dd>
 <dt class="field-name">Returns</dt><dd class="field-body">A paginator object.</dd>
 </dl>
 </dd></dl>
@@ -2067,7 +2036,14 @@ check if an operation is pageable.</dd>
 <dl class="method">
 <dt id="S3.Client.get_waiter">
 <tt class="descname">get_waiter</tt><big>(</big><em>waiter_name</em><big>)</big><a class="headerlink" href="#S3.Client.get_waiter" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns an object that can wait for some condition.</p>
+<dl class="docutils field-list" frame="void" rules="none">
+<dt class="field-name">Parameters</dt><dd class="field-body"><strong>waiter_name</strong> (<em>str</em>) -- The name of the waiter to get. See the waiters
+section of the service docs for a list of available waiters.</dd>
+<dt class="field-name">Returns</dt><dd class="field-body">The specified waiter object.</dd>
+<dt class="field-name">Return type</dt><dd class="field-body">ibm_botocore.waiter.Waiter</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
 <dt id="S3.Client.head_bucket">
@@ -2132,7 +2108,7 @@ check if an operation is pageable.</dd>
 <li><strong>SSECustomerAlgorithm</strong> (<em>string</em>) -- Specifies the algorithm to use to when encrypting the object (e.g., AES256).</li>
 <li><strong>SSECustomerKey</strong> (<em>string</em>) -- Specifies the customer-provided encryption key for Amazon S3 to use in encrypting data. This value is used to store the object and then it is discarded; Amazon does not store the encryption key. The key must be appropriate for use with the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm header.</li>
 <li><strong>SSECustomerKeyMD5</strong> (<em>string</em>) -- Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure the encryption key was transmitted without error.      Please note that this parameter is automatically populated if it is not provided. Including this parameter is not required</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Ignored by COS if present.</li>
 <li><strong>PartNumber</strong> (<em>integer</em>) -- Part number of the object being read. This is a positive integer between 1 and 10,000. Effectively performs a 'ranged' HEAD request for the part specified. Useful querying about the size of the part and the number of parts in this object.</li>
 </ul>
 </dd>
@@ -2177,7 +2153,7 @@ check if an operation is pageable.</dd>
 <p><strong>Response Structure</strong></p>
 <ul class="simple">
 <li><em>(dict) --</em><ul>
-<li><strong>DeleteMarker</strong> <em>(boolean) --</em> Specifies whether the object retrieved was (true) or was not (false) a Delete Marker. If false, this response header does not appear in the response.</li>
+<li><strong>DeleteMarker</strong> <em>(boolean) --</em> Not returned by COS.</li>
 <li><strong>AcceptRanges</strong> <em>(string) --</em></li>
 <li><strong>Expiration</strong> <em>(string) --</em> If the object expiration is configured (see PUT Bucket lifecycle), the response includes this header. It includes the expiry-date and rule-id key value pairs providing object expiration information. The value of the rule-id is URL encoded.</li>
 <li><strong>IbmTransition</strong> <em>(string) --</em> This header is only included if an object has transition metadata. This header will indicate the transition storage class and time of transition. If this header and the x-amz-restore header are both included, this header will indicate the time at which the object was originally archived.</li>
@@ -2194,7 +2170,7 @@ check if an operation is pageable.</dd>
 <li><strong>ContentType</strong> <em>(string) --</em> A standard MIME type describing the format of the object data.</li>
 <li><strong>Expires</strong> <em>(datetime) --</em> The date and time at which the object is no longer cacheable.</li>
 <li><strong>WebsiteRedirectLocation</strong> <em>(string) --</em> If the bucket is configured as a website, redirects requests for this object to another object in the same bucket or to an external URL. Amazon S3 stores the value of this header in the object metadata.</li>
-<li><strong>ServerSideEncryption</strong> <em>(string) --</em> The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).</li>
+<li><strong>ServerSideEncryption</strong> <em>(string) --</em> The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).</li>
 <li><strong>Metadata</strong> <em>(dict) --</em> A map of metadata to store with the object in S3.<ul>
 <li><em>(string) --</em><ul>
 <li><em>(string) --</em></li>
@@ -2207,7 +2183,7 @@ check if an operation is pageable.</dd>
 <li><strong>RetentionPeriod</strong> <em>(integer) --</em> Retention period to store on the object in seconds. If this field and Retention-Expiration-Date are specified a 400 error is returned. If neither is specified the bucket's DefaultRetention period will be used. 0 is a legal value assuming the bucket's minimum retention period is also 0.</li>
 <li><strong>SSECustomerAlgorithm</strong> <em>(string) --</em> If server-side encryption with a customer-provided encryption key was requested, the response will include this header confirming the encryption algorithm used.</li>
 <li><strong>SSECustomerKeyMD5</strong> <em>(string) --</em> If server-side encryption with a customer-provided encryption key was requested, the response will include this header to provide round trip message integrity verification of the customer-provided encryption key.</li>
-<li><strong>SSEKMSKeyId</strong> <em>(string) --</em> If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.</li>
+<li><strong>SSEKMSKeyId</strong> <em>(string) --</em> Not returned by COS.</li>
 <li><strong>StorageClass</strong> <em>(string) --</em></li>
 <li><strong>RequestCharged</strong> <em>(string) --</em> If present, indicates that the requester was successfully charged for the request.</li>
 <li><strong>ReplicationStatus</strong> <em>(string) --</em></li>
@@ -2738,7 +2714,7 @@ check if an operation is pageable.</dd>
 <li><strong>Marker</strong> (<em>string</em>) -- Specifies the key to start with when listing objects in a bucket.</li>
 <li><strong>MaxKeys</strong> (<em>integer</em>) -- Sets the maximum number of keys returned in the response. The response might contain fewer keys but will never contain more.</li>
 <li><strong>Prefix</strong> (<em>string</em>) -- Limits the response to keys that begin with the specified prefix.</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the list objects request. Bucket owners need not specify this parameter in their requests.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Ignored by COS if present.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -2833,8 +2809,7 @@ check if an operation is pageable.</dd>
     <span class="n">Prefix</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">ContinuationToken</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">FetchOwner</span><span class="o">=</span><span class="bp">True</span><span class="o">|</span><span class="bp">False</span><span class="p">,</span>
-    <span class="n">StartAfter</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">RequestPayer</span><span class="o">=</span><span class="s1">&#39;requester&#39;</span>
+    <span class="n">StartAfter</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -2848,7 +2823,6 @@ check if an operation is pageable.</dd>
 <li><strong>ContinuationToken</strong> (<em>string</em>) -- ContinuationToken indicates Amazon S3 that the list is being continued on this bucket with a token. ContinuationToken is obfuscated and is not a real key</li>
 <li><strong>FetchOwner</strong> (<em>boolean</em>) -- The owner field is not present in listV2 by default, if you want to return owner field with each key in the result then set the fetch owner field to true</li>
 <li><strong>StartAfter</strong> (<em>string</em>) -- StartAfter is where you want Amazon S3 to start listing from. Amazon S3 starts listing after this specified key. StartAfter can be any key in the bucket</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the list objects request in V2 style. Bucket owners need not specify this parameter in their requests.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -2952,7 +2926,7 @@ check if an operation is pageable.</dd>
 <li><strong>MaxParts</strong> (<em>integer</em>) -- Sets the maximum number of parts to return.</li>
 <li><strong>PartNumberMarker</strong> (<em>integer</em>) -- Specifies the part after which listing should begin. Only parts with higher part numbers will be listed.</li>
 <li><strong>UploadId</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong> Upload ID identifying the multipart upload whose parts are being listed.</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Ignored by COS if present.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -3573,34 +3547,6 @@ check if an operation is pageable.</dd>
 </dd></dl>
 
 <dl class="method">
-<dt id="S3.Client.put_bucket_request_payment">
-<tt class="descname">put_bucket_request_payment</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.put_bucket_request_payment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the request payment configuration for a bucket. By default, the bucket owner pays for downloads from the bucket. This configuration parameter enables the bucket owner (only) to specify that the person requesting the download will be charged for the download.</p>
-<p><strong>Request Syntax</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">put_bucket_request_payment</span><span class="p">(</span>
-    <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">RequestPaymentConfiguration</span><span class="o">=</span><span class="p">{</span>
-        <span class="s1">&#39;Payer&#39;</span><span class="p">:</span> <span class="s1">&#39;Requester&#39;</span><span class="o">|</span><span class="s1">&#39;BucketOwner&#39;</span>
-    <span class="p">}</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first simple">
-<li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
-<li><strong>RequestPaymentConfiguration</strong> (<em>dict</em>) -- <p><strong>[REQUIRED]</strong></p>
-<ul>
-<li><strong>Payer</strong> <em>(string) --</em> <strong>[REQUIRED]</strong> Specifies who pays for the download and request fees.</li>
-</ul>
-</li>
-</ul>
-</dd>
-<dt class="field-name">Returns</dt><dd class="field-body"><p class="first last">None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
 <dt id="S3.Client.put_object">
 <tt class="descname">put_object</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#S3.Client.put_object" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds an object to a bucket.</p>
@@ -3667,14 +3613,14 @@ check if an operation is pageable.</dd>
 <li><strong>RetentionExpirationDate</strong> (<em>datetime</em>) -- Date on which it will be legal to delete or modify the object. You can only specify this or the Retention-Period header. If both are specified a 400 error will be returned. If neither is specified the bucket's DefaultRetention period will be used.</li>
 <li><strong>RetentionLegalHoldId</strong> (<em>string</em>) -- A single legal hold to apply to the object. A legal hold is a character long string of max length 64. The object cannot be overwritten or deleted until all legal holds associated with the object are removed.</li>
 <li><strong>RetentionPeriod</strong> (<em>integer</em>) -- Retention period to store on the object in seconds. If this field and Retention-Expiration-Date are specified a 400 error is returned. If neither is specified the bucket's DefaultRetention period will be used. 0 is a legal value assuming the bucket's minimum retention period is also 0.</li>
-<li><strong>ServerSideEncryption</strong> (<em>string</em>) -- The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).</li>
+<li><strong>ServerSideEncryption</strong> (<em>string</em>) -- The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).</li>
 <li><strong>StorageClass</strong> (<em>string</em>) -- The type of storage to use for the object. Defaults to 'STANDARD'.</li>
 <li><strong>WebsiteRedirectLocation</strong> (<em>string</em>) -- If the bucket is configured as a website, redirects requests for this object to another object in the same bucket or to an external URL. Amazon S3 stores the value of this header in the object metadata.</li>
 <li><strong>SSECustomerAlgorithm</strong> (<em>string</em>) -- Specifies the algorithm to use to when encrypting the object (e.g., AES256).</li>
 <li><strong>SSECustomerKey</strong> (<em>string</em>) -- Specifies the customer-provided encryption key for Amazon S3 to use in encrypting data. This value is used to store the object and then it is discarded; Amazon does not store the encryption key. The key must be appropriate for use with the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm header.</li>
 <li><strong>SSECustomerKeyMD5</strong> (<em>string</em>) -- Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure the encryption key was transmitted without error.      Please note that this parameter is automatically populated if it is not provided. Including this parameter is not required</li>
-<li><strong>SSEKMSKeyId</strong> (<em>string</em>) -- Specifies the AWS KMS key ID to use for object encryption. All GET and PUT requests for an object protected by AWS KMS will fail if not made via SSL or using SigV4.</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
+<li><strong>SSEKMSKeyId</strong> (<em>string</em>) -- Ignored by COS if present.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Ignored by COS if present.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -3696,10 +3642,10 @@ check if an operation is pageable.</dd>
 <li><em>(dict) --</em><ul>
 <li><strong>Expiration</strong> <em>(string) --</em> If the object expiration is configured, this will contain the expiration date (expiry-date) and rule ID (rule-id). The value of rule-id is URL encoded.</li>
 <li><strong>ETag</strong> <em>(string) --</em> Entity tag for the uploaded object.</li>
-<li><strong>ServerSideEncryption</strong> <em>(string) --</em> The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).</li>
+<li><strong>ServerSideEncryption</strong> <em>(string) --</em> The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).</li>
 <li><strong>SSECustomerAlgorithm</strong> <em>(string) --</em> If server-side encryption with a customer-provided encryption key was requested, the response will include this header confirming the encryption algorithm used.</li>
 <li><strong>SSECustomerKeyMD5</strong> <em>(string) --</em> If server-side encryption with a customer-provided encryption key was requested, the response will include this header to provide round trip message integrity verification of the customer-provided encryption key.</li>
-<li><strong>SSEKMSKeyId</strong> <em>(string) --</em> If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.</li>
+<li><strong>SSEKMSKeyId</strong> <em>(string) --</em> Not returned by COS.</li>
 <li><strong>RequestCharged</strong> <em>(string) --</em> If present, indicates that the requester was successfully charged for the request.</li>
 </ul>
 </li>
@@ -3778,7 +3724,7 @@ check if an operation is pageable.</dd>
 <li><strong>GrantWrite</strong> (<em>string</em>) -- Allows grantee to create, overwrite, and delete any object in the bucket.</li>
 <li><strong>GrantWriteACP</strong> (<em>string</em>) -- Allows grantee to write the ACL for the applicable bucket.</li>
 <li><strong>Key</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Ignored by COS if present.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -3869,7 +3815,7 @@ check if an operation is pageable.</dd>
 <li><strong>SSECustomerAlgorithm</strong> (<em>string</em>) -- Specifies the algorithm to use to when encrypting the object (e.g., AES256).</li>
 <li><strong>SSECustomerKey</strong> (<em>string</em>) -- Specifies the customer-provided encryption key for Amazon S3 to use in encrypting data. This value is used to store the object and then it is discarded; Amazon does not store the encryption key. The key must be appropriate for use with the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm header. This must be the same encryption key specified in the initiate multipart upload request.</li>
 <li><strong>SSECustomerKeyMD5</strong> (<em>string</em>) -- Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure the encryption key was transmitted without error.      Please note that this parameter is automatically populated if it is not provided. Including this parameter is not required</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Ignored by COS if present.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -3888,11 +3834,11 @@ check if an operation is pageable.</dd>
 <p><strong>Response Structure</strong></p>
 <ul class="simple">
 <li><em>(dict) --</em><ul>
-<li><strong>ServerSideEncryption</strong> <em>(string) --</em> The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).</li>
+<li><strong>ServerSideEncryption</strong> <em>(string) --</em> The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).</li>
 <li><strong>ETag</strong> <em>(string) --</em> Entity tag for the uploaded object.</li>
 <li><strong>SSECustomerAlgorithm</strong> <em>(string) --</em> If server-side encryption with a customer-provided encryption key was requested, the response will include this header confirming the encryption algorithm used.</li>
 <li><strong>SSECustomerKeyMD5</strong> <em>(string) --</em> If server-side encryption with a customer-provided encryption key was requested, the response will include this header to provide round trip message integrity verification of the customer-provided encryption key.</li>
-<li><strong>SSEKMSKeyId</strong> <em>(string) --</em> If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.</li>
+<li><strong>SSEKMSKeyId</strong> <em>(string) --</em> Not returned by COS.</li>
 <li><strong>RequestCharged</strong> <em>(string) --</em> If present, indicates that the requester was successfully charged for the request.</li>
 </ul>
 </li>
@@ -3944,7 +3890,7 @@ check if an operation is pageable.</dd>
 <li><strong>CopySourceSSECustomerAlgorithm</strong> (<em>string</em>) -- Specifies the algorithm to use when decrypting the source object (e.g., AES256).</li>
 <li><strong>CopySourceSSECustomerKey</strong> (<em>string</em>) -- Specifies the customer-provided encryption key for Amazon S3 to use to decrypt the source object. The encryption key provided in this header must be one that was used when the source object was created.</li>
 <li><strong>CopySourceSSECustomerKeyMD5</strong> (<em>string</em>) -- Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure the encryption key was transmitted without error.      Please note that this parameter is automatically populated if it is not provided. Including this parameter is not required</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Ignored by COS if present.</li>
 </ul>
 </dd>
 <dt class="field-name">Return type</dt><dd class="field-body"><p class="first">dict</p>
@@ -3971,10 +3917,10 @@ check if an operation is pageable.</dd>
 <li><strong>LastModified</strong> <em>(datetime) --</em> Date and time at which the object was uploaded.</li>
 </ul>
 </li>
-<li><strong>ServerSideEncryption</strong> <em>(string) --</em> The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).</li>
+<li><strong>ServerSideEncryption</strong> <em>(string) --</em> The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).</li>
 <li><strong>SSECustomerAlgorithm</strong> <em>(string) --</em> If server-side encryption with a customer-provided encryption key was requested, the response will include this header confirming the encryption algorithm used.</li>
 <li><strong>SSECustomerKeyMD5</strong> <em>(string) --</em> If server-side encryption with a customer-provided encryption key was requested, the response will include this header to provide round trip message integrity verification of the customer-provided encryption key.</li>
-<li><strong>SSEKMSKeyId</strong> <em>(string) --</em> If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.</li>
+<li><strong>SSEKMSKeyId</strong> <em>(string) --</em> Not returned by COS.</li>
 <li><strong>RequestCharged</strong> <em>(string) --</em> If present, indicates that the requester was successfully charged for the request.</li>
 </ul>
 </li>
@@ -4168,7 +4114,7 @@ check if an operation is pageable.</dd>
 <li><strong>Delimiter</strong> (<em>string</em>) -- A delimiter is a character you use to group keys.</li>
 <li><strong>EncodingType</strong> (<em>string</em>) -- Requests Amazon S3 to encode the object keys in the response and specifies the encoding method to use. An object key may contain any Unicode character; however, XML 1.0 parser cannot parse some characters, such as characters with an ASCII value from 0 to 10. For characters that are not supported in XML 1.0, you can add this parameter to request that Amazon S3 encode the keys in the response.</li>
 <li><strong>Prefix</strong> (<em>string</em>) -- Limits the response to keys that begin with the specified prefix.</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the list objects request. Bucket owners need not specify this parameter in their requests.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Ignored by COS if present.</li>
 <li><strong>PaginationConfig</strong> (<em>dict</em>) -- <p>A dictionary that provides parameters to control pagination.</p>
 <ul>
 <li><strong>MaxItems</strong> <em>(integer) --</em><p>The total number of items to return. If the total number of items available is more than the value specified in max-items then a <tt class="docutils literal"><span class="pre">NextToken</span></tt> will be provided in the output that you can use to resume pagination.</p>
@@ -4297,7 +4243,6 @@ check if an operation is pageable.</dd>
     <span class="n">Prefix</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="n">FetchOwner</span><span class="o">=</span><span class="bp">True</span><span class="o">|</span><span class="bp">False</span><span class="p">,</span>
     <span class="n">StartAfter</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">RequestPayer</span><span class="o">=</span><span class="s1">&#39;requester&#39;</span><span class="p">,</span>
     <span class="n">PaginationConfig</span><span class="o">=</span><span class="p">{</span>
         <span class="s1">&#39;MaxItems&#39;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
         <span class="s1">&#39;PageSize&#39;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
@@ -4314,7 +4259,6 @@ check if an operation is pageable.</dd>
 <li><strong>Prefix</strong> (<em>string</em>) -- Limits the response to keys that begin with the specified prefix.</li>
 <li><strong>FetchOwner</strong> (<em>boolean</em>) -- The owner field is not present in listV2 by default, if you want to return owner field with each key in the result then set the fetch owner field to true</li>
 <li><strong>StartAfter</strong> (<em>string</em>) -- StartAfter is where you want Amazon S3 to start listing from. Amazon S3 starts listing after this specified key. StartAfter can be any key in the bucket</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the list objects request in V2 style. Bucket owners need not specify this parameter in their requests.</li>
 <li><strong>PaginationConfig</strong> (<em>dict</em>) -- <p>A dictionary that provides parameters to control pagination.</p>
 <ul>
 <li><strong>MaxItems</strong> <em>(integer) --</em><p>The total number of items to return. If the total number of items available is more than the value specified in max-items then a <tt class="docutils literal"><span class="pre">NextToken</span></tt> will be provided in the output that you can use to resume pagination.</p>
@@ -4451,7 +4395,7 @@ check if an operation is pageable.</dd>
 <li><strong>Bucket</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
 <li><strong>Key</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong></li>
 <li><strong>UploadId</strong> (<em>string</em>) -- <strong>[REQUIRED]</strong> Upload ID identifying the multipart upload whose parts are being listed.</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Ignored by COS if present.</li>
 <li><strong>PaginationConfig</strong> (<em>dict</em>) -- <p>A dictionary that provides parameters to control pagination.</p>
 <ul>
 <li><strong>MaxItems</strong> <em>(integer) --</em><p>The total number of items to return. If the total number of items available is more than the value specified in max-items then a <tt class="docutils literal"><span class="pre">NextToken</span></tt> will be provided in the output that you can use to resume pagination.</p>
@@ -4654,7 +4598,7 @@ check if an operation is pageable.</dd>
 <li><strong>SSECustomerAlgorithm</strong> (<em>string</em>) -- Specifies the algorithm to use to when encrypting the object (e.g., AES256).</li>
 <li><strong>SSECustomerKey</strong> (<em>string</em>) -- Specifies the customer-provided encryption key for Amazon S3 to use in encrypting data. This value is used to store the object and then it is discarded; Amazon does not store the encryption key. The key must be appropriate for use with the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm header.</li>
 <li><strong>SSECustomerKeyMD5</strong> (<em>string</em>) -- Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure the encryption key was transmitted without error.      Please note that this parameter is automatically populated if it is not provided. Including this parameter is not required</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Ignored by COS if present.</li>
 <li><strong>PartNumber</strong> (<em>integer</em>) -- Part number of the object being read. This is a positive integer between 1 and 10,000. Effectively performs a 'ranged' HEAD request for the part specified. Useful querying about the size of the part and the number of parts in this object.</li>
 </ul>
 </dd>
@@ -4703,7 +4647,7 @@ check if an operation is pageable.</dd>
 <li><strong>SSECustomerAlgorithm</strong> (<em>string</em>) -- Specifies the algorithm to use to when encrypting the object (e.g., AES256).</li>
 <li><strong>SSECustomerKey</strong> (<em>string</em>) -- Specifies the customer-provided encryption key for Amazon S3 to use in encrypting data. This value is used to store the object and then it is discarded; Amazon does not store the encryption key. The key must be appropriate for use with the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm header.</li>
 <li><strong>SSECustomerKeyMD5</strong> (<em>string</em>) -- Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure the encryption key was transmitted without error.      Please note that this parameter is automatically populated if it is not provided. Including this parameter is not required</li>
-<li><strong>RequestPayer</strong> (<em>string</em>) -- Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.</li>
+<li><strong>RequestPayer</strong> (<em>string</em>) -- Ignored by COS if present.</li>
 <li><strong>PartNumber</strong> (<em>integer</em>) -- Part number of the object being read. This is a positive integer between 1 and 10,000. Effectively performs a 'ranged' HEAD request for the part specified. Useful querying about the size of the part and the number of parts in this object.</li>
 </ul>
 </dd>
@@ -4750,7 +4694,7 @@ check if an operation is pageable.</dd>
         <li class="right" >
           <a href="../index.html" title="Available Services"
              >previous</a> |</li>
-        <li><a href="../../index.html">ibm_botocore 2.4.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">ibm_botocore 2.4.2.dev1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Available Services</a> &raquo;</li> 
       </ul>
     </div>

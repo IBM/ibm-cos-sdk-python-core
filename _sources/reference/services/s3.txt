@@ -123,9 +123,6 @@ Client
   *   :py:meth:`get_bucket_replication`
 
   
-  *   :py:meth:`get_bucket_request_payment`
-
-  
   *   :py:meth:`get_object`
 
   
@@ -201,9 +198,6 @@ Client
   *   :py:meth:`put_bucket_replication`
 
   
-  *   :py:meth:`put_bucket_request_payment`
-
-  
   *   :py:meth:`put_object`
 
   
@@ -254,7 +248,7 @@ Client
 
     
     :type RequestPayer: string
-    :param RequestPayer: Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.
+    :param RequestPayer: Ignored by COS if present.
 
     
     
@@ -379,7 +373,7 @@ Client
 
     
     :type RequestPayer: string
-    :param RequestPayer: Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.
+    :param RequestPayer: Ignored by COS if present.
 
     
     :type RetentionExpirationDate: datetime
@@ -435,10 +429,10 @@ Client
         - **ETag** *(string) --* Entity tag of the object.
         
 
-        - **ServerSideEncryption** *(string) --* The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).
+        - **ServerSideEncryption** *(string) --* The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).
         
 
-        - **SSEKMSKeyId** *(string) --* If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.
+        - **SSEKMSKeyId** *(string) --* Not returned by COS.
         
 
         - **RequestCharged** *(string) --* If present, indicates that the requester was successfully charged for the request.
@@ -593,7 +587,7 @@ Client
 
     
     :type ServerSideEncryption: string
-    :param ServerSideEncryption: The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).
+    :param ServerSideEncryption: The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).
 
     
     :type StorageClass: string
@@ -619,7 +613,7 @@ Client
 
     
     :type SSEKMSKeyId: string
-    :param SSEKMSKeyId: Specifies the AWS KMS key ID to use for object encryption. All GET and PUT requests for an object protected by AWS KMS will fail if not made via SSL or using SigV4.
+    :param SSEKMSKeyId: Ignored by COS if present.
 
     
     :type CopySourceSSECustomerAlgorithm: string
@@ -637,7 +631,7 @@ Client
 
     
     :type RequestPayer: string
-    :param RequestPayer: Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.
+    :param RequestPayer: Ignored by COS if present.
 
     
     
@@ -681,7 +675,7 @@ Client
         - **Expiration** *(string) --* If the object expiration is configured, the response includes this header.
         
 
-        - **ServerSideEncryption** *(string) --* The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).
+        - **ServerSideEncryption** *(string) --* The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).
         
 
         - **SSECustomerAlgorithm** *(string) --* If server-side encryption with a customer-provided encryption key was requested, the response will include this header confirming the encryption algorithm used.
@@ -690,7 +684,7 @@ Client
         - **SSECustomerKeyMD5** *(string) --* If server-side encryption with a customer-provided encryption key was requested, the response will include this header to provide round trip message integrity verification of the customer-provided encryption key.
         
 
-        - **SSEKMSKeyId** *(string) --* If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.
+        - **SSEKMSKeyId** *(string) --* Not returned by COS.
         
 
         - **RequestCharged** *(string) --* If present, indicates that the requester was successfully charged for the request.
@@ -893,7 +887,7 @@ Client
   
 
     :type ServerSideEncryption: string
-    :param ServerSideEncryption: The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).
+    :param ServerSideEncryption: The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).
 
     
     :type StorageClass: string
@@ -919,11 +913,11 @@ Client
 
     
     :type SSEKMSKeyId: string
-    :param SSEKMSKeyId: Specifies the AWS KMS key ID to use for object encryption. All GET and PUT requests for an object protected by AWS KMS will fail if not made via SSL or using SigV4.
+    :param SSEKMSKeyId: Ignored by COS if present.
 
     
     :type RequestPayer: string
-    :param RequestPayer: Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.
+    :param RequestPayer: Ignored by COS if present.
 
     
     
@@ -969,7 +963,7 @@ Client
         - **UploadId** *(string) --* ID for the initiated multipart upload.
         
 
-        - **ServerSideEncryption** *(string) --* The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).
+        - **ServerSideEncryption** *(string) --* The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).
         
 
         - **SSECustomerAlgorithm** *(string) --* If server-side encryption with a customer-provided encryption key was requested, the response will include this header confirming the encryption algorithm used.
@@ -978,7 +972,7 @@ Client
         - **SSECustomerKeyMD5** *(string) --* If server-side encryption with a customer-provided encryption key was requested, the response will include this header to provide round trip message integrity verification of the customer-provided encryption key.
         
 
-        - **SSEKMSKeyId** *(string) --* If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.
+        - **SSEKMSKeyId** *(string) --* Not returned by COS.
         
 
         - **RequestCharged** *(string) --* If present, indicates that the requester was successfully charged for the request.
@@ -986,7 +980,7 @@ Client
 
   .. py:method:: delete_bucket(**kwargs)
 
-    Deletes the bucket. All objects (including all object versions and Delete Markers) in the bucket must be deleted before the bucket itself can be deleted.
+    Deletes the bucket. All objects in the bucket must be deleted before the bucket itself can be deleted.
 
     **Request Syntax** 
     ::
@@ -1181,7 +1175,7 @@ Client
 
   .. py:method:: delete_object(**kwargs)
 
-    Removes the null version (if there is one) of an object and inserts a delete marker, which becomes the latest version of the object. If there isn't a null version, Amazon S3 does not remove any objects.
+    Removes an object. If the object doesn't exist, Amazon S3 does not remove any objects.
 
     **Request Syntax** 
     ::
@@ -1205,7 +1199,7 @@ Client
 
     
     :type RequestPayer: string
-    :param RequestPayer: Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.
+    :param RequestPayer: Ignored by COS if present.
 
     
     
@@ -1228,10 +1222,10 @@ Client
       - *(dict) --* 
         
 
-        - **DeleteMarker** *(boolean) --* Specifies whether the versioned object that was permanently deleted was (true) or was not (false) a delete marker.
+        - **DeleteMarker** *(boolean) --* Not returned by COS.
         
 
-        - **RequestCharged** *(string) --* If present, indicates that the requester was successfully charged for the request.
+        - **RequestCharged** *(string) --* Not returned by COS.
     
 
   .. py:method:: delete_objects(**kwargs)
@@ -1282,7 +1276,7 @@ Client
 
     
     :type RequestPayer: string
-    :param RequestPayer: Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.
+    :param RequestPayer: Ignored by COS if present.
 
     
     
@@ -2337,42 +2331,6 @@ Client
       
     
 
-  .. py:method:: get_bucket_request_payment(**kwargs)
-
-    Returns the request payment configuration of a bucket.
-
-    **Request Syntax** 
-    ::
-
-      response = client.get_bucket_request_payment(
-          Bucket='string'
-      )
-    :type Bucket: string
-    :param Bucket: **[REQUIRED]** 
-
-    
-    
-    :rtype: dict
-    :returns: 
-      
-      **Response Syntax** 
-
-      
-      ::
-
-        {
-            'Payer': 'Requester'|'BucketOwner'
-        }
-      **Response Structure** 
-
-      
-
-      - *(dict) --* 
-        
-
-        - **Payer** *(string) --* Specifies who pays for the download and request fees.
-    
-
   .. py:method:: get_object(**kwargs)
 
     Retrieves objects from Amazon S3.
@@ -2466,7 +2424,7 @@ Client
 
     
     :type RequestPayer: string
-    :param RequestPayer: Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.
+    :param RequestPayer: Ignored by COS if present.
 
     
     :type PartNumber: integer
@@ -2525,7 +2483,7 @@ Client
         - **Body** (:class:`.StreamingBody`) -- Object data.
         
 
-        - **DeleteMarker** *(boolean) --* Specifies whether the object retrieved was (true) or was not (false) a Delete Marker. If false, this response header does not appear in the response.
+        - **DeleteMarker** *(boolean) --* Not returned by COS.
         
 
         - **AcceptRanges** *(string) --* 
@@ -2573,7 +2531,7 @@ Client
         - **WebsiteRedirectLocation** *(string) --* If the bucket is configured as a website, redirects requests for this object to another object in the same bucket or to an external URL. Amazon S3 stores the value of this header in the object metadata.
         
 
-        - **ServerSideEncryption** *(string) --* The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).
+        - **ServerSideEncryption** *(string) --* The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).
         
 
         - **Metadata** *(dict) --* A map of metadata to store with the object in S3.
@@ -2602,7 +2560,7 @@ Client
         - **SSECustomerKeyMD5** *(string) --* If server-side encryption with a customer-provided encryption key was requested, the response will include this header to provide round trip message integrity verification of the customer-provided encryption key.
         
 
-        - **SSEKMSKeyId** *(string) --* If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.
+        - **SSEKMSKeyId** *(string) --* Ignored by COS if present.
         
 
         - **StorageClass** *(string) --* 
@@ -2638,7 +2596,7 @@ Client
 
     
     :type RequestPayer: string
-    :param RequestPayer: Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.
+    :param RequestPayer: Ignored by COS if present.
 
     
     
@@ -2740,7 +2698,7 @@ Client
 
     
     :type RequestPayer: string
-    :param RequestPayer: Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.
+    :param RequestPayer: Ignored by COS if present.
 
     
     
@@ -2786,13 +2744,21 @@ Client
         pageable.  You can use the ``client.can_paginate`` method to
         check if an operation is pageable.
     
-    :rtype: L{botocore.paginate.Paginator}
+    :rtype: L{ibm_botocore.paginate.Paginator}
     :return: A paginator object.
 
 
   .. py:method:: get_waiter(waiter_name)
 
         
+    Returns an object that can wait for some condition.
+    
+    :type waiter_name: str
+    :param waiter_name: The name of the waiter to get. See the waiters
+        section of the service docs for a list of available waiters.
+    
+    :returns: The specified waiter object.
+    :rtype: ibm_botocore.waiter.Waiter
 
 
   .. py:method:: head_bucket(**kwargs)
@@ -2898,7 +2864,7 @@ Client
 
     
     :type RequestPayer: string
-    :param RequestPayer: Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.
+    :param RequestPayer: Ignored by COS if present.
 
     
     :type PartNumber: integer
@@ -2954,7 +2920,7 @@ Client
       - *(dict) --* 
         
 
-        - **DeleteMarker** *(boolean) --* Specifies whether the object retrieved was (true) or was not (false) a Delete Marker. If false, this response header does not appear in the response.
+        - **DeleteMarker** *(boolean) --* Not returned by COS.
         
 
         - **AcceptRanges** *(string) --* 
@@ -3005,7 +2971,7 @@ Client
         - **WebsiteRedirectLocation** *(string) --* If the bucket is configured as a website, redirects requests for this object to another object in the same bucket or to an external URL. Amazon S3 stores the value of this header in the object metadata.
         
 
-        - **ServerSideEncryption** *(string) --* The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).
+        - **ServerSideEncryption** *(string) --* The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).
         
 
         - **Metadata** *(dict) --* A map of metadata to store with the object in S3.
@@ -3034,7 +3000,7 @@ Client
         - **SSECustomerKeyMD5** *(string) --* If server-side encryption with a customer-provided encryption key was requested, the response will include this header to provide round trip message integrity verification of the customer-provided encryption key.
         
 
-        - **SSEKMSKeyId** *(string) --* If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.
+        - **SSEKMSKeyId** *(string) --* Not returned by COS.
         
 
         - **StorageClass** *(string) --* 
@@ -3768,7 +3734,7 @@ Client
 
     
     :type RequestPayer: string
-    :param RequestPayer: Confirms that the requester knows that she or he will be charged for the list objects request. Bucket owners need not specify this parameter in their requests.
+    :param RequestPayer: Ignored by COS if present.
 
     
     
@@ -3906,8 +3872,7 @@ Client
           Prefix='string',
           ContinuationToken='string',
           FetchOwner=True|False,
-          StartAfter='string',
-          RequestPayer='requester'
+          StartAfter='string'
       )
     :type Bucket: string
     :param Bucket: **[REQUIRED]** Name of the bucket to list.
@@ -3939,10 +3904,6 @@ Client
     
     :type StartAfter: string
     :param StartAfter: StartAfter is where you want Amazon S3 to start listing from. Amazon S3 starts listing after this specified key. StartAfter can be any key in the bucket
-
-    
-    :type RequestPayer: string
-    :param RequestPayer: Confirms that the requester knows that she or he will be charged for the list objects request in V2 style. Bucket owners need not specify this parameter in their requests.
 
     
     
@@ -4101,7 +4062,7 @@ Client
 
     
     :type RequestPayer: string
-    :param RequestPayer: Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.
+    :param RequestPayer: Ignored by COS if present.
 
     
     
@@ -4920,34 +4881,6 @@ Client
     
     :returns: None
 
-  .. py:method:: put_bucket_request_payment(**kwargs)
-
-    Sets the request payment configuration for a bucket. By default, the bucket owner pays for downloads from the bucket. This configuration parameter enables the bucket owner (only) to specify that the person requesting the download will be charged for the download.
-
-    **Request Syntax** 
-    ::
-
-      response = client.put_bucket_request_payment(
-          Bucket='string',
-          RequestPaymentConfiguration={
-              'Payer': 'Requester'|'BucketOwner'
-          }
-      )
-    :type Bucket: string
-    :param Bucket: **[REQUIRED]** 
-
-    
-    :type RequestPaymentConfiguration: dict
-    :param RequestPaymentConfiguration: **[REQUIRED]** 
-
-    
-      - **Payer** *(string) --* **[REQUIRED]** Specifies who pays for the download and request fees.
-
-      
-    
-    
-    :returns: None
-
   .. py:method:: put_object(**kwargs)
 
     Adds an object to a bucket.
@@ -5075,7 +5008,7 @@ Client
 
     
     :type ServerSideEncryption: string
-    :param ServerSideEncryption: The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).
+    :param ServerSideEncryption: The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).
 
     
     :type StorageClass: string
@@ -5101,11 +5034,11 @@ Client
 
     
     :type SSEKMSKeyId: string
-    :param SSEKMSKeyId: Specifies the AWS KMS key ID to use for object encryption. All GET and PUT requests for an object protected by AWS KMS will fail if not made via SSL or using SigV4.
+    :param SSEKMSKeyId: Ignored by COS if present.
 
     
     :type RequestPayer: string
-    :param RequestPayer: Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.
+    :param RequestPayer: Ignored by COS if present.
 
     
     
@@ -5139,7 +5072,7 @@ Client
         - **ETag** *(string) --* Entity tag for the uploaded object.
         
 
-        - **ServerSideEncryption** *(string) --* The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).
+        - **ServerSideEncryption** *(string) --* The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).
         
 
         - **SSECustomerAlgorithm** *(string) --* If server-side encryption with a customer-provided encryption key was requested, the response will include this header confirming the encryption algorithm used.
@@ -5148,7 +5081,7 @@ Client
         - **SSECustomerKeyMD5** *(string) --* If server-side encryption with a customer-provided encryption key was requested, the response will include this header to provide round trip message integrity verification of the customer-provided encryption key.
         
 
-        - **SSEKMSKeyId** *(string) --* If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.
+        - **SSEKMSKeyId** *(string) --* Not returned by COS.
         
 
         - **RequestCharged** *(string) --* If present, indicates that the requester was successfully charged for the request.
@@ -5268,7 +5201,7 @@ Client
 
     
     :type RequestPayer: string
-    :param RequestPayer: Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.
+    :param RequestPayer: Ignored by COS if present.
 
     
     
@@ -5406,7 +5339,7 @@ Client
 
     
     :type RequestPayer: string
-    :param RequestPayer: Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.
+    :param RequestPayer: Ignored by COS if present.
 
     
     
@@ -5433,7 +5366,7 @@ Client
       - *(dict) --* 
         
 
-        - **ServerSideEncryption** *(string) --* The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).
+        - **ServerSideEncryption** *(string) --* The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).
         
 
         - **ETag** *(string) --* Entity tag for the uploaded object.
@@ -5445,7 +5378,7 @@ Client
         - **SSECustomerKeyMD5** *(string) --* If server-side encryption with a customer-provided encryption key was requested, the response will include this header to provide round trip message integrity verification of the customer-provided encryption key.
         
 
-        - **SSEKMSKeyId** *(string) --* If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.
+        - **SSEKMSKeyId** *(string) --* Not returned by COS.
         
 
         - **RequestCharged** *(string) --* If present, indicates that the requester was successfully charged for the request.
@@ -5544,7 +5477,7 @@ Client
 
     
     :type RequestPayer: string
-    :param RequestPayer: Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.
+    :param RequestPayer: Ignored by COS if present.
 
     
     
@@ -5584,7 +5517,7 @@ Client
       
         
 
-        - **ServerSideEncryption** *(string) --* The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).
+        - **ServerSideEncryption** *(string) --* The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).
         
 
         - **SSECustomerAlgorithm** *(string) --* If server-side encryption with a customer-provided encryption key was requested, the response will include this header confirming the encryption algorithm used.
@@ -5593,7 +5526,7 @@ Client
         - **SSECustomerKeyMD5** *(string) --* If server-side encryption with a customer-provided encryption key was requested, the response will include this header to provide round trip message integrity verification of the customer-provided encryption key.
         
 
-        - **SSEKMSKeyId** *(string) --* If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.
+        - **SSEKMSKeyId** *(string) --* Not returned by COS.
         
 
         - **RequestCharged** *(string) --* If present, indicates that the requester was successfully charged for the request.
@@ -5873,7 +5806,7 @@ The available paginators are:
 
     
     :type RequestPayer: string
-    :param RequestPayer: Confirms that the requester knows that she or he will be charged for the list objects request. Bucket owners need not specify this parameter in their requests.
+    :param RequestPayer: Ignored by COS if present.
 
     
     :type PaginationConfig: dict
@@ -6062,7 +5995,6 @@ The available paginators are:
           Prefix='string',
           FetchOwner=True|False,
           StartAfter='string',
-          RequestPayer='requester',
           PaginationConfig={
               'MaxItems': 123,
               'PageSize': 123,
@@ -6091,10 +6023,6 @@ The available paginators are:
     
     :type StartAfter: string
     :param StartAfter: StartAfter is where you want Amazon S3 to start listing from. Amazon S3 starts listing after this specified key. StartAfter can be any key in the bucket
-
-    
-    :type RequestPayer: string
-    :param RequestPayer: Confirms that the requester knows that she or he will be charged for the list objects request in V2 style. Bucket owners need not specify this parameter in their requests.
 
     
     :type PaginationConfig: dict
@@ -6296,7 +6224,7 @@ The available paginators are:
 
     
     :type RequestPayer: string
-    :param RequestPayer: Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.
+    :param RequestPayer: Ignored by COS if present.
 
     
     :type PaginationConfig: dict
@@ -6602,7 +6530,7 @@ The available waiters are:
 
     
     :type RequestPayer: string
-    :param RequestPayer: Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.
+    :param RequestPayer: Ignored by COS if present.
 
     
     :type PartNumber: integer
@@ -6685,7 +6613,7 @@ The available waiters are:
 
     
     :type RequestPayer: string
-    :param RequestPayer: Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.
+    :param RequestPayer: Ignored by COS if present.
 
     
     :type PartNumber: integer
