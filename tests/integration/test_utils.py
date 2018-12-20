@@ -10,11 +10,8 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-import time
-from tests import unittest
-
-import ibm_botocore.session
-from ibm_botocore.utils import ArgumentGenerator
+import botocore.session
+from botocore.utils import ArgumentGenerator
 
 
 class ArgumentGeneratorError(AssertionError):
@@ -27,7 +24,7 @@ class ArgumentGeneratorError(AssertionError):
 
 
 def test_can_generate_all_inputs():
-    session = ibm_botocore.session.get_session()
+    session = botocore.session.get_session()
     generator = ArgumentGenerator()
     for service_name in session.get_available_services():
         service_model = session.get_service_model(service_name)

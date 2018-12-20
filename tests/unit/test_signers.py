@@ -10,24 +10,28 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-
 import mock
 import datetime
 import json
 
-import ibm_botocore
-import ibm_botocore.auth
-from ibm_botocore.compat import six, urlparse, parse_qs
+from dateutil.tz import tzutc
 
+import ibm_botocore
+import ibm_botocore.session
+import ibm_botocore.auth
+from ibm_botocore.config import Config
 from ibm_botocore.credentials import Credentials
 from ibm_botocore.credentials import ReadOnlyCredentials
+from ibm_botocore.hooks import HierarchicalEmitter
+from ibm_botocore.model import ServiceId
 from ibm_botocore.exceptions import NoRegionError, UnknownSignatureVersionError
 from ibm_botocore.exceptions import UnknownClientMethodError, ParamValidationError
 from ibm_botocore.exceptions import UnsupportedSignatureVersionError
-from ibm_botocore.signers import RequestSigner, S3PostPresigner
-from ibm_botocore.config import Config
+from ibm_botocore.signers import RequestSigner, S3PostPresigner, CloudFrontSigner
+from ibm_botocore.signers import generate_db_auth_token
 
 from tests import unittest
+from tests import assert_url_equal
 
 
 class BaseSignerTest(unittest.TestCase):
@@ -36,7 +40,7 @@ class BaseSignerTest(unittest.TestCase):
         self.emitter = mock.Mock()
         self.emitter.emit_until_response.return_value = (None, None)
         self.signer = RequestSigner(
-            'service_name', 'region_name', 'signing_name',
+            ServiceId('service_name'), 'region_name', 'signing_name',
             'v4', self.credentials, self.emitter)
         self.fixed_credentials = self.credentials.get_frozen_credentials()
 
@@ -54,8 +58,9 @@ class TestSigner(BaseSignerTest):
 
     def test_region_required_for_sigv4(self):
         self.signer = RequestSigner(
-            'service_name', None, 'signing_name', 'v4', self.credentials,
-            self.emitter)
+            ServiceId('service_name'), None, 'signing_name', 'v4',
+            self.credentials, self.emitter
+        )
 
         with self.assertRaises(NoRegionError):
             self.signer.sign('operation_name', mock.Mock())
@@ -100,7 +105,7 @@ class TestSigner(BaseSignerTest):
         self.emitter.emit_until_response.assert_called_with(
             'choose-signer.service_name.operation_name',
             signing_name='signing_name', region_name='region_name',
-            signature_version='v4')
+            signature_version='v4', context=mock.ANY)
 
     def test_choose_signer_override(self):
         request = mock.Mock()
@@ -126,7 +131,7 @@ class TestSigner(BaseSignerTest):
             'before-sign.service_name.operation_name',
             request=mock.ANY, signing_name='signing_name',
             region_name='region_name', signature_version='v4',
-            request_signer=self.signer)
+            request_signer=self.signer, operation_name='operation_name')
 
     def test_disable_signing(self):
         # Returning ibm_botocore.UNSIGNED from choose-signer disables signing!
@@ -158,7 +163,20 @@ class TestSigner(BaseSignerTest):
         self.emitter.emit_until_response.assert_called_with(
             'choose-signer.service_name.operation_name',
             signing_name='signing_name', region_name='region_name',
-            signature_version='v4-query')
+            signature_version='v4-query', context=mock.ANY)
+
+    def test_choose_signer_passes_context(self):
+        request = mock.Mock()
+        request.context = {'foo': 'bar'}
+
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS,
+                             {'v4': mock.Mock()}):
+            self.signer.sign('operation_name', request)
+
+        self.emitter.emit_until_response.assert_called_with(
+            'choose-signer.service_name.operation_name',
+            signing_name='signing_name', region_name='region_name',
+            signature_version='v4', context={'foo': 'bar'})
 
     def test_generate_url_choose_signer_override(self):
         request_dict = {
@@ -272,7 +290,7 @@ class TestSigner(BaseSignerTest):
             'context': {}
         }
         self.signer = RequestSigner(
-            'service_name', 'region_name', 'signing_name',
+            ServiceId('service_name'), 'region_name', 'signing_name',
             'foo', self.credentials, self.emitter)
         with self.assertRaises(UnsupportedSignatureVersionError):
             self.signer.generate_presigned_url(
@@ -285,7 +303,7 @@ class TestSigner(BaseSignerTest):
         self.credentials = FakeCredentials('a', 'b', 'c')
 
         self.signer = RequestSigner(
-            'service_name', 'region_name', 'signing_name',
+            ServiceId('service_name'), 'region_name', 'signing_name',
             'v4', self.credentials, self.emitter)
 
         auth_cls = mock.Mock()
@@ -306,7 +324,7 @@ class TestSigner(BaseSignerTest):
         # the error (which they already do).
         self.credentials = None
         self.signer = RequestSigner(
-            'service_name', 'region_name', 'signing_name',
+            ServiceId('service_name'), 'region_name', 'signing_name',
             'v4', self.credentials, self.emitter)
         auth_cls = mock.Mock()
         with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS,
@@ -411,6 +429,43 @@ class TestSigner(BaseSignerTest):
             expires=2
         )
 
+    def test_sign_with_custom_signing_name(self):
+        request = mock.Mock()
+        auth = mock.Mock()
+        auth_types = {
+            'v4': auth
+        }
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS, auth_types):
+            self.signer.sign('operation_name', request, signing_name='foo')
+        auth.assert_called_with(
+            credentials=ReadOnlyCredentials('key', 'secret', None),
+            service_name='foo',
+            region_name='region_name'
+        )
+
+    def test_presign_with_custom_signing_name(self):
+        auth = mock.Mock()
+        auth.REQUIRES_REGION = True
+
+        request_dict = {
+            'headers': {},
+            'url': 'https://foo.com',
+            'body': b'',
+            'url_path': '/',
+            'method': 'GET',
+            'context': {}
+        }
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS,
+                             {'v4-query': auth}):
+            presigned_url = self.signer.generate_presigned_url(
+                request_dict, operation_name='operation_name',
+                signing_name='foo')
+        auth.assert_called_with(
+            credentials=self.fixed_credentials,
+            region_name='region_name',
+            expires=3600, service_name='foo')
+        self.assertEqual(presigned_url, 'https://foo.com')
+
     def test_unknown_signer_raises_unknown_on_standard(self):
         request = mock.Mock()
         auth = mock.Mock()
@@ -440,11 +495,71 @@ class TestSigner(BaseSignerTest):
                                  signing_type='presign-post')
 
 
+class TestCloudfrontSigner(BaseSignerTest):
+    def setUp(self):
+        super(TestCloudfrontSigner, self).setUp()
+        self.signer = CloudFrontSigner("MY_KEY_ID", lambda message: b'signed')
+        # It helps but the long string diff will still be slightly different on
+        # Python 2.6/2.7/3.x. We won't soly rely on that anyway, so it's fine.
+        self.maxDiff = None
+
+    def test_build_canned_policy(self):
+        policy = self.signer.build_policy('foo', datetime.datetime(2016, 1, 1))
+        expected = (
+            '{"Statement":[{"Resource":"foo",'
+            '"Condition":{"DateLessThan":{"AWS:EpochTime":1451606400}}}]}')
+        self.assertEqual(json.loads(policy), json.loads(expected))
+        self.assertEqual(policy, expected)  # This is to ensure the right order
+
+    def test_build_custom_policy(self):
+        policy = self.signer.build_policy(
+            'foo', datetime.datetime(2016, 1, 1),
+            date_greater_than=datetime.datetime(2015, 12, 1),
+            ip_address='12.34.56.78/9')
+        expected = {
+            "Statement": [{
+                "Resource": "foo",
+                "Condition": {
+                    "DateGreaterThan": {"AWS:EpochTime": 1448928000},
+                    "DateLessThan": {"AWS:EpochTime": 1451606400},
+                    "IpAddress": {"AWS:SourceIp": "12.34.56.78/9"}
+                },
+            }]
+        }
+        self.assertEqual(json.loads(policy), expected)
+
+    def test_generate_presign_url_with_expire_time(self):
+        signed_url = self.signer.generate_presigned_url(
+            'http://test.com/foo.txt',
+            date_less_than=datetime.datetime(2016, 1, 1))
+        expected = (
+            'http://test.com/foo.txt?Expires=1451606400&Signature=c2lnbmVk'
+            '&Key-Pair-Id=MY_KEY_ID')
+        assert_url_equal(signed_url, expected)
+
+    def test_generate_presign_url_with_custom_policy(self):
+        policy = self.signer.build_policy(
+            'foo', datetime.datetime(2016, 1, 1),
+            date_greater_than=datetime.datetime(2015, 12, 1),
+            ip_address='12.34.56.78/9')
+        signed_url = self.signer.generate_presigned_url(
+            'http://test.com/index.html?foo=bar', policy=policy)
+        expected = (
+            'http://test.com/index.html?foo=bar'
+            '&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiZm9vIiwiQ29uZ'
+            'Gl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIj'
+            'oxNDUxNjA2NDAwfSwiSXBBZGRyZXNzIjp7IkFXUzpTb3VyY2VJcCI'
+            '6IjEyLjM0LjU2Ljc4LzkifSwiRGF0ZUdyZWF0ZXJUaGFuIjp7IkFX'
+            'UzpFcG9jaFRpbWUiOjE0NDg5MjgwMDB9fX1dfQ__'
+            '&Signature=c2lnbmVk&Key-Pair-Id=MY_KEY_ID')
+        assert_url_equal(signed_url, expected)
+
+
 class TestS3PostPresigner(BaseSignerTest):
     def setUp(self):
         super(TestS3PostPresigner, self).setUp()
         self.request_signer = RequestSigner(
-            'service_name', 'region_name', 'signing_name',
+            ServiceId('service_name'), 'region_name', 'signing_name',
             's3v4', self.credentials, self.emitter)
         self.signer = S3PostPresigner(self.request_signer)
         self.request_dict = {
@@ -497,7 +612,7 @@ class TestS3PostPresigner(BaseSignerTest):
         self.emitter.emit_until_response.assert_called_with(
             'choose-signer.service_name.PutObject',
             signing_name='signing_name', region_name='region_name',
-            signature_version='s3v4-presign-post')
+            signature_version='s3v4-presign-post', context=mock.ANY)
 
     def test_generate_presigned_post_choose_signer_override(self):
         auth = mock.Mock()
@@ -583,7 +698,7 @@ class TestS3PostPresigner(BaseSignerTest):
             'context': {}
         }
         self.request_signer = RequestSigner(
-            'service_name', 'region_name', 'signing_name',
+            ServiceId('service_name'), 'region_name', 'signing_name',
             'foo', self.credentials, self.emitter)
         self.signer = S3PostPresigner(self.request_signer)
         with self.assertRaises(UnsupportedSignatureVersionError):
@@ -615,7 +730,11 @@ class TestGenerateUrl(unittest.TestCase):
             'query_string': {},
             'url_path': u'/mybucket/mykey',
             'method': u'GET',
-            'context': {}}
+            # mock.ANY is used because client parameter related events
+            # inject values into the context. So using the context's exact
+            # value for these tests will be a maintenance burden if
+            # anymore customizations are added that inject into the context.
+            'context': mock.ANY}
         self.generate_url_mock.assert_called_with(
             request_dict=ref_request_dict, expires_in=3600,
             operation_name='GetObject')
@@ -636,7 +755,7 @@ class TestGenerateUrl(unittest.TestCase):
             'query_string': {u'response-content-disposition': disposition},
             'url_path': u'/mybucket/mykey',
             'method': u'GET',
-            'context': {}}
+            'context': mock.ANY}
         self.generate_url_mock.assert_called_with(
             request_dict=ref_request_dict, expires_in=3600,
             operation_name='GetObject')
@@ -660,7 +779,7 @@ class TestGenerateUrl(unittest.TestCase):
             'query_string': {},
             'url_path': u'/mybucket/mykey',
             'method': u'GET',
-            'context': {}}
+            'context': mock.ANY}
         self.generate_url_mock.assert_called_with(
             request_dict=ref_request_dict, expires_in=20,
             operation_name='GetObject')
@@ -676,10 +795,43 @@ class TestGenerateUrl(unittest.TestCase):
             'query_string': {},
             'url_path': u'/mybucket/mykey',
             'method': u'PUT',
-            'context': {}}
+            'context': mock.ANY}
         self.generate_url_mock.assert_called_with(
             request_dict=ref_request_dict, expires_in=3600,
             operation_name='GetObject')
+
+    def test_generate_presigned_url_emits_param_events(self):
+        emitter = mock.Mock(HierarchicalEmitter)
+        emitter.emit.return_value = []
+        self.client.meta.events = emitter
+        self.client.generate_presigned_url(
+            'get_object', Params={'Bucket': self.bucket, 'Key': self.key})
+        events_emitted = [
+            emit_call[0][0] for emit_call in emitter.emit.call_args_list
+        ]
+        self.assertEqual(
+            events_emitted,
+            [
+                'provide-client-params.s3.GetObject',
+                'before-parameter-build.s3.GetObject'
+            ]
+        )
+
+    def test_generate_presign_url_emits_is_presign_in_context(self):
+        emitter = mock.Mock(HierarchicalEmitter)
+        emitter.emit.return_value = []
+        self.client.meta.events = emitter
+        self.client.generate_presigned_url(
+            'get_object', Params={'Bucket': self.bucket, 'Key': self.key})
+        kwargs_emitted = [
+            emit_call[1] for emit_call in emitter.emit.call_args_list
+        ]
+        for kwargs in kwargs_emitted:
+            self.assertTrue(
+                kwargs.get('context', {}).get('is_presign_request'),
+                'The context did not have is_presign_request set to True for '
+                'the following kwargs emitted: %s' % kwargs
+            )
 
 
 class TestGeneratePresignedPost(unittest.TestCase):
@@ -766,3 +918,57 @@ class TestGeneratePresignedPost(unittest.TestCase):
         self.assertEqual(fields['acl'], 'public-read')
         self.assertEqual(
             fields, {'key': 'mykey', 'acl': 'public-read'})
+
+    def test_generate_presigned_post_non_s3_client(self):
+        self.client = self.session.create_client('ec2', 'us-west-2')
+        with self.assertRaises(AttributeError):
+            self.client.generate_presigned_post()
+
+
+class TestGenerateDBAuthToken(BaseSignerTest):
+    maxDiff = None
+
+    def setUp(self):
+        self.session = ibm_botocore.session.get_session()
+        self.client = self.session.create_client(
+            'rds', region_name='us-east-1', aws_access_key_id='akid',
+            aws_secret_access_key='skid', config=Config(signature_version='v4')
+        )
+
+    def test_generate_db_auth_token(self):
+        hostname = 'prod-instance.us-east-1.rds.amazonaws.com'
+        port = 3306
+        username = 'someusername'
+        clock = datetime.datetime(2016, 11, 7, 17, 39, 33, tzinfo=tzutc())
+
+        with mock.patch('datetime.datetime') as dt:
+            dt.utcnow.return_value = clock
+            result = generate_db_auth_token(
+                self.client, hostname, port, username)
+
+        expected_result = (
+            'prod-instance.us-east-1.rds.amazonaws.com:3306/?Action=connect'
+            '&DBUser=someusername&X-Amz-Algorithm=AWS4-HMAC-SHA256'
+            '&X-Amz-Date=20161107T173933Z&X-Amz-SignedHeaders=host'
+            '&X-Amz-Expires=900&X-Amz-Credential=akid%2F20161107%2F'
+            'us-east-1%2Frds-db%2Faws4_request&X-Amz-Signature'
+            '=d1138cdbc0ca63eec012ec0fc6c2267e03642168f5884a7795320d4c18374c61'
+        )
+
+        # A scheme needs to be appended to the beginning or urlsplit may fail
+        # on certain systems.
+        assert_url_equal(
+            'https://' + result, 'https://' + expected_result)
+
+    def test_custom_region(self):
+        hostname = 'host.us-east-1.rds.amazonaws.com'
+        port = 3306
+        username = 'mySQLUser'
+        region = 'us-west-2'
+        result = generate_db_auth_token(
+            self.client, hostname, port, username, Region=region)
+
+        self.assertIn(region, result)
+        # The hostname won't be changed even if a different region is specified
+        self.assertIn(hostname, result)
+

@@ -15,7 +15,7 @@ from tests import unittest
 
 import mock
 
-import ibm_botocore.session
+import botocore.session
 
 
 # Basic sanity checks for loader functionality.
@@ -29,7 +29,7 @@ class TestLoaderBasicFunctionality(unittest.TestCase):
         self.patched.start()
         self.environ.pop('AWS_DATA_PATH', None)
 
-        self.session = ibm_botocore.session.get_session()
+        self.session = botocore.session.get_session()
         self.loader = self.session.get_component('data_loader')
 
     def tearDown(self):

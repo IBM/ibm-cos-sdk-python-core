@@ -28,14 +28,13 @@ class TestS3Docs(BaseDocsFunctionalTest):
             param_name='CopySourceSSECustomerKeyMD5')
 
     def test_hides_content_md5_when_impossible_to_provide(self):
-        modified_methods = ['delete_objects', 
-                            'put_bucket_acl',
-                            'put_bucket_cors', 
-                            'put_bucket_lifecycle_configuration', 
-                            'put_bucket_replication', 
-                            'put_bucket_request_payment', 
-                            'put_object_acl']
-                            #'put_bucket_versioning']
+        modified_methods = ['delete_objects', 'put_bucket_acl',
+                            'put_bucket_cors', 'put_bucket_lifecycle',
+                            'put_bucket_logging', 'put_bucket_policy',
+                            'put_bucket_notification', 'put_bucket_tagging',
+                            'put_bucket_replication', 'put_bucket_website',
+                            'put_bucket_request_payment', 'put_object_acl',
+                            'put_bucket_versioning']
         service_contents = ServiceDocumenter(
             's3', self._session).document_service()
         for method_name in modified_methods:
@@ -47,7 +46,7 @@ class TestS3Docs(BaseDocsFunctionalTest):
     def test_copy_source_documented_as_union_type(self):
         content  = self.get_docstring_for_method('s3', 'copy_object')
         dict_form = (
-            "{'Bucket': 'string', 'Key': 'string'}")
+            "{'Bucket': 'string', 'Key': 'string', 'VersionId': 'string'}")
         self.assert_contains_line(
             "CopySource='string' or %s" % dict_form, content)
 
@@ -57,4 +56,5 @@ class TestS3Docs(BaseDocsFunctionalTest):
         # We don't want to overspecify the test, so I've picked
         # an arbitrary line from the customized docs.
         self.assert_contains_line(
-            "You can also provide this value as a dictionary", param_docs)
+            #"You can also provide this value as a dictionary", param_docs)
+            "The name of the source bucket and key name of the source object", param_docs)

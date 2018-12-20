@@ -25,7 +25,8 @@ import warnings
 import uuid
 
 from ibm_botocore.compat import unquote, json, six, unquote_str, \
-    ensure_bytes, get_md5, MD5_AVAILABLE
+    ensure_bytes, get_md5, MD5_AVAILABLE, OrderedDict, urlsplit, urlunsplit
+
 from ibm_botocore.docs.utils import AutoPopulatedParam
 from ibm_botocore.docs.utils import HideParamFromOperations
 from ibm_botocore.docs.utils import AppendParamDocumentation
@@ -55,6 +56,55 @@ REGISTER_LAST = object()
 # (.), hyphens (-), and underscores (_).
 VALID_BUCKET = re.compile('^[a-zA-Z0-9.\-_]{1,255}$')
 VERSION_ID_SUFFIX = re.compile(r'\?versionId=[^\s]+$')
+
+
+class ClientMethodAlias(object):
+    def __init__(self, actual_name):
+        """ Aliases a non-extant method to an existing method.
+
+        :param actual_name: The name of the method that actually exists on
+            the client.
+        """
+        self._actual = actual_name
+
+    def __call__(self, client, **kwargs):
+        return getattr(client, self._actual)
+
+
+class HeaderToHostHoister(object):
+    """Takes a header and moves it to the front of the hoststring.
+    """
+    def __init__(self, header_name):
+        self._header_name = header_name
+
+    def hoist(self, params, **kwargs):
+        """Hoist a header to the hostname.
+
+        Hoist a header to the beginning of the hostname with a suffix "." after
+        it. The original header should be removed from the header map. This
+        method is intended to be used as a target for the before-call event.
+        """
+        if self._header_name not in params['headers']:
+            return
+        header_value = params['headers'][self._header_name]
+        original_url = params['url']
+        new_url = self._prepend_to_host(original_url, header_value)
+        params['url'] = new_url
+
+    def _prepend_to_host(self, url, prefix):
+        url_components = urlsplit(url)
+        parts = url_components.netloc.split('.')
+        parts = [prefix] + parts
+        new_netloc = '.'.join(parts)
+        new_components = (
+            url_components.scheme,
+            new_netloc,
+            url_components.path,
+            url_components.query,
+            ''
+        )
+        new_url = urlunsplit(new_components)
+        return new_url
 
 
 def check_for_200_error(response, **kwargs):
@@ -556,15 +606,35 @@ def decode_list_object(parsed, context, **kwargs):
     # Amazon S3 includes this element in the response, and returns encoded key
     # name values in the following response elements:
     # Delimiter, Marker, Prefix, NextMarker, Key.
+    _decode_list_object(
+        top_level_keys=['Delimiter', 'Marker', 'NextMarker'],
+        nested_keys=[('Contents', 'Key'), ('CommonPrefixes', 'Prefix')],
+        parsed=parsed,
+        context=context
+    )
+
+
+def decode_list_object_v2(parsed, context, **kwargs):
+    # From the documentation: If you specify encoding-type request parameter,
+    # Amazon S3 includes this element in the response, and returns encoded key
+    # name values in the following response elements:
+    # Delimiter, Prefix, ContinuationToken, Key, and StartAfter.
+    _decode_list_object(
+        top_level_keys=['Delimiter', 'Prefix', 'StartAfter'],
+        nested_keys=[('Contents', 'Key'), ('CommonPrefixes', 'Prefix')],
+        parsed=parsed,
+        context=context
+    )
+
+
+def _decode_list_object(top_level_keys, nested_keys, parsed, context):
     if parsed.get('EncodingType') == 'url' and \
                     context.get('encoding_type_auto_set'):
         # URL decode top-level keys in the response if present.
-        top_level_keys = ['Delimiter', 'Marker', 'NextMarker']
         for key in top_level_keys:
             if key in parsed:
                 parsed[key] = unquote_str(parsed[key])
         # URL decode nested keys from the response if present.
-        nested_keys = [('Contents', 'Key'), ('CommonPrefixes', 'Prefix')]
         for (top_key, child_key) in nested_keys:
             if top_key in parsed:
                 for member in parsed[top_key]:
@@ -681,6 +751,8 @@ BUILTIN_HANDLERS = [
 
     ('before-parameter-build.s3.ListObjects',
      set_list_objects_encoding_type_url),
+    ('before-parameter-build.s3.ListObjectsV2',
+     set_list_objects_encoding_type_url),
     ('before-call.s3.PutBucketTagging', calculate_md5),
     ('before-call.s3.PutBucketLifecycle', calculate_md5),
     ('before-call.s3.PutBucketLifecycleConfiguration', calculate_md5),
@@ -728,6 +800,7 @@ BUILTIN_HANDLERS = [
     ('before-parameter-build.s3.UploadPartCopy', copy_source_sse_md5),
     ('before-parameter-build.ec2.RunInstances', base64_encode_user_data),
     ('after-call.s3.ListObjects', decode_list_object),
+    ('after-call.s3.ListObjectsV2', decode_list_object_v2),
 
     # S3 SSE documentation modifications
     ('docs.*.s3.*.complete-section',

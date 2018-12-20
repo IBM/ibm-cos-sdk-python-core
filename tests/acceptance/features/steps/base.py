@@ -1,12 +1,10 @@
 import json
 
-from ibm_botocore import xform_name
-from ibm_botocore.exceptions import ClientError
+from botocore import xform_name
+from botocore.exceptions import ClientError
 
-import jmespath
 from behave import when, then
 from nose.tools import assert_equal
-from nose.tools import assert_is_instance
 
 
 def _params_from_table(table):
@@ -79,7 +77,7 @@ def then_expected_error(context, code):
 
 @then(u'the value at "{}" should be a list')
 def then_expected_type_is_list(context, expression):
-    # In ibm_botocore, if there are no values with an element,
+    # In botocore, if there are no values with an element,
     # it will not appear in the response dict, so it's actually
     # ok if the element does not exist (and is not a list).
     # If an exception happened the test will have already failed,

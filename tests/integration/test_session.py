@@ -12,12 +12,12 @@
 # language governing permissions and limitations under the License.
 from tests import unittest
 
-import ibm_botocore.session
+import botocore.session
 
 
 class TestCanChangeParsing(unittest.TestCase):
     def setUp(self):
-        self.session = ibm_botocore.session.get_session()
+        self.session = botocore.session.get_session()
 
     def test_can_change_timestamp_with_clients(self):
         factory = self.session.get_component('response_parser_factory')

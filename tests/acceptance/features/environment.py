@@ -1,14 +1,18 @@
 import os
 
-import ibm_botocore.session
+import botocore.session
 
-SESSION = ibm_botocore.session.get_session()
+SESSION = botocore.session.get_session()
 KNOWN_SERVICES = SESSION.get_available_services()
 
 # For the services where the tag name doesn't match
 # the name we use to create_client(), we need to maintain
 # a map until we can get these changes pushed upstream.
 TAG_TO_ENDPOINT_PREFIX = {
+    'cognitoidentity': 'cognito-identity',
+    'cognitosync': 'cognito-sync',
+    'elasticloadbalancing': 'elb',
+    'elasticfilesystem': 'efs',
 }
 REGION = 'us-east-1'
 REGION_OVERRIDES = {

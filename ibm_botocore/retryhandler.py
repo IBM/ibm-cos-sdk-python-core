@@ -17,10 +17,10 @@ import functools
 import logging
 from binascii import crc32
 
-from ibm_botocore.vendored.requests import ConnectionError, Timeout
-from ibm_botocore.vendored.requests.packages.urllib3.exceptions import ClosedPoolError
-
-from ibm_botocore.exceptions import ChecksumError, EndpointConnectionError
+from ibm_botocore.exceptions import (
+    ChecksumError, EndpointConnectionError, ReadTimeoutError,
+    ConnectionError, ConnectionClosedError,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 # this mapping with more specific exceptions.
 EXCEPTION_MAP = {
     'GENERAL_CONNECTION_ERROR': [
-        ConnectionError, ClosedPoolError, Timeout,
+        ConnectionError, ConnectionClosedError, ReadTimeoutError,
         EndpointConnectionError
     ],
 }

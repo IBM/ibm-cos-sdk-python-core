@@ -13,7 +13,7 @@
 """Abstractions to interact with service models."""
 from collections import defaultdict
 
-from ibm_botocore.utils import CachedProperty, instance_cache
+from ibm_botocore.utils import CachedProperty, instance_cache, hyphenize_service_id
 from ibm_botocore.compat import OrderedDict
 
 
@@ -40,6 +40,11 @@ class UndefinedModelAttributeError(Exception):
     pass
 
 
+class ServiceId(str):
+    def hyphenize(self):
+        return hyphenize_service_id(self)
+
+
 class Shape(object):
     """Object representing a shape from the service model."""
     # To simplify serialization logic, all shape params that are
@@ -48,7 +53,9 @@ class Shape(object):
     # the attributes that should be moved.
     SERIALIZED_ATTRS = ['locationName', 'queryName', 'flattened', 'location',
                         'payload', 'streaming', 'timestampFormat',
-                        'xmlNamespace', 'resultWrapper', 'xmlAttribute']
+                        'xmlNamespace', 'resultWrapper', 'xmlAttribute',
+                        'eventstream', 'event', 'eventheader', 'eventpayload',
+                        'jsonvalue', 'timestampFormat', 'hostLabel']
     METADATA_ATTRS = ['required', 'min', 'max', 'sensitive', 'enum',
                       'idempotencyToken', 'error', 'exception']
     MAP_TYPE = OrderedDict
@@ -103,6 +110,8 @@ class Shape(object):
             * xmlNamespace
             * resultWrapper
             * xmlAttribute
+            * jsonvalue
+            * timestampFormat
 
         :rtype: dict
         :return: Serialization information about the shape.
@@ -281,6 +290,10 @@ class ServiceModel(object):
             return self.endpoint_prefix
 
     @CachedProperty
+    def service_id(self):
+        return ServiceId(self._get_metadata_property('serviceId'))
+
+    @CachedProperty
     def signing_name(self):
         """The name to use when computing signatures.
 
@@ -309,7 +322,7 @@ class ServiceModel(object):
             return self.metadata[name]
         except KeyError:
             raise UndefinedModelAttributeError(
-                '"%s" not defined in the metadata of the the model: %s' %
+                '"%s" not defined in the metadata of the model: %s' %
                 (name, self))
 
     # Signature version is one of the rare properties
@@ -325,6 +338,10 @@ class ServiceModel(object):
     @signature_version.setter
     def signature_version(self, value):
         self._signature_version = value
+
+    def __repr__(self):
+        return '%s(%s)' % (self.__class__.__name__, self.service_name)
+
 
 
 class OperationModel(object):
@@ -343,7 +360,17 @@ class OperationModel(object):
         :param name: The operation name.  This is the operation name exposed to
             the users of this model.  This can potentially be different from
             the "wire_name", which is the operation name that *must* by
-            provided over the wire.
+            provided over the wire.  For example, given::
+
+               "CreateCloudFrontOriginAccessIdentity":{
+                 "name":"CreateCloudFrontOriginAccessIdentity2014_11_06",
+                  ...
+              }
+
+           The ``name`` would be ``CreateCloudFrontOriginAccessIdentity``,
+           but the ``self.wire_name`` would be
+           ``CreateCloudFrontOriginAccessIdentity2014_11_06``, which is the
+           value we must send in the corresponding HTTP request.
 
         """
         self._operation_model = operation_model
@@ -369,7 +396,7 @@ class OperationModel(object):
         In many situations this is the same value as the
         ``name``, value, but in some services, the operation name
         exposed to the user is different from the operaiton name
-        we send across the wire.
+        we send across the wire (e.g cloudfront).
 
         Any serialization code should use ``wire_name``.
 
@@ -383,6 +410,10 @@ class OperationModel(object):
     @CachedProperty
     def documentation(self):
         return self._operation_model.get('documentation', '')
+
+    @CachedProperty
+    def deprecated(self):
+        return self._operation_model.get('deprecated', False)
 
     @CachedProperty
     def input_shape(self):
@@ -414,9 +445,40 @@ class OperationModel(object):
                 shape.metadata['idempotencyToken']]
 
     @CachedProperty
+    def auth_type(self):
+        return self._operation_model.get('authtype')
+
+    @CachedProperty
     def error_shapes(self):
         shapes = self._operation_model.get("errors", [])
         return list(self._service_model.resolve_shape_ref(s) for s in shapes)
+
+    @CachedProperty
+    def endpoint(self):
+        return self._operation_model.get('endpoint')
+
+    @CachedProperty
+    def has_event_stream_input(self):
+        return self.get_event_stream_input() is not None
+
+    @CachedProperty
+    def has_event_stream_output(self):
+        return self.get_event_stream_output() is not None
+
+    def get_event_stream_input(self):
+        return self._get_event_stream(self.input_shape)
+
+    def get_event_stream_output(self):
+        return self._get_event_stream(self.output_shape)
+
+    def _get_event_stream(self, shape):
+        """Returns the event stream member's shape if any or None otherwise."""
+        if shape is None:
+            return None
+        for member in shape.members.values():
+            if member.serialization.get('eventstream'):
+                return member
+        return None
 
     @CachedProperty
     def has_streaming_input(self):

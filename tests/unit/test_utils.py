@@ -10,22 +10,24 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-
 from tests import unittest
+from tests import RawResponse
 from dateutil.tz import tzutc, tzoffset
 import datetime
-import six
-
+import copy
 import mock
 
+import ibm_botocore
 from ibm_botocore import xform_name
 from ibm_botocore.compat import OrderedDict, json
+from ibm_botocore.compat import six
 from ibm_botocore.awsrequest import AWSRequest
+from ibm_botocore.awsrequest import AWSResponse
 from ibm_botocore.exceptions import InvalidExpressionError, ConfigNotFound
-from ibm_botocore.exceptions import ClientError
+from ibm_botocore.exceptions import ClientError, ConnectionClosedError
 from ibm_botocore.exceptions import InvalidDNSNameError, MetadataRetrievalError
 from ibm_botocore.model import ServiceModel
-from ibm_botocore.vendored import requests
+from ibm_botocore.utils import is_json_value_header
 from ibm_botocore.utils import remove_dot_segments
 from ibm_botocore.utils import normalize_url_path
 from ibm_botocore.utils import validate_jmespath_for_set
@@ -44,15 +46,61 @@ from ibm_botocore.utils import fix_s3_host
 from ibm_botocore.utils import switch_to_virtual_host_style
 from ibm_botocore.utils import instance_cache
 from ibm_botocore.utils import merge_dicts
+from ibm_botocore.utils import lowercase_dict
 from ibm_botocore.utils import get_service_module_name
 from ibm_botocore.utils import percent_encode_sequence
+from ibm_botocore.utils import percent_encode
 from ibm_botocore.utils import switch_host_s3_accelerate
 from ibm_botocore.utils import deep_merge
 from ibm_botocore.utils import S3RegionRedirector
 from ibm_botocore.utils import ContainerMetadataFetcher
+from ibm_botocore.utils import IMDSFetcher
+from ibm_botocore.utils import InstanceMetadataFetcher
 from ibm_botocore.model import DenormalizedStructureBuilder
 from ibm_botocore.model import ShapeResolver
 from ibm_botocore.config import Config
+
+
+class TestIsJSONValueHeader(unittest.TestCase):
+    def test_no_serialization_section(self):
+        shape = mock.Mock()
+        shape.type_name = 'string'
+        self.assertFalse(is_json_value_header(shape))
+
+    def test_non_jsonvalue_shape(self):
+        shape = mock.Mock()
+        shape.serialization = {
+            'location': 'header'
+        }
+        shape.type_name = 'string'
+        self.assertFalse(is_json_value_header(shape))
+
+    def test_non_header_jsonvalue_shape(self):
+        shape = mock.Mock()
+        shape.serialization = {
+            'jsonvalue': True
+        }
+        shape.type_name = 'string'
+        self.assertFalse(is_json_value_header(shape))
+
+    def test_non_string_jsonvalue_shape(self):
+        shape = mock.Mock()
+        shape.serialization = {
+            'location': 'header',
+            'jsonvalue': True
+        }
+        shape.type_name = 'integer'
+        self.assertFalse(is_json_value_header(shape))
+
+    def test_json_value_header(self):
+        shape = mock.Mock()
+        shape.serialization = {
+            'jsonvalue': True,
+            'location': 'header'
+        }
+        shape.type_name = 'string'
+        self.assertTrue(is_json_value_header(shape))
+
 
 
 class TestURINormalization(unittest.TestCase):
@@ -131,6 +179,12 @@ class TestTransformName(unittest.TestCase):
         transformed = xform_name('IPV6', '_')
         self.assertEqual(transformed, 'ipv6')
 
+    def test_s3_partial_rename(self):
+        transformed = xform_name('s3Resources', '-')
+        self.assertEqual(transformed, 's3-resources')
+        transformed = xform_name('s3Resources', '_')
+        self.assertEqual(transformed, 's3_resources')
+
 
 class TestValidateJMESPathForSet(unittest.TestCase):
     def setUp(self):
@@ -189,6 +243,44 @@ class TestSetValueFromJMESPath(unittest.TestCase):
         self.assertFalse('Brand' in self.data)
         set_value_from_jmespath(self.data, 'Brand.New', {'abc': 123})
         self.assertEqual(self.data['Brand']['New']['abc'], 123)
+
+
+class TestParseEC2CredentialsFile(unittest.TestCase):
+    def test_parse_ec2_content(self):
+        contents = "AWSAccessKeyId=a\nAWSSecretKey=b\n"
+        self.assertEqual(parse_key_val_file_contents(contents),
+                         {'AWSAccessKeyId': 'a',
+                          'AWSSecretKey': 'b'})
+
+    def test_parse_ec2_content_empty(self):
+        contents = ""
+        self.assertEqual(parse_key_val_file_contents(contents), {})
+
+    def test_key_val_pair_with_blank_lines(self):
+        # The \n\n has an extra blank between the access/secret keys.
+        contents = "AWSAccessKeyId=a\n\nAWSSecretKey=b\n"
+        self.assertEqual(parse_key_val_file_contents(contents),
+                         {'AWSAccessKeyId': 'a',
+                          'AWSSecretKey': 'b'})
+
+    def test_key_val_parser_lenient(self):
+        # Ignore any line that does not have a '=' char in it.
+        contents = "AWSAccessKeyId=a\nNOTKEYVALLINE\nAWSSecretKey=b\n"
+        self.assertEqual(parse_key_val_file_contents(contents),
+                         {'AWSAccessKeyId': 'a',
+                          'AWSSecretKey': 'b'})
+
+    def test_multiple_equals_on_line(self):
+        contents = "AWSAccessKeyId=a\nAWSSecretKey=secret_key_with_equals=b\n"
+        self.assertEqual(parse_key_val_file_contents(contents),
+                         {'AWSAccessKeyId': 'a',
+                          'AWSSecretKey': 'secret_key_with_equals=b'})
+
+    def test_os_error_raises_config_not_found(self):
+        mock_open = mock.Mock()
+        mock_open.side_effect = OSError()
+        with self.assertRaises(ConfigNotFound):
+            parse_key_val_file('badfile', _open=mock_open)
 
 
 class TestParseTimestamps(unittest.TestCase):
@@ -331,6 +423,17 @@ class TestArgumentGenerator(unittest.TestCase):
                 'A': ''
             }
         )
+
+    def test_generate_string_enum(self):
+        enum_values = ['A', 'B', 'C']
+        model = {
+            'A': {'type': 'string', 'enum': enum_values}
+        }
+        shape = DenormalizedStructureBuilder().with_members(
+            model).build_model()
+        actual = self.arg_generator.generate_skeleton(shape)
+
+        self.assertIn(actual['A'], enum_values)
 
     def test_generate_scalars(self):
         self.assert_skeleton_from_model_is(
@@ -582,13 +685,13 @@ class TestFixS3Host(unittest.TestCase):
             request=request, signature_version=signature_version,
             region_name=region_name)
         self.assertEqual(request.url,
-                         'https://bucket.s3.amazonaws.com/key.txt')
+                         'https://bucket.s3-us-west-2.amazonaws.com/key.txt')
         self.assertEqual(request.auth_path, '/bucket/key.txt')
 
     def test_fix_s3_host_only_applied_once(self):
         request = AWSRequest(
             method='PUT', headers={},
-            url='https://s3-us-west-2.amazonaws.com/bucket/key.txt'
+            url='https://s3.us-west-2.amazonaws.com/bucket/key.txt'
         )
         region_name = 'us-west-2'
         signature_version = 's3'
@@ -600,7 +703,7 @@ class TestFixS3Host(unittest.TestCase):
             request=request, signature_version=signature_version,
             region_name=region_name)
         self.assertEqual(request.url,
-                         'https://bucket.s3.amazonaws.com/key.txt')
+                         'https://bucket.s3.us-west-2.amazonaws.com/key.txt')
         # This was a bug previously.  We want to make sure that
         # calling fix_s3_host() again does not alter the auth_path.
         # Otherwise we'll get signature errors.
@@ -890,6 +993,33 @@ class TestMergeDicts(unittest.TestCase):
             dict1, {'Foo': ['foo_value']})
 
 
+class TestLowercaseDict(unittest.TestCase):
+    def test_lowercase_dict_empty(self):
+        original = {}
+        copy = lowercase_dict(original)
+        self.assertEqual(original, copy)
+
+    def test_lowercase_dict_original_keys_lower(self):
+        original = {
+            'lower_key1': 1,
+            'lower_key2': 2,
+        }
+        copy = lowercase_dict(original)
+        self.assertEqual(original, copy)
+
+    def test_lowercase_dict_original_keys_mixed(self):
+        original = {
+            'SOME_KEY': 'value',
+            'AnOTher_OnE': 'anothervalue',
+        }
+        copy = lowercase_dict(original)
+        expected = {
+            'some_key': 'value',
+            'another_one': 'anothervalue',
+        }
+        self.assertEqual(expected, copy)
+
+
 class TestGetServiceModuleName(unittest.TestCase):
     def setUp(self):
         self.service_description = {
@@ -976,6 +1106,27 @@ class TestPercentEncodeSequence(unittest.TestCase):
                              ('k2', ['another', 'list'])])),
             'k1=a&k1=list&k2=another&k2=list')
 
+class TestPercentEncode(unittest.TestCase):
+    def test_percent_encode_obj(self):
+        self.assertEqual(percent_encode(1), '1')
+
+    def test_percent_encode_text(self):
+        self.assertEqual(percent_encode(u''), '')
+        self.assertEqual(percent_encode(u'a'), 'a')
+        self.assertEqual(percent_encode(u'\u0000'), '%00')
+        # Codepoint > 0x7f
+        self.assertEqual(percent_encode(u'\u2603'), '%E2%98%83')
+        # Codepoint > 0xffff
+        self.assertEqual(percent_encode(u'\U0001f32e'), '%F0%9F%8C%AE')
+
+    def test_percent_encode_bytes(self):
+        self.assertEqual(percent_encode(b''), '')
+        self.assertEqual(percent_encode(b'a'), u'a')
+        self.assertEqual(percent_encode(b'\x00'), u'%00')
+        # UTF-8 Snowman
+        self.assertEqual(percent_encode(b'\xe2\x98\x83'), '%E2%98%83')
+        # Arbitrary bytes (not valid UTF-8).
+        self.assertEqual(percent_encode(b'\x80\x00'), '%80%00')
 
 class TestSwitchHostS3Accelerate(unittest.TestCase):
     def setUp(self):
@@ -1226,6 +1377,28 @@ class TestS3RegionRedirector(unittest.TestCase):
         }
         signing_context = request_dict['context'].get('signing')
         self.assertEqual(signing_context, expected_signing_context)
+        self.assertTrue(request_dict['context'].get('s3_redirected'))
+
+    def test_does_not_redirect_if_previously_redirected(self):
+        request_dict = {
+            'context': {
+                'signing': {'bucket': 'foo', 'region': 'us-west-2'},
+                's3_redirected': True,
+            },
+            'url': 'https://us-west-2.amazonaws.com/foo'
+        }
+        response = (None, {
+            'Error': {
+                'Code': '400',
+                'Message': 'Bad Request',
+            },
+            'ResponseMetadata': {
+                'HTTPHeaders': {'x-amz-bucket-region': 'us-west-2'}
+            }
+        })
+        redirect_response = self.redirector.redirect_from_error(
+            request_dict, response, self.operation)
+        self.assertIsNone(redirect_response)
 
     def test_does_not_redirect_unless_permanentredirect_recieved(self):
         request_dict = {}
@@ -1276,6 +1449,46 @@ class TestS3RegionRedirector(unittest.TestCase):
         redirect_response = self.redirector.redirect_from_error(
             request_dict, response, self.operation)
         self.assertIsNone(redirect_response)
+
+    def test_redirects_400_head_bucket(self):
+        request_dict = {'url': 'https://us-west-2.amazonaws.com/foo',
+                        'context': {'signing': {'bucket': 'foo'}}}
+        response = (None, {
+            'Error': {'Code': '400', 'Message': 'Bad Request'},
+            'ResponseMetadata': {
+                'HTTPHeaders': {'x-amz-bucket-region': 'eu-central-1'}
+            }
+        })
+
+        self.operation.name = 'HeadObject'
+        redirect_response = self.redirector.redirect_from_error(
+            request_dict, response, self.operation)
+        self.assertEqual(redirect_response, 0)
+
+        self.operation.name = 'ListObjects'
+        redirect_response = self.redirector.redirect_from_error(
+            request_dict, response, self.operation)
+        self.assertIsNone(redirect_response)
+
+    def test_does_not_redirect_400_head_bucket_no_region_header(self):
+        # We should not redirect a 400 Head* if the region header is not
+        # present as this will lead to infinitely calling HeadBucket.
+        request_dict = {'url': 'https://us-west-2.amazonaws.com/foo',
+                        'context': {'signing': {'bucket': 'foo'}}}
+        response = (None, {
+            'Error': {'Code': '400', 'Message': 'Bad Request'},
+            'ResponseMetadata': {
+                'HTTPHeaders': {}
+            }
+        })
+
+        self.operation.name = 'HeadBucket'
+        redirect_response = self.redirector.redirect_from_error(
+            request_dict, response, self.operation)
+        head_bucket_calls = self.client.head_bucket.call_count
+        self.assertIsNone(redirect_response)
+        # We should not have made an additional head bucket call
+        self.assertEqual(head_bucket_calls, 0)
 
     def test_does_not_redirect_if_None_response(self):
         request_dict = {'url': 'https://us-west-2.amazonaws.com/foo',
@@ -1364,7 +1577,7 @@ class TestContainerMetadataFetcher(unittest.TestCase):
     def fake_response(self, status_code, body):
         response = mock.Mock()
         response.status_code = status_code
-        response.text = body
+        response.content = body
         return response
 
     def set_http_responses_to(self, *responses):
@@ -1378,9 +1591,15 @@ class TestContainerMetadataFetcher(unittest.TestCase):
                 http_response = response
             else:
                 http_response = self.fake_response(
-                    status_code=200, body=json.dumps(response))
+                    status_code=200, body=json.dumps(response).encode('utf-8'))
             http_responses.append(http_response)
-        self.http.get.side_effect = http_responses
+        self.http.send.side_effect = http_responses
+
+    def assert_request(self, method, url, headers):
+        request = self.http.send.call_args[0][0]
+        self.assertEqual(request.method, method)
+        self.assertEqual(request.url, url)
+        self.assertEqual(request.headers, headers)
 
     def assert_can_retrieve_metadata_from(self, full_uri):
         response_body = {'foo': 'bar'}
@@ -1388,10 +1607,7 @@ class TestContainerMetadataFetcher(unittest.TestCase):
         fetcher = self.create_fetcher()
         response = fetcher.retrieve_full_uri(full_uri)
         self.assertEqual(response, response_body)
-        self.http.get.assert_called_with(
-            full_uri, headers={'Accept': 'application/json'},
-            timeout=fetcher.TIMEOUT_SECONDS,
-        )
+        self.assert_request('GET', full_uri, {'Accept': 'application/json'})
 
     def assert_host_is_not_allowed(self, full_uri):
         response_body = {'foo': 'bar'}
@@ -1399,7 +1615,7 @@ class TestContainerMetadataFetcher(unittest.TestCase):
         fetcher = self.create_fetcher()
         with self.assertRaisesRegexp(ValueError, 'Unsupported host'):
             fetcher.retrieve_full_uri(full_uri)
-        self.assertFalse(self.http.get.called)
+        self.assertFalse(self.http.send.called)
 
     def test_can_specify_extra_headers_are_merged(self):
         headers = {
@@ -1412,10 +1628,7 @@ class TestContainerMetadataFetcher(unittest.TestCase):
         fetcher = self.create_fetcher()
         response = fetcher.retrieve_full_uri(
             'http://localhost', headers)
-        self.http.get.assert_called_with(
-            'http://localhost', headers=headers,
-            timeout=fetcher.TIMEOUT_SECONDS,
-        )
+        self.assert_request('GET', 'http://localhost', headers)
 
     def test_can_retrieve_uri(self):
         json_body =  {
@@ -1431,11 +1644,8 @@ class TestContainerMetadataFetcher(unittest.TestCase):
 
         self.assertEqual(response, json_body)
         # Ensure we made calls to the right endpoint.
-        self.http.get.assert_called_with(
-            'http://169.254.170.2/foo?id=1',
-            headers={'Accept': 'application/json'},
-            timeout=fetcher.TIMEOUT_SECONDS,
-        )
+        headers = {'Accept': 'application/json'}
+        self.assert_request('GET', 'http://169.254.170.2/foo?id=1', headers)
 
     def test_can_retry_requests(self):
         success_response = {
@@ -1447,7 +1657,7 @@ class TestContainerMetadataFetcher(unittest.TestCase):
         self.set_http_responses_to(
             # First response is a connection error, should
             # be retried.
-            requests.ConnectionError(),
+            ConnectionClosedError(endpoint_url=''),
             # Second response is the successful JSON response
             # with credentials.
             success_response,
@@ -1459,44 +1669,44 @@ class TestContainerMetadataFetcher(unittest.TestCase):
     def test_propagates_credential_error_on_http_errors(self):
         self.set_http_responses_to(
             # In this scenario, we never get a successful response.
-            requests.ConnectionError(),
-            requests.ConnectionError(),
-            requests.ConnectionError(),
-            requests.ConnectionError(),
-            requests.ConnectionError(),
+            ConnectionClosedError(endpoint_url=''),
+            ConnectionClosedError(endpoint_url=''),
+            ConnectionClosedError(endpoint_url=''),
+            ConnectionClosedError(endpoint_url=''),
+            ConnectionClosedError(endpoint_url=''),
         )
         # As a result, we expect an appropriate error to be raised.
         fetcher = self.create_fetcher()
         with self.assertRaises(MetadataRetrievalError):
             fetcher.retrieve_uri('/foo?id=1')
-        self.assertEqual(self.http.get.call_count, fetcher.RETRY_ATTEMPTS)
+        self.assertEqual(self.http.send.call_count, fetcher.RETRY_ATTEMPTS)
 
     def test_error_raised_on_non_200_response(self):
         self.set_http_responses_to(
-            self.fake_response(status_code=404, body='Error not found'),
-            self.fake_response(status_code=404, body='Error not found'),
-            self.fake_response(status_code=404, body='Error not found'),
+            self.fake_response(status_code=404, body=b'Error not found'),
+            self.fake_response(status_code=404, body=b'Error not found'),
+            self.fake_response(status_code=404, body=b'Error not found'),
         )
         fetcher = self.create_fetcher()
         with self.assertRaises(MetadataRetrievalError):
             fetcher.retrieve_uri('/foo?id=1')
         # Should have tried up to RETRY_ATTEMPTS.
-        self.assertEqual(self.http.get.call_count, fetcher.RETRY_ATTEMPTS)
+        self.assertEqual(self.http.send.call_count, fetcher.RETRY_ATTEMPTS)
 
     def test_error_raised_on_no_json_response(self):
         # If the service returns a sucess response but with a body that
         # does not contain JSON, we should still retry up to RETRY_ATTEMPTS,
         # but after exhausting retries we propagate the exception.
         self.set_http_responses_to(
-            self.fake_response(status_code=200, body='Not JSON'),
-            self.fake_response(status_code=200, body='Not JSON'),
-            self.fake_response(status_code=200, body='Not JSON'),
+            self.fake_response(status_code=200, body=b'Not JSON'),
+            self.fake_response(status_code=200, body=b'Not JSON'),
+            self.fake_response(status_code=200, body=b'Not JSON'),
         )
         fetcher = self.create_fetcher()
         with self.assertRaises(MetadataRetrievalError):
             fetcher.retrieve_uri('/foo?id=1')
         # Should have tried up to RETRY_ATTEMPTS.
-        self.assertEqual(self.http.get.call_count, fetcher.RETRY_ATTEMPTS)
+        self.assertEqual(self.http.send.call_count, fetcher.RETRY_ATTEMPTS)
 
     def test_can_retrieve_full_uri_with_fixed_ip(self):
         self.assert_can_retrieve_metadata_from(
@@ -1533,5 +1743,241 @@ class TestContainerMetadataFetcher(unittest.TestCase):
         self.assert_host_is_not_allowed('https://somewhere.com/foo')
 
 
-if __name__ == '__main__':
-    unittest.main()
+class TestUnsigned(unittest.TestCase):
+    def test_copy_returns_same_object(self):
+        self.assertIs(ibm_botocore.UNSIGNED, copy.copy(ibm_botocore.UNSIGNED))
+
+    def test_deepcopy_returns_same_object(self):
+        self.assertIs(ibm_botocore.UNSIGNED, copy.deepcopy(ibm_botocore.UNSIGNED))
+
+
+class TestInstanceMetadataFetcher(unittest.TestCase):
+    def setUp(self):
+        urllib3_session_send = 'ibm_botocore.httpsession.URLLib3Session.send'
+        self._urllib3_patch = mock.patch(urllib3_session_send)
+        self._send = self._urllib3_patch.start()
+        self._imds_responses = []
+        self._send.side_effect = self.get_imds_response
+        self._role_name = 'role-name'
+        self._creds = {
+            'AccessKeyId': 'spam',
+            'SecretAccessKey': 'eggs',
+            'Token': 'spam-token',
+            'Expiration': 'something',
+        }
+
+    def tearDown(self):
+        self._urllib3_patch.stop()
+
+    def add_imds_response(self, body, status_code=200):
+        response = ibm_botocore.awsrequest.AWSResponse(
+            url='http://169.254.169.254/',
+            status_code=status_code,
+            headers={},
+            raw=RawResponse(body)
+        )
+        self._imds_responses.append(response)
+
+    def add_get_role_name_imds_response(self, role_name=None):
+        if role_name is None:
+            role_name = self._role_name
+        self.add_imds_response(body=role_name.encode('utf-8'))
+
+    def add_get_credentials_imds_response(self, creds=None):
+        if creds is None:
+            creds = self._creds
+        self.add_imds_response(body=json.dumps(creds).encode('utf-8'))
+
+    def add_imds_connection_error(self, exception):
+        self._imds_responses.append(exception)
+
+    def get_imds_response(self, request):
+        response = self._imds_responses.pop(0)
+        if isinstance(response, Exception):
+            raise response
+        return response
+
+    def test_disabled_by_environment(self):
+        env = {'AWS_EC2_METADATA_DISABLED': 'true'}
+        fetcher = InstanceMetadataFetcher(env=env)
+        result = fetcher.retrieve_iam_role_credentials()
+        self.assertEqual(result, {})
+        self._send.assert_not_called()
+
+    def test_disabled_by_environment_mixed_case(self):
+        env = {'AWS_EC2_METADATA_DISABLED': 'tRuE'}
+        fetcher = InstanceMetadataFetcher(env=env)
+        result = fetcher.retrieve_iam_role_credentials()
+        self.assertEqual(result, {})
+        self._send.assert_not_called()
+
+    def test_disabling_env_var_not_true(self):
+        url = 'https://example.com/'
+        env = {'AWS_EC2_METADATA_DISABLED': 'false'}
+
+        self.add_get_role_name_imds_response()
+        self.add_get_credentials_imds_response()
+
+        fetcher = InstanceMetadataFetcher(base_url=url, env=env)
+        result = fetcher.retrieve_iam_role_credentials()
+
+        expected_result = {
+            'access_key': self._creds['AccessKeyId'],
+            'secret_key': self._creds['SecretAccessKey'],
+            'token': self._creds['Token'],
+            'expiry_time': self._creds['Expiration'],
+            'role_name': self._role_name
+        }
+        self.assertEqual(result, expected_result)
+
+    def test_includes_user_agent_header(self):
+        user_agent = 'my-user-agent'
+        self.add_get_role_name_imds_response()
+        self.add_get_credentials_imds_response()
+
+        InstanceMetadataFetcher(
+            user_agent=user_agent).retrieve_iam_role_credentials()
+
+        headers = self._send.call_args[0][0].headers
+        self.assertEqual(headers['User-Agent'], user_agent)
+
+    def test_non_200_response_for_role_name_is_retried(self):
+        # Response for role name that have a non 200 status code should
+        # be retried.
+        self.add_imds_response(
+            status_code=429, body=b'{"message": "Slow down"}')
+        self.add_get_role_name_imds_response()
+        self.add_get_credentials_imds_response()
+        result = InstanceMetadataFetcher(
+            num_attempts=2).retrieve_iam_role_credentials()
+        expected_result = {
+            'access_key': self._creds['AccessKeyId'],
+            'secret_key': self._creds['SecretAccessKey'],
+            'token': self._creds['Token'],
+            'expiry_time': self._creds['Expiration'],
+            'role_name': self._role_name
+        }
+        self.assertEqual(result, expected_result)
+
+    def test_http_connection_error_for_role_name_is_retried(self):
+        # Connection related errors should be retried
+        self.add_imds_connection_error(ConnectionClosedError(endpoint_url=''))
+        self.add_get_role_name_imds_response()
+        self.add_get_credentials_imds_response()
+        result = InstanceMetadataFetcher(
+            num_attempts=2).retrieve_iam_role_credentials()
+        expected_result = {
+            'access_key': self._creds['AccessKeyId'],
+            'secret_key': self._creds['SecretAccessKey'],
+            'token': self._creds['Token'],
+            'expiry_time': self._creds['Expiration'],
+            'role_name': self._role_name
+        }
+        self.assertEqual(result, expected_result)
+
+    def test_empty_response_for_role_name_is_retried(self):
+        # Response for role name that have a non 200 status code should
+        # be retried.
+        self.add_imds_response(body=b'')
+        self.add_get_role_name_imds_response()
+        self.add_get_credentials_imds_response()
+        result = InstanceMetadataFetcher(
+            num_attempts=2).retrieve_iam_role_credentials()
+        expected_result = {
+            'access_key': self._creds['AccessKeyId'],
+            'secret_key': self._creds['SecretAccessKey'],
+            'token': self._creds['Token'],
+            'expiry_time': self._creds['Expiration'],
+            'role_name': self._role_name
+        }
+        self.assertEqual(result, expected_result)
+
+    def test_non_200_response_is_retried(self):
+        self.add_get_role_name_imds_response()
+        # Response for creds that has a 200 status code but has an empty
+        # body should be retried.
+        self.add_imds_response(
+            status_code=429, body=b'{"message": "Slow down"}')
+        self.add_get_credentials_imds_response()
+        result = InstanceMetadataFetcher(
+            num_attempts=2).retrieve_iam_role_credentials()
+        expected_result = {
+            'access_key': self._creds['AccessKeyId'],
+            'secret_key': self._creds['SecretAccessKey'],
+            'token': self._creds['Token'],
+            'expiry_time': self._creds['Expiration'],
+            'role_name': self._role_name
+        }
+        self.assertEqual(result, expected_result)
+
+    def test_http_connection_errors_is_retried(self):
+        self.add_get_role_name_imds_response()
+        # Connection related errors should be retried
+        self.add_imds_connection_error(ConnectionClosedError(endpoint_url=''))
+        self.add_get_credentials_imds_response()
+        result = InstanceMetadataFetcher(
+            num_attempts=2).retrieve_iam_role_credentials()
+        expected_result = {
+            'access_key': self._creds['AccessKeyId'],
+            'secret_key': self._creds['SecretAccessKey'],
+            'token': self._creds['Token'],
+            'expiry_time': self._creds['Expiration'],
+            'role_name': self._role_name
+        }
+        self.assertEqual(result, expected_result)
+
+    def test_empty_response_is_retried(self):
+        self.add_get_role_name_imds_response()
+        # Response for creds that has a 200 status code but is empty.
+        # This should be retried.
+        self.add_imds_response(body=b'')
+        self.add_get_credentials_imds_response()
+        result = InstanceMetadataFetcher(
+            num_attempts=2).retrieve_iam_role_credentials()
+        expected_result = {
+            'access_key': self._creds['AccessKeyId'],
+            'secret_key': self._creds['SecretAccessKey'],
+            'token': self._creds['Token'],
+            'expiry_time': self._creds['Expiration'],
+            'role_name': self._role_name
+        }
+        self.assertEqual(result, expected_result)
+
+    def test_invalid_json_is_retried(self):
+        self.add_get_role_name_imds_response()
+        # Response for creds that has a 200 status code but is invalid JSON.
+        # This should be retried.
+        self.add_imds_response(body=b'{"AccessKey":')
+        self.add_get_credentials_imds_response()
+        result = InstanceMetadataFetcher(
+            num_attempts=2).retrieve_iam_role_credentials()
+        expected_result = {
+            'access_key': self._creds['AccessKeyId'],
+            'secret_key': self._creds['SecretAccessKey'],
+            'token': self._creds['Token'],
+            'expiry_time': self._creds['Expiration'],
+            'role_name': self._role_name
+        }
+        self.assertEqual(result, expected_result)
+
+    def test_exhaust_retries_on_role_name_request(self):
+        self.add_imds_response(status_code=400, body=b'')
+        result = InstanceMetadataFetcher(
+            num_attempts=1).retrieve_iam_role_credentials()
+        self.assertEqual(result, {})
+
+    def test_exhaust_retries_on_credentials_request(self):
+        self.add_get_role_name_imds_response()
+        self.add_imds_response(status_code=400, body=b'')
+        result = InstanceMetadataFetcher(
+            num_attempts=1).retrieve_iam_role_credentials()
+        self.assertEqual(result, {})
+
+    def test_missing_fields_in_credentials_response(self):
+        self.add_get_role_name_imds_response()
+        # Response for creds that has a 200 status code and a JSON body
+        # representing an error. We do not necessarily want to retry this.
+        self.add_imds_response(
+            body=b'{"Code":"AssumeRoleUnauthorizedAccess","Message":"error"}')
+        result = InstanceMetadataFetcher().retrieve_iam_role_credentials()
+        self.assertEqual(result, {})

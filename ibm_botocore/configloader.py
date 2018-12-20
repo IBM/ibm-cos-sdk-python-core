@@ -14,8 +14,9 @@
 import os
 import shlex
 import copy
+import sys
 
-from six.moves import configparser
+from ibm_botocore.compat import six
 
 import ibm_botocore.exceptions
 
@@ -142,12 +143,13 @@ def raw_config_parse(config_filename, parse_subsections=True):
         path = os.path.expandvars(path)
         path = os.path.expanduser(path)
         if not os.path.isfile(path):
-            raise ibm_botocore.exceptions.ConfigNotFound(path=path)
-        cp = configparser.RawConfigParser()
+            raise ibm_botocore.exceptions.ConfigNotFound(path=_unicode_path(path))
+        cp = six.moves.configparser.RawConfigParser()
         try:
-            cp.read(path)
-        except configparser.Error:
-            raise ibm_botocore.exceptions.ConfigParseError(path=path)
+            cp.read([path])
+        except six.moves.configparser.Error:
+            raise ibm_botocore.exceptions.ConfigParseError(
+                path=_unicode_path(path))
         else:
             for section in cp.sections():
                 config[section] = {}
@@ -161,9 +163,20 @@ def raw_config_parse(config_filename, parse_subsections=True):
                             config_value = _parse_nested(config_value)
                         except ValueError:
                             raise ibm_botocore.exceptions.ConfigParseError(
-                                path=path)
+                                path=_unicode_path(path))
                     config[section][option] = config_value
     return config
+
+
+def _unicode_path(path):
+    if isinstance(path, six.text_type):
+        return path
+    # According to the documentation getfilesystemencoding can return None
+    # on unix in which case the default encoding is used instead.
+    filesystem_encoding = sys.getfilesystemencoding()
+    if filesystem_encoding is None:
+        filesystem_encoding = sys.getdefaultencoding()
+    return path.decode(filesystem_encoding, 'replace')
 
 
 def _parse_nested(config_value):

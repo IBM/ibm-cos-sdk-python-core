@@ -11,7 +11,7 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-from tests import unittest, temporary_file, random_chars
+from tests import unittest, temporary_file, random_chars, ClientHTTPStubber
 import os
 import time
 from collections import defaultdict
@@ -25,28 +25,28 @@ from contextlib import closing
 
 from nose.plugins.attrib import attr
 
-from ibm_botocore.vendored.requests import adapters
-from ibm_botocore.vendored.requests.exceptions import ConnectionError
-from ibm_botocore.compat import six, zip_longest
-import ibm_botocore.session
-import ibm_botocore.auth
-import ibm_botocore.credentials
-import ibm_botocore.vendored.requests as requests
-from ibm_botocore.config import Config
-from ibm_botocore.exceptions import ClientError
+from botocore.endpoint import Endpoint
+from botocore.exceptions import ConnectionClosedError
+from botocore.compat import six, zip_longest
+import botocore.session
+import botocore.auth
+import botocore.credentials
+import botocore.vendored.requests as requests
+from botocore.config import Config
+from botocore.exceptions import ClientError
 
 
 def random_bucketname():
     return 'botocoretest-' + random_chars(10)
 
 
-LOG = logging.getLogger('ibm_botocore.tests.integration')
+LOG = logging.getLogger('botocore.tests.integration')
 _SHARED_BUCKET = random_bucketname()
 _DEFAULT_REGION = 'us-west-2'
 
 
 def setup_module():
-    s3 = ibm_botocore.session.get_session().create_client('s3')
+    s3 = botocore.session.get_session().create_client('s3')
     waiter = s3.get_waiter('bucket_exists')
     params = {
         'Bucket': _SHARED_BUCKET,
@@ -65,7 +65,7 @@ def setup_module():
 
 
 def clear_out_bucket(bucket, region, delete_bucket=False):
-    s3 = ibm_botocore.session.get_session().create_client(
+    s3 = botocore.session.get_session().create_client(
         's3', region_name=region)
     page = s3.get_paginator('list_objects')
     # Use pages paired with batch delete_objects().
@@ -96,7 +96,7 @@ class BaseS3ClientTest(unittest.TestCase):
         self.bucket_name = _SHARED_BUCKET
         self.region = _DEFAULT_REGION
         clear_out_bucket(self.bucket_name, self.region)
-        self.session = ibm_botocore.session.get_session()
+        self.session = botocore.session.get_session()
         self.client = self.session.create_client('s3', region_name=self.region)
 
     def assert_status_code(self, response, status_code):
@@ -315,6 +315,11 @@ class TestS3Objects(TestS3BaseWithBucket):
         body = '*' * (5 * (1024 ** 2))
         self.assert_can_put_object(body)
 
+    def test_can_put_object_bytearray(self):
+        body_bytes = b'*' * 1024
+        body = bytearray(body_bytes)
+        self.assert_can_put_object(body)
+
     def test_get_object_stream_wrapper(self):
         self.create_object('foobarbaz', body='body contents')
         response = self.client.get_object(
@@ -407,6 +412,21 @@ class TestS3Objects(TestS3BaseWithBucket):
         self.assertEqual(parsed['Contents'][0]['Key'], key_name)
 
         parsed = self.client.list_objects(Bucket=self.bucket_name,
+                                          EncodingType='url')
+        self.assertEqual(len(parsed['Contents']), 1)
+        self.assertEqual(parsed['Contents'][0]['Key'], 'foo%08')
+
+    def test_unicode_system_character_with_list_v2(self):
+        # Verify we can use a unicode system character which would normally
+        # break the xml parser
+        key_name = 'foo\x08'
+        self.create_object(key_name)
+        self.addCleanup(self.delete_object, key_name, self.bucket_name)
+        parsed = self.client.list_objects_v2(Bucket=self.bucket_name)
+        self.assertEqual(len(parsed['Contents']), 1)
+        self.assertEqual(parsed['Contents'][0]['Key'], key_name)
+
+        parsed = self.client.list_objects_v2(Bucket=self.bucket_name,
                                           EncodingType='url')
         self.assertEqual(len(parsed['Contents']), 1)
         self.assertEqual(parsed['Contents'][0]['Key'], 'foo%08')
@@ -544,11 +564,11 @@ class TestS3PresignUsStandard(BaseS3PresignTest):
     def setUp(self):
         super(TestS3PresignUsStandard, self).setUp()
         self.region = 'us-east-1'
-        self.bucket_name = self.create_bucket(self.region)
         self.client_config = Config(
             region_name=self.region, signature_version='s3')
         self.client = self.session.create_client(
             's3', config=self.client_config)
+        self.bucket_name = self.create_bucket(self.region)
         self.setup_bucket()
 
     def test_presign_sigv2(self):
@@ -582,7 +602,7 @@ class TestS3PresignUsStandard(BaseS3PresignTest):
             'get_object', Params={'Bucket': self.bucket_name, 'Key': self.key})
         self.assertTrue(
             presigned_url.startswith(
-                'https://s3.amazonaws.com/%s/%s' % (
+                'https://%s.s3.amazonaws.com/%s' % (
                     self.bucket_name, self.key)),
             "Host was suppose to be the us-east-1 endpoint, instead "
             "got: %s" % presigned_url)
@@ -647,7 +667,7 @@ class TestS3PresignUsStandard(BaseS3PresignTest):
         # Make sure the correct endpoint is being used
         self.assertTrue(
             post_args['url'].startswith(
-                'https://s3.amazonaws.com/%s' % self.bucket_name),
+                'https://%s.s3.amazonaws.com/' % self.bucket_name),
             "Host was suppose to use us-east-1 endpoint, instead "
             "got: %s" % post_args['url'])
 
@@ -679,7 +699,14 @@ class TestS3PresignNonUsStandard(BaseS3PresignTest):
         self.assertEqual(requests.get(presigned_url).content, b'foo')
 
     def test_presign_sigv4(self):
+        # For a newly created bucket, you can't use virtualhosted
+        # addressing and 's3v4' due to the backwards compat behavior
+        # using '.s3.amazonaws.com' for anything in the AWS partition.
+        # Instead you either have to use the older 's3' signature version
+        # of you have to use path style addressing.  The latter is being
+        # done here.
         self.client_config.signature_version = 's3v4'
+        self.client_config.s3 = {'addressing_style': 'path'}
         self.client = self.session.create_client(
             's3', config=self.client_config)
         presigned_url = self.client.generate_presigned_url(
@@ -687,7 +714,7 @@ class TestS3PresignNonUsStandard(BaseS3PresignTest):
 
         self.assertTrue(
             presigned_url.startswith(
-                'https://s3-us-west-2.amazonaws.com/%s/%s' % (
+                'https://s3.us-west-2.amazonaws.com/%s/%s' % (
                     self.bucket_name, self.key)),
             "Host was suppose to be the us-west-2 endpoint, instead "
             "got: %s" % presigned_url)
@@ -748,7 +775,7 @@ class TestS3PresignNonUsStandard(BaseS3PresignTest):
         # Make sure the correct endpoint is being used
         self.assertTrue(
             post_args['url'].startswith(
-                'https://s3-us-west-2.amazonaws.com/%s' % self.bucket_name),
+                'https://%s.s3.amazonaws.com/' % self.bucket_name),
             "Host was suppose to use DNS style, instead "
             "got: %s" % post_args['url'])
 
@@ -792,6 +819,7 @@ class TestS3SigV4Client(BaseS3ClientTest):
         super(TestS3SigV4Client, self).setUp()
         self.client = self.session.create_client(
             's3', self.region, config=Config(signature_version='s3v4'))
+        self.http_stubber = ClientHTTPStubber(self.client)
 
     def test_can_get_bucket_location(self):
         # Even though the bucket is in us-west-2, we should still be able to
@@ -805,19 +833,10 @@ class TestS3SigV4Client(BaseS3ClientTest):
 
     def test_request_retried_for_sigv4(self):
         body = six.BytesIO(b"Hello world!")
-
-        original_send = adapters.HTTPAdapter.send
-        state = mock.Mock()
-        state.error_raised = False
-
-        def mock_http_adapter_send(self, *args, **kwargs):
-            if not state.error_raised:
-                state.error_raised = True
-                raise ConnectionError("Simulated ConnectionError raised.")
-            else:
-                return original_send(self, *args, **kwargs)
-        with mock.patch('ibm_botocore.vendored.requests.adapters.HTTPAdapter.send',
-                        mock_http_adapter_send):
+        exception = ConnectionClosedError(endpoint_url='')
+        self.http_stubber.responses.append(exception)
+        self.http_stubber.responses.append(None)
+        with self.http_stubber:
             response = self.client.put_object(Bucket=self.bucket_name,
                                               Key='foo.txt', Body=body)
             self.assert_status_code(response, 200)
@@ -888,6 +907,39 @@ class TestS3SigV4Client(BaseS3ClientTest):
         self.assertEqual(len(response['Uploads']), 1)
         # Make sure the upload id is as expected.
         self.assertEqual(response['Uploads'][0]['UploadId'], upload_id)
+
+    def test_can_add_double_space_metadata(self):
+        # Ensure we get no sigv4 errors when we send
+        # metadata with consecutive spaces.
+        response = self.client.put_object(
+            Bucket=self.bucket_name, Key='foo.txt',
+            Body=b'foobar', Metadata={'foo': '  multi    spaces  '})
+        self.assert_status_code(response, 200)
+
+    def test_bad_request_on_invalid_credentials(self):
+        # A previous bug would cause this to hang.  We want
+        # to verify we get the 400 response.
+        # In order to test we need a key that actually
+        # exists so we use the properly configured self.client.
+        self.client.put_object(Bucket=self.bucket_name,
+                               Key='foo.txt',
+                               Body=b'asdfasdf')
+        # Now we create a client with a bad session token
+        # which should give us a 400 response.
+        creds = self.session.get_credentials()
+        client = self.session.create_client(
+            's3', self.region,
+            config=Config(signature_version='s3v4'),
+            aws_access_key_id=creds.access_key,
+            aws_secret_access_key=creds.secret_key,
+            aws_session_token='bad-token-causes-400',
+        )
+        with self.assertRaises(ClientError) as e:
+            client.head_object(
+                Bucket=self.bucket_name,
+                Key='foo.txt',
+            )
+        self.assertEqual(e.exception.response['Error']['Code'], '400')
 
 
 class TestSSEKeyParamValidation(BaseS3ClientTest):

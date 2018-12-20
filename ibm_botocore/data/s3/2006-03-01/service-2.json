@@ -8,7 +8,8 @@
     "protocol":"rest-xml",
     "serviceAbbreviation":"Amazon S3",
     "serviceFullName":"Amazon Simple Storage Service",
-    "signatureVersion":"s3",
+    "serviceId":"s3",
+    "signatureVersion":"s3v4",
     "timestampFormat":"rfc822",
     "uid":"s3-2006-03-01"
   },
@@ -98,7 +99,7 @@
       },
       "input":{"shape":"DeleteBucketRequest"},
       "__documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/RESTBucketDELETE.html",
-      "documentation":"Deletes the bucket. All objects (including all object versions and Delete Markers) in the bucket must be deleted before the bucket itself can be deleted."
+      "documentation":"Deletes the bucket. All objects in the bucket must be deleted before the bucket itself can be deleted."
     },
     "DeleteBucketAnalyticsConfiguration":{
       "name":"DeleteBucketAnalyticsConfiguration",
@@ -194,7 +195,7 @@
       "input":{"shape":"DeleteObjectRequest"},
       "output":{"shape":"DeleteObjectOutput"},
       "__documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/RESTObjectDELETE.html",
-      "documentation":"Removes the null version (if there is one) of an object and inserts a delete marker, which becomes the latest version of the object. If there isn't a null version, Amazon S3 does not remove any objects."
+      "documentation":"Removes an object. If the object doesn't exist, Amazon S3 does not remove any objects."
     },
     "DeleteObjects":{
       "name":"DeleteObjects",
@@ -330,17 +331,6 @@
       "input":{"shape":"GetBucketReplicationRequest"},
       "output":{"shape":"GetBucketReplicationOutput"},
       "documentation":"Returns the replication configuration of a bucket."
-    },
-    "GetBucketRequestPayment":{
-      "name":"GetBucketRequestPayment",
-      "http":{
-        "method":"GET",
-        "requestUri":"/{Bucket}?requestPayment"
-      },
-      "input":{"shape":"GetBucketRequestPaymentRequest"},
-      "output":{"shape":"GetBucketRequestPaymentOutput"},
-      "__documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/RESTrequestPaymentGET.html",
-      "documentation":"Returns the request payment configuration of a bucket."
     },
     "GetObject":{
       "name":"GetObject",
@@ -594,16 +584,6 @@
       "input":{"shape":"PutBucketReplicationRequest"},
       "documentation":"Creates a new replication configuration (or replaces an existing one, if present)."
     },
-    "PutBucketRequestPayment":{
-      "name":"PutBucketRequestPayment",
-      "http":{
-        "method":"PUT",
-        "requestUri":"/{Bucket}?requestPayment"
-      },
-      "input":{"shape":"PutBucketRequestPaymentRequest"},
-      "__documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/RESTrequestPaymentPUT.html",
-      "documentation":"Sets the request payment configuration for a bucket. By default, the bucket owner pays for downloads from the bucket. This configuration parameter enables the bucket owner (only) to specify that the person requesting the download will be charged for the download."
-    },
     "PutObject":{
       "name":"PutObject",
       "http":{
@@ -714,6 +694,7 @@
         },
         "RequestPayer":{
           "shape":"RequestPayer",
+          "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-request-payer"
         }
@@ -1127,13 +1108,13 @@
         },
         "ServerSideEncryption":{
           "shape":"ServerSideEncryption",
-          "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).",
+          "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).",
           "location":"header",
           "locationName":"x-amz-server-side-encryption"
         },
         "SSEKMSKeyId":{
           "shape":"SSEKMSKeyId",
-          "documentation":"If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.",
+          "documentation":"Not returned by COS.",
           "location":"header",
           "locationName":"x-amz-server-side-encryption-aws-kms-key-id"
         },
@@ -1174,6 +1155,7 @@
         },
         "RequestPayer":{
           "shape":"RequestPayer",
+          "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-request-payer"
         },
@@ -1257,7 +1239,7 @@
         },
         "ServerSideEncryption":{
           "shape":"ServerSideEncryption",
-          "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).",
+          "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).",
           "location":"header",
           "locationName":"x-amz-server-side-encryption"
         },
@@ -1275,7 +1257,7 @@
         },
         "SSEKMSKeyId":{
           "shape":"SSEKMSKeyId",
-          "documentation":"If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.",
+          "documentation":"Not returned by COS.",
           "location":"header",
           "locationName":"x-amz-server-side-encryption-aws-kms-key-id"
         },
@@ -1439,7 +1421,7 @@
         },
         "ServerSideEncryption":{
           "shape":"ServerSideEncryption",
-          "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).",
+          "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).",
           "location":"header",
           "locationName":"x-amz-server-side-encryption"
         },
@@ -1475,7 +1457,7 @@
         },
         "SSEKMSKeyId":{
           "shape":"SSEKMSKeyId",
-          "documentation":"Specifies the AWS KMS key ID to use for object encryption. All GET and PUT requests for an object protected by AWS KMS will fail if not made via SSL or using SigV4.",
+          "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-server-side-encryption-aws-kms-key-id"
         },
@@ -1499,6 +1481,7 @@
         },
         "RequestPayer":{
           "shape":"RequestPayer",
+          "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-request-payer"
         }
@@ -1659,7 +1642,7 @@
         },
         "ServerSideEncryption":{
           "shape":"ServerSideEncryption",
-          "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).",
+          "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).",
           "location":"header",
           "locationName":"x-amz-server-side-encryption"
         },
@@ -1677,7 +1660,7 @@
         },
         "SSEKMSKeyId":{
           "shape":"SSEKMSKeyId",
-          "documentation":"If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.",
+          "documentation":"Not returned by COS.",
           "location":"header",
           "locationName":"x-amz-server-side-encryption-aws-kms-key-id"
         },
@@ -1779,7 +1762,7 @@
         },
         "ServerSideEncryption":{
           "shape":"ServerSideEncryption",
-          "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).",
+          "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).",
           "location":"header",
           "locationName":"x-amz-server-side-encryption"
         },
@@ -1815,12 +1798,13 @@
         },
         "SSEKMSKeyId":{
           "shape":"SSEKMSKeyId",
-          "documentation":"Specifies the AWS KMS key ID to use for object encryption. All GET and PUT requests for an object protected by AWS KMS will fail if not made via SSL or using SigV4.",
+          "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-server-side-encryption-aws-kms-key-id"
         },
         "RequestPayer":{
           "shape":"RequestPayer",
+          "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-request-payer"
         }
@@ -2005,12 +1989,13 @@
       "members":{
         "DeleteMarker":{
           "shape":"DeleteMarker",
-          "documentation":"Specifies whether the versioned object that was permanently deleted was (true) or was not (false) a delete marker.",
+          "documentation":"Not returned by COS.",
           "location":"header",
           "locationName":"x-amz-delete-marker"
         },
         "RequestCharged":{
           "shape":"RequestCharged",
+          "documentation":"Not returned by COS.",
           "location":"header",
           "locationName":"x-amz-request-charged"
         }
@@ -2041,6 +2026,7 @@
         },
         "RequestPayer":{
           "shape":"RequestPayer",
+          "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-request-payer"
         }
@@ -2086,6 +2072,7 @@
         },
         "RequestPayer":{
           "shape":"RequestPayer",
+          "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-request-payer"
         }
@@ -2563,26 +2550,6 @@
         }
       }
     },
-    "GetBucketRequestPaymentOutput":{
-      "type":"structure",
-      "members":{
-        "Payer":{
-          "shape":"Payer",
-          "documentation":"Specifies who pays for the download and request fees."
-        }
-      }
-    },
-    "GetBucketRequestPaymentRequest":{
-      "type":"structure",
-      "required":["Bucket"],
-      "members":{
-        "Bucket":{
-          "shape":"BucketName",
-          "location":"uri",
-          "locationName":"Bucket"
-        }
-      }
-    },
     "GetBucketWebsiteOutput":{
       "type":"structure",
       "members":{
@@ -2638,6 +2605,7 @@
         },
         "RequestPayer":{
           "shape":"RequestPayer",
+          "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-request-payer"
         }
@@ -2653,7 +2621,7 @@
         },
         "DeleteMarker":{
           "shape":"DeleteMarker",
-          "documentation":"Specifies whether the object retrieved was (true) or was not (false) a Delete Marker. If false, this response header does not appear in the response.",
+          "documentation":"Not returned by COS.",
           "location":"header",
           "locationName":"x-amz-delete-marker"
         },
@@ -2748,7 +2716,7 @@
         },
         "ServerSideEncryption":{
           "shape":"ServerSideEncryption",
-          "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).",
+          "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).",
           "location":"header",
           "locationName":"x-amz-server-side-encryption"
         },
@@ -2790,7 +2758,7 @@
         },
         "SSEKMSKeyId":{
           "shape":"SSEKMSKeyId",
-          "documentation":"If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.",
+          "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-server-side-encryption-aws-kms-key-id"
         },
@@ -2921,6 +2889,7 @@
         },
         "RequestPayer":{
           "shape":"RequestPayer",
+          "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-request-payer"
         },
@@ -2966,6 +2935,7 @@
         },
         "RequestPayer":{
           "shape":"RequestPayer",
+          "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-request-payer"
         }
@@ -3069,7 +3039,7 @@
       "members":{
         "DeleteMarker":{
           "shape":"DeleteMarker",
-          "documentation":"Specifies whether the object retrieved was (true) or was not (false) a Delete Marker. If false, this response header does not appear in the response.",
+          "documentation":"Not returned by COS.",
           "location":"header",
           "locationName":"x-amz-delete-marker"
         },
@@ -3170,7 +3140,7 @@
         },
         "ServerSideEncryption":{
           "shape":"ServerSideEncryption",
-          "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).",
+          "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).",
           "location":"header",
           "locationName":"x-amz-server-side-encryption"
         },
@@ -3212,7 +3182,7 @@
         },
         "SSEKMSKeyId":{
           "shape":"SSEKMSKeyId",
-          "documentation":"If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.",
+          "documentation":"Not returned by COS.",
           "location":"header",
           "locationName":"x-amz-server-side-encryption-aws-kms-key-id"
         },
@@ -3306,6 +3276,7 @@
         },
         "RequestPayer":{
           "shape":"RequestPayer",
+          "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-request-payer"
         },
@@ -3937,7 +3908,7 @@
         },
         "RequestPayer":{
           "shape":"RequestPayer",
-          "documentation":"Confirms that the requester knows that she or he will be charged for the list objects request. Bucket owners need not specify this parameter in their requests.",
+          "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-request-payer"
         }
@@ -4047,12 +4018,6 @@
           "documentation":"StartAfter is where you want Amazon S3 to start listing from. Amazon S3 starts listing after this specified key. StartAfter can be any key in the bucket",
           "location":"querystring",
           "locationName":"start-after"
-        },
-        "RequestPayer":{
-          "shape":"RequestPayer",
-          "documentation":"Confirms that the requester knows that she or he will be charged for the list objects request in V2 style. Bucket owners need not specify this parameter in their requests.",
-          "location":"header",
-          "locationName":"x-amz-request-payer"
         }
       }
     },
@@ -4157,6 +4122,7 @@
         },
         "RequestPayer":{
           "shape":"RequestPayer",
+          "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-request-payer"
         }
@@ -4784,31 +4750,6 @@
       },
       "payload":"ReplicationConfiguration"
     },
-    "PutBucketRequestPaymentRequest":{
-      "type":"structure",
-      "required":[
-        "Bucket",
-        "RequestPaymentConfiguration"
-      ],
-      "members":{
-        "Bucket":{
-          "shape":"BucketName",
-          "location":"uri",
-          "locationName":"Bucket"
-        },
-        "ContentMD5":{
-          "shape":"ContentMD5",
-          "location":"header",
-          "locationName":"Content-MD5"
-        },
-        "RequestPaymentConfiguration":{
-          "shape":"RequestPaymentConfiguration",
-          "locationName":"RequestPaymentConfiguration",
-          "xmlNamespace":{"uri":"http://s3.amazonaws.com/doc/2006-03-01/"}
-        }
-      },
-      "payload":"RequestPaymentConfiguration"
-    },
     "PutBucketWebsiteRequest":{
       "type":"structure",
       "required":[
@@ -4909,6 +4850,7 @@
         },
         "RequestPayer":{
           "shape":"RequestPayer",
+          "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-request-payer"
         }
@@ -4932,7 +4874,7 @@
         },
         "ServerSideEncryption":{
           "shape":"ServerSideEncryption",
-          "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).",
+          "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).",
           "location":"header",
           "locationName":"x-amz-server-side-encryption"
         },
@@ -4950,7 +4892,7 @@
         },
         "SSEKMSKeyId":{
           "shape":"SSEKMSKeyId",
-          "documentation":"If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.",
+          "documentation":"Not returned by COS.",
           "location":"header",
           "locationName":"x-amz-server-side-encryption-aws-kms-key-id"
         },
@@ -5089,7 +5031,7 @@
         },
         "ServerSideEncryption":{
           "shape":"ServerSideEncryption",
-          "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).",
+          "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).",
           "location":"header",
           "locationName":"x-amz-server-side-encryption"
         },
@@ -5125,12 +5067,13 @@
         },
         "SSEKMSKeyId":{
           "shape":"SSEKMSKeyId",
-          "documentation":"Specifies the AWS KMS key ID to use for object encryption. All GET and PUT requests for an object protected by AWS KMS will fail if not made via SSL or using SigV4.",
+          "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-server-side-encryption-aws-kms-key-id"
         },
         "RequestPayer":{
           "shape":"RequestPayer",
+          "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-request-payer"
         }
@@ -5294,16 +5237,6 @@
       "type":"string",
       "documentation":"Confirms that the requester knows that she or he will be charged for the request. Bucket owners need not specify this parameter in their requests.",
       "enum":["requester"]
-    },
-    "RequestPaymentConfiguration":{
-      "type":"structure",
-      "required":["Payer"],
-      "members":{
-        "Payer":{
-          "shape":"Payer",
-          "documentation":"Specifies who pays for the download and request fees."
-        }
-      }
     },
     "ResponseCacheControl":{"type":"string"},
     "ResponseContentDisposition":{"type":"string"},
@@ -5623,7 +5556,7 @@
         "CopyPartResult":{"shape":"CopyPartResult"},
         "ServerSideEncryption":{
           "shape":"ServerSideEncryption",
-          "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).",
+          "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).",
           "location":"header",
           "locationName":"x-amz-server-side-encryption"
         },
@@ -5641,7 +5574,7 @@
         },
         "SSEKMSKeyId":{
           "shape":"SSEKMSKeyId",
-          "documentation":"If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.",
+          "documentation":"Not returned by COS.",
           "location":"header",
           "locationName":"x-amz-server-side-encryption-aws-kms-key-id"
         },
@@ -5759,6 +5692,7 @@
         },
         "RequestPayer":{
           "shape":"RequestPayer",
+          "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-request-payer"
         }
@@ -5769,7 +5703,7 @@
       "members":{
         "ServerSideEncryption":{
           "shape":"ServerSideEncryption",
-          "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256, aws:kms).",
+          "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).",
           "location":"header",
           "locationName":"x-amz-server-side-encryption"
         },
@@ -5793,7 +5727,7 @@
         },
         "SSEKMSKeyId":{
           "shape":"SSEKMSKeyId",
-          "documentation":"If present, specifies the ID of the AWS Key Management Service (KMS) master encryption key that was used for the object.",
+          "documentation":"Not returned by COS.",
           "location":"header",
           "locationName":"x-amz-server-side-encryption-aws-kms-key-id"
         },
@@ -5874,6 +5808,7 @@
         },
         "RequestPayer":{
           "shape":"RequestPayer",
+          "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-request-payer"
         }

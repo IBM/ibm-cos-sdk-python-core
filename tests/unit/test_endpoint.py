@@ -10,21 +10,20 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-
+import socket
 from tests import unittest
 
 from mock import Mock, patch, sentinel
-from nose.tools import assert_equals
 from ibm_botocore.vendored.requests import ConnectionError
 
 from ibm_botocore.compat import six
 from ibm_botocore.awsrequest import AWSRequest
 from ibm_botocore.endpoint import Endpoint, DEFAULT_TIMEOUT
 from ibm_botocore.endpoint import EndpointCreator
-from ibm_botocore.endpoint import BotocoreHTTPSession
 from ibm_botocore.exceptions import EndpointConnectionError
 from ibm_botocore.exceptions import ConnectionClosedError
-from ibm_botocore.exceptions import BaseEndpointResolverError
+from ibm_botocore.httpsession import URLLib3Session
+from ibm_botocore.model import OperationModel, ServiceId
 
 
 def request_dict():
@@ -44,9 +43,9 @@ class RecordStreamResets(six.StringIO):
         six.StringIO.__init__(self, value)
         self.total_resets = 0
 
-    def seek(self, where):
+    def seek(self, where, whence=0):
         self.total_resets += 1
-        six.StringIO.seek(self, where)
+        six.StringIO.seek(self, where, whence)
 
 
 class TestEndpointBase(unittest.TestCase):
@@ -54,6 +53,7 @@ class TestEndpointBase(unittest.TestCase):
     def setUp(self):
         self.op = Mock()
         self.op.has_streaming_output = False
+        self.op.has_event_stream_output = False
         self.op.metadata = {'protocol': 'json'}
         self.event_emitter = Mock()
         self.event_emitter.emit.return_value = []
@@ -76,22 +76,6 @@ class TestEndpointBase(unittest.TestCase):
 
 class TestEndpointFeatures(TestEndpointBase):
 
-    def test_timeout_can_be_specified(self):
-        timeout_override = 120
-        self.endpoint.timeout = timeout_override
-        self.endpoint.make_request(self.op, request_dict())
-        kwargs = self.http_session.send.call_args[1]
-        self.assertEqual(kwargs['timeout'], timeout_override)
-
-    def test_make_request_with_proxies(self):
-        proxies = {'http': 'http://localhost:8888'}
-        self.endpoint.proxies = proxies
-        self.endpoint.make_request(self.op, request_dict())
-        prepared_request = self.http_session.send.call_args[0][0]
-        self.http_session.send.assert_called_with(
-            prepared_request, verify=True, stream=False,
-            proxies=proxies, timeout=DEFAULT_TIMEOUT)
-
     def test_make_request_with_no_auth(self):
         self.endpoint.auth = None
         self.endpoint.make_request(self.op, request_dict())
@@ -109,23 +93,6 @@ class TestEndpointFeatures(TestEndpointBase):
         prepared_request = self.http_session.send.call_args[0][0]
         self.assertNotIn('Authorization', prepared_request.headers)
 
-    def test_make_request_injects_better_dns_error_msg(self):
-        fake_request = Mock(url='https://ec2.us-west-2.amazonaws.com')
-        self.http_session.send.side_effect = ConnectionError(
-            "Fake gaierror(8, node or host not known)", request=fake_request)
-        with self.assertRaisesRegexp(EndpointConnectionError,
-                                     'Could not connect'):
-            self.endpoint.make_request(self.op, request_dict())
-
-    def test_make_request_injects_better_bad_status_line_error_msg(self):
-        fake_request = Mock(url='https://ec2.us-west-2.amazonaws.com')
-        self.http_session.send.side_effect = ConnectionError(
-            """'Connection aborted.', BadStatusLine("''",)""",
-            request=fake_request)
-        with self.assertRaisesRegexp(ConnectionClosedError,
-                                     'Connection was closed'):
-            self.endpoint.make_request(self.op, request_dict())
-
     def test_make_request_with_context(self):
         r = request_dict()
         r['context'] = {'signing': {'region': 'us-west-2'}}
@@ -134,83 +101,95 @@ class TestEndpointFeatures(TestEndpointBase):
         request = prepare.call_args[0][0]
         self.assertEqual(request.context['signing']['region'], 'us-west-2')
 
-    def test_can_specify_max_pool_connections(self):
-        endpoint = Endpoint('https://ec2.us-west-2.amazonaws.com', 'ec2',
-                            self.event_emitter, max_pool_connections=50)
-        # We can look in endpoint.http_session.adapters[0]._pool_maxsize,
-        # but that feels like testing too much implementation detail.
-        self.assertEqual(endpoint.max_pool_connections, 50)
-
-
 class TestRetryInterface(TestEndpointBase):
     def setUp(self):
         super(TestRetryInterface, self).setUp()
         self.retried_on_exception = None
+        self._operation = Mock(spec=OperationModel)
+        self._operation.service_model.service_id = ServiceId('ec2')
 
     def test_retry_events_are_emitted(self):
-        op = Mock()
+        op = self._operation
         op.name = 'DescribeInstances'
         op.metadata = {'protocol': 'query'}
         op.has_streaming_output = False
+        op.has_event_stream_output = False
         self.endpoint.make_request(op, request_dict())
         call_args = self.event_emitter.emit.call_args
         self.assertEqual(call_args[0][0],
                          'needs-retry.ec2.DescribeInstances')
 
     def test_retry_events_can_alter_behavior(self):
-        op = Mock()
+        op = self._operation
         op.name = 'DescribeInstances'
         op.metadata = {'protocol': 'json'}
+        op.has_event_stream_output = False
         self.event_emitter.emit.side_effect = [
             [(None, None)],    # Request created.
+            [(None, None)],    # Request sent.
             [(None, 0)],       # Check if retry needed. Retry needed.
             [(None, None)],    # Request created.
+            [(None, None)],    # Request sent.
             [(None, None)]     # Check if retry needed. Retry not needed.
         ]
         self.endpoint.make_request(op, request_dict())
         call_args = self.event_emitter.emit.call_args_list
-        self.assertEqual(self.event_emitter.emit.call_count, 4)
+        self.assertEqual(self.event_emitter.emit.call_count, 6)
         # Check that all of the events are as expected.
         self.assertEqual(call_args[0][0][0],
                          'request-created.ec2.DescribeInstances')
         self.assertEqual(call_args[1][0][0],
-                         'needs-retry.ec2.DescribeInstances')
+                         'before-send.ec2.DescribeInstances')
         self.assertEqual(call_args[2][0][0],
-                         'request-created.ec2.DescribeInstances')
+                         'needs-retry.ec2.DescribeInstances')
         self.assertEqual(call_args[3][0][0],
+                         'request-created.ec2.DescribeInstances')
+        self.assertEqual(call_args[4][0][0],
+                         'before-send.ec2.DescribeInstances')
+        self.assertEqual(call_args[5][0][0],
                          'needs-retry.ec2.DescribeInstances')
 
     def test_retry_on_socket_errors(self):
-        op = Mock()
+        op = self._operation
         op.name = 'DescribeInstances'
+        op.has_event_stream_output = False
         self.event_emitter.emit.side_effect = [
             [(None, None)],    # Request created.
+            [(None, None)],    # Request sent.
             [(None, 0)],       # Check if retry needed. Retry needed.
             [(None, None)],    # Request created
+            [(None, None)],    # Request sent.
             [(None, None)]     # Check if retry needed. Retry not needed.
         ]
         self.http_session.send.side_effect = ConnectionError()
         with self.assertRaises(ConnectionError):
             self.endpoint.make_request(op, request_dict())
         call_args = self.event_emitter.emit.call_args_list
-        self.assertEqual(self.event_emitter.emit.call_count, 4)
+        self.assertEqual(self.event_emitter.emit.call_count, 6)
         # Check that all of the events are as expected.
         self.assertEqual(call_args[0][0][0],
                          'request-created.ec2.DescribeInstances')
         self.assertEqual(call_args[1][0][0],
-                         'needs-retry.ec2.DescribeInstances')
+                         'before-send.ec2.DescribeInstances')
         self.assertEqual(call_args[2][0][0],
-                         'request-created.ec2.DescribeInstances')
+                         'needs-retry.ec2.DescribeInstances')
         self.assertEqual(call_args[3][0][0],
+                         'request-created.ec2.DescribeInstances')
+        self.assertEqual(call_args[4][0][0],
+                         'before-send.ec2.DescribeInstances')
+        self.assertEqual(call_args[5][0][0],
                          'needs-retry.ec2.DescribeInstances')
 
     def test_retry_attempts_added_to_response_metadata(self):
         op = Mock(name='DescribeInstances')
         op.metadata = {'protocol': 'query'}
+        op.has_event_stream_output = False
         self.event_emitter.emit.side_effect = [
             [(None, None)],    # Request created.
+            [(None, None)],    # Request sent
             [(None, 0)],       # Check if retry needed. Retry needed.
             [(None, None)],    # Request created.
+            [(None, None)],    # Request sent
             [(None, None)]     # Check if retry needed. Retry not needed.
         ]
         parser = Mock()
@@ -221,8 +200,10 @@ class TestRetryInterface(TestEndpointBase):
 
     def test_retry_attempts_is_zero_when_not_retried(self):
         op = Mock(name='DescribeInstances', metadata={'protocol': 'query'})
+        op.has_event_stream_output = False
         self.event_emitter.emit.side_effect = [
             [(None, None)],    # Request created.
+            [(None, None)],    # Request sent.
             [(None, None)],    # Check if retry needed. Retry needed.
         ]
         parser = Mock()
@@ -251,19 +232,34 @@ class TestS3ResetStreamOnRetry(TestEndpointBase):
         body = RecordStreamResets('foobar')
         op.name = 'PutObject'
         op.has_streaming_output = True
+        op.has_event_stream_output = False
         op.metadata = {'protocol': 'rest-xml'}
         request = request_dict()
         request['body'] = body
         self.event_emitter.emit.side_effect = [
             [(None, None)],   # Request created.
+            [(None, None)],   # Request sent.
             [(None, 0)],      # Check if retry needed. Needs Retry.
             [(None, None)],   # Request created.
+            [(None, None)],   # Request sent.
             [(None, 0)],      # Check if retry needed again. Needs Retry.
             [(None, None)],   # Request created.
+            [(None, None)],   # Request sent.
             [(None, None)],   # Finally emit no rety is needed.
         ]
         self.endpoint.make_request(op, request)
-        self.assertEqual(body.total_resets, 2)
+        # 2 seeks for the resets and 6 (2 per creation) for content-length
+        self.assertEqual(body.total_resets, 8)
+
+
+class TestEventStreamBody(TestEndpointBase):
+
+    def test_event_stream_body_is_streaming(self):
+        self.op.has_event_stream_output = True
+        request = request_dict()
+        self.endpoint.make_request(self.op, request)
+        sent_request = self.http_session.send.call_args[0][0]
+        self.assertTrue(sent_request.stream_output)
 
 
 class TestEndpointCreator(unittest.TestCase):
@@ -275,6 +271,7 @@ class TestEndpointCreator(unittest.TestCase):
         self.environ_patch = patch('os.environ', self.environ)
         self.environ_patch.start()
         self.creator = EndpointCreator(Mock())
+        self.mock_session = Mock(spec=URLLib3Session)
 
     def tearDown(self):
         self.environ_patch.stop()
@@ -288,96 +285,86 @@ class TestEndpointCreator(unittest.TestCase):
     def test_create_endpoint_with_default_timeout(self):
         endpoint = self.creator.create_endpoint(
             self.service_model, region_name='us-west-2',
-            endpoint_url='https://example.com')
-        self.assertEqual(endpoint.timeout, DEFAULT_TIMEOUT)
+            endpoint_url='https://example.com',
+            http_session_cls=self.mock_session)
+        session_args = self.mock_session.call_args[1]
+        self.assertEqual(session_args.get('timeout'), DEFAULT_TIMEOUT)
 
     def test_create_endpoint_with_customized_timeout(self):
         endpoint = self.creator.create_endpoint(
             self.service_model, region_name='us-west-2',
-            endpoint_url='https://example.com', timeout=123)
-        self.assertEqual(endpoint.timeout, 123)
+            endpoint_url='https://example.com', timeout=123,
+            http_session_cls=self.mock_session)
+        session_args = self.mock_session.call_args[1]
+        self.assertEqual(session_args.get('timeout'), 123)
 
     def test_get_endpoint_default_verify_ssl(self):
         endpoint = self.creator.create_endpoint(
             self.service_model, region_name='us-west-2',
-            endpoint_url='https://example.com')
-        self.assertTrue(endpoint.verify)
+            endpoint_url='https://example.com',
+            http_session_cls=self.mock_session)
+        session_args = self.mock_session.call_args[1]
+        self.assertTrue(session_args.get('verify'))
 
     def test_verify_ssl_can_be_disabled(self):
         endpoint = self.creator.create_endpoint(
             self.service_model, region_name='us-west-2',
-            endpoint_url='https://example.com', verify=False)
-        self.assertFalse(endpoint.verify)
+            endpoint_url='https://example.com', verify=False,
+            http_session_cls=self.mock_session)
+        session_args = self.mock_session.call_args[1]
+        self.assertFalse(session_args.get('verify'))
 
     def test_verify_ssl_can_specify_cert_bundle(self):
         endpoint = self.creator.create_endpoint(
             self.service_model, region_name='us-west-2',
-            endpoint_url='https://example.com', verify='/path/cacerts.pem')
-        self.assertEqual(endpoint.verify, '/path/cacerts.pem')
+            endpoint_url='https://example.com', verify='/path/cacerts.pem',
+            http_session_cls=self.mock_session)
+        session_args = self.mock_session.call_args[1]
+        self.assertEqual(session_args.get('verify'), '/path/cacerts.pem')
+
+    def test_client_cert_can_specify_path(self):
+        client_cert = '/some/path/cert'
+        endpoint = self.creator.create_endpoint(
+            self.service_model, region_name='us-west-2',
+            endpoint_url='https://example.com', client_cert=client_cert,
+            http_session_cls=self.mock_session)
+        session_args = self.mock_session.call_args[1]
+        self.assertEqual(session_args.get('client_cert'), '/some/path/cert')
 
     def test_honor_cert_bundle_env_var(self):
         self.environ['REQUESTS_CA_BUNDLE'] = '/env/cacerts.pem'
         endpoint = self.creator.create_endpoint(
             self.service_model, region_name='us-west-2',
-            endpoint_url='https://example.com')
-        self.assertEqual(endpoint.verify, '/env/cacerts.pem')
+            endpoint_url='https://example.com',
+            http_session_cls=self.mock_session)
+        session_args = self.mock_session.call_args[1]
+        self.assertEqual(session_args.get('verify'), '/env/cacerts.pem')
 
     def test_env_ignored_if_explicitly_passed(self):
         self.environ['REQUESTS_CA_BUNDLE'] = '/env/cacerts.pem'
         endpoint = self.creator.create_endpoint(
             self.service_model, region_name='us-west-2',
-            endpoint_url='https://example.com', verify='/path/cacerts.pem')
+            endpoint_url='https://example.com', verify='/path/cacerts.pem',
+            http_session_cls=self.mock_session)
+        session_args = self.mock_session.call_args[1]
         # /path/cacerts.pem wins over the value from the env var.
-        self.assertEqual(endpoint.verify, '/path/cacerts.pem')
+        self.assertEqual(session_args.get('verify'), '/path/cacerts.pem')
 
     def test_can_specify_max_pool_conns(self):
         endpoint = self.creator.create_endpoint(
             self.service_model, region_name='us-west-2',
             endpoint_url='https://example.com',
-            max_pool_connections=100
+            max_pool_connections=100,
+            http_session_cls=self.mock_session,
         )
-        self.assertEqual(endpoint.max_pool_connections, 100)
+        session_args = self.mock_session.call_args[1]
+        self.assertEqual(session_args.get('max_pool_connections'), 100)
 
-
-class TestAWSSession(unittest.TestCase):
-    def test_auth_header_preserved_from_s3_redirects(self):
-        request = AWSRequest()
-        request.url = 'https://bucket.s3.amazonaws.com/'
-        request.method = 'GET'
-        request.headers['Authorization'] = 'original auth header'
-        prepared_request = request.prepare()
-
-        fake_response = Mock()
-        fake_response.headers = {
-            'location': 'https://bucket.s3-us-west-2.amazonaws.com'}
-        fake_response.url = request.url
-        fake_response.status_code = 307
-        fake_response.is_permanent_redirect = False
-        # This line is needed to disable the cookie handling
-        # code in requests.
-        fake_response.raw._original_response = None
-
-        success_response = Mock()
-        success_response.raw._original_response = None
-        success_response.is_redirect = False
-        success_response.status_code = 200
-        session = BotocoreHTTPSession()
-        session.send = Mock(return_value=success_response)
-
-        list(session.resolve_redirects(
-            fake_response, prepared_request, stream=False))
-
-        redirected_request = session.send.call_args[0][0]
-        # The Authorization header for the newly sent request should
-        # still have our original Authorization header.
-        self.assertEqual(
-            redirected_request.headers['Authorization'],
-            'original auth header')
-
-    def test_max_pool_conns_injects_custom_adapter(self):
-        http_adapter_cls = Mock(return_value=sentinel.HTTP_ADAPTER)
-        session = BotocoreHTTPSession(max_pool_connections=20,
-                                      http_adapter_cls=http_adapter_cls)
-        http_adapter_cls.assert_called_with(pool_maxsize=20)
-        self.assertEqual(session.adapters['https://'], sentinel.HTTP_ADAPTER)
-        self.assertEqual(session.adapters['http://'], sentinel.HTTP_ADAPTER)
+    def test_socket_options(self):
+        socket_options = [(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)]
+        self.creator.create_endpoint(
+            self.service_model, region_name='us-west-2',
+            endpoint_url='https://example.com',
+            http_session_cls=self.mock_session, socket_options=socket_options)
+        session_args = self.mock_session.call_args[1]
+        self.assertEqual(session_args.get('socket_options'), socket_options)

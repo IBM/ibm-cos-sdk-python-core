@@ -23,6 +23,7 @@ import binascii
 import platform
 import select
 import datetime
+from io import BytesIO
 from subprocess import Popen, PIPE
 
 from dateutil.tz import tzlocal
@@ -34,9 +35,14 @@ if sys.version_info[:2] == (2, 6):
 else:
     import unittest
 
+from nose.tools import assert_equal
 
 import ibm_botocore.loaders
 import ibm_botocore.session
+from ibm_botocore.awsrequest import AWSResponse
+from ibm_botocore.compat import six
+from ibm_botocore.compat import urlparse
+from ibm_botocore.compat import parse_qs
 from ibm_botocore import utils
 from ibm_botocore import credentials
 
@@ -57,6 +63,19 @@ def skip_unless_has_memory_collection(cls):
     return cls
 
 
+def skip_if_windows(reason):
+    """Decorator to skip tests that should not be run on windows.
+    Example usage:
+        @skip_if_windows("Not valid")
+        def test_some_non_windows_stuff(self):
+            self.assertEqual(...)
+    """
+    def decorator(func):
+        return unittest.skipIf(
+            platform.system() not in ['Darwin', 'Linux'], reason)(func)
+    return decorator
+
+
 def random_chars(num_chars):
     """Returns random hex characters.
 
@@ -72,7 +91,7 @@ def create_session(**kwargs):
     # so that we reused the same models across tests.
     session = ibm_botocore.session.Session(**kwargs)
     session.register_component('data_loader', _LOADER)
-    session.set_config_variable('credentials_file', 'noexist/foo/ibm_botocore')
+    session.set_config_variable('credentials_file', 'noexist/foo/botocore')
     return session
 
 
@@ -318,3 +337,87 @@ class IntegerRefresher(credentials.RefreshableCredentials):
 
     def _current_datetime(self):
         return datetime.datetime.now(tzlocal())
+
+
+def _urlparse(url):
+    if isinstance(url, six.binary_type):
+        # Not really necessary, but it helps to reduce noise on Python 2.x
+        url = url.decode('utf8')
+    return urlparse(url)
+
+def assert_url_equal(url1, url2):
+    parts1 = _urlparse(url1)
+    parts2 = _urlparse(url2)
+
+    # Because the query string ordering isn't relevant, we have to parse
+    # every single part manually and then handle the query string.
+    assert_equal(parts1.scheme, parts2.scheme)
+    assert_equal(parts1.netloc, parts2.netloc)
+    assert_equal(parts1.path, parts2.path)
+    assert_equal(parts1.params, parts2.params)
+    assert_equal(parts1.fragment, parts2.fragment)
+    assert_equal(parts1.username, parts2.username)
+    assert_equal(parts1.password, parts2.password)
+    assert_equal(parts1.hostname, parts2.hostname)
+    assert_equal(parts1.port, parts2.port)
+    assert_equal(parse_qs(parts1.query), parse_qs(parts2.query))
+
+
+class HTTPStubberException(Exception):
+    pass
+
+
+class RawResponse(BytesIO):
+    # TODO: There's a few objects similar to this in various tests, let's
+    # try and consolidate to this one in a future commit.
+    def stream(self, **kwargs):
+        contents = self.read()
+        while contents:
+            yield contents
+            contents = self.read()
+
+
+class ClientHTTPStubber(object):
+    def __init__(self, client, strict=True):
+        self.reset()
+        self._strict = strict
+        self._client = client
+
+    def reset(self):
+        self.requests = []
+        self.responses = []
+
+    def add_response(self, url='https://example.com', status=200, headers=None,
+                     body=b''):
+        if headers is None:
+            headers = {}
+
+        raw = RawResponse(body)
+        response = AWSResponse(url, status, headers, raw)
+        self.responses.append(response)
+
+    def start(self):
+        self._client.meta.events.register('before-send', self)
+
+    def stop(self):
+        self._client.meta.events.unregister('before-send', self)
+
+    def __enter__(self):
+        self.start()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.stop()
+
+    def __call__(self, request, **kwargs):
+        self.requests.append(request)
+        if self.responses:
+            response = self.responses.pop(0)
+            if isinstance(response, Exception):
+                raise response
+            else:
+                return response
+        elif self._strict:
+            raise HTTPStubberException('Insufficient responses')
+        else:
+            return None

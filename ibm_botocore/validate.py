@@ -15,9 +15,11 @@ Validation Errors
 
 from ibm_botocore.compat import six
 import decimal
+import json
 from datetime import datetime
 
 from ibm_botocore.utils import parse_to_aware_datetime
+from ibm_botocore.utils import is_json_value_header
 from ibm_botocore.exceptions import ParamValidationError
 
 
@@ -73,6 +75,12 @@ def range_check(name, value, shape, error_type, errors):
         min_allowed = shape.metadata['min']
         if value < min_allowed:
             failed = True
+    elif hasattr(shape, 'serialization'):
+        # Members that can be bound to the host have an implicit min of 1
+        if shape.serialization.get('hostLabel'):
+            min_allowed = 1
+            if value < min_allowed:
+                failed = True
     if failed:
         errors.report(name, error_type, param=value,
                       valid_range=[min_allowed, max_allowed])
@@ -120,6 +128,9 @@ class ValidationErrors(object):
             return ('Invalid length for parameter %s, value: %s, valid range: '
                     '%s-%s' % (name, additional['param'],
                                min_allowed, max_allowed))
+        elif error_type == 'unable to encode to json':
+            return 'Invalid parameter %s must be json serializable: %s' \
+                % (name, additional['type_error'])
 
     def _get_name(self, name):
         if not name:
@@ -154,9 +165,25 @@ class ParamValidator(object):
         self._validate(params, shape, errors, name='')
         return errors
 
+    def _check_special_validation_cases(self, shape):
+        if is_json_value_header(shape):
+            return self._validate_jsonvalue_string
+
     def _validate(self, params, shape, errors, name):
-        getattr(self, '_validate_%s' % shape.type_name)(
-            params, shape, errors, name)
+        special_validator = self._check_special_validation_cases(shape)
+        if special_validator:
+            special_validator(params, shape, errors, name)
+        else:
+            getattr(self, '_validate_%s' % shape.type_name)(
+                params, shape, errors, name)
+
+    def _validate_jsonvalue_string(self, params, shape, errors, name):
+        # Check to see if a value marked as a jsonvalue can be dumped to
+        # a json string.
+        try:
+            json.dumps(params)
+        except (ValueError, TypeError) as e:
+            errors.report(name, 'unable to encode to json', type_error=e)
 
     @type_check(valid_types=(dict,))
     def _validate_structure(self, params, shape, errors, name):

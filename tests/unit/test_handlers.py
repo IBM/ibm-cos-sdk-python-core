@@ -17,9 +17,11 @@ import base64
 import mock
 import copy
 import os
+import json
 
 import ibm_botocore
 import ibm_botocore.session
+from ibm_botocore.compat import OrderedDict
 from ibm_botocore.exceptions import ParamValidationError, MD5UnavailableError
 from ibm_botocore.exceptions import AliasConflictParameterError
 from ibm_botocore.awsrequest import AWSRequest
@@ -29,7 +31,7 @@ from ibm_botocore.docs.bcdoc.restdoc import DocumentStructure
 from ibm_botocore.docs.params import RequestParamsDocumenter
 from ibm_botocore.docs.example import RequestExampleDocumenter
 from ibm_botocore.hooks import HierarchicalEmitter
-from ibm_botocore.model import OperationModel, ServiceModel
+from ibm_botocore.model import OperationModel, ServiceModel, ServiceId
 from ibm_botocore.model import DenormalizedStructureBuilder
 from ibm_botocore.signers import RequestSigner
 from ibm_botocore.credentials import Credentials
@@ -130,6 +132,112 @@ class TestHandlers(BaseSessionTest):
         self.assertEqual(params['CopySource'],
                          '/foo/bar?versionId=123')
 
+
+    def test_use_event_operation_name(self):
+        operation_model = mock.Mock()
+        operation_model.name = 'FakeOperation'
+        request_signer = mock.Mock()
+        request_signer._region_name = 'us-east-1'
+        request_dict = {}
+        params = {'SourceRegion': 'us-west-2'}
+        request_dict['body'] = params
+        request_dict['url'] = 'https://myservice.us-east-1.amazonaws.com'
+        request_dict['method'] = 'POST'
+        request_dict['headers'] = {}
+        request_dict['context'] = {}
+
+        handlers.inject_presigned_url_ec2(
+            request_dict, request_signer, operation_model)
+
+        call_args = request_signer.generate_presigned_url.call_args
+        operation_name = call_args[1].get('operation_name')
+        self.assertEqual(operation_name, 'FakeOperation')
+
+    def test_destination_region_always_changed(self):
+        # If the user provides a destination region, we will still
+        # override the DesinationRegion with the region_name from
+        # the endpoint object.
+        actual_region = 'us-west-1'
+        operation_model = mock.Mock()
+        operation_model.name = 'CopySnapshot'
+
+        credentials = Credentials('key', 'secret')
+        event_emitter = HierarchicalEmitter()
+        request_signer = RequestSigner(
+            ServiceId('ec2'), actual_region, 'ec2', 'v4', credentials,
+            event_emitter)
+        request_dict = {}
+        params = {
+            'SourceRegion': 'us-west-2',
+            'DestinationRegion': 'us-east-1'}
+        request_dict['body'] = params
+        request_dict['url'] = 'https://ec2.us-west-1.amazonaws.com'
+        request_dict['method'] = 'POST'
+        request_dict['headers'] = {}
+        request_dict['context'] = {}
+
+        # The user provides us-east-1, but we will override this to
+        # endpoint.region_name, of 'us-west-1' in this case.
+        handlers.inject_presigned_url_ec2(
+            request_dict, request_signer, operation_model)
+
+        self.assertIn('https://ec2.us-west-2.amazonaws.com?',
+                      params['PresignedUrl'])
+
+        # Always use the DestinationRegion from the endpoint, regardless of
+        # whatever value the user provides.
+        self.assertEqual(params['DestinationRegion'], actual_region)
+
+    def test_source_region_removed(self):
+        operation_model = mock.Mock()
+        operation_model.name = 'CopyDBSnapshot'
+        credentials = Credentials('key', 'secret')
+        event_emitter = HierarchicalEmitter()
+        request_signer = RequestSigner(
+            ServiceId('rds'), 'us-east-1', 'rds', 'v4', credentials,
+            event_emitter
+        )
+        request_dict = {}
+        params = {'SourceRegion': 'us-west-2'}
+        request_dict['body'] = params
+        request_dict['url'] = 'https://rds.us-east-1.amazonaws.com'
+        request_dict['method'] = 'POST'
+        request_dict['headers'] = {}
+        request_dict['context'] = {}
+
+        handlers.inject_presigned_url_rds(
+            params=request_dict,
+            request_signer=request_signer,
+            model=operation_model
+        )
+
+        self.assertNotIn('SourceRegion', params)
+
+    def test_dest_region_removed(self):
+        operation_model = mock.Mock()
+        operation_model.name = 'CopyDBSnapshot'
+        credentials = Credentials('key', 'secret')
+        event_emitter = HierarchicalEmitter()
+        request_signer = RequestSigner(
+            ServiceId('rds'), 'us-east-1', 'rds', 'v4', credentials,
+            event_emitter)
+        request_dict = {}
+        params = {'SourceRegion': 'us-west-2'}
+        request_dict['body'] = params
+        request_dict['url'] = 'https://rds.us-east-1.amazonaws.com'
+        request_dict['method'] = 'POST'
+        request_dict['headers'] = {}
+        request_dict['context'] = {}
+
+        handlers.inject_presigned_url_rds(
+            params=request_dict,
+            request_signer=request_signer,
+            model=operation_model
+        )
+
+        self.assertNotIn('DestinationRegion', params)
+
+
     def test_500_status_code_set_for_200_response(self):
         http_response = mock.Mock()
         http_response.status_code = 200
@@ -156,6 +264,79 @@ class TestHandlers(BaseSessionTest):
         # A 500 response can raise an exception, which means the response
         # object is None.  We need to handle this case.
         handlers.check_for_200_error(None)
+
+    def test_route53_resource_id(self):
+        event = 'before-parameter-build.route53.GetHostedZone'
+        params = {'Id': '/hostedzone/ABC123',
+                  'HostedZoneId': '/hostedzone/ABC123',
+                  'ResourceId': '/hostedzone/DEF456',
+                  'DelegationSetId': '/hostedzone/GHI789',
+                  'Other': '/hostedzone/foo'}
+        operation_def = {
+            'name': 'GetHostedZone',
+            'input': {
+                'shape': 'GetHostedZoneInput'
+            }
+        }
+        service_def = {
+            'metadata': {},
+            'shapes': {
+                'GetHostedZoneInput': {
+                    'type': 'structure',
+                    'members': {
+                        'Id': {
+                            'shape': 'ResourceId'
+                        },
+                        'HostedZoneId': {
+                            'shape': 'ResourceId'
+                        },
+                        'ResourceId': {
+                            'shape': 'ResourceId'
+                        },
+                        'DelegationSetId': {
+                            'shape': 'DelegationSetId'
+                        },
+                        'Other': {
+                            'shape': 'String'
+                        }
+                    }
+                },
+                'ResourceId': {
+                    'type': 'string'
+                },
+                'DelegationSetId': {
+                    'type': 'string'
+                },
+                'String': {
+                    'type': 'string'
+                }
+            }
+        }
+        model = OperationModel(operation_def, ServiceModel(service_def))
+        self.session.emit(event, params=params, model=model)
+
+        self.assertEqual(params['Id'], 'ABC123')
+        self.assertEqual(params['HostedZoneId'], 'ABC123')
+        self.assertEqual(params['ResourceId'], 'DEF456')
+        self.assertEqual(params['DelegationSetId'], 'GHI789')
+
+        # This one should have been left alone
+        self.assertEqual(params['Other'], '/hostedzone/foo')
+
+    def test_route53_resource_id_missing_input_shape(self):
+        event = 'before-parameter-build.route53.GetHostedZone'
+        params = {'HostedZoneId': '/hostedzone/ABC123'}
+        operation_def = {
+            'name': 'GetHostedZone'
+        }
+        service_def = {
+            'metadata': {},
+            'shapes': {}
+        }
+        model = OperationModel(operation_def, ServiceModel(service_def))
+        self.session.emit(event, params=params, model=model)
+
+        self.assertEqual(params['HostedZoneId'], '/hostedzone/ABC123')
 
     def test_run_instances_userdata(self):
         user_data = 'This is a test'
@@ -184,7 +365,7 @@ class TestHandlers(BaseSessionTest):
                   'UserData': b64_user_data}
         self.assertEqual(params, result)
 
-    def test_register_retry_for_handlers_with_no_endpoint_prefix(self):
+    def test_register_retry_for_handlers_with_no_metadata(self):
         no_endpoint_prefix = {'metadata': {}}
         session = mock.Mock()
         handlers.register_retries_for_service(service_data=no_endpoint_prefix,
@@ -194,7 +375,10 @@ class TestHandlers(BaseSessionTest):
 
     def test_register_retry_handlers(self):
         service_data = {
-            'metadata': {'endpointPrefix': 'foo'},
+            'metadata': {
+                'endpointPrefix': 'foo',
+                'serviceId': 'foo',
+            },
         }
         session = mock.Mock()
         loader = mock.Mock()
@@ -224,6 +408,24 @@ class TestHandlers(BaseSessionTest):
         # The handler should not have changed the response because it's
         # an error response.
         self.assertEqual(original, handler_input)
+
+    def test_does_decode_template_body_in_order(self):
+        expected_ordering = OrderedDict([
+            ('TemplateVersion', 1.0),
+            ('APropertyOfSomeKind', 'a value'),
+            ('list', [1, 2, 3]),
+            ('nested', OrderedDict([('key', 'value'),
+                                    ('foo', 'bar')]))
+        ])
+        template_string = json.dumps(expected_ordering)
+        parsed_response = {'TemplateBody': template_string}
+
+        handlers.json_decode_template_body(parsed=parsed_response)
+        result = parsed_response['TemplateBody']
+
+        self.assertTrue(isinstance(result, OrderedDict))
+        for element, expected_element in zip(result, expected_ordering):
+            self.assertEqual(element, expected_element)
 
     def test_decode_json_policy(self):
         parsed = {
@@ -275,6 +477,15 @@ class TestHandlers(BaseSessionTest):
         handlers.inject_account_id(params)
         self.assertEqual(params['accountId'], 'foo')
 
+    def test_glacier_version_header_added(self):
+        request_dict = {
+            'headers': {}
+        }
+        model = ServiceModel({'metadata': {'apiVersion': '2012-01-01'}})
+        handlers.add_glacier_version(model, request_dict)
+        self.assertEqual(request_dict['headers']['x-amz-glacier-version'],
+                         '2012-01-01')
+
     def test_application_json_header_added(self):
         request_dict = {
             'headers': {}
@@ -289,6 +500,58 @@ class TestHandlers(BaseSessionTest):
         handlers.add_accept_header(None, request_dict)
         self.assertEqual(request_dict['headers']['Accept'], 'application/yaml')
 
+    def test_glacier_checksums_added(self):
+        request_dict = {
+            'headers': {},
+            'body': six.BytesIO(b'hello world'),
+        }
+        handlers.add_glacier_checksums(request_dict)
+        self.assertIn('x-amz-content-sha256', request_dict['headers'])
+        self.assertIn('x-amz-sha256-tree-hash', request_dict['headers'])
+        self.assertEqual(
+            request_dict['headers']['x-amz-content-sha256'],
+            'b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9')
+        self.assertEqual(
+            request_dict['headers']['x-amz-sha256-tree-hash'],
+            'b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9')
+        # And verify that the body can still be read.
+        self.assertEqual(request_dict['body'].read(), b'hello world')
+
+    def test_tree_hash_added_only_if_not_exists(self):
+        request_dict = {
+            'headers': {
+                'x-amz-sha256-tree-hash': 'pre-exists',
+            },
+            'body': six.BytesIO(b'hello world'),
+        }
+        handlers.add_glacier_checksums(request_dict)
+        self.assertEqual(request_dict['headers']['x-amz-sha256-tree-hash'],
+                         'pre-exists')
+
+    def test_checksum_added_only_if_not_exists(self):
+        request_dict = {
+            'headers': {
+                'x-amz-content-sha256': 'pre-exists',
+            },
+            'body': six.BytesIO(b'hello world'),
+        }
+        handlers.add_glacier_checksums(request_dict)
+        self.assertEqual(request_dict['headers']['x-amz-content-sha256'],
+                         'pre-exists')
+
+    def test_glacier_checksums_support_raw_bytes(self):
+        request_dict = {
+            'headers': {},
+            'body': b'hello world',
+        }
+        handlers.add_glacier_checksums(request_dict)
+        self.assertEqual(
+            request_dict['headers']['x-amz-content-sha256'],
+            'b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9')
+        self.assertEqual(
+            request_dict['headers']['x-amz-sha256-tree-hash'],
+            'b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9')
+
     def test_switch_host_with_param(self):
         request = AWSRequest()
         url = 'https://machinelearning.us-east-1.amazonaws.com'
@@ -298,8 +561,6 @@ class TestHandlers(BaseSessionTest):
         request.url = url
         handlers.switch_host_with_param(request, 'PredictEndpoint')
         self.assertEqual(request.url, new_endpoint)
-
-
 
     def test_invalid_char_in_bucket_raises_exception(self):
         params = {
@@ -428,12 +689,120 @@ class TestHandlers(BaseSessionTest):
         handlers.decode_list_object(parsed, context=context)
         self.assertEqual(parsed['Delimiter'], u'\xe7\xf6s% asd\x08 c')
 
+    def test_decode_list_objects_v2(self):
+        parsed = {
+            'Contents': [{'Key': "%C3%A7%C3%B6s%25asd%08"}],
+            'EncodingType': 'url',
+        }
+        context = {'encoding_type_auto_set': True}
+        handlers.decode_list_object_v2(parsed, context=context)
+        self.assertEqual(parsed['Contents'][0]['Key'], u'\xe7\xf6s%asd\x08')
+
+    def test_decode_list_objects_v2_does_not_decode_without_context(self):
+        parsed = {
+            'Contents': [{'Key': "%C3%A7%C3%B6s%25asd"}],
+            'EncodingType': 'url',
+        }
+        handlers.decode_list_object_v2(parsed, context={})
+        self.assertEqual(parsed['Contents'][0]['Key'], u'%C3%A7%C3%B6s%25asd')
+
+    def test_decode_list_objects_v2_with_delimiter(self):
+        parsed = {
+            'Delimiter': "%C3%A7%C3%B6s%25%20asd%08+c",
+            'EncodingType': 'url',
+        }
+        context = {'encoding_type_auto_set': True}
+        handlers.decode_list_object_v2(parsed, context=context)
+        self.assertEqual(parsed['Delimiter'], u'\xe7\xf6s% asd\x08 c')
+
+    def test_decode_list_objects_v2_with_prefix(self):
+        parsed = {
+            'Prefix': "%C3%A7%C3%B6s%25%20asd%08+c",
+            'EncodingType': 'url',
+        }
+        context = {'encoding_type_auto_set': True}
+        handlers.decode_list_object_v2(parsed, context=context)
+        self.assertEqual(parsed['Prefix'], u'\xe7\xf6s% asd\x08 c')
+
+    def test_decode_list_objects_v2_does_not_decode_continuationtoken(self):
+        parsed = {
+            'ContinuationToken': "%C3%A7%C3%B6s%25%20asd%08+c",
+            'EncodingType': 'url',
+        }
+        context = {'encoding_type_auto_set': True}
+        handlers.decode_list_object_v2(parsed, context=context)
+        self.assertEqual(
+            parsed['ContinuationToken'], u"%C3%A7%C3%B6s%25%20asd%08+c")
+
+    def test_decode_list_objects_v2_with_startafter(self):
+        parsed = {
+            'StartAfter': "%C3%A7%C3%B6s%25%20asd%08+c",
+            'EncodingType': 'url',
+        }
+        context = {'encoding_type_auto_set': True}
+        handlers.decode_list_object_v2(parsed, context=context)
+        self.assertEqual(parsed['StartAfter'], u'\xe7\xf6s% asd\x08 c')
+
+    def test_decode_list_objects_v2_with_common_prefixes(self):
+        parsed = {
+            'CommonPrefixes': [{'Prefix': "%C3%A7%C3%B6s%25%20asd%08+c"}],
+            'EncodingType': 'url',
+        }
+        context = {'encoding_type_auto_set': True}
+        handlers.decode_list_object_v2(parsed, context=context)
+        self.assertEqual(parsed['CommonPrefixes'][0]['Prefix'],
+                         u'\xe7\xf6s% asd\x08 c')
+
     def test_get_bucket_location_optional(self):
         # This handler should no-op if another hook (i.e. stubber) has already
         # filled in response
         response = {"LocationConstraint": "eu-west-1"}
         handlers.parse_get_bucket_location(response, None),
         self.assertEqual(response["LocationConstraint"], "eu-west-1")
+
+    def test_set_operation_specific_signer_no_auth_type(self):
+        signing_name = 'myservice'
+        context = {'auth_type': None}
+        response = handlers.set_operation_specific_signer(
+            context=context, signing_name=signing_name)
+        self.assertIsNone(response)
+
+    def test_set_operation_specific_signer_unsigned(self):
+        signing_name = 'myservice'
+        context = {'auth_type': 'none'}
+        response = handlers.set_operation_specific_signer(
+            context=context, signing_name=signing_name)
+        self.assertEqual(response, ibm_botocore.UNSIGNED)
+
+    def test_set_operation_specific_signer_v4(self):
+        signing_name = 'myservice'
+        context = {'auth_type': 'v4'}
+        response = handlers.set_operation_specific_signer(
+            context=context, signing_name=signing_name)
+        self.assertEqual(response, 'v4')
+
+    def test_set_operation_specific_signer_s3v4(self):
+        signing_name = 's3'
+        context = {'auth_type': 'v4'}
+        response = handlers.set_operation_specific_signer(
+            context=context, signing_name=signing_name)
+        self.assertEqual(response, 's3v4')
+
+    def test_set_operation_specific_signer_v4_unsinged_payload(self):
+        signing_name = 'myservice'
+        context = {'auth_type': 'v4-unsigned-body'}
+        response = handlers.set_operation_specific_signer(
+            context=context, signing_name=signing_name)
+        self.assertEqual(response, 'v4')
+        self.assertEqual(context.get('payload_signing_enabled'), False)
+
+    def test_set_operation_specific_signer_s3v4_unsigned_payload(self):
+        signing_name = 's3'
+        context = {'auth_type': 'v4-unsigned-body'}
+        response = handlers.set_operation_specific_signer(
+            context=context, signing_name=signing_name)
+        self.assertEqual(response, 's3v4')
+        self.assertEqual(context.get('payload_signing_enabled'), False)
 
 
 class TestConvertStringBodyToFileLikeObject(BaseSessionTest):
@@ -586,7 +955,7 @@ class TestAddMD5(BaseMD5Test):
     def test_adds_md5_when_v4(self):
         credentials = Credentials('key', 'secret')
         request_signer = RequestSigner(
-            's3', 'us-east-1', 's3', 'v4', credentials, mock.Mock())
+            ServiceId('s3'), 'us-east-1', 's3', 'v4', credentials, mock.Mock())
         request_dict = {'body': b'bar',
                         'url': 'https://s3.us-east-1.amazonaws.com',
                         'method': 'PUT',
@@ -599,7 +968,8 @@ class TestAddMD5(BaseMD5Test):
     def test_adds_md5_when_s3v4(self):
         credentials = Credentials('key', 'secret')
         request_signer = RequestSigner(
-            's3', 'us-east-1', 's3', 's3v4', credentials, mock.Mock())
+            ServiceId('s3'), 'us-east-1', 's3', 's3v4', credentials,
+            mock.Mock())
         request_dict = {'body': b'bar',
                         'url': 'https://s3.us-east-1.amazonaws.com',
                         'method': 'PUT',
@@ -628,7 +998,7 @@ class TestAddMD5(BaseMD5Test):
     def test_add_md5_raises_error_when_md5_unavailable(self):
         credentials = Credentials('key', 'secret')
         request_signer = RequestSigner(
-            's3', 'us-east-1', 's3', 's3', credentials, mock.Mock())
+            ServiceId('s3'), 'us-east-1', 's3', 's3', credentials, mock.Mock())
         request_dict = {'body': b'bar',
                         'url': 'https://s3.us-east-1.amazonaws.com',
                         'method': 'PUT',
@@ -642,7 +1012,7 @@ class TestAddMD5(BaseMD5Test):
     def test_adds_md5_when_s3v2(self):
         credentials = Credentials('key', 'secret')
         request_signer = RequestSigner(
-            's3', 'us-east-1', 's3', 's3', credentials, mock.Mock())
+            ServiceId('s3'), 'us-east-1', 's3', 's3', credentials, mock.Mock())
         request_dict = {'body': b'bar',
                         'url': 'https://s3.us-east-1.amazonaws.com',
                         'method': 'PUT',
@@ -766,3 +1136,46 @@ class TestParameterAlias(unittest.TestCase):
         contents = self.sample_section.flush_structure().decode('utf-8')
         self.assertIn(self.alias_name + '=',  contents)
         self.assertNotIn(self.original_name + '=', contents)
+
+
+class TestCommandAlias(unittest.TestCase):
+    def test_command_alias(self):
+        alias = handlers.ClientMethodAlias('foo')
+        client = mock.Mock()
+        client.foo.return_value = 'bar'
+
+        response = alias(client=client)()
+        self.assertEqual(response, 'bar')
+
+
+class TestPrependToHost(unittest.TestCase):
+    def setUp(self):
+        self.hoister = handlers.HeaderToHostHoister('test-header')
+
+    def _prepend_to_host(self, url, prepend_string):
+        params = {
+            'headers': {
+                'test-header': prepend_string,
+            },
+            'url': url,
+        }
+        self.hoister.hoist(params=params)
+        return params['url']
+
+    def test_does_prepend_to_host(self):
+        prepended = self._prepend_to_host('https://bar.example.com/', 'foo')
+        self.assertEqual(prepended, 'https://foo.bar.example.com/')
+
+    def test_does_prepend_to_host_with_http(self):
+        prepended = self._prepend_to_host('http://bar.example.com/', 'foo')
+        self.assertEqual(prepended, 'http://foo.bar.example.com/')
+
+    def test_does_prepend_to_host_with_path(self):
+        prepended = self._prepend_to_host(
+            'https://bar.example.com/path', 'foo')
+        self.assertEqual(prepended, 'https://foo.bar.example.com/path')
+
+    def test_does_prepend_to_host_with_more_components(self):
+        prepended = self._prepend_to_host(
+            'https://bar.baz.example.com/path', 'foo')
+        self.assertEqual(prepended, 'https://foo.bar.baz.example.com/path')

@@ -11,17 +11,6 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-
-# Copyright 2017 IBM Corp. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
-# the License. You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
-# an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations under the License.
 import base64
 import datetime
 from hashlib import sha256
@@ -44,6 +33,7 @@ from ibm_botocore.compat import encodebytes
 from ibm_botocore.compat import six
 from ibm_botocore.compat import json
 from ibm_botocore.compat import MD5_AVAILABLE
+from ibm_botocore.compat import ensure_unicode
 
 logger = logging.getLogger(__name__)
 
@@ -61,6 +51,7 @@ SIGNED_HEADERS_BLACKLIST = [
     'user-agent',
     'x-amzn-trace-id',
 ]
+UNSIGNED_PAYLOAD = 'UNSIGNED-PAYLOAD'
 
 
 class BaseSigner(object):
@@ -68,31 +59,6 @@ class BaseSigner(object):
 
     def add_auth(self, request):
         raise NotImplementedError("add_auth")
-
-
-class OAuth2(BaseSigner):
-    def __init__(self, credentials):
-        self.credentials = credentials
-
-    def add_auth(self, request):
-        # The auth handler is the last thing called in the
-        # preparation phase of a prepared request.
-        # Because of this we have to parse the query params
-        # from the request body so we can update them with
-        # the sigv2 auth params.
-        self._inject_token_to_request(request)
-        return request
-
-    def _inject_token_to_request(self, request):
-        if 'Authorization' in request.headers:
-            # We have to do this because request.headers is not
-            # normal dictionary.  It has the (unintuitive) behavior
-            # of aggregating repeated setattr calls for the same
-            # key value.  For example:
-            # headers['foo'] = 'a'; headers['foo'] = 'b'
-            # list(headers) will print ['foo', 'foo'].
-            del request.headers['Authorization']
-        request.headers['Authorization'] = ("Bearer %s" % self.credentials.token)
 
 
 class SigV2Auth(BaseSigner):
@@ -144,7 +110,7 @@ class SigV2Auth(BaseSigner):
             params = request.data
         else:
             # GET
-            params = request.param
+            params = request.params
         params['AWSAccessKeyId'] = self.credentials.access_key
         params['SignatureVersion'] = '2'
         params['SignatureMethod'] = 'HmacSHA256'
@@ -209,14 +175,30 @@ class SigV4Auth(BaseSigner):
         in the StringToSign.
         """
         header_map = HTTPHeaders()
-        split = urlsplit(request.url)
         for name, value in request.headers.items():
             lname = name.lower()
             if lname not in SIGNED_HEADERS_BLACKLIST:
                 header_map[lname] = value
         if 'host' not in header_map:
-            header_map['host'] = split.netloc
+            # Ensure we sign the lowercased version of the host, as that
+            # is what will ultimately be sent on the wire.
+            # TODO: We should set the host ourselves, instead of relying on our
+            # HTTP client to set it for us.
+            header_map['host'] = self._canonical_host(request.url).lower()
         return header_map
+
+    def _canonical_host(self, url):
+        url_parts = urlsplit(url)
+        default_ports = {
+            'http': 80,
+            'https': 443
+        }
+        if any(url_parts.scheme == scheme and url_parts.port == port
+               for scheme, port in default_ports.items()):
+            # No need to include the port if it's the default port.
+            return url_parts.hostname
+        # Strip out auth if it's present in the netloc.
+        return url_parts.netloc.rsplit('@', 1)[-1]
 
     def canonical_query_string(self, request):
         # The query string can come from two parts.  One is the
@@ -263,10 +245,18 @@ class SigV4Auth(BaseSigner):
         headers = []
         sorted_header_names = sorted(set(headers_to_sign))
         for key in sorted_header_names:
-            value = ','.join(v.strip() for v in
+            value = ','.join(self._header_value(v) for v in
                              sorted(headers_to_sign.get_all(key)))
-            headers.append('%s:%s' % (key, value))
+            headers.append('%s:%s' % (key, ensure_unicode(value)))
         return '\n'.join(headers)
+
+    def _header_value(self, value):
+        # From the sigv4 docs:
+        # Lowercase(HeaderName) + ':' + Trimall(HeaderValue)
+        #
+        # The Trimall function removes excess white space before and after
+        # values, and converts sequential spaces to a single space.
+        return ' '.join(value.split())
 
     def signed_headers(self, headers_to_sign):
         l = ['%s' % n.lower().strip() for n in set(headers_to_sign)]
@@ -274,22 +264,37 @@ class SigV4Auth(BaseSigner):
         return ';'.join(l)
 
     def payload(self, request):
-        if request.body and hasattr(request.body, 'seek'):
-            position = request.body.tell()
-            read_chunksize = functools.partial(request.body.read,
+        if not self._should_sha256_sign_payload(request):
+            # When payload signing is disabled, we use this static string in
+            # place of the payload checksum.
+            return UNSIGNED_PAYLOAD
+        request_body = request.body
+        if request_body and hasattr(request_body, 'seek'):
+            position = request_body.tell()
+            read_chunksize = functools.partial(request_body.read,
                                                PAYLOAD_BUFFER)
             checksum = sha256()
             for chunk in iter(read_chunksize, b''):
                 checksum.update(chunk)
             hex_checksum = checksum.hexdigest()
-            request.body.seek(position)
+            request_body.seek(position)
             return hex_checksum
-        elif request.body:
+        elif request_body:
             # The request serialization has ensured that
             # request.body is a bytes() type.
-            return sha256(request.body).hexdigest()
+            return sha256(request_body).hexdigest()
         else:
             return EMPTY_SHA256_HASH
+
+    def _should_sha256_sign_payload(self, request):
+        # Payloads will always be signed over insecure connections.
+        if not request.url.startswith('https'):
+            return True
+
+        # Certain operations may have payload signing disabled by default.
+        # Since we don't have access to the operation model, we pass in this
+        # bit of metadata through the request context.
+        return request.context.get('payload_signing_enabled', True)
 
     def canonical_request(self, request):
         cr = [request.method.upper()]
@@ -382,6 +387,11 @@ class SigV4Auth(BaseSigner):
                 del request.headers['X-Amz-Security-Token']
             request.headers['X-Amz-Security-Token'] = self.credentials.token
 
+        if not request.context.get('payload_signing_enabled', True):
+            if 'X-Amz-Content-SHA256' in request.headers:
+                del request.headers['X-Amz-Content-SHA256']
+            request.headers['X-Amz-Content-SHA256'] = UNSIGNED_PAYLOAD
+
     def _set_necessary_date_headers(self, request):
         # The spec allows for either the Date _or_ the X-Amz-Date value to be
         # used so we check both.  If there's a Date header, we use the date
@@ -419,10 +429,7 @@ class S3SigV4Auth(SigV4Auth):
         if 'X-Amz-Content-SHA256' in request.headers:
             del request.headers['X-Amz-Content-SHA256']
 
-        if self._should_sha256_sign_payload(request):
-            request.headers['X-Amz-Content-SHA256'] = self.payload(request)
-        else:
-            request.headers['X-Amz-Content-SHA256'] = 'UNSIGNED-PAYLOAD'
+        request.headers['X-Amz-Content-SHA256'] = self.payload(request)
 
     def _should_sha256_sign_payload(self, request):
         # S3 allows optional body signing, so to minimize the performance
@@ -436,15 +443,27 @@ class S3SigV4Auth(SigV4Auth):
         if s3_config is None:
             s3_config = {}
 
+        # The explicit configuration takes precedence over any implicit
+        # configuration.
         sign_payload = s3_config.get('payload_signing_enabled', None)
         if sign_payload is not None:
             return sign_payload
 
-        if 'Content-MD5' in request.headers and 'https' in request.url and \
-                request.context.get('has_streaming_input', False):
+        # We require that both content-md5 be present and https be enabled
+        # to implicitly disable body signing. The combination of TLS and
+        # content-md5 is sufficiently secure and durable for us to be
+        # confident in the request without body signing.
+        if not request.url.startswith('https') or \
+                'Content-MD5' not in request.headers:
+            return True
+
+        # If the input is streaming we disable body signing by default.
+        if request.context.get('has_streaming_input', False):
             return False
 
-        return True
+        # If the S3-specific checks had no results, delegate to the generic
+        # checks.
+        return super(S3SigV4Auth, self)._should_sha256_sign_payload(request)
 
     def _normalize_url_path(self, path):
         # For S3, we do not normalize the path.
@@ -461,10 +480,20 @@ class SigV4QueryAuth(SigV4Auth):
         self._expires = expires
 
     def _modify_request_before_signing(self, request):
+        # We automatically set this header, so if it's the auto-set value we
+        # want to get rid of it since it doesn't make sense for presigned urls.
+        content_type = request.headers.get('content-type')
+        blacklisted_content_type = (
+            'application/x-www-form-urlencoded; charset=utf-8'
+        )
+        if content_type == blacklisted_content_type:
+            del request.headers['content-type']
+
         # Note that we're not including X-Amz-Signature.
         # From the docs: "The Canonical Query String must include all the query
         # parameters from the preceding table except for X-Amz-Signature.
         signed_headers = self.signed_headers(self.headers_to_sign(request))
+
         auth_params = {
             'X-Amz-Algorithm': 'AWS4-HMAC-SHA256',
             'X-Amz-Credential': self.scope(request),
@@ -550,7 +579,7 @@ class S3SigV4QueryAuth(SigV4QueryAuth):
         # "You don't include a payload hash in the Canonical Request, because
         # when you create a presigned URL, you don't know anything about the
         # payload. Instead, you use a constant string "UNSIGNED-PAYLOAD".
-        return "UNSIGNED-PAYLOAD"
+        return UNSIGNED_PAYLOAD
 
 
 class S3SigV4PostAuth(SigV4Auth):
@@ -612,7 +641,7 @@ class HmacV1Auth(BaseSigner):
                      'response-content-encoding', 'delete', 'lifecycle',
                      'tagging', 'restore', 'storageClass', 'notification',
                      'replication', 'requestPayment', 'analytics', 'metrics',
-                     'inventory']
+                     'inventory', 'select', 'select-type']
 
     def __init__(self, credentials, service_name=None, region_name=None):
         self.credentials = credentials
@@ -824,6 +853,29 @@ class HmacV1PostAuth(HmacV1Auth):
         request.context['s3-presign-post-fields'] = fields
         request.context['s3-presign-post-policy'] = policy
 
+class OAuth2(BaseSigner):
+    def __init__(self, credentials):
+        self.credentials = credentials
+
+    def add_auth(self, request):
+        # The auth handler is the last thing called in the
+        # preparation phase of a prepared request.
+        # Because of this we have to parse the query params
+        # from the request body so we can update them with
+        # the sigv2 auth params.
+        self._inject_token_to_request(request)
+        return request
+
+    def _inject_token_to_request(self, request):
+        if 'Authorization' in request.headers:
+            # We have to do this because request.headers is not
+            # normal dictionary.  It has the (unintuitive) behavior
+            # of aggregating repeated setattr calls for the same
+            # key value.  For example:
+            # headers['foo'] = 'a'; headers['foo'] = 'b'
+            # list(headers) will print ['foo', 'foo'].
+            del request.headers['Authorization']
+        request.headers['Authorization'] = ("Bearer %s" % self.credentials.token)
 
 # Defined at the bottom instead of the top of the module because the Auth
 # classes weren't defined yet.

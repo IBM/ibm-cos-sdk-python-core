@@ -17,7 +17,6 @@ import datetime
 import time
 import base64
 import json
-import tempfile
 
 import mock
 
@@ -25,7 +24,6 @@ import ibm_botocore.auth
 import ibm_botocore.credentials
 from ibm_botocore.compat import HTTPHeaders, urlsplit, parse_qs, six
 from ibm_botocore.awsrequest import AWSRequest
-from ibm_botocore.vendored.requests.models import Request
 
 
 class BaseTestWithFixedDate(unittest.TestCase):
@@ -48,7 +46,7 @@ class TestHMACV1(unittest.TestCase):
         access_key = '44CF9590006BF252F707'
         secret_key = 'OtxrzxIsfpFjA7SwPzILwy8Bw21TLhquhboDYROV'
         self.credentials = ibm_botocore.credentials.Credentials(access_key,
-                                                                secret_key)
+                                                            secret_key)
         self.hmacv1 = ibm_botocore.auth.HmacV1Auth(self.credentials, None, None)
         self.date_mock = mock.patch('ibm_botocore.auth.formatdate')
         self.formatdate = self.date_mock.start()
@@ -175,7 +173,7 @@ class TestSigV2(unittest.TestCase):
         access_key = 'foo'
         secret_key = 'bar'
         self.credentials = ibm_botocore.credentials.Credentials(access_key,
-                                                                secret_key)
+                                                            secret_key)
         self.signer = ibm_botocore.auth.SigV2Auth(self.credentials)
         self.time_patcher = mock.patch.object(
             ibm_botocore.auth.time, 'gmtime',
@@ -199,7 +197,7 @@ class TestSigV2(unittest.TestCase):
                      u'VCtWuwaOL0yMffAT8W4y0AFW3W4KUykBqah9S40rB+Q='))
 
     def test_fields(self):
-        request = Request()
+        request = AWSRequest()
         request.url = '/'
         request.method = 'POST'
         request.data = {'Foo': u'\u2713'}
@@ -214,7 +212,7 @@ class TestSigV2(unittest.TestCase):
 
     def test_resign(self):
         # Make sure that resigning after e.g. retries works
-        request = Request()
+        request = AWSRequest()
         request.url = '/'
         request.method = 'POST'
         params = {
@@ -226,6 +224,20 @@ class TestSigV2(unittest.TestCase):
             result, ('Foo=%E2%9C%93',
                      u'VCtWuwaOL0yMffAT8W4y0AFW3W4KUykBqah9S40rB+Q='))
 
+    def test_get(self):
+        request = AWSRequest()
+        request.url = '/'
+        request.method = 'GET'
+        request.params = {'Foo': u'\u2713'}
+        self.signer.add_auth(request)
+        self.assertEqual(request.params['AWSAccessKeyId'], 'foo')
+        self.assertEqual(request.params['Foo'], u'\u2713')
+        self.assertEqual(request.params['Timestamp'], '2014-06-20T08:40:23Z')
+        self.assertEqual(request.params['Signature'],
+                         u'Un97klqZCONP65bA1+Iv4H3AcB2I40I4DBvw5ZERFPw=')
+        self.assertEqual(request.params['SignatureMethod'], 'HmacSHA256')
+        self.assertEqual(request.params['SignatureVersion'], '2')
+
 
 class TestSigV3(unittest.TestCase):
 
@@ -235,7 +247,7 @@ class TestSigV3(unittest.TestCase):
         self.access_key = 'access_key'
         self.secret_key = 'secret_key'
         self.credentials = ibm_botocore.credentials.Credentials(self.access_key,
-                                                                self.secret_key)
+                                                            self.secret_key)
         self.auth = ibm_botocore.auth.SigV3Auth(self.credentials)
         self.date_mock = mock.patch('ibm_botocore.auth.formatdate')
         self.formatdate = self.date_mock.start()
@@ -247,7 +259,7 @@ class TestSigV3(unittest.TestCase):
     def test_signature_with_date_headers(self):
         request = AWSRequest()
         request.headers = {'Date': 'Thu, 17 Nov 2005 18:49:58 GMT'}
-        request.url = 'https://s3.amazonaws.com'
+        request.url = 'https://route53.amazonaws.com'
         self.auth.add_auth(request)
         self.assertEqual(
             request.headers['X-Amzn-Authorization'],
@@ -261,7 +273,7 @@ class TestSigV3(unittest.TestCase):
         request = AWSRequest()
         request.headers['Date'] = 'Thu, 17 Nov 2005 18:49:58 GMT'
         request.method = 'PUT'
-        request.url = 'https://s3.amazonaws.com/'
+        request.url = 'https://route53.amazonaws.com/'
         auth.add_auth(request)
         original_auth = request.headers['X-Amzn-Authorization']
         # Resigning the request shouldn't change the authorization
@@ -346,7 +358,7 @@ class TestS3SigV4Auth(BaseTestWithFixedDate):
                                     'Root=foo;Parent=bar;Sampleid=1')
 
     def test_blacklist_headers(self):
-        self._test_blacklist_header('user-agent', 'ibm_botocore/1.4.11')
+        self._test_blacklist_header('user-agent', 'botocore/1.4.11')
 
     def test_context_sets_signing_region(self):
         original_signing_region = 'eu-central-1'
@@ -391,7 +403,7 @@ class TestS3SigV4Auth(BaseTestWithFixedDate):
     def test_uses_sha256_if_not_streaming_upload(self):
         self.request.context['has_streaming_input'] = False
         self.request.headers.add_header('Content-MD5', 'foo')
-        self.request.url = 'http://s3.amazonaws.com/bucket'
+        self.request.url = 'https://s3.amazonaws.com/bucket'
         self.auth.add_auth(self.request)
         sha_header = self.request.headers['X-Amz-Content-SHA256']
         self.assertNotEqual(sha_header, 'UNSIGNED-PAYLOAD')
@@ -402,6 +414,28 @@ class TestS3SigV4Auth(BaseTestWithFixedDate):
         self.auth.add_auth(self.request)
         sha_header = self.request.headers['X-Amz-Content-SHA256']
         self.assertEqual(sha_header, 'UNSIGNED-PAYLOAD')
+
+    def test_does_not_use_sha256_if_context_config_set(self):
+        self.request.context['payload_signing_enabled'] = False
+        self.request.headers.add_header('Content-MD5', 'foo')
+        self.auth.add_auth(self.request)
+        sha_header = self.request.headers['X-Amz-Content-SHA256']
+        self.assertEqual(sha_header, 'UNSIGNED-PAYLOAD')
+
+    def test_sha256_if_context_set_on_http(self):
+        self.request.context['payload_signing_enabled'] = False
+        self.request.headers.add_header('Content-MD5', 'foo')
+        self.request.url = 'http://s3.amazonaws.com/bucket'
+        self.auth.add_auth(self.request)
+        sha_header = self.request.headers['X-Amz-Content-SHA256']
+        self.assertNotEqual(sha_header, 'UNSIGNED-PAYLOAD')
+
+    def test_sha256_if_context_set_without_md5(self):
+        self.request.context['payload_signing_enabled'] = False
+        self.request.url = 'https://s3.amazonaws.com/bucket'
+        self.auth.add_auth(self.request)
+        sha_header = self.request.headers['X-Amz-Content-SHA256']
+        self.assertNotEqual(sha_header, 'UNSIGNED-PAYLOAD')
 
 
 class TestSigV4(unittest.TestCase):
@@ -473,6 +507,7 @@ class TestSigV4(unittest.TestCase):
     def test_payload_is_binary_file(self):
         request = AWSRequest()
         request.data = six.BytesIO(u'\u2713'.encode('utf-8'))
+        request.url = 'https://amazonaws.com'
         auth = self.create_signer()
         payload = auth.payload(request)
         self.assertEqual(
@@ -482,11 +517,82 @@ class TestSigV4(unittest.TestCase):
     def test_payload_is_bytes_type(self):
         request = AWSRequest()
         request.data = u'\u2713'.encode('utf-8')
+        request.url = 'https://amazonaws.com'
         auth = self.create_signer()
         payload = auth.payload(request)
         self.assertEqual(
             payload,
             '1dabba21cdad44541f6b15796f8d22978fc7ea10c46aeceeeeb66c23b3ac7604')
+
+    def test_payload_not_signed_if_disabled_in_context(self):
+        request = AWSRequest()
+        request.data = u'\u2713'.encode('utf-8')
+        request.url = 'https://amazonaws.com'
+        request.context['payload_signing_enabled'] = False
+        auth = self.create_signer()
+        payload = auth.payload(request)
+        self.assertEqual(payload, 'UNSIGNED-PAYLOAD')
+
+    def test_content_sha256_set_if_payload_signing_disabled(self):
+        request = AWSRequest()
+        request.data = six.BytesIO(u'\u2713'.encode('utf-8'))
+        request.url = 'https://amazonaws.com'
+        request.context['payload_signing_enabled'] = False
+        request.method = 'PUT'
+        auth = self.create_signer()
+        auth.add_auth(request)
+        sha_header = request.headers['X-Amz-Content-SHA256']
+        self.assertEqual(sha_header, 'UNSIGNED-PAYLOAD')
+
+    def test_collapse_multiple_spaces(self):
+        auth = self.create_signer()
+        original = HTTPHeaders()
+        original['foo'] = 'double  space'
+        headers = auth.canonical_headers(original)
+        self.assertEqual(headers, 'foo:double space')
+
+    def test_trims_leading_trailing_spaces(self):
+        auth = self.create_signer()
+        original = HTTPHeaders()
+        original['foo'] = '  leading  and  trailing  '
+        headers = auth.canonical_headers(original)
+        self.assertEqual(headers, 'foo:leading and trailing')
+
+    def test_strips_http_default_port(self):
+        request = AWSRequest()
+        request.url = 'http://s3.us-west-2.amazonaws.com:80/'
+        request.method = 'GET'
+        auth = self.create_signer('s3', 'us-west-2')
+        actual = auth.headers_to_sign(request)['host']
+        expected = 's3.us-west-2.amazonaws.com'
+        self.assertEqual(actual, expected)
+
+    def test_strips_https_default_port(self):
+        request = AWSRequest()
+        request.url = 'https://s3.us-west-2.amazonaws.com:443/'
+        request.method = 'GET'
+        auth = self.create_signer('s3', 'us-west-2')
+        actual = auth.headers_to_sign(request)['host']
+        expected = 's3.us-west-2.amazonaws.com'
+        self.assertEqual(actual, expected)
+
+    def test_strips_http_auth(self):
+        request = AWSRequest()
+        request.url = 'https://username:password@s3.us-west-2.amazonaws.com/'
+        request.method = 'GET'
+        auth = self.create_signer('s3', 'us-west-2')
+        actual = auth.headers_to_sign(request)['host']
+        expected = 's3.us-west-2.amazonaws.com'
+        self.assertEqual(actual, expected)
+
+    def test_strips_default_port_and_http_auth(self):
+        request = AWSRequest()
+        request.url = 'http://username:password@s3.us-west-2.amazonaws.com:80/'
+        request.method = 'GET'
+        auth = self.create_signer('s3', 'us-west-2')
+        actual = auth.headers_to_sign(request)['host']
+        expected = 's3.us-west-2.amazonaws.com'
+        self.assertEqual(actual, expected)
 
 
 class TestSigV4Resign(BaseTestWithFixedDate):
@@ -538,7 +644,7 @@ class TestS3SigV2Presign(BasePresignTest):
         self.access_key = 'access_key'
         self.secret_key = 'secret_key'
         self.credentials = ibm_botocore.credentials.Credentials(self.access_key,
-                                                                self.secret_key)
+                                                            self.secret_key)
         self.expires = 3000
         self.auth = ibm_botocore.auth.HmacV1QueryAuth(
             self.credentials, expires=self.expires)
@@ -581,8 +687,8 @@ class TestS3SigV2Presign(BasePresignTest):
         self.assertEqual(query_string['AWSAccessKeyId'], self.access_key)
         self.assertEqual(query_string['Expires'],
                          str(int(self.current_epoch_time) + self.expires))
-        self.assertEquals(query_string['Signature'],
-                          'ZRSgywstwIruKLTLt/Bcrf9H1K4=')
+        self.assertEqual(query_string['Signature'],
+                         'ZRSgywstwIruKLTLt/Bcrf9H1K4=')
 
     def test_presign_with_x_amz_headers(self):
         self.request.headers['x-amz-security-token'] = 'foo'
@@ -591,8 +697,8 @@ class TestS3SigV2Presign(BasePresignTest):
         query_string = self.get_parsed_query_string(self.request)
         self.assertEqual(query_string['x-amz-security-token'], 'foo')
         self.assertEqual(query_string['x-amz-acl'], 'read-only')
-        self.assertEquals(query_string['Signature'],
-                          '5oyMAGiUk1E5Ry2BnFr6cIS3Gus=')
+        self.assertEqual(query_string['Signature'],
+                         '5oyMAGiUk1E5Ry2BnFr6cIS3Gus=')
 
     def test_presign_with_content_headers(self):
         self.request.headers['content-type'] = 'txt'
@@ -601,16 +707,16 @@ class TestS3SigV2Presign(BasePresignTest):
         query_string = self.get_parsed_query_string(self.request)
         self.assertEqual(query_string['content-type'], 'txt')
         self.assertEqual(query_string['content-md5'], 'foo')
-        self.assertEquals(query_string['Signature'],
-                          '/YQRFdQGywXP74WrOx2ET/RUqz8=')
+        self.assertEqual(query_string['Signature'],
+                         '/YQRFdQGywXP74WrOx2ET/RUqz8=')
 
     def test_presign_with_unused_headers(self):
-        self.request.headers['user-agent'] = 'ibm_botocore'
+        self.request.headers['user-agent'] = 'botocore'
         self.auth.add_auth(self.request)
         query_string = self.get_parsed_query_string(self.request)
         self.assertNotIn('user-agent', query_string)
-        self.assertEquals(query_string['Signature'],
-                          'ZRSgywstwIruKLTLt/Bcrf9H1K4=')
+        self.assertEqual(query_string['Signature'],
+                         'ZRSgywstwIruKLTLt/Bcrf9H1K4=')
 
 
 class TestSigV4Presign(BasePresignTest):
@@ -621,7 +727,7 @@ class TestSigV4Presign(BasePresignTest):
         self.access_key = 'access_key'
         self.secret_key = 'secret_key'
         self.credentials = ibm_botocore.credentials.Credentials(self.access_key,
-                                                                self.secret_key)
+                                                            self.secret_key)
         self.service_name = 'myservice'
         self.region_name = 'myregion'
         self.auth = ibm_botocore.auth.SigV4QueryAuth(
@@ -769,6 +875,18 @@ class TestSigV4Presign(BasePresignTest):
             'Param': 'value'
         }
         self.assertEqual(query_string, expected_query_string)
+
+    def test_presign_content_type_form_encoded_not_signed(self):
+        request = AWSRequest()
+        request.method = 'GET'
+        request.url = 'https://myservice.us-east-1.amazonaws.com/'
+        request.headers['Content-Type'] = (
+            'application/x-www-form-urlencoded; charset=utf-8'
+        )
+        self.auth.add_auth(request)
+        query_string = self.get_parsed_query_string(request)
+        signed_headers = query_string.get('X-Amz-SignedHeaders')
+        self.assertNotIn('content-type', signed_headers)
 
 
 class BaseS3PresignPostTest(unittest.TestCase):

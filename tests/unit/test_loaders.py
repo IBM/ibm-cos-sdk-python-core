@@ -368,3 +368,66 @@ class TestLoadersWithDirectorySearching(BaseEnvVar):
             result = result[current]
         return parts[0] in result
 
+    def test_list_available_services(self):
+        self.fake_directories = {
+            'foo': {
+                'ec2': {
+                    '2010-01-01': ['service-2'],
+                    '2014-10-01': ['service-1'],
+                },
+                'dynamodb': {
+                    '2010-01-01': ['service-2'],
+                },
+            },
+            'bar': {
+                'ec2': {
+                    '2015-03-01': ['service-1'],
+                },
+                'rds': {
+                    # This will not show up in
+                    # list_available_services() for type
+                    # service-2 because it does not contains
+                    # a service-2.
+                    '2012-01-01': ['resource-1'],
+                },
+            },
+        }
+        with self.loader_with_fake_dirs() as loader:
+            self.assertEqual(
+                loader.list_available_services(type_name='service-2'),
+                ['dynamodb', 'ec2'])
+            self.assertEqual(
+                loader.list_available_services(type_name='resource-1'),
+                ['rds'])
+
+    def test_determine_latest(self):
+        # Fake mapping of directories to subdirectories.
+        # In this example, we can see that the 'bar' directory
+        # contains the latest EC2 API version, 2015-03-01,
+        # so loader.determine_latest('ec2') should return
+        # this value 2015-03-01.
+        self.fake_directories = {
+            'foo': {
+                'ec2': {
+                    '2010-01-01': ['service-2'],
+                    # This directory contains the latest API version
+                    # for EC2 because its the highest API directory
+                    # that contains a service-2.
+                    '2014-10-01': ['service-2'],
+                },
+            },
+            'bar': {
+                'ec2': {
+                    '2012-01-01': ['service-2'],
+                    # 2015-03-1 is *not* the latest for service-2,
+                    # because its directory only has service-1.json.
+                    '2015-03-01': ['service-1'],
+                },
+            },
+        }
+        with self.loader_with_fake_dirs() as loader:
+            latest = loader.determine_latest_version('ec2', 'service-2')
+            self.assertEqual(loader.determine_latest_version('ec2', 'service-2'),
+                             '2014-10-01')
+            self.assertEqual(loader.determine_latest_version('ec2', 'service-1'),
+                             '2015-03-01')
