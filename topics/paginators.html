@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Botocore Paginators &mdash; ibm_botocore 2.4.2.dev1 documentation</title>
+    <title>Botocore Paginators &mdash; ibm_botocore 2.4.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -23,7 +23,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '2.4.2.dev1',
+        VERSION:     '2.4.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -32,7 +32,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="ibm_botocore 2.4.2.dev1 documentation" href="../index.html" />
+    <link rel="top" title="ibm_botocore 2.4.1 documentation" href="../index.html" />
     <link rel="up" title="IBM COS Core Library for Python Topic Guides" href="index.html" />
     <link rel="next" title="IBM COS Core Library for Python Development" href="../development/index.html" />
     <link rel="prev" title="Botocore Events" href="events.html" />
@@ -56,7 +56,7 @@
         <li class="right" >
           <a href="events.html" title="Botocore Events"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">ibm_botocore 2.4.2.dev1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">ibm_botocore 2.4.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">IBM COS Core Library for Python Topic Guides</a> &raquo;</li> 
       </ul>
     </div>
@@ -67,7 +67,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">ibm_botocore 2.4.2.dev1 documentation</a>
+    ../index.html" class="text-logo">ibm_botocore 2.4.1 documentation</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -162,20 +162,20 @@ a reusable <tt class="docutils literal"><span class="pre">Paginator</span></tt> 
 Paginator, passing in any relevant operation parameters to apply to the
 underlying API operation. The <tt class="docutils literal"><span class="pre">paginate</span></tt> method then returns an iterable
 <tt class="docutils literal"><span class="pre">PageIterator</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ibm_botocore.session</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">ibm_botocore.session</span>
 
-<span class="c1"># Create a session and a client</span>
+<span class="c"># Create a session and a client</span>
 <span class="n">session</span> <span class="o">=</span> <span class="n">ibm_botocore</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span>
-<span class="n">client</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">create_client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">,</span> <span class="n">region_name</span><span class="o">=</span><span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">create_client</span><span class="p">(</span><span class="s">&#39;s3&#39;</span><span class="p">,</span> <span class="n">region_name</span><span class="o">=</span><span class="s">&#39;us-west-2&#39;</span><span class="p">)</span>
 
-<span class="c1"># Create a reusable Paginator</span>
-<span class="n">paginator</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_paginator</span><span class="p">(</span><span class="s1">&#39;list_objects&#39;</span><span class="p">)</span>
+<span class="c"># Create a reusable Paginator</span>
+<span class="n">paginator</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_paginator</span><span class="p">(</span><span class="s">&#39;list_objects&#39;</span><span class="p">)</span>
 
-<span class="c1"># Create a PageIterator from the Paginator</span>
-<span class="n">page_iterator</span> <span class="o">=</span> <span class="n">paginator</span><span class="o">.</span><span class="n">paginate</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;my-bucket&#39;</span><span class="p">)</span>
+<span class="c"># Create a PageIterator from the Paginator</span>
+<span class="n">page_iterator</span> <span class="o">=</span> <span class="n">paginator</span><span class="o">.</span><span class="n">paginate</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s">&#39;my-bucket&#39;</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="n">page_iterator</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">page</span><span class="p">[</span><span class="s1">&#39;Contents&#39;</span><span class="p">])</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">page</span><span class="p">[</span><span class="s">&#39;Contents&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 <div class="section" id="customizing-page-iterators">
@@ -184,9 +184,9 @@ underlying API operation. The <tt class="docutils literal"><span class="pre">pag
 the pages of API operation results. The <tt class="docutils literal"><span class="pre">paginate</span></tt> method accepts a
 <tt class="docutils literal"><span class="pre">PaginationConfig</span></tt> named argument that can be used to customize the
 pagination:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">paginator</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_paginator</span><span class="p">(</span><span class="s1">&#39;list_objects&#39;</span><span class="p">)</span>
-<span class="n">page_iterator</span> <span class="o">=</span> <span class="n">paginator</span><span class="o">.</span><span class="n">paginate</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;my-bucket&#39;</span><span class="p">,</span>
-                                   <span class="n">PaginationConfig</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;MaxItems&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">paginator</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_paginator</span><span class="p">(</span><span class="s">&#39;list_objects&#39;</span><span class="p">)</span>
+<span class="n">page_iterator</span> <span class="o">=</span> <span class="n">paginator</span><span class="o">.</span><span class="n">paginate</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s">&#39;my-bucket&#39;</span><span class="p">,</span>
+                                   <span class="n">PaginationConfig</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;MaxItems&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
 </pre></div>
 </div>
 <dl class="docutils">
@@ -216,15 +216,15 @@ through to each underlying API call. For example,
 <tt class="xref py py-meth docutils literal"><span class="pre">S3.Paginator.list_objects.paginate()</span></tt> accepts a <tt class="docutils literal"><span class="pre">Prefix</span></tt> parameter
 used to filter the paginated results by prefix server-side before sending them
 to the client:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ibm_botocore.session</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">ibm_botocore.session</span>
 <span class="n">session</span> <span class="o">=</span> <span class="n">ibm_botocore</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span>
-<span class="n">client</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">create_client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">,</span> <span class="n">region_name</span><span class="o">=</span><span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
-<span class="n">paginator</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_paginator</span><span class="p">(</span><span class="s1">&#39;list_objects&#39;</span><span class="p">)</span>
-<span class="n">operation_parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Bucket&#39;</span><span class="p">:</span> <span class="s1">&#39;my-bucket&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;foo/baz&#39;</span><span class="p">}</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">create_client</span><span class="p">(</span><span class="s">&#39;s3&#39;</span><span class="p">,</span> <span class="n">region_name</span><span class="o">=</span><span class="s">&#39;us-west-2&#39;</span><span class="p">)</span>
+<span class="n">paginator</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_paginator</span><span class="p">(</span><span class="s">&#39;list_objects&#39;</span><span class="p">)</span>
+<span class="n">operation_parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;Bucket&#39;</span><span class="p">:</span> <span class="s">&#39;my-bucket&#39;</span><span class="p">,</span>
+                        <span class="s">&#39;Prefix&#39;</span><span class="p">:</span> <span class="s">&#39;foo/baz&#39;</span><span class="p">}</span>
 <span class="n">page_iterator</span> <span class="o">=</span> <span class="n">paginator</span><span class="o">.</span><span class="n">paginate</span><span class="p">(</span><span class="o">**</span><span class="n">operation_parameters</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="n">page_iterator</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">page</span><span class="p">[</span><span class="s1">&#39;Contents&#39;</span><span class="p">])</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">page</span><span class="p">[</span><span class="s">&#39;Contents&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 <div class="section" id="filtering-results-with-jmespath">
@@ -233,9 +233,9 @@ to the client:</p>
 directly on paginated results. You can filter results client-side using
 JMESPath expressions that are applied to each page of results through the
 <tt class="docutils literal"><span class="pre">search</span></tt> method of a <tt class="docutils literal"><span class="pre">PageIterator</span></tt>.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">paginator</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_paginator</span><span class="p">(</span><span class="s1">&#39;list_objects&#39;</span><span class="p">)</span>
-<span class="n">page_iterator</span> <span class="o">=</span> <span class="n">paginator</span><span class="o">.</span><span class="n">paginate</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;my-bucket&#39;</span><span class="p">)</span>
-<span class="n">filtered_iterator</span> <span class="o">=</span> <span class="n">page_iterator</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;Contents[?Size &gt; `100`][]&quot;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">paginator</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_paginator</span><span class="p">(</span><span class="s">&#39;list_objects&#39;</span><span class="p">)</span>
+<span class="n">page_iterator</span> <span class="o">=</span> <span class="n">paginator</span><span class="o">.</span><span class="n">paginate</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s">&#39;my-bucket&#39;</span><span class="p">)</span>
+<span class="n">filtered_iterator</span> <span class="o">=</span> <span class="n">page_iterator</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;Contents[?Size &gt; `100`][]&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">key_data</span> <span class="ow">in</span> <span class="n">filtered_iterator</span><span class="p">:</span>
     <span class="k">print</span><span class="p">(</span><span class="n">key_data</span><span class="p">)</span>
 </pre></div>
@@ -285,7 +285,7 @@ each key that has a <tt class="docutils literal"><span class="pre">Size</span></
         <li class="right" >
           <a href="events.html" title="Botocore Events"
              >previous</a> |</li>
-        <li><a href="../index.html">ibm_botocore 2.4.2.dev1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">ibm_botocore 2.4.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >IBM COS Core Library for Python Topic Guides</a> &raquo;</li> 
       </ul>
     </div>
