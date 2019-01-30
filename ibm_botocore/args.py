@@ -21,6 +21,7 @@ import logging
 import socket
 
 import ibm_botocore.serialize
+import ibm_botocore.utils
 from ibm_botocore.signers import RequestSigner
 from ibm_botocore.config import Config
 from ibm_botocore.endpoint import EndpointCreator
@@ -110,7 +111,7 @@ class ClientArgsCreator(object):
         elif scoped_config:
             raw_value = scoped_config.get('parameter_validation')
             if raw_value is not None:
-                parameter_validation = self._ensure_boolean(raw_value)
+                parameter_validation = ibm_botocore.utils.ensure_boolean(raw_value)
 
         endpoint_config = endpoint_bridge.resolve(
             service_name, region_name, endpoint_url, is_secure)
@@ -199,7 +200,7 @@ class ClientArgsCreator(object):
         config_copy = config_dict.copy()
         present_keys = [k for k in keys if k in config_copy]
         for key in present_keys:
-            config_copy[key] = self._ensure_boolean(config_copy[key])
+            config_copy[key] = ibm_botocore.utils.ensure_boolean(config_copy[key])
         return config_copy
 
     def _get_default_s3_region(self, service_name, endpoint_bridge):

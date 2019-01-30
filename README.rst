@@ -18,5 +18,5 @@ Getting Help
 Feel free to use GitHub issues for tracking bugs and feature requests, but for help please use one of the following resources:
 
 * Ask a question on `Stack Overflow <https://stackoverflow.com/>`__ and tag it with ``ibm`` and ``object-storage``.
-* Open a support ticket with `IBM Bluemix Support <https://support.ng.bluemix.net/gethelp/>`__
+* Open a support ticket with `IBM Cloud Support <https://cloud.ibm.com/unifiedsupport/supportcenter/>`__
 * If it turns out that you may have found a bug, please `open an issue <https://github.com/ibm/ibm-cos-sdk-python-core/issues/new>`__

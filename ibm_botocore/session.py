@@ -20,10 +20,12 @@ import copy
 import logging
 import os
 import platform
+import socket
 import warnings
 import collections
 
 from ibm_botocore import __version__
+from ibm_botocore import UNSIGNED
 import ibm_botocore.configloader
 import ibm_botocore.credentials
 import ibm_botocore.client
@@ -41,9 +43,11 @@ from ibm_botocore.loaders import create_loader
 from ibm_botocore.parsers import ResponseParserFactory
 from ibm_botocore.regions import EndpointResolver
 from ibm_botocore.model import ServiceModel
+from ibm_botocore import monitoring
 from ibm_botocore import paginate
 from ibm_botocore import waiter
 from ibm_botocore import retryhandler, translate
+from ibm_botocore import utils
 from ibm_botocore.utils import EVENT_ALIASES
 
 
@@ -130,6 +134,7 @@ class Session(object):
         self._register_response_parser_factory()
         self._register_exceptions_factory()
         self._register_config_store()
+        self._register_monitor()
 
     def _register_event_emitter(self):
         self._components.register_component('event_emitter', self._events)
@@ -179,6 +184,27 @@ class Session(object):
         )
         self._components.register_component('config_store',
                                             config_store_component)
+
+    def _register_monitor(self):
+        self._internal_components.lazy_register_component(
+            'monitor', self._create_csm_monitor)
+
+    def _create_csm_monitor(self):
+        if self.get_config_variable('csm_enabled'):
+            client_id = self.get_config_variable('csm_client_id')
+            port = self.get_config_variable('csm_port')
+            handler = monitoring.Monitor(
+                adapter=monitoring.MonitorEventAdapter(),
+                publisher=monitoring.SocketPublisher(
+                    socket=socket.socket(socket.AF_INET, socket.SOCK_DGRAM),
+                    host='127.0.0.1',
+                    port=port,
+                    serializer=monitoring.CSMSerializer(
+                        csm_client_id=client_id)
+                )
+            )
+            return handler
+        return None
 
     @property
     def available_profiles(self):
@@ -829,14 +855,17 @@ class Session(object):
         response_parser_factory = self.get_component(
             'response_parser_factory')
 
+        if config is not None and config.signature_version is UNSIGNED:
+            credentials = None
         # Precedence - if any IAM method is provided, it will be used before aws
-        if ibm_api_key_id or auth_function or token_manager:
+        elif ibm_api_key_id or auth_function or token_manager:
             credentials = ibm_botocore.credentials.OAuth2Credentials(api_key_id=ibm_api_key_id,
                                                                      service_instance_id=ibm_service_instance_id,
                                                                      auth_endpoint=ibm_auth_endpoint,
                                                                      auth_function=auth_function,
                                                                      token_manager=token_manager,
                                                                      verify=verify)
+            credentials.token_manager.set_from_config(config)
         elif aws_access_key_id is not None and aws_secret_access_key is not None:
             credentials = ibm_botocore.credentials.Credentials(
                 access_key=aws_access_key_id,
@@ -853,25 +882,31 @@ class Session(object):
             if isinstance(credentials, ibm_botocore.credentials.OAuth2Credentials):
                 if isinstance(credentials.token_manager, ibm_botocore.credentials.DefaultTokenManager):
                     credentials.token_manager.set_verify(verify)
+                    credentials.token_manager.set_from_config(config)
                 # load values that can be used for setting values in CreateBucket,ListBuckets
                 ibm_service_instance_id = credentials.service_instance_id
 
-        endpoint_resolver = self.get_component('endpoint_resolver')
-        exceptions_factory = self.get_component('exceptions_factory')
+        endpoint_resolver = self._get_internal_component('endpoint_resolver')
+        exceptions_factory = self._get_internal_component('exceptions_factory')
+        config_store = self.get_component('config_store')        
         client_creator = ibm_botocore.client.ClientCreator(
             loader, endpoint_resolver, self.user_agent(), event_emitter,
             retryhandler, translate, response_parser_factory,
-            exceptions_factory)
+            exceptions_factory, config_store)
         client = client_creator.create_client(
             service_name=service_name, region_name=region_name,
             is_secure=use_ssl, endpoint_url=endpoint_url, verify=verify,
             credentials=credentials, scoped_config=self.get_scoped_config(),
             client_config=config, api_version=api_version)
-
+        monitor = self._get_internal_component('monitor')
+        if monitor is not None:
+            monitor.register(client.meta.events)
+            
         # Register custom callbacks
         self._ibm_service_instance_id = ibm_service_instance_id
         client.meta.events.register('provide-client-params.s3.CreateBucket', self.check_service_instance_id)
         client.meta.events.register('provide-client-params.s3.ListBuckets', self.check_service_instance_id)
+
         return client
 
     def check_service_instance_id(self, params, **kwargs):

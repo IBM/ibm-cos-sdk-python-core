@@ -705,15 +705,19 @@ class AssumeRoleCredentialFetcher(CachedCredentialFetcher):
 
     def _assume_role_kwargs(self):
         """Get the arguments for assume role based on current configuration."""
-        assume_role_kwargs = self._assume_kwargs
+        assume_role_kwargs = deepcopy(self._assume_kwargs)
+
         mfa_serial = assume_role_kwargs.get('SerialNumber')
 
         if mfa_serial is not None:
             prompt = 'Enter MFA code for %s: ' % mfa_serial
             token_code = self._mfa_prompter(prompt)
-
-            assume_role_kwargs = deepcopy(assume_role_kwargs)
             assume_role_kwargs['TokenCode'] = token_code
+
+        duration_seconds = assume_role_kwargs.get('DurationSeconds')
+
+        if duration_seconds is not None:
+            assume_role_kwargs['DurationSeconds'] = duration_seconds
 
         return assume_role_kwargs
 
@@ -729,9 +733,16 @@ class AssumeRoleCredentialFetcher(CachedCredentialFetcher):
 
 
 class CredentialProvider(object):
-
-    # Implementations must provide a method.
+    # A short name to identify the provider within ibm_botocore.
     METHOD = None
+
+    # A name to identify the provider for use in cross-sdk features like
+    # assume role's `credential_source` configuration option. These names
+    # are to be treated in a case-insensitive way. NOTE: any providers not
+    # implemented in ibm_botocore MUST prefix their canonical names with
+    # 'custom' or we DO NOT guarantee that it will work with any features
+    # that this provides.
+    CANONICAL_NAME = None
 
     def __init__(self, session=None):
         self.session = session
@@ -751,7 +762,7 @@ class CredentialProvider(object):
         ``access_key/secret_key/token`` themselves.
 
         :returns: Whether credentials were found & set
-        :rtype: boolean
+        :rtype: Credentials
         """
         return True
 
@@ -869,16 +880,17 @@ class InstanceMetadataProvider(CredentialProvider):
 
 class EnvProvider(CredentialProvider):
     METHOD = 'env'
+    CANONICAL_NAME = 'Environment'
     ACCESS_KEY = 'AWS_ACCESS_KEY_ID'
     SECRET_KEY = 'AWS_SECRET_ACCESS_KEY'
     IBM_COS_API_KEY_ID = 'IBM_API_KEY_ID'
     IBM_COS_SERVICE_INSTANCE_ID = 'IBM_SERVICE_INSTANCE_ID'
     IBM_COS_AUTH_ENDPOINT = 'IBM_AUTH_ENDPOINT'
-    EXPIRY_TIME = 'AWS_CREDENTIAL_EXPIRATION'
 
     # The token can come from either of these env var.
     # AWS_SESSION_TOKEN is what other AWS SDKs have standardized on.
     TOKENS = ['AWS_SECURITY_TOKEN', 'AWS_SESSION_TOKEN']
+    EXPIRY_TIME = 'AWS_CREDENTIAL_EXPIRATION'
 
     def __init__(self, environ=None, mapping=None):
         """
@@ -939,7 +951,7 @@ class EnvProvider(CredentialProvider):
                 self.environ, self._mapping['ibm_api_key_id'],
                 self._mapping['ibm_service_instance_id'],
                 self._mapping['ibm_auth_endpoint'])
-            token = self._get_session_token()
+            
             return OAuth2Credentials(api_key_id=ibm_api_key_id,
                                      service_instance_id=ibm_service_instance_id,
                                      auth_endpoint=ibm_auth_endpoint,
@@ -964,7 +976,7 @@ class EnvProvider(CredentialProvider):
             )
         else:
             return None
-            
+
     def _create_credentials_fetcher(self):
         mapping = self._mapping
         method = self.METHOD
@@ -1002,11 +1014,6 @@ class EnvProvider(CredentialProvider):
 
         return fetch_credentials
 
-    def _get_session_token(self):
-        for token_envvar in self._mapping['token']:
-            if token_envvar in self.environ:
-                return self.environ[token_envvar]
-
 
 class OriginalEC2Provider(CredentialProvider):
     METHOD = 'ec2-credentials-file'
@@ -1043,6 +1050,7 @@ class OriginalEC2Provider(CredentialProvider):
 
 class SharedCredentialProvider(CredentialProvider):
     METHOD = 'shared-credentials-file'
+    CANONICAL_NAME = 'SharedCredentials'
 
     ACCESS_KEY = 'aws_access_key_id'
     SECRET_KEY = 'aws_secret_access_key'
@@ -1155,7 +1163,7 @@ class ConfigProvider(CredentialProvider):
                             self._config_filename)
                 ibm_api_key_id, ibm_service_instance_id, ibm_auth_endpoint = self._extract_creds_from_mapping(
                     profile_config, self.IBM_COS_API_KEY_ID, self.IBM_COS_SERVICE_INSTANCE_ID, self.IBM_COS_AUTH_ENDPOINT)
-                token = self._get_session_token(profile_config)
+                
                 return OAuth2Credentials(api_key_id=ibm_api_key_id,
                                          service_instance_id=ibm_service_instance_id,
                                          auth_endpoint=ibm_auth_endpoint,
@@ -1179,6 +1187,7 @@ class ConfigProvider(CredentialProvider):
 
 class BotoProvider(CredentialProvider):
     METHOD = 'boto-config'
+    CANONICAL_NAME = 'Boto2Config'
 
     BOTO_CONFIG_ENV = 'BOTO_CONFIG'
     DEFAULT_CONFIG_FILENAMES = ['/etc/boto.cfg', '~/.boto']
@@ -1328,6 +1337,10 @@ class AssumeRoleProvider(CredentialProvider):
         if mfa_serial is not None:
             extra_args['SerialNumber'] = mfa_serial
 
+        duration_seconds = role_config.get('duration_seconds')
+        if duration_seconds is not None:
+            extra_args['DurationSeconds'] = duration_seconds
+
         fetcher = AssumeRoleCredentialFetcher(
             client_creator=self._client_creator,
             source_credentials=source_credentials,
@@ -1360,6 +1373,7 @@ class AssumeRoleProvider(CredentialProvider):
         mfa_serial = profile.get('mfa_serial')
         external_id = profile.get('external_id')
         role_session_name = profile.get('role_session_name')
+        duration_seconds = profile.get('duration_seconds')
 
         role_config = {
             'role_arn': role_arn,
@@ -1369,6 +1383,12 @@ class AssumeRoleProvider(CredentialProvider):
             'source_profile': source_profile,
             'credential_source': credential_source
         }
+
+        if duration_seconds is not None:
+          try:
+            role_config['duration_seconds'] = int(duration_seconds)
+          except ValueError:
+            pass
 
         # Either the credential source or the source profile must be
         # specified, but not both.
@@ -1918,6 +1938,7 @@ class DefaultTokenManager(TokenManager):
         self.auth_endpoint = auth_endpoint
         self._time_fetcher = time_fetcher
         self.set_verify(verify)
+        self.proxies = None
 
         if auth_function:
             self.auth_function = auth_function
@@ -2046,6 +2067,12 @@ class DefaultTokenManager(TokenManager):
         else:
             return DefaultTokenManager.API_TOKEN_URL
 
+    def set_from_config(self, config):
+        """ store any values that are required from the config
+        """
+        if config:
+            self.proxies = config.proxies
+        
     def _get_data(self):
         """ Get the data posted to IAM server
         If refresh token exists request a token refresh
@@ -2073,6 +2100,7 @@ class DefaultTokenManager(TokenManager):
                                  data=self._get_data(),
                                  headers=self._get_headers(),
                                  timeout=5,
+                                 proxies=self.proxies,
                                  verify=self.get_verify())
 
         if response.status_code != httplib.OK:

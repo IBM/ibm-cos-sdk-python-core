@@ -4,7 +4,7 @@
 Config Reference
 ================
 
-botocore.config
+ibm_botocore.config
 ---------------
 
 .. autoclass:: ibm_botocore.config.Config

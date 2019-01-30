@@ -106,7 +106,7 @@ class TestRetryInterface(TestEndpointBase):
         super(TestRetryInterface, self).setUp()
         self.retried_on_exception = None
         self._operation = Mock(spec=OperationModel)
-        self._operation.service_model.service_id = ServiceId('ec2')
+        self._operation.service_model.service_id = ServiceId('s3')
 
     def test_retry_events_are_emitted(self):
         op = self._operation

@@ -16,6 +16,9 @@
 # ``traverse_and_document_shape`` method called directly. It should be
 # inherited from a Documenter class with the appropriate methods
 # and attributes.
+from ibm_botocore.utils import is_json_value_header
+
+
 class ShapeDocumenter(object):
     EVENT_NAME = ''
 
@@ -56,6 +59,8 @@ class ShapeDocumenter(object):
         :param is_required: If the shape is a required member.
         """
         param_type = shape.type_name
+        if getattr(shape, 'serialization', {}).get('eventstream'):
+            param_type = 'event_stream'
         if shape.name in history:
             self.document_recursive_shape(section, shape, name=name)
         else:
@@ -85,19 +90,25 @@ class ShapeDocumenter(object):
 
     def _get_special_py_default(self, shape):
         special_defaults = {
+            'jsonvalue_header': '{...}|[...]|123|123.4|\'string\'|True|None',
             'streaming_input_shape': 'b\'bytes\'|file',
-            'streaming_output_shape': 'StreamingBody()'
+            'streaming_output_shape': 'StreamingBody()',
+            'eventstream_output_shape': 'EventStream()',
         }
         return self._get_value_for_special_type(shape, special_defaults)
 
     def _get_special_py_type_name(self, shape):
         special_type_names = {
+            'jsonvalue_header': 'JSON serializable',
             'streaming_input_shape': 'bytes or seekable file-like object',
-            'streaming_output_shape': ':class:`.StreamingBody`'
+            'streaming_output_shape': ':class:`.StreamingBody`',
+            'eventstream_output_shape': ':class:`.EventStream`',
         }
         return self._get_value_for_special_type(shape, special_type_names)
 
     def _get_value_for_special_type(self, shape, special_type_map):
+        if is_json_value_header(shape):
+            return special_type_map['jsonvalue_header']
         for special_type, marked_shape in self._context[
                 'special_shape_types'].items():
             if special_type in special_type_map:

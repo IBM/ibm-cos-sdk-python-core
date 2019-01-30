@@ -26,17 +26,19 @@ import uuid
 
 from ibm_botocore.compat import unquote, json, six, unquote_str, \
     ensure_bytes, get_md5, MD5_AVAILABLE, OrderedDict, urlsplit, urlunsplit
-
 from ibm_botocore.docs.utils import AutoPopulatedParam
 from ibm_botocore.docs.utils import HideParamFromOperations
 from ibm_botocore.docs.utils import AppendParamDocumentation
 from ibm_botocore.signers import add_generate_presigned_url
 from ibm_botocore.signers import add_generate_presigned_post
+from ibm_botocore.signers import add_generate_db_auth_token
 from ibm_botocore.exceptions import ParamValidationError
 from ibm_botocore.exceptions import AliasConflictParameterError
 from ibm_botocore.exceptions import UnsupportedTLSVersionWarning
+from ibm_botocore.exceptions import MissingServiceIdError
 from ibm_botocore.utils import percent_encode, SAFE_CHARS
 from ibm_botocore.utils import switch_host_with_param
+from ibm_botocore.utils import hyphenize_service_id
 
 from ibm_botocore import retryhandler
 from ibm_botocore import utils
@@ -54,57 +56,16 @@ REGISTER_LAST = object()
 # to be as long as 255 characters, and bucket names can contain any
 # combination of uppercase letters, lowercase letters, numbers, periods
 # (.), hyphens (-), and underscores (_).
-VALID_BUCKET = re.compile('^[a-zA-Z0-9.\-_]{1,255}$')
+VALID_BUCKET = re.compile(r'^[a-zA-Z0-9.\-_]{1,255}$')
 VERSION_ID_SUFFIX = re.compile(r'\?versionId=[^\s]+$')
 
-
-class ClientMethodAlias(object):
-    def __init__(self, actual_name):
-        """ Aliases a non-extant method to an existing method.
-
-        :param actual_name: The name of the method that actually exists on
-            the client.
-        """
-        self._actual = actual_name
-
-    def __call__(self, client, **kwargs):
-        return getattr(client, self._actual)
+SERVICE_NAME_ALIASES = {
+    'runtime.sagemaker': 'sagemaker-runtime'
+}
 
 
-class HeaderToHostHoister(object):
-    """Takes a header and moves it to the front of the hoststring.
-    """
-    def __init__(self, header_name):
-        self._header_name = header_name
-
-    def hoist(self, params, **kwargs):
-        """Hoist a header to the hostname.
-
-        Hoist a header to the beginning of the hostname with a suffix "." after
-        it. The original header should be removed from the header map. This
-        method is intended to be used as a target for the before-call event.
-        """
-        if self._header_name not in params['headers']:
-            return
-        header_value = params['headers'][self._header_name]
-        original_url = params['url']
-        new_url = self._prepend_to_host(original_url, header_value)
-        params['url'] = new_url
-
-    def _prepend_to_host(self, url, prefix):
-        url_components = urlsplit(url)
-        parts = url_components.netloc.split('.')
-        parts = [prefix] + parts
-        new_netloc = '.'.join(parts)
-        new_components = (
-            url_components.scheme,
-            new_netloc,
-            url_components.path,
-            url_components.query,
-            ''
-        )
-        new_url = urlunsplit(new_components)
-        return new_url
+def handle_service_name_alias(service_name, **kwargs):
+    return SERVICE_NAME_ALIASES.get(service_name, service_name)
 
 
 def check_for_200_error(response, **kwargs):
@@ -147,6 +108,39 @@ def _looks_like_special_case_error(http_response):
     return False
 
 
+def set_operation_specific_signer(context, signing_name, **kwargs):
+    """ Choose the operation-specific signer.
+
+    Individual operations may have a different auth type than the service as a
+    whole. This will most often manifest as operations that should not be
+    authenticated at all, but can include other auth modes such as sigv4
+    without body signing.
+    """
+    auth_type = context.get('auth_type')
+
+    # Auth type will be None if the operation doesn't have a configured auth
+    # type.
+    if not auth_type:
+        return
+
+    # Auth type will be the string value 'none' if the operation should not
+    # be signed at all.
+    if auth_type == 'none':
+        return ibm_botocore.UNSIGNED
+
+    if auth_type.startswith('v4'):
+        signature_version = 'v4'
+        if signing_name == 's3':
+            signature_version = 's3v4'
+
+        # If the operation needs an unsigned body, we set additional context
+        # allowing the signer to be aware of this.
+        if auth_type == 'v4-unsigned-body':
+            context['payload_signing_enabled'] = False
+
+        return signature_version
+
+
 def decode_console_output(parsed, **kwargs):
     if 'Output' in parsed:
         try:
@@ -179,7 +173,8 @@ def decode_quoted_jsondoc(value):
 def json_decode_template_body(parsed, **kwargs):
     if 'TemplateBody' in parsed:
         try:
-            value = json.loads(parsed['TemplateBody'])
+            value = json.loads(
+                parsed['TemplateBody'], object_pairs_hook=OrderedDict)
             parsed['TemplateBody'] = value
         except (ValueError, TypeError):
             logger.debug('error loading JSON', exc_info=True)
@@ -269,6 +264,14 @@ def _needs_s3_sse_customization(params, sse_member_prefix):
             sse_member_prefix + 'KeyMD5' not in params)
 
 
+# NOTE: Retries get registered in two separate places in the botocore
+# code: once when creating the client and once when you load the service
+# model from the session. While at first this handler seems unneeded, it
+# would be a breaking change for the AWS CLI to have it removed. This is
+# because it relies on the service model from the session to create commands
+# and this handler respects operation granular retry logic while the client
+# one does not. If this is ever to be removed the handler, the client
+# will have to respect per-operation level retry configuration.
 def register_retries_for_service(service_data, session,
                                  service_name, **kwargs):
     loader = session.get_component('data_loader')
@@ -277,17 +280,20 @@ def register_retries_for_service(service_data, session,
         logger.debug("Not registering retry handlers, could not endpoint "
                      "prefix from model for service %s", service_name)
         return
+    service_id = service_data.get('metadata', {}).get('serviceId')
+    if service_id is None:
+        raise MissingServiceIdError(service_name=service_name)
+    service_event_name = hyphenize_service_id(service_id)
     config = _load_retry_config(loader, endpoint_prefix)
     if not config:
         return
     logger.debug("Registering retry handlers for service: %s", service_name)
     handler = retryhandler.create_retry_handler(
         config, endpoint_prefix)
-    unique_id = 'retry-config-%s' % endpoint_prefix
-    session.register('needs-retry.%s' % endpoint_prefix,
+    unique_id = 'retry-config-%s' % service_event_name
+    session.register('needs-retry.%s' % service_event_name,
                      handler, unique_id=unique_id)
-    _register_for_operations(config, session,
-                             service_name=endpoint_prefix)
+    _register_for_operations(config, session, service_event_name)
 
 
 def _load_retry_config(loader, endpoint_prefix):
@@ -298,7 +304,7 @@ def _load_retry_config(loader, endpoint_prefix):
     return retry_config
 
 
-def _register_for_operations(config, session, service_name):
+def _register_for_operations(config, session, service_event_name):
     # There's certainly a tradeoff for registering the retry config
     # for the operations when the service is created.  In practice,
     # there aren't a whole lot of per operation retry configs so
@@ -307,8 +313,8 @@ def _register_for_operations(config, session, service_name):
         if key == '__default__':
             continue
         handler = retryhandler.create_retry_handler(config, key)
-        unique_id = 'retry-config-%s-%s' % (service_name, key)
-        session.register('needs-retry.%s.%s' % (service_name, key),
+        unique_id = 'retry-config-%s-%s' % (service_event_name, key)
+        session.register('needs-retry.%s.%s' % (service_event_name, key),
                          handler, unique_id=unique_id)
 
 
@@ -339,7 +345,6 @@ def document_copy_source_form(section, event_name, **kwargs):
         value_portion = param_line.get_section('member-value')
         value_portion.clear_text()
         value_portion.write("'string' or {'Bucket': 'string', "
-#                            "'Key': 'string', 'VersionId': 'string'}")
                             "'Key': 'string'}")
     elif 'request-params' in event_name:
         param_section = section.get_section('CopySource')
@@ -349,20 +354,12 @@ def document_copy_source_form(section, event_name, **kwargs):
         doc_section = param_section.get_section('param-documentation')
         doc_section.clear_text()
         doc_section.write(
-#            "The name of the source bucket, key name of the source object, "
-#            "and optional version ID of the source object.  You can either "
-#            "provide this value as a string or a dictionary.  The "
-#            "string form is {bucket}/{key} or "
-#            "{bucket}/{key}?versionId={versionId} if you want to copy a "
-#            "specific version.  You can also provide this value as a "
-#            "dictionary.  The dictionary format is recommended over "
-#            "the string format because it is more explicit.  The dictionary "
-#            "format is: {'Bucket': 'bucket', 'Key': 'key', 'VersionId': 'id'}."
-#            "  Note that the VersionId key is optional and may be omitted."
-
-            "The name of the source bucket, key name of the source object"
-            "You can either provide this value as a string or a dictionary.  The "
-            "string form is {bucket}/{key}.  You can also provide this value as a "
+            "The name of the source bucket, key name of the source object. "
+            "You can either "
+            "provide this value as a string or a dictionary.  The "
+            "string form is {bucket}/{key} or "
+            "{bucket}/{key} if you want to copy a "
+            "specific version.  You can also provide this value as a "
             "dictionary.  The dictionary format is recommended over "
             "the string format because it is more explicit.  The dictionary "
             "format is: {'Bucket': 'bucket', 'Key': 'key'}."
@@ -376,10 +373,10 @@ def handle_copy_source_param(params, **kwargs):
 
         * CopySource provided as a string.  We'll make a best effort
           to URL encode the key name as required.  This will require
-          parsing the bucket and version id from the CopySource value
+          parsing the bucket from the CopySource value
           and only encoding the key.
         * CopySource provided as a dict.  In this case we're
-          explicitly given the Bucket, Key, and VersionId so we're
+          explicitly given the Bucket, Key so we're
           able to encode the key and ensure this value is serialized
           and correctly sent to S3.
 
@@ -446,6 +443,41 @@ def _get_presigned_url_source_and_destination_regions(request_signer, params):
     source_region = params.get('SourceRegion')
     return source_region, destination_region
 
+
+def inject_presigned_url_ec2(params, request_signer, model, **kwargs):
+    # The customer can still provide this, so we should pass if they do.
+    if 'PresignedUrl' in params['body']:
+        return
+    src, dest = _get_presigned_url_source_and_destination_regions(
+        request_signer, params['body'])
+    url = _get_cross_region_presigned_url(
+        request_signer, params, model, src, dest)
+    params['body']['PresignedUrl'] = url
+    # EC2 Requires that the destination region be sent over the wire in
+    # addition to the source region.
+    params['body']['DestinationRegion'] = dest
+
+
+def inject_presigned_url_rds(params, request_signer, model, **kwargs):
+    # SourceRegion is not required for RDS operations, so it's possible that
+    # it isn't set. In that case it's probably a local copy so we don't need
+    # to do anything else.
+    if 'SourceRegion' not in params['body']:
+        return
+
+    src, dest = _get_presigned_url_source_and_destination_regions(
+        request_signer, params['body'])
+
+    # Since SourceRegion isn't actually modeled for RDS, it needs to be
+    # removed from the request params before we send the actual request.
+    del params['body']['SourceRegion']
+
+    if 'PreSignedUrl' in params['body']:
+        return
+
+    url = _get_cross_region_presigned_url(
+        request_signer, params, model, src, dest)
+    params['body']['PreSignedUrl'] = url
 
 
 def json_decode_policies(parsed, model, **kwargs):
@@ -547,6 +579,27 @@ def validate_ascii_metadata(params, **kwargs):
                 report=error_msg)
 
 
+def fix_route53_ids(params, model, **kwargs):
+    """
+    Check for and split apart Route53 resource IDs, setting
+    only the last piece. This allows the output of one operation
+    (e.g. ``'foo/1234'``) to be used as input in another
+    operation (e.g. it expects just ``'1234'``).
+    """
+    input_shape = model.input_shape
+    if not input_shape or not hasattr(input_shape, 'members'):
+        return
+
+    members = [name for (name, shape) in input_shape.members.items()
+               if shape.name in ['ResourceId', 'DelegationSetId']]
+
+    for name in members:
+        if name in params:
+            orig_value = params[name]
+            params[name] = orig_value.split('/')[-1]
+            logger.debug('%s %s -> %s', name, orig_value, params[name])
+
+
 def inject_account_id(params, **kwargs):
     if params.get('accountId') is None:
         # Glacier requires accountId, but allows you
@@ -556,17 +609,90 @@ def inject_account_id(params, **kwargs):
         params['accountId'] = '-'
 
 
+def add_glacier_version(model, params, **kwargs):
+    request_dict = params
+    request_dict['headers']['x-amz-glacier-version'] = model.metadata[
+        'apiVersion']
+
+
 def add_accept_header(model, params, **kwargs):
     if params['headers'].get('Accept', None) is None:
         request_dict = params
         request_dict['headers']['Accept'] = 'application/json'
 
 
+def add_glacier_checksums(params, **kwargs):
+    """Add glacier checksums to the http request.
+
+    This will add two headers to the http request:
+
+        * x-amz-content-sha256
+        * x-amz-sha256-tree-hash
+
+    These values will only be added if they are not present
+    in the HTTP request.
+
+    """
+    request_dict = params
+    headers = request_dict['headers']
+    body = request_dict['body']
+    if isinstance(body, six.binary_type):
+        # If the user provided a bytes type instead of a file
+        # like object, we're temporarily create a BytesIO object
+        # so we can use the util functions to calculate the
+        # checksums which assume file like objects.  Note that
+        # we're not actually changing the body in the request_dict.
+        body = six.BytesIO(body)
+    starting_position = body.tell()
+    if 'x-amz-content-sha256' not in headers:
+        headers['x-amz-content-sha256'] = utils.calculate_sha256(
+            body, as_hex=True)
+    body.seek(starting_position)
+    if 'x-amz-sha256-tree-hash' not in headers:
+        headers['x-amz-sha256-tree-hash'] = utils.calculate_tree_hash(body)
+    body.seek(starting_position)
+
+
+def document_glacier_tree_hash_checksum():
+    doc = '''
+        This is a required field.
+
+        Ideally you will want to compute this value with checksums from
+        previous uploaded parts, using the algorithm described in
+        `Glacier documentation <http://docs.aws.amazon.com/amazonglacier/latest/dev/checksum-calculations.html>`_.
+
+        But if you prefer, you can also use ibm_botocore.utils.calculate_tree_hash()
+        to compute it from raw file by::
+
+            checksum = calculate_tree_hash(open('your_file.txt', 'rb'))
+
+        '''
+    return AppendParamDocumentation('checksum', doc).append_documentation
+
+
+def document_cloudformation_get_template_return_type(section, event_name, **kwargs):
+    if 'response-params' in event_name:
+        template_body_section = section.get_section('TemplateBody')
+        type_section = template_body_section.get_section('param-type')
+        type_section.clear_text()
+        type_section.write('(*dict*) --')
+    elif 'response-example' in event_name:
+        parent = section.get_section('structure-value')
+        param_line = parent.get_section('TemplateBody')
+        value_portion = param_line.get_section('member-value')
+        value_portion.clear_text()
+        value_portion.write('{}')
+
+
+def switch_host_machinelearning(request, **kwargs):
+    switch_host_with_param(request, 'PredictEndpoint')
+
+
 def check_openssl_supports_tls_version_1_2(**kwargs):
     import ssl
     try:
         openssl_version_tuple = ssl.OPENSSL_VERSION_INFO
-        if openssl_version_tuple[0] < 1 or openssl_version_tuple[2] < 1:
+        if openssl_version_tuple < (1, 0, 1):
             warnings.warn(
                 'Currently installed openssl version: %s does not '
                 'support TLS 1.2, which is required for use of iot-data. '
@@ -730,19 +856,87 @@ class ParameterAlias(object):
         section.write(updated_content)
 
 
+class ClientMethodAlias(object):
+    def __init__(self, actual_name):
+        """ Aliases a non-extant method to an existing method.
+
+        :param actual_name: The name of the method that actually exists on
+            the client.
+        """
+        self._actual = actual_name
+
+    def __call__(self, client, **kwargs):
+        return getattr(client, self._actual)
+
+
+def remove_subscribe_to_shard(class_attributes, **kwargs):
+    if 'subscribe_to_shard' in class_attributes:
+        # subscribe_to_shard requires HTTP 2 support
+        del class_attributes['subscribe_to_shard']
+
+
+class HeaderToHostHoister(object):
+    """Takes a header and moves it to the front of the hoststring.
+    """
+    def __init__(self, header_name):
+        self._header_name = header_name
+
+    def hoist(self, params, **kwargs):
+        """Hoist a header to the hostname.
+
+        Hoist a header to the beginning of the hostname with a suffix "." after
+        it. The original header should be removed from the header map. This
+        method is intended to be used as a target for the before-call event.
+        """
+        if self._header_name not in params['headers']:
+            return
+        header_value = params['headers'][self._header_name]
+        original_url = params['url']
+        new_url = self._prepend_to_host(original_url, header_value)
+        params['url'] = new_url
+
+    def _prepend_to_host(self, url, prefix):
+        url_components = urlsplit(url)
+        parts = url_components.netloc.split('.')
+        parts = [prefix] + parts
+        new_netloc = '.'.join(parts)
+        new_components = (
+            url_components.scheme,
+            new_netloc,
+            url_components.path,
+            url_components.query,
+            ''
+        )
+        new_url = urlunsplit(new_components)
+        return new_url
+
+
+def inject_api_version_header_if_needed(model, params, **kwargs):
+    if not model.is_endpoint_discovery_operation:
+        return
+    params['headers']['x-amz-api-version'] = model.service_model.api_version
+
+
 # This is a list of (event_name, handler).
 # When a Session is created, everything in this list will be
 # automatically registered with that Session.
 
 BUILTIN_HANDLERS = [
+    ('choose-service-name', handle_service_name_alias),
+    ('getattr.mturk.list_hi_ts_for_qualification_type',
+     ClientMethodAlias('list_hits_for_qualification_type')),
     ('before-parameter-build.s3.UploadPart',
      convert_body_to_file_like_object, REGISTER_LAST),
     ('before-parameter-build.s3.PutObject',
      convert_body_to_file_like_object, REGISTER_LAST),
+    ('creating-client-class.kinesis', remove_subscribe_to_shard),
     ('creating-client-class', add_generate_presigned_url),
     ('creating-client-class.s3', add_generate_presigned_post),
     ('creating-client-class.iot-data', check_openssl_supports_tls_version_1_2),
+    ('after-call.iam', json_decode_policies),
 
+    ('after-call.ec2.GetConsoleOutput', decode_console_output),
+    ('after-call.cloudformation.GetTemplate', json_decode_template_body),
     ('after-call.s3.GetBucketLocation', parse_get_bucket_location),
 
     ('before-parameter-build', generate_idempotent_uuid),
@@ -789,6 +983,7 @@ BUILTIN_HANDLERS = [
     ('needs-retry.s3.CompleteMultipartUpload', check_for_200_error,
      REGISTER_FIRST),
     ('service-data-loaded', register_retries_for_service),
+    ('choose-signer', set_operation_specific_signer),
     ('before-parameter-build.s3.HeadObject', sse_md5),
     ('before-parameter-build.s3.GetObject', sse_md5),
     ('before-parameter-build.s3.PutObject', sse_md5),

@@ -5378,8 +5378,7 @@
     "ServerSideEncryption":{
       "type":"string",
       "enum":[
-        "AES256",
-        "aws:kms"
+        "AES256"
       ]
     },
     "Size":{"type":"integer"},
