@@ -12,9 +12,9 @@
 # language governing permissions and limitations under the License.
 from tests import unittest
 
-from botocore.exceptions import ClientError
-from botocore.vendored import six
-import botocore.session
+from ibm_botocore.exceptions import ClientError
+from ibm_botocore.vendored import six
+import ibm_botocore.session
 
 
 class TestGlacier(unittest.TestCase):
@@ -30,7 +30,7 @@ class TestGlacier(unittest.TestCase):
     VAULT_NAME = 'botocore-integ-test-vault'
 
     def setUp(self):
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
         self.client = self.session.create_client('glacier', 'us-west-2')
         # There's no error if the vault already exists so we don't
         # need to catch any exceptions here.

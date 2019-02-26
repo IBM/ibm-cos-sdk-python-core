@@ -13,12 +13,12 @@
 from tests import unittest
 import itertools
 
-import botocore.session
+import ibm_botocore.session
 
 
 class TestRDSPagination(unittest.TestCase):
     def setUp(self):
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
         self.client = self.session.create_client('rds', 'us-west-2')
 
     def test_can_paginate_reserved_instances(self):

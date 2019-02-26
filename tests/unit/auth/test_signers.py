@@ -711,7 +711,7 @@ class TestS3SigV2Presign(BasePresignTest):
                          '/YQRFdQGywXP74WrOx2ET/RUqz8=')
 
     def test_presign_with_unused_headers(self):
-        self.request.headers['user-agent'] = 'botocore'
+        self.request.headers['user-agent'] = 'ibm_botocore'
         self.auth.add_auth(self.request)
         query_string = self.get_parsed_query_string(self.request)
         self.assertNotIn('user-agent', query_string)

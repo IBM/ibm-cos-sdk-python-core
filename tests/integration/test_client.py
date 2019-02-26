@@ -14,15 +14,15 @@ import logging
 import datetime
 from tests import unittest, random_chars
 
-import botocore.session
-from botocore.client import ClientError
-from botocore.compat import six
-from botocore.exceptions import EndpointConnectionError
+import ibm_botocore.session
+from ibm_botocore.client import ClientError
+from ibm_botocore.compat import six
+from ibm_botocore.exceptions import EndpointConnectionError
 
 
 class TestBucketWithVersions(unittest.TestCase):
     def setUp(self):
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
         self.client = self.session.create_client('s3', region_name='us-west-2')
         self.bucket_name = 'botocoretest%s' % random_chars(50)
 
@@ -89,7 +89,7 @@ class TestResponseLog(unittest.TestCase):
         # are in the debug log.  It's an integration test so that
         # we can refactor the code however we want, as long as we don't
         # lose this feature.
-        session = botocore.session.get_session()
+        session = ibm_botocore.session.get_session()
         client = session.create_client('s3', region_name='us-west-2')
         debug_log = six.StringIO()
         session.set_stream_logger('', logging.DEBUG, debug_log)
@@ -101,7 +101,7 @@ class TestResponseLog(unittest.TestCase):
 
 class TestAcceptedDateTimeFormats(unittest.TestCase):
     def setUp(self):
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
         self.client = self.session.create_client('emr', 'us-west-2')
 
     def test_accepts_datetime_object(self):
@@ -131,7 +131,7 @@ class TestAcceptedDateTimeFormats(unittest.TestCase):
 
 class TestCreateClients(unittest.TestCase):
     def setUp(self):
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
 
     def test_client_can_clone_with_service_events(self):
         # We should also be able to create a client object.
@@ -148,7 +148,7 @@ class TestCreateClients(unittest.TestCase):
 
 class TestClientErrors(unittest.TestCase):
     def setUp(self):
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
 
     def test_region_mentioned_in_invalid_region(self):
         client = self.session.create_client(
@@ -188,7 +188,7 @@ class TestClientErrors(unittest.TestCase):
 
 class TestClientMeta(unittest.TestCase):
     def setUp(self):
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
 
     def test_region_name_on_meta(self):
         client = self.session.create_client('s3', 'us-west-2')
@@ -202,7 +202,7 @@ class TestClientMeta(unittest.TestCase):
 
 class TestClientInjection(unittest.TestCase):
     def setUp(self):
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
 
     def test_can_inject_client_methods(self):
 
@@ -224,7 +224,7 @@ class TestClientInjection(unittest.TestCase):
 class TestMixedEndpointCasing(unittest.TestCase):
     def setUp(self):
         self.url = 'https://EC2.US-WEST-2.amazonaws.com/'
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
         self.client = self.session.create_client('ec2', 'us-west-2',
                                                  endpoint_url=self.url)
 

@@ -14,13 +14,13 @@ import time
 
 from tests import unittest
 
-import botocore.session
-from botocore import exceptions
+import ibm_botocore.session
+from ibm_botocore import exceptions
 
 
 class TestApigateway(unittest.TestCase):
     def setUp(self):
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
         self.client = self.session.create_client('apigateway', 'us-east-1')
 
         # Create a resource to use with this client.

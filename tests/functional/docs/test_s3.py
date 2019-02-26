@@ -56,5 +56,4 @@ class TestS3Docs(BaseDocsFunctionalTest):
         # We don't want to overspecify the test, so I've picked
         # an arbitrary line from the customized docs.
         self.assert_contains_line(
-            #"You can also provide this value as a dictionary", param_docs)
-            "The name of the source bucket and key name of the source object", param_docs)
+            "You can also provide this value as a dictionary", param_docs)

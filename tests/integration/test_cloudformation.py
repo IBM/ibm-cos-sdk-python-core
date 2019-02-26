@@ -12,13 +12,13 @@
 # language governing permissions and limitations under the License.
 from tests import unittest, random_chars
 
-import botocore.session
-from botocore.exceptions import ClientError
+import ibm_botocore.session
+from ibm_botocore.exceptions import ClientError
 
 
 class TestCloudformation(unittest.TestCase):
     def setUp(self):
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
         self.client = self.session.create_client('cloudformation', 'us-east-1')
 
     def test_handles_errors_with_template_body(self):

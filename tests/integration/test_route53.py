@@ -12,13 +12,13 @@
 # language governing permissions and limitations under the License.
 from tests import unittest
 
-import botocore.session
-from botocore.exceptions import ClientError
+import ibm_botocore.session
+from ibm_botocore.exceptions import ClientError
 
 
 class TestRoute53Pagination(unittest.TestCase):
     def setUp(self):
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
         self.client = self.session.create_client('route53', 'us-west-2')
 
     def test_paginate_with_max_items(self):

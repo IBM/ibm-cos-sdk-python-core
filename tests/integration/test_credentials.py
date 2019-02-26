@@ -18,8 +18,8 @@ import json
 import time
 from uuid import uuid4
 
-from botocore.session import Session
-from botocore.exceptions import ClientError
+from ibm_botocore.session import Session
+from ibm_botocore.exceptions import ClientError
 from tests import BaseEnvVar, temporary_file, random_chars
 
 
@@ -63,7 +63,7 @@ class TestCredentialPrecedence(BaseEnvVar):
         self.assertEqual(credentials.access_key, 'env')
         self.assertEqual(credentials.secret_key, 'env-secret')
 
-    @mock.patch('botocore.credentials.Credentials')
+    @mock.patch('ibm_botocore.credentials.Credentials')
     def test_access_secret_vs_profile_code(self, credentials_cls):
         # If all three are given, then the access/secret keys should
         # take precedence.
@@ -86,7 +86,7 @@ class TestCredentialPrecedence(BaseEnvVar):
         self.assertEqual(credentials.access_key, 'default')
         self.assertEqual(credentials.secret_key, 'default-secret')
 
-    @mock.patch('botocore.credentials.Credentials')
+    @mock.patch('ibm_botocore.credentials.Credentials')
     def test_access_secret_env_vs_code(self, credentials_cls):
         # If the access/secret keys are set both as env vars and via
         # code, then those set by code should take precedence.
