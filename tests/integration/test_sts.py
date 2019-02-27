@@ -12,12 +12,12 @@
 # language governing permissions and limitations under the License.
 from tests import unittest
 
-import botocore.session
-from botocore.exceptions import ClientError
+import ibm_botocore.session
+from ibm_botocore.exceptions import ClientError
 
 class TestSTS(unittest.TestCase):
     def setUp(self):
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
         credentials = self.session.get_credentials()
         if credentials.token is not None:
             self.skipTest('STS tests require long-term credentials')

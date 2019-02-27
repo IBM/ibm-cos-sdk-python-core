@@ -14,15 +14,15 @@ from tests import unittest, random_chars
 
 from nose.plugins.attrib import attr
 
-import botocore.session
-from botocore.exceptions import WaiterError
+import ibm_botocore.session
+from ibm_botocore.exceptions import WaiterError
 
 
 # This is the same test as above, except using the client interface.
 @attr('slow')
 class TestWaiterForDynamoDB(unittest.TestCase):
     def setUp(self):
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
         self.client = self.session.create_client('dynamodb', 'us-west-2')
 
     def test_create_table_and_wait(self):
@@ -46,7 +46,7 @@ class TestCanGetWaitersThroughClientInterface(unittest.TestCase):
         # We're checking this because ses is not the endpoint prefix
         # for the service, it's email.  We want to make sure this does
         # not affect the lookup process.
-        session = botocore.session.get_session()
+        session = ibm_botocore.session.get_session()
         client = session.create_client('ses', 'us-east-1')
         # If we have at least one waiter in the list, we know that we have
         # actually loaded the waiters and this test has passed.
@@ -55,7 +55,7 @@ class TestCanGetWaitersThroughClientInterface(unittest.TestCase):
 
 class TestMatchersWithErrors(unittest.TestCase):
     def setUp(self):
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
         self.client = self.session.create_client(
             'ec2', region_name='us-west-2')
 

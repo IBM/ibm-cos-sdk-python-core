@@ -12,12 +12,12 @@
 # language governing permissions and limitations under the License.
 from tests import unittest, random_chars
 
-import botocore.session
+import ibm_botocore.session
 
 
 class TestCognitoIdentity(unittest.TestCase):
     def setUp(self):
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
         self.client = self.session.create_client('cognito-identity', 'us-east-1')
 
     def test_can_create_and_delete_identity_pool(self):

@@ -17,11 +17,11 @@ import warnings
 from nose.tools import assert_equal, assert_true
 
 from tests import ClientHTTPStubber
-from botocore import xform_name
-import botocore.session
-from botocore.client import ClientError
-from botocore.endpoint import Endpoint
-from botocore.exceptions import ConnectionClosedError
+from ibm_botocore import xform_name
+import ibm_botocore.session
+from ibm_botocore.client import ClientError
+from ibm_botocore.endpoint import Endpoint
+from ibm_botocore.exceptions import ConnectionClosedError
 
 
 # Mapping of service -> api calls to try.
@@ -235,7 +235,7 @@ def _list_services(dict_entries):
 def test_can_make_request_with_client():
     # Same as test_can_make_request, but with Client objects
     # instead of service/operations.
-    session = botocore.session.get_session()
+    session = ibm_botocore.session.get_session()
     for service_name in _list_services(SMOKE_TESTS):
         client = _get_client(session, service_name)
         for operation_name in SMOKE_TESTS[service_name]:
@@ -255,7 +255,7 @@ def _make_client_call(client, operation_name, kwargs):
 
 
 def test_can_make_request_and_understand_errors_with_client():
-    session = botocore.session.get_session()
+    session = ibm_botocore.session.get_session()
     for service_name in _list_services(ERROR_TESTS):
         client = _get_client(session, service_name)
         for operation_name in ERROR_TESTS[service_name]:
@@ -276,7 +276,7 @@ def _make_error_client_call(client, operation_name, kwargs):
 
 
 def test_client_can_retry_request_properly():
-    session = botocore.session.get_session()
+    session = ibm_botocore.session.get_session()
     for service_name in _list_services(SMOKE_TESTS):
         client = _get_client(session, service_name)
         for operation_name in SMOKE_TESTS[service_name]:

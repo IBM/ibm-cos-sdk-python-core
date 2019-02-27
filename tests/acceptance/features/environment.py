@@ -1,8 +1,8 @@
 import os
 
-import botocore.session
+import ibm_botocore.session
 
-SESSION = botocore.session.get_session()
+SESSION = ibm_botocore.session.get_session()
 KNOWN_SERVICES = SESSION.get_available_services()
 
 # For the services where the tag name doesn't match

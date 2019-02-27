@@ -13,7 +13,7 @@
 
 from tests import unittest, random_chars
 
-import botocore.session
+import ibm_botocore.session
 
 DEFAULT_ROLE_POLICY = """\
 {"Statement": [
@@ -30,7 +30,7 @@ DEFAULT_ROLE_POLICY = """\
 
 class TestElasticTranscoder(unittest.TestCase):
     def setUp(self):
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
         self.client = self.session.create_client(
             'elastictranscoder', 'us-east-1')
         self.s3_client = self.session.create_client('s3', 'us-east-1')

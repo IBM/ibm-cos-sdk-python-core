@@ -1,7 +1,7 @@
 import json
 
-from botocore import xform_name
-from botocore.exceptions import ClientError
+from ibm_botocore import xform_name
+from ibm_botocore.exceptions import ClientError
 
 from behave import when, then
 from nose.tools import assert_equal

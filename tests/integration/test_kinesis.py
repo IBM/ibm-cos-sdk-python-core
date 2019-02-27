@@ -16,7 +16,7 @@ from tests import unittest, random_chars
 
 from nose.plugins.attrib import attr
 
-import botocore.session
+import ibm_botocore.session
 
 
 class TestKinesisListStreams(unittest.TestCase):
@@ -28,7 +28,7 @@ class TestKinesisListStreams(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.session = botocore.session.get_session()
+        cls.session = ibm_botocore.session.get_session()
         cls.stream_name = 'botocore-test-%s' % random_chars(10)
         client = cls.session.create_client('kinesis', cls.REGION)
         client.create_stream(StreamName=cls.stream_name,

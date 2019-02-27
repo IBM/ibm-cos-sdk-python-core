@@ -5,21 +5,21 @@ import threading
 from tests import unittest
 from contextlib import contextmanager
 
-import botocore.session
-from botocore.config import Config
-from botocore.vendored.six.moves import BaseHTTPServer, socketserver
-from botocore.exceptions import (
+import ibm_botocore.session
+from ibm_botocore.config import Config
+from ibm_botocore.vendored.six.moves import BaseHTTPServer, socketserver
+from ibm_botocore.exceptions import (
     ConnectTimeoutError, ReadTimeoutError, EndpointConnectionError,
     ConnectionClosedError,
 )
-from botocore.vendored.requests import exceptions as requests_exceptions
+from ibm_botocore.vendored.requests import exceptions as requests_exceptions
 
 
 class TestClientHTTPBehavior(unittest.TestCase):
     def setUp(self):
         self.port = unused_port()
         self.localhost = 'http://localhost:%s/' % self.port
-        self.session = botocore.session.get_session()
+        self.session = ibm_botocore.session.get_session()
 
     @unittest.skip('Test has suddenly become extremely flakey.')
     def test_can_proxy_https_request_with_auth(self):
