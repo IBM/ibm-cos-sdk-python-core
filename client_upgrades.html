@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Upgrading to Clients &mdash; ibm_botocore 2.4.4 documentation</title>
+    <title>Upgrading to Clients &mdash; ibm_botocore 2.5.0 documentation</title>
     
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -23,7 +23,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '2.4.4',
+        VERSION:     '2.5.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -32,7 +32,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="ibm_botocore 2.4.4 documentation" href="index.html" />
+    <link rel="top" title="ibm_botocore 2.5.0 documentation" href="index.html" />
   
    
 
@@ -44,7 +44,7 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li><a href="index.html">ibm_botocore 2.4.4 documentation</a> &raquo;</li> 
+        <li><a href="index.html">ibm_botocore 2.5.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -54,7 +54,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">ibm_botocore 2.4.4 documentation</a>
+    index.html" class="text-logo">ibm_botocore 2.5.0 documentation</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -131,25 +131,25 @@ interface to making AWS calls that provided a number of benefits over
 the existing interface.  At the time, both interfaces were added
 so that users could opt in to trying the new clients.</p>
 <p>Below is an example of the old interface:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">botocore.session</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">botocore.session</span>
 <span class="n">session</span> <span class="o">=</span> <span class="n">botocore</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span>
-<span class="n">s3</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_service</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
-<span class="n">endpoint</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">get_endpoint</span><span class="p">(</span><span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
-<span class="n">list_objects</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="s1">&#39;ListObjects&#39;</span><span class="p">)</span>
-<span class="n">http</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="n">list_objects</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;mybucket&#39;</span><span class="p">)</span>
+<span class="n">s3</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_service</span><span class="p">(</span><span class="s">&#39;s3&#39;</span><span class="p">)</span>
+<span class="n">endpoint</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">get_endpoint</span><span class="p">(</span><span class="s">&#39;us-west-2&#39;</span><span class="p">)</span>
+<span class="n">list_objects</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="s">&#39;ListObjects&#39;</span><span class="p">)</span>
+<span class="n">http</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="n">list_objects</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">Bucket</span><span class="o">=</span><span class="s">&#39;mybucket&#39;</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">http</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Contents: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;Contents])</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;Contents: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">response</span><span class="p">[</span><span class="s">&#39;Contents])</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;API call failed, status code: </span><span class="si">%s</span><span class="s2">, error: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;API call failed, status code: </span><span class="si">%s</span><span class="s">, error: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span>
         <span class="n">http</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">http</span><span class="o">.</span><span class="n">content</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>Here's an example of the newer (preferred) client interface:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">botocore.session</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">botocore.session</span>
 <span class="n">session</span> <span class="o">=</span> <span class="n">botocore</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span>
-<span class="n">s3</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">create_client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">,</span> <span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
-<span class="n">response</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">list_objects</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;mybucket&#39;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Contents: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;Contents&#39;</span><span class="p">])</span>
+<span class="n">s3</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">create_client</span><span class="p">(</span><span class="s">&#39;s3&#39;</span><span class="p">,</span> <span class="s">&#39;us-west-2&#39;</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">list_objects</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s">&#39;mybucket&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Contents: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">response</span><span class="p">[</span><span class="s">&#39;Contents&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>While there are many improvements with the new interface, here's
@@ -211,11 +211,11 @@ specifically, botocore uses the same casing used by the respective
 AWS service.  Most AWS services uses CamelCasing.  Some AWS services
 use lowerCamelCase.</p>
 <p><strong>Old</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">list_objects</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">bucket</span><span class="o">=</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">list_objects</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">bucket</span><span class="o">=</span><span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s">&#39;bar&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>New</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">list_objects</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">client</span><span class="o">.</span><span class="n">list_objects</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="s">&#39;bar&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -226,24 +226,24 @@ object.  To reuse existing HTTP connection, you needed to keep a reference
 to the endpoint objects.  With clients, connection pooling is tied to a client.
 Use a single client to make multiple API calls.</p>
 <p><strong>Old</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">service</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_service</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
-<span class="n">endpoint</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">get_endpoint</span><span class="p">(</span><span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
-<span class="n">operation</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="s1">&#39;ListObjects&#39;</span><span class="p">)</span>
-<span class="n">head_object</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="s1">&#39;HeadObject&#39;</span><span class="p">)</span>
-<span class="n">parsed</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;mybucket&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-<span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">parsed</span><span class="p">[</span><span class="s1">&#39;Contents&#39;</span><span class="p">]:</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s1">&#39;Key&#39;</span><span class="p">]</span>
-    <span class="c1"># Use existing connection be passing in the same endpoint.</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">head_object</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;mybucket&#39;</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="n">name</span><span class="p">))</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">service</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_service</span><span class="p">(</span><span class="s">&#39;s3&#39;</span><span class="p">)</span>
+<span class="n">endpoint</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">get_endpoint</span><span class="p">(</span><span class="s">&#39;us-west-2&#39;</span><span class="p">)</span>
+<span class="n">operation</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="s">&#39;ListObjects&#39;</span><span class="p">)</span>
+<span class="n">head_object</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="s">&#39;HeadObject&#39;</span><span class="p">)</span>
+<span class="n">parsed</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">Bucket</span><span class="o">=</span><span class="s">&#39;mybucket&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">parsed</span><span class="p">[</span><span class="s">&#39;Contents&#39;</span><span class="p">]:</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;Key&#39;</span><span class="p">]</span>
+    <span class="c"># Use existing connection be passing in the same endpoint.</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">head_object</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">Bucket</span><span class="o">=</span><span class="s">&#39;mybucket&#39;</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="n">name</span><span class="p">))</span>
 </pre></div>
 </div>
 <p><strong>New</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">s3</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">,</span> <span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">s3</span><span class="o">.</span><span class="n">list_objects</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;mybucket&#39;</span><span class="p">)[</span><span class="s1">&#39;Contents&#39;</span><span class="p">]:</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s1">&#39;Key&#39;</span><span class="p">]</span>
-    <span class="c1"># Using the same client will reuse any existing HTTP</span>
-    <span class="c1"># connections the client was using.</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">s3</span><span class="o">.</span><span class="n">head_object</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;mybucket&#39;</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="n">name</span><span class="p">))</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s3</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="s">&#39;s3&#39;</span><span class="p">,</span> <span class="s">&#39;us-west-2&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">s3</span><span class="o">.</span><span class="n">list_objects</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s">&#39;mybucket&#39;</span><span class="p">)[</span><span class="s">&#39;Contents&#39;</span><span class="p">]:</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;Key&#39;</span><span class="p">]</span>
+    <span class="c"># Using the same client will reuse any existing HTTP</span>
+    <span class="c"># connections the client was using.</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">s3</span><span class="o">.</span><span class="n">head_object</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s">&#39;mybucket&#39;</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="n">name</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -256,14 +256,14 @@ you'd use <tt class="docutils literal"><span class="pre">service.get_operation('
 which map 1 - 1 to operation names are snake_cased, as is common in python
 code.</p>
 <p><strong>Old</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">service</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_service</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
-<span class="n">list_objects</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="s1">&#39;ListObjects&#39;</span><span class="p">)</span>
-<span class="n">head_object</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="s1">&#39;HeadObject&#39;</span><span class="p">)</span>
-<span class="n">get_object</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="s1">&#39;GetObject&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">service</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_service</span><span class="p">(</span><span class="s">&#39;s3&#39;</span><span class="p">)</span>
+<span class="n">list_objects</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="s">&#39;ListObjects&#39;</span><span class="p">)</span>
+<span class="n">head_object</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="s">&#39;HeadObject&#39;</span><span class="p">)</span>
+<span class="n">get_object</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="s">&#39;GetObject&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>New</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">s3</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">,</span> <span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s3</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="s">&#39;s3&#39;</span><span class="p">,</span> <span class="s">&#39;us-west-2&#39;</span><span class="p">)</span>
 <span class="n">list_objects</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">list_objects</span>
 <span class="n">head_object</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">head_object</span>
 <span class="n">get_object</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">get_object</span>
@@ -277,14 +277,14 @@ a tuple of the HTTP response object, and the parsed dict that results from
 parsing the HTTP object.  In the client interface, only the parsed
 response is returned.  The HTTP response object is not returned.</p>
 <p><strong>Old</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">ec2</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_service</span><span class="p">(</span><span class="s1">&#39;ec2&#39;</span><span class="p">)</span>
-<span class="n">endpoint</span> <span class="o">=</span> <span class="n">ec2</span><span class="o">.</span><span class="n">get_endpoint</span><span class="p">(</span><span class="s1">&#39;ec2&#39;</span><span class="p">)</span>
-<span class="n">describe_instances</span> <span class="o">=</span> <span class="n">ec2</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="s1">&#39;DescribeInstances&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">ec2</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_service</span><span class="p">(</span><span class="s">&#39;ec2&#39;</span><span class="p">)</span>
+<span class="n">endpoint</span> <span class="o">=</span> <span class="n">ec2</span><span class="o">.</span><span class="n">get_endpoint</span><span class="p">(</span><span class="s">&#39;ec2&#39;</span><span class="p">)</span>
+<span class="n">describe_instances</span> <span class="o">=</span> <span class="n">ec2</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="s">&#39;DescribeInstances&#39;</span><span class="p">)</span>
 <span class="n">http</span><span class="p">,</span> <span class="n">parsed</span> <span class="o">=</span> <span class="n">describe_instances</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">endpoint</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>New</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">ec2</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="s1">&#39;ec2&#39;</span><span class="p">,</span> <span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">ec2</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="s">&#39;ec2&#39;</span><span class="p">,</span> <span class="s">&#39;us-west-2&#39;</span><span class="p">)</span>
 <span class="n">parsed</span> <span class="o">=</span> <span class="n">ec2</span><span class="o">.</span><span class="n">describe_instances</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -294,10 +294,10 @@ required (discussed below).  Exception are automatically raised.</p>
 <p>Note that if for some reason you do need to see the response status code,
 it is available via the <tt class="docutils literal"><span class="pre">ResponseMetadata</span></tt> in the parsed dict that's
 returned.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">ec2</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="s1">&#39;ec2&#39;</span><span class="p">,</span> <span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">ec2</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="s">&#39;ec2&#39;</span><span class="p">,</span> <span class="s">&#39;us-west-2&#39;</span><span class="p">)</span>
 <span class="n">parsed</span> <span class="o">=</span> <span class="n">ec2</span><span class="o">.</span><span class="n">describe_instances</span><span class="p">()</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;The status code is:&quot;</span><span class="p">,</span>
-      <span class="n">parsed</span><span class="p">[</span><span class="s1">&#39;ResponseMetadata&#39;</span><span class="p">][</span><span class="s1">&#39;HTTPStatusCode&#39;</span><span class="p">]))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;The status code is:&quot;</span><span class="p">,</span>
+      <span class="n">parsed</span><span class="p">[</span><span class="s">&#39;ResponseMetadata&#39;</span><span class="p">][</span><span class="s">&#39;HTTPStatusCode&#39;</span><span class="p">]))</span>
 </pre></div>
 </div>
 </div>
@@ -309,15 +309,15 @@ as the parsed error response (which is a dictionary).  There isn't
 really equivalent functionality in the old interface, but below is
 an example of how you can handle an error:</p>
 <p><strong>New</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">botocore.exceptions</span> <span class="kn">import</span> <span class="n">ClientError</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">botocore.exceptions</span> <span class="kn">import</span> <span class="n">ClientError</span>
 
-<span class="n">ec2</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="s1">&#39;ec2&#39;</span><span class="p">,</span> <span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
+<span class="n">ec2</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="s">&#39;ec2&#39;</span><span class="p">,</span> <span class="s">&#39;us-west-2&#39;</span><span class="p">)</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="n">parsed</span> <span class="o">=</span> <span class="n">ec2</span><span class="o">.</span><span class="n">describe_instances</span><span class="p">(</span><span class="n">InstanceIds</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;i-badid&#39;</span><span class="p">])</span>
+    <span class="n">parsed</span> <span class="o">=</span> <span class="n">ec2</span><span class="o">.</span><span class="n">describe_instances</span><span class="p">(</span><span class="n">InstanceIds</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;i-badid&#39;</span><span class="p">])</span>
 <span class="k">except</span> <span class="n">ClientError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Received error: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="c1"># Only worry about a specific service error code</span>
-    <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;Error&#39;</span><span class="p">][</span><span class="s1">&#39;Code&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;InvalidInstanceID.NotFound&#39;</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Received error: </span><span class="si">%s</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="c"># Only worry about a specific service error code</span>
+    <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="p">[</span><span class="s">&#39;Error&#39;</span><span class="p">][</span><span class="s">&#39;Code&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;InvalidInstanceID.NotFound&#39;</span><span class="p">:</span>
         <span class="k">raise</span>
 </pre></div>
 </div>
@@ -339,7 +339,7 @@ be happy to help.</p>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li><a href="index.html">ibm_botocore 2.4.4 documentation</a> &raquo;</li> 
+        <li><a href="index.html">ibm_botocore 2.5.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
 <script type="text/javascript">
