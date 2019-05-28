@@ -854,7 +854,6 @@ class Session(object):
         event_emitter = self.get_component('event_emitter')
         response_parser_factory = self.get_component(
             'response_parser_factory')
-
         if config is not None and config.signature_version is UNSIGNED:
             credentials = None
         # Precedence - if any IAM method is provided, it will be used before aws
@@ -888,7 +887,7 @@ class Session(object):
 
         endpoint_resolver = self._get_internal_component('endpoint_resolver')
         exceptions_factory = self._get_internal_component('exceptions_factory')
-        config_store = self.get_component('config_store')        
+        config_store = self.get_component('config_store')
         client_creator = ibm_botocore.client.ClientCreator(
             loader, endpoint_resolver, self.user_agent(), event_emitter,
             retryhandler, translate, response_parser_factory,

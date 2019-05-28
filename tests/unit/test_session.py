@@ -23,6 +23,7 @@ import mock
 
 import ibm_botocore.session
 import ibm_botocore.exceptions
+from ibm_botocore import UNSIGNED
 from ibm_botocore.model import ServiceModel
 from ibm_botocore import client
 from ibm_botocore.hooks import HierarchicalEmitter
@@ -498,6 +499,14 @@ class TestCreateClient(BaseSessionTest):
                 aws_access_key_id=None,
                 aws_secret_access_key='foo',
             )
+
+    def test_cred_provider_not_called_on_unsigned_client(self):
+        cred_provider = mock.Mock()
+        self.session.register_component(
+            'credential_provider', cred_provider)
+        config = ibm_botocore.config.Config(signature_version=UNSIGNED)
+        self.session.create_client('sts', 'us-west-2', config=config)
+        self.assertFalse(cred_provider.load_credentials.called)
 
     @mock.patch('ibm_botocore.client.ClientCreator')
     def test_config_passed_to_client_creator(self, client_creator):

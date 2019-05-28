@@ -27,6 +27,7 @@ from ibm_botocore.exceptions import InvalidExpressionError, ConfigNotFound
 from ibm_botocore.exceptions import ClientError, ConnectionClosedError
 from ibm_botocore.exceptions import InvalidDNSNameError, MetadataRetrievalError
 from ibm_botocore.model import ServiceModel
+from ibm_botocore.utils import ensure_boolean
 from ibm_botocore.utils import is_json_value_header
 from ibm_botocore.utils import remove_dot_segments
 from ibm_botocore.utils import normalize_url_path
@@ -59,6 +60,23 @@ from ibm_botocore.utils import InstanceMetadataFetcher
 from ibm_botocore.model import DenormalizedStructureBuilder
 from ibm_botocore.model import ShapeResolver
 from ibm_botocore.config import Config
+
+
+class TestEnsureBoolean(unittest.TestCase):
+    def test_boolean_true(self):
+        self.assertEqual(ensure_boolean(True), True)
+
+    def test_boolean_false(self):
+        self.assertEqual(ensure_boolean(False), False)
+
+    def test_string_true(self):
+        self.assertEqual(ensure_boolean('True'), True)
+
+    def test_string_false(self):
+        self.assertEqual(ensure_boolean('False'), False)
+
+    def test_string_lowercase_true(self):
+        self.assertEqual(ensure_boolean('true'), True)
 
 
 class TestIsJSONValueHeader(unittest.TestCase):

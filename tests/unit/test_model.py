@@ -2,6 +2,7 @@ from tests import unittest
 
 from ibm_botocore import model
 from ibm_botocore.compat import OrderedDict
+from ibm_botocore.exceptions import MissingServiceIdError
 
 
 def test_missing_model_attribute_raises_exception():
@@ -74,6 +75,24 @@ class TestServiceModel(unittest.TestCase):
     def test_hyphenize_service_id(self):
         self.assertEqual(
             self.service_model.service_id.hyphenize(), 'myservice')
+
+    def test_service_id_does_not_exist(self):
+        service_model = {
+            'metadata': {
+                'protocol': 'query',
+                'endpointPrefix': 'endpoint-prefix',
+            },
+            'documentation': 'Documentation value',
+            'operations': {},
+            'shapes': {
+                'StringShape': {'type': 'string'}
+            }
+        }
+        service_name = 'myservice'
+        service_model = model.ServiceModel(service_model, service_name)
+        with self.assertRaisesRegexp(model.UndefinedModelAttributeError,
+                                     service_name):
+            service_model.service_id
 
     def test_operation_does_not_exist(self):
         with self.assertRaises(model.OperationNotFoundError):
@@ -263,6 +282,33 @@ class TestOperationModelFromService(unittest.TestCase):
         service_model = model.ServiceModel(self.model)
         operation_two = service_model.operation_model('OperationTwo')
         self.assertFalse(operation_two.deprecated)
+
+    def test_endpoint_operation_present(self):
+        self.model['operations']['OperationName']['endpointoperation'] = True
+        service_model = model.ServiceModel(self.model)
+        operation_name = service_model.operation_model('OperationName')
+        self.assertTrue(operation_name.is_endpoint_discovery_operation)
+
+    def test_endpoint_operation_present_false(self):
+        self.model['operations']['OperationName']['endpointoperation'] = False
+        service_model = model.ServiceModel(self.model)
+        operation_name = service_model.operation_model('OperationName')
+        self.assertFalse(operation_name.is_endpoint_discovery_operation)
+
+    def test_endpoint_operation_absent(self):
+        operation_two = self.service_model.operation_model('OperationName')
+        self.assertFalse(operation_two.is_endpoint_discovery_operation)
+
+    def test_endpoint_discovery_present(self):
+        operation = self.model['operations']['OperationName']
+        operation['endpointdiscovery'] = {'required': True}
+        service_model = model.ServiceModel(self.model)
+        operation_name = service_model.operation_model('OperationName')
+        self.assertTrue(operation_name.endpoint_discovery.get('required'))
+
+    def test_endpoint_discovery_absent(self):
+        operation_name = self.service_model.operation_model('OperationName')
+        self.assertIsNone(operation_name.endpoint_discovery)
 
 
 class TestOperationModelEventStreamTypes(unittest.TestCase):
@@ -823,6 +869,20 @@ class TestBuilders(unittest.TestCase):
         }).build_model()
         self.assertEqual(shape.members['A'].documentation,
                          'MyDocs')
+
+    def test_min_max_used_in_metadata(self):
+        b = model.DenormalizedStructureBuilder()
+        shape = b.with_members({
+            'A': {
+                'type': 'string',
+                'documentation': 'MyDocs',
+                'min': 2,
+                'max': 3,
+            },
+        }).build_model()
+        metadata = shape.members['A'].metadata
+        self.assertEqual(metadata.get('min'), 2)
+        self.assertEqual(metadata.get('max'), 3)
 
     def test_use_shape_name_when_provided(self):
         b = model.DenormalizedStructureBuilder()

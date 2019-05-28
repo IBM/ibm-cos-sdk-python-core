@@ -21,6 +21,7 @@ from ibm_botocore.model import ServiceModel
 from ibm_botocore import serialize
 from ibm_botocore.compat import six
 from ibm_botocore.exceptions import ParamValidationError
+from ibm_botocore.serialize import SERIALIZERS
 
 
 class BaseModelWithBlob(unittest.TestCase):

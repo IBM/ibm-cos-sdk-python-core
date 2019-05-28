@@ -19,6 +19,7 @@ setup(
     version=ibm_botocore.__version__,
     description='Low-level, data-driven core of IBM SDK for Python',
     long_description=open('README.rst').read(),
+    long_description_content_type='text/x-rst',
     author='IBM',
     url='https://github.com/ibm/ibm-cos-sdk-python-core',
     scripts=[],

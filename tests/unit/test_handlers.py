@@ -24,6 +24,7 @@ import ibm_botocore.session
 from ibm_botocore.compat import OrderedDict
 from ibm_botocore.exceptions import ParamValidationError, MD5UnavailableError
 from ibm_botocore.exceptions import AliasConflictParameterError
+from ibm_botocore.exceptions import MissingServiceIdError
 from ibm_botocore.awsrequest import AWSRequest
 from ibm_botocore.compat import quote, six
 from ibm_botocore.config import Config
@@ -31,8 +32,10 @@ from ibm_botocore.docs.bcdoc.restdoc import DocumentStructure
 from ibm_botocore.docs.params import RequestParamsDocumenter
 from ibm_botocore.docs.example import RequestExampleDocumenter
 from ibm_botocore.hooks import HierarchicalEmitter
+from ibm_botocore.loaders import Loader
 from ibm_botocore.model import OperationModel, ServiceModel, ServiceId
 from ibm_botocore.model import DenormalizedStructureBuilder
+from ibm_botocore.session import Session
 from ibm_botocore.signers import RequestSigner
 from ibm_botocore.credentials import Credentials
 from ibm_botocore import handlers
@@ -364,42 +367,6 @@ class TestHandlers(BaseSessionTest):
                   'MaxCount': 5,
                   'UserData': b64_user_data}
         self.assertEqual(params, result)
-
-    def test_register_retry_for_handlers_with_no_metadata(self):
-        no_endpoint_prefix = {'metadata': {}}
-        session = mock.Mock()
-        handlers.register_retries_for_service(service_data=no_endpoint_prefix,
-                                              session=mock.Mock(),
-                                              service_name='foo')
-        self.assertFalse(session.register.called)
-
-    def test_register_retry_handlers(self):
-        service_data = {
-            'metadata': {
-                'endpointPrefix': 'foo',
-                'serviceId': 'foo',
-            },
-        }
-        session = mock.Mock()
-        loader = mock.Mock()
-        session.get_component.return_value = loader
-        loader.load_data.return_value = {
-            'retry': {
-                '__default__': {
-                    'max_attempts': 10,
-                    'delay': {
-                        'type': 'exponential',
-                        'base': 2,
-                        'growth_factor': 5,
-                    },
-                },
-            },
-        }
-        handlers.register_retries_for_service(service_data=service_data,
-                                              session=session,
-                                              service_name='foo')
-        session.register.assert_called_with('needs-retry.foo', mock.ANY,
-                                            unique_id='retry-config-foo')
 
     def test_get_template_has_error_response(self):
         original = {'Error': {'Code': 'Message'}}
@@ -850,10 +817,12 @@ class TestRetryHandlerOrder(BaseSessionTest):
         return names
 
     def test_s3_special_case_is_before_other_retry(self):
+        client = self.session.create_client('s3')
         service_model = self.session.get_service_model('s3')
         operation = service_model.operation_model('CopyObject')
-        responses = self.session.emit(
+        responses = client.meta.events.emit(
             'needs-retry.s3.CopyObject',
+            request_dict={},
             response=(mock.Mock(), mock.Mock()), endpoint=mock.Mock(),
             operation=operation, attempts=1, caught_exception=None)
         # This is implementation specific, but we're trying to verify that

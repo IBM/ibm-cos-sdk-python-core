@@ -133,8 +133,6 @@ def test_endpoint_matches_service():
 
 
 def _assert_known_endpoint_prefix(endpoint_prefix, known_endpoint_prefixes):
-    
-    print(endpoint_prefix, known_endpoint_prefixes)
     assert endpoint_prefix in known_endpoint_prefixes
 
 

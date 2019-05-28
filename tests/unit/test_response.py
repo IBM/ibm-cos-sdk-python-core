@@ -94,6 +94,15 @@ class TestStreamWrapper(unittest.TestCase):
         self.assertEqual(len(chunks), 2)
         self.assertEqual(chunks, [b'a' * 1024, b'a' * 1024])
 
+    def test_streaming_body_is_an_iterator(self):
+        body = six.BytesIO(b'a' * 1024 + b'b' * 1024 + b'c' * 2)
+        stream = response.StreamingBody(body, content_length=2050)
+        self.assertEqual(b'a' * 1024, next(stream))
+        self.assertEqual(b'b' * 1024, next(stream))
+        self.assertEqual(b'c' * 2, next(stream))
+        with self.assertRaises(StopIteration):
+            next(stream)
+
     def test_iter_chunks_single_byte(self):
         body = six.BytesIO(b'abcde')
         stream = response.StreamingBody(body, content_length=5)
@@ -148,6 +157,21 @@ class TestStreamWrapper(unittest.TestCase):
         stream = response.StreamingBody(TimeoutBody(), content_length=None)
         with self.assertRaises(ReadTimeoutError):
             stream.read()
+
+    def test_streaming_line_abstruse_newline_standard(self):
+        for chunk_size in range(1, 30):
+            body = six.BytesIO(b'1234567890\r\n1234567890\r\n12345\r\n')
+            stream = response.StreamingBody(body, content_length=31)
+            self.assert_lines(
+                stream.iter_lines(chunk_size),
+                [b'1234567890', b'1234567890', b'12345'],
+            )
+
+    def test_streaming_line_empty_body(self):
+        stream = response.StreamingBody(
+            six.BytesIO(b''), content_length=0,
+        )
+        self.assert_lines(stream.iter_lines(), [])
 
 
 class FakeRawResponse(six.BytesIO):
