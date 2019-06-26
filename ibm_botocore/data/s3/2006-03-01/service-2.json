@@ -441,6 +441,17 @@
       "documentation":"Returns a list of all buckets owned by the authenticated sender of the request.",
       "alias":"GetService"
     },
+    "ListBucketsExtended":{
+      "name":"ListBucketsExtended",
+      "http":{
+        "method":"GET",
+        "requestUri":"/?extended"
+      },
+      "input":{"shape":"ListBucketsExtendedRequest"},
+      "output":{"shape":"ListBucketsExtendedOutput"},
+      "documentationUrl":"https://cloud.ibm.com/docs/services/cloud-object-storage/api-reference?topic=cloud-object-storage-compatibility-api-bucket-operations#compatibility-api-list-buckets",
+      "documentation":"Returns a list of all buckets owned by the authenticated sender of the request, along with the LocationConstraint describing the region that the bucket resides in and the bucket's storage tier."
+    },
     "ListLegalHolds":{
       "name":"ListLegalHolds",
       "http":{
@@ -856,6 +867,10 @@
         "CreationDate":{
           "shape":"CreationDate",
           "documentation":"Date the bucket was created."
+        },
+        "LocationConstraint":{
+          "shape":"BucketLocationConstraint",
+          "documentation": "Specifies the region where the bucket will be created. If you don't specify a region, the bucket will be created in US Standard."
         }
       }
     },
@@ -1002,6 +1017,13 @@
       "enum":[
         "Retention"
       ]
+    },
+    "Buckets":{
+      "type":"list",
+      "member":{
+        "shape":"Bucket",
+        "locationName":"Bucket"
+      }
     },
     "BucketProtectionEnablePermanentRetention":{"type":"boolean"},
     "Buckets":{
@@ -3616,6 +3638,44 @@
           "location":"querystring",
           "locationName":"continuation-token"
         }
+      }
+    },
+    "ListBucketsExtendedRequest": {
+      "type": "structure",
+      "members": {
+        "IBMServiceInstanceId": {
+          "shape":"AccountId",
+          "documentation":"The owning storage account. All buckets owned by this storage account are returned.",
+          "location":"header",
+          "locationName": "ibm-service-instance-id"
+        },
+        "Marker":{
+          "shape":"Marker",
+          "documentation":"Specifies the key to start with when listing objects in a bucket.",
+          "location":"querystring",
+          "locationName":"marker"
+        },
+        "MaxKeys":{
+          "shape":"MaxKeys",
+          "documentation":"Sets the maximum number of keys returned in the response. The response might contain fewer keys but will never contain more.",
+          "location":"querystring",
+          "locationName":"max-keys"
+        },
+        "Prefix":{
+          "shape":"Prefix",
+          "documentation":"Limits the response to keys that begin with the specified prefix.",
+          "location":"querystring",
+          "locationName":"prefix"
+        }
+      }
+    },
+    "ListBucketsExtendedOutput":{
+      "type":"structure",
+      "members":{
+        "IsTruncated":{"shape":"IsTruncated"},
+        "NextMarker":{"shape":"NextMarker"},
+        "Buckets":{"shape":"Buckets"},
+        "Owner":{"shape":"Owner"}
       }
     },
     "ListBucketInventoryConfigurationsOutput":{
