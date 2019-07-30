@@ -135,7 +135,6 @@ class TestHandlers(BaseSessionTest):
         self.assertEqual(params['CopySource'],
                          '/foo/bar?versionId=123')
 
-
     def test_use_event_operation_name(self):
         operation_model = mock.Mock()
         operation_model.name = 'FakeOperation'
@@ -240,7 +239,6 @@ class TestHandlers(BaseSessionTest):
 
         self.assertNotIn('DestinationRegion', params)
 
-
     def test_500_status_code_set_for_200_response(self):
         http_response = mock.Mock()
         http_response.status_code = 200
@@ -318,10 +316,10 @@ class TestHandlers(BaseSessionTest):
         model = OperationModel(operation_def, ServiceModel(service_def))
         self.session.emit(event, params=params, model=model)
 
-        self.assertEqual(params['Id'], 'ABC123')
-        self.assertEqual(params['HostedZoneId'], 'ABC123')
-        self.assertEqual(params['ResourceId'], 'DEF456')
-        self.assertEqual(params['DelegationSetId'], 'GHI789')
+        self.assertEqual(params['Id'], '/hostedzone/ABC123')
+        self.assertEqual(params['HostedZoneId'], '/hostedzone/ABC123')
+        self.assertEqual(params['ResourceId'], '/hostedzone/DEF456')
+        self.assertEqual(params['DelegationSetId'], '/hostedzone/GHI789')
 
         # This one should have been left alone
         self.assertEqual(params['Other'], '/hostedzone/foo')

@@ -390,7 +390,7 @@ class TestSessionUserAgent(BaseSessionTest):
 
     def test_can_change_user_agent_version(self):
         self.session.user_agent_version = '24.0'
-        self.assertTrue(self.session.user_agent().startswith('Botocore/24.0'))
+        self.assertTrue(self.session.user_agent().startswith('ibm-cos-sdk-python-core/24.0'))
 
     def test_can_append_to_user_agent(self):
         self.session.user_agent_extra = 'custom-thing/other'
@@ -473,15 +473,15 @@ class TestGetWaiterModel(BaseSessionTest):
 
 class TestCreateClient(BaseSessionTest):
     def test_can_create_client(self):
-        sts_client = self.session.create_client('sts', 'us-west-2')
-        self.assertIsInstance(sts_client, client.BaseClient)
+        s3_client = self.session.create_client('s3', 'us-west-2')
+        self.assertIsInstance(s3_client, client.BaseClient)
 
     def test_credential_provider_not_called_when_creds_provided(self):
         cred_provider = mock.Mock()
         self.session.register_component(
             'credential_provider', cred_provider)
         self.session.create_client(
-            'sts', 'us-west-2',
+            's3', 'us-west-2',
             aws_access_key_id='foo',
             aws_secret_access_key='bar',
             aws_session_token='baz')
@@ -493,13 +493,13 @@ class TestCreateClient(BaseSessionTest):
     def test_cred_provider_called_when_partial_creds_provided(self):
         with self.assertRaises(ibm_botocore.exceptions.PartialCredentialsError):
             self.session.create_client(
-                'sts', 'us-west-2',
+                's3', 'us-west-2',
                 aws_access_key_id='foo',
                 aws_secret_access_key=None
             )
         with self.assertRaises(ibm_botocore.exceptions.PartialCredentialsError):
             self.session.create_client(
-                'sts', 'us-west-2',
+                's3', 'us-west-2',
                 aws_access_key_id=None,
                 aws_secret_access_key='foo',
             )
@@ -512,7 +512,7 @@ class TestCreateClient(BaseSessionTest):
         # The config passed to the client should be the one that is used
         # in creating the client.
         config = ibm_botocore.config.Config(region_name='us-west-2')
-        self.session.create_client('sts', config=config)
+        self.session.create_client('s3', config=config)
         client_creator.return_value.create_client.assert_called_with(
             service_name=mock.ANY, region_name=mock.ANY, is_secure=mock.ANY,
             endpoint_url=mock.ANY, verify=mock.ANY, credentials=mock.ANY,
@@ -523,7 +523,7 @@ class TestCreateClient(BaseSessionTest):
     def test_create_client_with_default_client_config(self, client_creator):
         config = ibm_botocore.config.Config()
         self.session.set_default_client_config(config)
-        self.session.create_client('sts')
+        self.session.create_client('s3')
 
         client_creator.return_value.create_client.assert_called_with(
             service_name=mock.ANY, region_name=mock.ANY, is_secure=mock.ANY,
@@ -536,7 +536,7 @@ class TestCreateClient(BaseSessionTest):
         config = ibm_botocore.config.Config(region_name='us-west-2')
         other_config = ibm_botocore.config.Config(region_name='us-east-1')
         self.session.set_default_client_config(config)
-        self.session.create_client('sts', config=other_config)
+        self.session.create_client('s3', config=other_config)
 
         # Grab the client config used in creating the client
         used_client_config = (
@@ -551,14 +551,14 @@ class TestCreateClient(BaseSessionTest):
 
     def test_create_client_with_region(self):
         ec2_client = self.session.create_client(
-            'ec2', 'us-west-2')
+            's3', 'us-west-2')
         self.assertEqual(ec2_client.meta.region_name, 'us-west-2')
 
     def test_create_client_with_region_and_client_config(self):
         config = ibm_botocore.config.Config()
         # Use a client config with no region configured.
         ec2_client = self.session.create_client(
-            'ec2', region_name='us-west-2', config=config)
+            's3', region_name='us-west-2', config=config)
         self.assertEqual(ec2_client.meta.region_name, 'us-west-2')
 
         # If the region name is changed, it should not change the
@@ -568,11 +568,11 @@ class TestCreateClient(BaseSessionTest):
 
         # Now make a new client with the updated client config.
         ec2_client = self.session.create_client(
-            'ec2', config=config)
+            's3', config=config)
         self.assertEqual(ec2_client.meta.region_name, 'us-east-1')
 
     def test_create_client_no_region_and_no_client_config(self):
-        ec2_client = self.session.create_client('ec2')
+        ec2_client = self.session.create_client('s3')
         self.assertEqual(ec2_client.meta.region_name, 'us-west-11')
 
     @mock.patch('ibm_botocore.client.ClientCreator')
@@ -585,7 +585,7 @@ class TestCreateClient(BaseSessionTest):
             f.write('foo_ca_bundle=config-certs.pem\n')
             f.flush()
 
-            self.session.create_client('ec2', 'us-west-2')
+            self.session.create_client('s3', 'us-west-2')
             call_kwargs = client_creator.return_value.\
                 create_client.call_args[1]
             self.assertEqual(call_kwargs['verify'], 'config-certs.pem')
@@ -593,14 +593,14 @@ class TestCreateClient(BaseSessionTest):
     @mock.patch('ibm_botocore.client.ClientCreator')
     def test_create_client_with_ca_bundle_from_env_var(self, client_creator):
         self.environ['FOO_AWS_CA_BUNDLE'] = 'env-certs.pem'
-        self.session.create_client('ec2', 'us-west-2')
+        self.session.create_client('s3', 'us-west-2')
         call_kwargs = client_creator.return_value.create_client.call_args[1]
         self.assertEqual(call_kwargs['verify'], 'env-certs.pem')
 
     @mock.patch('ibm_botocore.client.ClientCreator')
     def test_create_client_with_verify_param(self, client_creator):
         self.session.create_client(
-            'ec2', 'us-west-2', verify='verify-certs.pem')
+            's3', 'us-west-2', verify='verify-certs.pem')
         call_kwargs = client_creator.return_value.create_client.call_args[1]
         self.assertEqual(call_kwargs['verify'], 'verify-certs.pem')
 
@@ -620,7 +620,7 @@ class TestCreateClient(BaseSessionTest):
 
             # Set the ca cert using the verify parameter
             self.session.create_client(
-                'ec2', 'us-west-2', verify='verify-certs.pem')
+                's3', 'us-west-2', verify='verify-certs.pem')
             call_kwargs = client_creator.return_value.\
                 create_client.call_args[1]
             # The verify parameter should override all the other

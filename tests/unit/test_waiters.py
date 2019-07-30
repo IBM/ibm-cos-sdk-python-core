@@ -662,5 +662,3 @@ class ServiceWaiterFunctionalTest(BaseEnvVar):
                     service, type_name='service-2', api_version=api_version),
                 service_name=service
             )
-
-

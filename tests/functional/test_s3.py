@@ -48,7 +48,6 @@ class TestOnlyAsciiCharsAllowed(BaseS3OperationTest):
                         'goodkey': 'good', 'non-ascii': u'\u2713'})
 
 
-
 class TestS3PutObject(BaseS3OperationTest):
     def test_500_error_with_non_xml_body(self):
         # Note: This exact test case may not be applicable from

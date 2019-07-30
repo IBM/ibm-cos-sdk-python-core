@@ -920,8 +920,8 @@ class TestGeneratePresignedPost(unittest.TestCase):
             fields, {'key': 'mykey', 'acl': 'public-read'})
 
     def test_generate_presigned_post_non_s3_client(self):
-        self.client = self.session.create_client('ec2', 'us-west-2')
-        with self.assertRaises(AttributeError):
+        self.client = self.session.create_client('s3', 'us-west-2')
+        with self.assertRaises(TypeError):
             self.client.generate_presigned_post()
 
 
@@ -931,7 +931,7 @@ class TestGenerateDBAuthToken(BaseSignerTest):
     def setUp(self):
         self.session = ibm_botocore.session.get_session()
         self.client = self.session.create_client(
-            'rds', region_name='us-east-1', aws_access_key_id='akid',
+            's3', region_name='us-east-1', aws_access_key_id='akid',
             aws_secret_access_key='skid', config=Config(signature_version='v4')
         )
 

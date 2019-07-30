@@ -1048,6 +1048,7 @@ class OriginalEC2Provider(CredentialProvider):
         else:
             return None
 
+
 class SharedCredentialProvider(CredentialProvider):
     METHOD = 'shared-credentials-file'
     CANONICAL_NAME = 'SharedCredentials'
@@ -1837,7 +1838,7 @@ class IbmCosCredentialsProvider(SharedCredentialProvider):
                 set_dic_value(_sec, 'ibm_kp_root_key_crn',      _data, 'iam_serviceid_crn')
 
                 # this is for testing - if the value is set in the file then use it
-                # otherwise the default endpoint is used -- 'https://iam.ng.bluemix.net/oidc/token'
+                # otherwise the default endpoint is used -- 'https://iam.cloud.ibm.com/identity/token'
                 set_dic_value(_sec, 'ibm_auth_endpoint',        _data, 'iam_auth_endpoint')
                 if 'ibm_auth_endpoint' not in _sec.keys():
                     _sec['ibm_auth_endpoint'] = None
@@ -1879,7 +1880,7 @@ class DefaultTokenManager(TokenManager):
     :ivar _mandatory_refresh_timeout: The time at which all threads will block waiting for
         refreshed credentials.
     """
-    API_TOKEN_URL = 'https://iam.ng.bluemix.net/oidc/token'
+    API_TOKEN_URL = 'https://iam.cloud.ibm.com/identity/token'
     _advisory_refresh_timeout = 0
     _mandatory_refresh_timeout = 0
     REFRESH_OVERRIDE_IN_SECS = 0 # force refresh in this number of secs

@@ -239,8 +239,8 @@ class TestEventStreamBody(TestEndpointBase):
 class TestEndpointCreator(unittest.TestCase):
     def setUp(self):
         self.service_model = Mock(
-            endpoint_prefix='ec2', signature_version='v2',
-            signing_name='ec2')
+            endpoint_prefix='s3', signature_version='v2',
+            signing_name='s3')
         self.environ = {}
         self.environ_patch = patch('os.environ', self.environ)
         self.environ_patch.start()
