@@ -12,8 +12,9 @@
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 from __future__ import unicode_literals
-from ibm_botocore.vendored import requests
-from ibm_botocore.vendored.requests.packages import urllib3
+
+import requests
+from requests.packages import urllib3
 
 
 def _exception_from_packed_args(exception_cls, args=None, kwargs=None):

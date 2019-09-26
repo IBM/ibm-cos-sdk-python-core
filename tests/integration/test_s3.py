@@ -31,7 +31,7 @@ from ibm_botocore.compat import six, zip_longest
 import ibm_botocore.session
 import ibm_botocore.auth
 import ibm_botocore.credentials
-import ibm_botocore.vendored.requests as requests
+import requests
 from ibm_botocore.config import Config
 from ibm_botocore.exceptions import ClientError
 

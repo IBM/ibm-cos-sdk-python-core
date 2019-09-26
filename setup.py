@@ -10,8 +10,8 @@ if not _valid:
 
 
 requires = ['jmespath>=0.7.1,<1.0.0',
-            'docutils>=0.10',
-            'urllib3>=1.20,<1.25',
+            'docutils>=0.10,<0.16',
+            'urllib3>=1.20,<1.26',
             'python-dateutil>=2.1,<3.0.0']
 
 setup(
@@ -24,8 +24,7 @@ setup(
     url='https://github.com/ibm/ibm-cos-sdk-python-core',
     scripts=[],
     packages=find_packages(exclude=['tests*']),
-    package_data={'ibm_botocore': ['data/*.json', 'data/*/*.json'],
-                  'ibm_botocore.vendored.requests': ['*.pem']},
+    package_data={'ibm_botocore': ['cacert.pem', 'data/*.json', 'data/*/*.json']},
     include_package_data=True,
     install_requires=requires,
     license="Apache License 2.0",

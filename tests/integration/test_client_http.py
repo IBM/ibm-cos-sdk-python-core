@@ -12,7 +12,7 @@ from ibm_botocore.exceptions import (
     ConnectTimeoutError, ReadTimeoutError, EndpointConnectionError,
     ConnectionClosedError,
 )
-from ibm_botocore.vendored.requests import exceptions as requests_exceptions
+from requests import exceptions as requests_exceptions
 
 
 class TestClientHTTPBehavior(unittest.TestCase):

@@ -1,8 +1,8 @@
 from nose.tools import assert_raises
 
 from ibm_botocore import exceptions as botocore_exceptions
-from ibm_botocore.vendored.requests import exceptions as requests_exceptions
-from ibm_botocore.vendored.requests.packages.urllib3 import exceptions as urllib3_exceptions
+from requests import exceptions as requests_exceptions
+from urllib3 import exceptions as urllib3_exceptions
 
 EXCEPTION_MAPPING = [
     (botocore_exceptions.ReadTimeoutError, requests_exceptions.ReadTimeout),

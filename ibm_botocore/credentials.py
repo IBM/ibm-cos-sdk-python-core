@@ -1790,7 +1790,7 @@ class CredentialResolver(object):
 # IBM IAM Credentails
 #######################################################################################################
 import atexit
-import ibm_botocore.vendored.requests as requests
+import requests
 try:
     import http.client as httplib
 except ImportError:
