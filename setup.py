@@ -12,7 +12,8 @@ if not _valid:
 requires = ['jmespath>=0.7.1,<1.0.0',
             'docutils>=0.10,<0.16',
             'urllib3>=1.20,<1.26',
-            'python-dateutil>=2.1,<3.0.0']
+            'python-dateutil>=2.1,<3.0.0',
+            'requests>=2.20']
 
 setup(
     name='ibm-cos-sdk-core',
