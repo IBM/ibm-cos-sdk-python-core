@@ -92,7 +92,8 @@ EVENT_ALIASES = {
     "email": "ses",
     "entitlement.marketplace": "marketplace-entitlement-service",
     "es": "elasticsearch-service",
-    "events": "cloudwatch-events",
+    "events": "eventbridge",
+    "cloudwatch-events": "eventbridge",
     "iot-data": "iot-data-plane",
     "iot-jobs-data": "iot-jobs-data-plane",
     "iot1click-devices": "iot-1click-devices-service",
@@ -869,9 +870,6 @@ def check_dns_name(bucket_name):
     if n < 3 or n > 63:
         # Wrong length
         return False
-    if n == 1:
-        if not bucket_name.isalnum():
-            return False
     match = LABEL_RE.match(bucket_name)
     if match is None or match.end() != len(bucket_name):
         return False
@@ -1373,3 +1371,13 @@ def get_encoding_from_headers(headers, default='ISO-8859-1'):
 
     if 'text' in content_type:
         return default
+
+
+class FileWebIdentityTokenLoader(object):
+    def __init__(self, web_identity_token_path, _open=open):
+        self._web_identity_token_path = web_identity_token_path
+        self._open = _open
+
+    def __call__(self):
+        with self._open(self._web_identity_token_path) as token_file:
+            return token_file.read()
