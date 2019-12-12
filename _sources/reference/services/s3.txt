@@ -69,6 +69,9 @@ Client
   *   :py:meth:`~S3.Client.delete_bucket_replication`
 
   
+  *   :py:meth:`~S3.Client.delete_bucket_tagging`
+
+  
   *   :py:meth:`~S3.Client.delete_bucket_website`
 
   
@@ -123,6 +126,12 @@ Client
   *   :py:meth:`~S3.Client.get_bucket_replication`
 
   
+  *   :py:meth:`~S3.Client.get_bucket_tagging`
+
+  
+  *   :py:meth:`~S3.Client.get_bucket_versioning`
+
+  
   *   :py:meth:`~S3.Client.get_object`
 
   
@@ -165,6 +174,9 @@ Client
   *   :py:meth:`~S3.Client.list_multipart_uploads`
 
   
+  *   :py:meth:`~S3.Client.list_object_versions`
+
+  
   *   :py:meth:`~S3.Client.list_objects`
 
   
@@ -199,6 +211,12 @@ Client
 
   
   *   :py:meth:`~S3.Client.put_bucket_replication`
+
+  
+  *   :py:meth:`~S3.Client.put_bucket_tagging`
+
+  
+  *   :py:meth:`~S3.Client.put_bucket_versioning`
 
   
   *   :py:meth:`~S3.Client.put_object`
@@ -416,6 +434,7 @@ Client
             'Expiration': 'string',
             'ETag': 'string',
             'ServerSideEncryption': 'AES256',
+            'VersionId': 'string',
             'SSEKMSKeyId': 'string',
             'RequestCharged': 'requester'
         }
@@ -444,6 +463,13 @@ Client
         - **ServerSideEncryption** *(string) --* The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).
         
 
+        - **VersionId** *(string) --* 
+
+          Version of the object.
+
+          
+        
+
         - **SSEKMSKeyId** *(string) --* Not returned by COS.
         
 
@@ -468,7 +494,7 @@ Client
           ContentEncoding='string',
           ContentLanguage='string',
           ContentType='string',
-          CopySource='string' or {'Bucket': 'string', 'Key': 'string'},
+          CopySource='string' or {'Bucket': 'string', 'Key': 'string', 'VersionId': 'string'},
           CopySourceIfMatch='string',
           CopySourceIfModifiedSince=datetime(2015, 1, 1),
           CopySourceIfNoneMatch='string',
@@ -526,7 +552,7 @@ Client
 
     
     :type CopySource: str or dict
-    :param CopySource: **[REQUIRED]** The name of the source bucket, key name of the source object. You can either provide this value as a string or a dictionary.  The string form is {bucket}/{key} or {bucket}/{key} if you want to copy a specific version.  You can also provide this value as a dictionary.  The dictionary format is recommended over the string format because it is more explicit.  The dictionary format is: {'Bucket': 'bucket', 'Key': 'key'}.
+    :param CopySource: **[REQUIRED]** The name of the source bucket, key name of the source object, and optional version ID of the source object.  You can either provide this value as a string or a dictionary.  The string form is {bucket}/{key} or {bucket}/{key}?versionId={versionId} if you want to copy a specific version.  You can also provide this value as a dictionary.  The dictionary format is recommended over the string format because it is more explicit.  The dictionary format is: {'Bucket': 'bucket', 'Key': 'key', 'VersionId': 'id'}.  Note that the VersionId key is optional and may be omitted.
 
     
     :type CopySourceIfMatch: string
@@ -664,6 +690,8 @@ Client
                 'LastModified': datetime(2015, 1, 1)
             },
             'Expiration': 'string',
+            'CopySourceVersionId': 'string',
+            'VersionId': 'string',
             'ServerSideEncryption': 'AES256',
             'SSECustomerAlgorithm': 'string',
             'SSECustomerKeyMD5': 'string',
@@ -688,6 +716,20 @@ Client
         
 
         - **Expiration** *(string) --* If the object expiration is configured, the response includes this header.
+        
+
+        - **CopySourceVersionId** *(string) --* 
+
+          
+
+          
+        
+
+        - **VersionId** *(string) --* 
+
+          Version ID of the newly created copy.
+
+          
         
 
         - **ServerSideEncryption** *(string) --* The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).
@@ -1174,6 +1216,34 @@ Client
     
     :returns: None
 
+  .. py:method:: delete_bucket_tagging(**kwargs)
+
+    
+
+    Deletes the tags from the bucket.
+
+    
+
+    See also: `AWS API Documentation <https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/DeleteBucketTagging>`_    
+
+
+    **Request Syntax** 
+    ::
+
+      response = client.delete_bucket_tagging(
+          Bucket='string'
+      )
+    :type Bucket: string
+    :param Bucket: **[REQUIRED]** 
+
+      
+
+      
+
+    
+    
+    :returns: None
+
   .. py:method:: delete_bucket_website(**kwargs)
 
     This operation removes the website configuration from the bucket.
@@ -1238,6 +1308,7 @@ Client
           Bucket='string',
           Key='string',
           MFA='string',
+          VersionId='string',
           RequestPayer='requester'
       )
     :type Bucket: string
@@ -1250,6 +1321,14 @@ Client
     
     :type MFA: string
     :param MFA: The concatenation of the authentication device's serial number, a space, and the value that is displayed on your authentication device.
+
+    
+    :type VersionId: string
+    :param VersionId: 
+
+      VersionId used to reference a specific version of the object.
+
+      
 
     
     :type RequestPayer: string
@@ -1297,7 +1376,8 @@ Client
           Delete={
               'Objects': [
                   {
-                      'Key': 'string'
+                      'Key': 'string',
+                      'VersionId': 'string'
                   },
               ],
               'Quiet': True|False
@@ -1320,6 +1400,13 @@ Client
 
         
           - **Key** *(string) --* **[REQUIRED]** Key name of the object to delete.
+
+          
+          - **VersionId** *(string) --* 
+
+            VersionId for the specific version of the object to delete.
+
+            
 
           
         
@@ -1858,10 +1945,15 @@ Client
     ::
 
       response = client.get_bucket_cors(
-          Bucket='string'
+          Bucket='string',
+          MirrorDestination='string'
       )
     :type Bucket: string
     :param Bucket: **[REQUIRED]** 
+
+    
+    :type MirrorDestination: string
+    :param MirrorDestination: Mirror source for object reads.
 
     
     
@@ -2450,6 +2542,137 @@ Client
       
     
 
+  .. py:method:: get_bucket_tagging(**kwargs)
+
+    
+
+    Returns the tag set associated with the bucket.
+
+    
+
+    See also: `AWS API Documentation <https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/GetBucketTagging>`_    
+
+
+    **Request Syntax** 
+    ::
+
+      response = client.get_bucket_tagging(
+          Bucket='string',
+          MirrorDestination='string'
+      )
+    :type Bucket: string
+    :param Bucket: **[REQUIRED]** 
+
+      
+
+      
+
+    
+    :type MirrorDestination: string
+    :param MirrorDestination: Mirror source for object reads.
+
+    
+    
+    :rtype: dict
+    :returns: 
+      
+      **Response Syntax** 
+
+      
+      ::
+
+        {
+            'TagSet': [
+                {
+                    'Key': 'string',
+                    'Value': 'string'
+                },
+            ]
+        }
+      **Response Structure** 
+
+      
+
+      - *(dict) --* 
+        
+
+        - **TagSet** *(list) --* 
+
+          
+
+          
+          
+
+          - *(dict) --* 
+            
+
+            - **Key** *(string) --* Name of the tag.
+            
+
+            - **Value** *(string) --* Value of the tag.
+        
+      
+    
+
+  .. py:method:: get_bucket_versioning(**kwargs)
+
+    
+
+    Returns the versioning state of a bucket.
+
+    
+
+    See also: `AWS API Documentation <https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/GetBucketVersioning>`_    
+
+
+    **Request Syntax** 
+    ::
+
+      response = client.get_bucket_versioning(
+          Bucket='string'
+      )
+    :type Bucket: string
+    :param Bucket: **[REQUIRED]** 
+
+      
+
+      
+
+    
+    
+    :rtype: dict
+    :returns: 
+      
+      **Response Syntax** 
+
+      
+      ::
+
+        {
+            'Status': 'Enabled'|'Suspended',
+            'MFADelete': 'Enabled'|'Disabled'
+        }
+      **Response Structure** 
+
+      
+
+      - *(dict) --* 
+        
+
+        - **Status** *(string) --* 
+
+          The versioning state of the bucket.
+
+          
+        
+
+        - **MFADelete** *(string) --* 
+
+          Specifies whether MFA delete is enabled in the bucket versioning configuration. This element is only returned if the bucket has been configured with MFA delete. If the bucket has never been so configured, this element is not returned.
+
+          
+    
+
   .. py:method:: get_object(**kwargs)
 
     Retrieves objects from Amazon S3.
@@ -2467,6 +2690,7 @@ Client
           IfNoneMatch='string',
           IfUnmodifiedSince=datetime(2015, 1, 1),
           Key='string',
+          MirrorDestination='string',
           Range='string',
           ResponseCacheControl='string',
           ResponseContentDisposition='string',
@@ -2474,6 +2698,7 @@ Client
           ResponseContentLanguage='string',
           ResponseContentType='string',
           ResponseExpires=datetime(2015, 1, 1),
+          VersionId='string',
           SSECustomerAlgorithm='string',
           SSECustomerKey='string',
           RequestPayer='requester',
@@ -2503,6 +2728,10 @@ Client
     :param Key: **[REQUIRED]** 
 
     
+    :type MirrorDestination: string
+    :param MirrorDestination: Mirror source for object reads.
+
+    
     :type Range: string
     :param Range: Downloads the specified range bytes of an object. For more information about the HTTP Range header, go to http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35.
 
@@ -2529,6 +2758,14 @@ Client
     
     :type ResponseExpires: datetime
     :param ResponseExpires: Sets the Expires header of the response.
+
+    
+    :type VersionId: string
+    :param VersionId: 
+
+      VersionId used to reference a specific version of the object.
+
+      
 
     
     :type SSECustomerAlgorithm: string
@@ -2572,6 +2809,7 @@ Client
             'ContentLength': 123,
             'ETag': 'string',
             'MissingMeta': 123,
+            'VersionId': 'string',
             'CacheControl': 'string',
             'ContentDisposition': 'string',
             'ContentEncoding': 'string',
@@ -2627,6 +2865,13 @@ Client
         
 
         - **MissingMeta** *(integer) --* This is set to the number of metadata entries not returned in x-amz-meta headers. This can happen if you create metadata using an API like SOAP that supports more flexible metadata than the REST API. For example, using SOAP, you can create metadata whose values are not legal HTTP headers.
+        
+
+        - **VersionId** *(string) --* 
+
+          Version of the object.
+
+          
         
 
         - **CacheControl** *(string) --* Specifies caching behavior along the request/reply chain.
@@ -2710,6 +2955,8 @@ Client
       response = client.get_object_acl(
           Bucket='string',
           Key='string',
+          MirrorDestination='string',
+          VersionId='string',
           RequestPayer='requester'
       )
     :type Bucket: string
@@ -2718,6 +2965,18 @@ Client
     
     :type Key: string
     :param Key: **[REQUIRED]** 
+
+    
+    :type MirrorDestination: string
+    :param MirrorDestination: Mirror source for object reads.
+
+    
+    :type VersionId: string
+    :param VersionId: 
+
+      VersionId used to reference a specific version of the object.
+
+      
 
     
     :type RequestPayer: string
@@ -2949,7 +3208,9 @@ Client
           IfNoneMatch='string',
           IfUnmodifiedSince=datetime(2015, 1, 1),
           Key='string',
+          MirrorDestination='string',
           Range='string',
+          VersionId='string',
           SSECustomerAlgorithm='string',
           SSECustomerKey='string',
           RequestPayer='requester',
@@ -2979,8 +3240,20 @@ Client
     :param Key: **[REQUIRED]** 
 
     
+    :type MirrorDestination: string
+    :param MirrorDestination: Mirror source for object reads.
+
+    
     :type Range: string
     :param Range: Downloads the specified range bytes of an object. For more information about the HTTP Range header, go to http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35.
+
+    
+    :type VersionId: string
+    :param VersionId: 
+
+      VersionId used to reference a specific version of the object.
+
+      
 
     
     :type SSECustomerAlgorithm: string
@@ -3025,6 +3298,7 @@ Client
             'ContentLength': 123,
             'ETag': 'string',
             'MissingMeta': 123,
+            'VersionId': 'string',
             'CacheControl': 'string',
             'ContentDisposition': 'string',
             'ContentEncoding': 'string',
@@ -3082,6 +3356,13 @@ Client
         
 
         - **MissingMeta** *(integer) --* This is set to the number of metadata entries not returned in x-amz-meta headers. This can happen if you create metadata using an API like SOAP that supports more flexible metadata than the REST API. For example, using SOAP, you can create metadata whose values are not legal HTTP headers.
+        
+
+        - **VersionId** *(string) --* 
+
+          Version of the object.
+
+          
         
 
         - **CacheControl** *(string) --* Specifies caching behavior along the request/reply chain.
@@ -3708,7 +3989,8 @@ Client
 
       response = client.list_legal_holds(
           Bucket='string',
-          Key='string'
+          Key='string',
+          MirrorDestination='string'
       )
     :type Bucket: string
     :param Bucket: **[REQUIRED]** 
@@ -3716,6 +3998,10 @@ Client
     
     :type Key: string
     :param Key: **[REQUIRED]** 
+
+    
+    :type MirrorDestination: string
+    :param MirrorDestination: Mirror source for object reads.
 
     
     
@@ -3784,6 +4070,7 @@ Client
           EncodingType='url',
           KeyMarker='string',
           MaxUploads=123,
+          MirrorDestination='string',
           Prefix='string',
           UploadIdMarker='string'
       )
@@ -3805,6 +4092,10 @@ Client
     
     :type MaxUploads: integer
     :param MaxUploads: Sets the maximum number of multipart uploads, from 1 to 1,000, to return in the response body. 1,000 is the maximum number of uploads that can be returned in a response.
+
+    
+    :type MirrorDestination: string
+    :param MirrorDestination: Mirror source for object reads.
 
     
     :type Prefix: string
@@ -3945,6 +4236,335 @@ Client
         - **EncodingType** *(string) --* Encoding type used by Amazon S3 to encode object keys in the response.
     
 
+  .. py:method:: list_object_versions(**kwargs)
+
+    
+
+    Returns metadata about all of the versions of objects in a bucket.
+
+    
+
+    See also: `AWS API Documentation <https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/ListObjectVersions>`_    
+
+
+    **Request Syntax** 
+    ::
+
+      response = client.list_object_versions(
+          Bucket='string',
+          Delimiter='string',
+          EncodingType='url',
+          KeyMarker='string',
+          MaxKeys=123,
+          Prefix='string',
+          VersionIdMarker='string'
+      )
+    :type Bucket: string
+    :param Bucket: **[REQUIRED]** 
+
+      
+
+      
+
+    
+    :type Delimiter: string
+    :param Delimiter: 
+
+      A delimiter is a character you use to group keys.
+
+      
+
+    
+    :type EncodingType: string
+    :param EncodingType: Requests Amazon S3 to encode the object keys in the response and specifies the encoding method to use. An object key may contain any Unicode character; however, XML 1.0 parser cannot parse some characters, such as characters with an ASCII value from 0 to 10. For characters that are not supported in XML 1.0, you can add this parameter to request that Amazon S3 encode the keys in the response.
+
+    
+    :type KeyMarker: string
+    :param KeyMarker: 
+
+      Specifies the key to start with when listing objects in a bucket.
+
+      
+
+    
+    :type MaxKeys: integer
+    :param MaxKeys: 
+
+      Sets the maximum number of keys returned in the response. The response might contain fewer keys but will never contain more.
+
+      
+
+    
+    :type Prefix: string
+    :param Prefix: 
+
+      Limits the response to keys that begin with the specified prefix.
+
+      
+
+    
+    :type VersionIdMarker: string
+    :param VersionIdMarker: 
+
+      Specifies the object version you want to start listing from.
+
+      
+
+    
+    
+    :rtype: dict
+    :returns: 
+      
+      **Response Syntax** 
+
+      
+      ::
+
+        {
+            'IsTruncated': True|False,
+            'KeyMarker': 'string',
+            'VersionIdMarker': 'string',
+            'NextKeyMarker': 'string',
+            'NextVersionIdMarker': 'string',
+            'Versions': [
+                {
+                    'ETag': 'string',
+                    'Size': 123,
+                    'StorageClass': 'STANDARD',
+                    'Key': 'string',
+                    'VersionId': 'string',
+                    'IsLatest': True|False,
+                    'LastModified': datetime(2015, 1, 1),
+                    'Owner': {
+                        'DisplayName': 'string',
+                        'ID': 'string'
+                    }
+                },
+            ],
+            'DeleteMarkers': [
+                {
+                    'Owner': {
+                        'DisplayName': 'string',
+                        'ID': 'string'
+                    },
+                    'Key': 'string',
+                    'IsLatest': True|False,
+                    'LastModified': datetime(2015, 1, 1)
+                },
+            ],
+            'Name': 'string',
+            'Prefix': 'string',
+            'Delimiter': 'string',
+            'MaxKeys': 123,
+            'CommonPrefixes': [
+                {
+                    'Prefix': 'string'
+                },
+            ],
+            'EncodingType': 'url'
+        }
+      **Response Structure** 
+
+      
+
+      - *(dict) --* 
+        
+
+        - **IsTruncated** *(boolean) --* 
+
+          A flag that indicates whether or not Amazon S3 returned all of the results that satisfied the search criteria. If your results were truncated, you can make a follow-up paginated request using the NextKeyMarker and NextVersionIdMarker response parameters as a starting place in another request to return the rest of the results.
+
+          
+        
+
+        - **KeyMarker** *(string) --* 
+
+          Marks the last Key returned in a truncated response.
+
+          
+        
+
+        - **VersionIdMarker** *(string) --* 
+
+          
+
+          
+        
+
+        - **NextKeyMarker** *(string) --* 
+
+          Use this value for the key marker request parameter in a subsequent request.
+
+          
+        
+
+        - **NextVersionIdMarker** *(string) --* 
+
+          Use this value for the next version id marker parameter in a subsequent request.
+
+          
+        
+
+        - **Versions** *(list) --* 
+
+          
+
+          
+          
+
+          - *(dict) --* 
+
+            
+
+            
+            
+
+            - **ETag** *(string) --* 
+
+              
+
+              
+            
+
+            - **Size** *(integer) --* 
+
+              Size in bytes of the object.
+
+              
+            
+
+            - **StorageClass** *(string) --* 
+
+              The class of storage used to store the object.
+
+              
+            
+
+            - **Key** *(string) --* 
+
+              The object key.
+
+              
+            
+
+            - **VersionId** *(string) --* 
+
+              Version ID of an object.
+
+              
+            
+
+            - **IsLatest** *(boolean) --* 
+
+              Specifies whether the object is (true) or is not (false) the latest version of an object.
+
+              
+            
+
+            - **LastModified** *(datetime) --* 
+
+              Date and time the object was last modified.
+
+              
+            
+
+            - **Owner** *(dict) --* 
+
+              
+
+              
+              
+
+              - **DisplayName** *(string) --* 
+              
+
+              - **ID** *(string) --* 
+          
+        
+      
+        
+
+        - **DeleteMarkers** *(list) --* 
+
+          
+
+          
+          
+
+          - *(dict) --* 
+            
+
+            - **Owner** *(dict) --* 
+              
+
+              - **DisplayName** *(string) --* 
+              
+
+              - **ID** *(string) --* 
+          
+            
+
+            - **Key** *(string) --* The object key.
+            
+
+            - **IsLatest** *(boolean) --* Specifies whether the object is (true) or is not (false) the latest version of an object.
+            
+
+            - **LastModified** *(datetime) --* Date and time the object was last modified.
+        
+      
+        
+
+        - **Name** *(string) --* 
+
+          
+
+          
+        
+
+        - **Prefix** *(string) --* 
+
+          
+
+          
+        
+
+        - **Delimiter** *(string) --* 
+
+          
+
+          
+        
+
+        - **MaxKeys** *(integer) --* 
+
+          
+
+          
+        
+
+        - **CommonPrefixes** *(list) --* 
+
+          
+
+          
+          
+
+          - *(dict) --* 
+            
+
+            - **Prefix** *(string) --* 
+        
+      
+        
+
+        - **EncodingType** *(string) --* 
+
+          Encoding type used by Amazon S3 to encode object keys in the response.
+
+          
+    
+
   .. py:method:: list_objects(**kwargs)
 
     Returns some or all (up to 1000) of the objects in a bucket. You can use the request parameters as selection criteria to return a subset of the objects in a bucket.
@@ -3961,6 +4581,7 @@ Client
           EncodingType='url',
           Marker='string',
           MaxKeys=123,
+          MirrorDestination='string',
           Prefix='string',
           RequestPayer='requester'
       )
@@ -3982,6 +4603,10 @@ Client
     
     :type MaxKeys: integer
     :param MaxKeys: Sets the maximum number of keys returned in the response. The response might contain fewer keys but will never contain more.
+
+    
+    :type MirrorDestination: string
+    :param MirrorDestination: Mirror source for object reads.
 
     
     :type Prefix: string
@@ -4298,6 +4923,7 @@ Client
           Bucket='string',
           Key='string',
           MaxParts=123,
+          MirrorDestination='string',
           PartNumberMarker=123,
           UploadId='string',
           RequestPayer='requester'
@@ -4312,6 +4938,10 @@ Client
     
     :type MaxParts: integer
     :param MaxParts: Sets the maximum number of parts to return.
+
+    
+    :type MirrorDestination: string
+    :param MirrorDestination: Mirror source for object reads.
 
     
     :type PartNumberMarker: integer
@@ -5095,24 +5725,24 @@ Client
     :param ProtectionConfiguration: **[REQUIRED]** Container for setting retention settings.
 
     
-      - **Status** *(string) --* **[REQUIRED]** Retention status of a bucket.
+      - **Status** *(string) --* Retention status of a bucket.
 
       
-      - **MinimumRetention** *(dict) --* **[REQUIRED]** Minimum retention period for an object, if a PUT of an object specifies a shorter retention period the PUT object will fail.
-
-      
-        - **Days** *(integer) --* **[REQUIRED]** 
-
-        
-      
-      - **DefaultRetention** *(dict) --* **[REQUIRED]** Default retention period for an object, if a PUT of an object does not specify a retention period this value will be converted to seconds and used.
+      - **MinimumRetention** *(dict) --* Minimum retention period for an object, if a PUT of an object specifies a shorter retention period the PUT object will fail.
 
       
         - **Days** *(integer) --* **[REQUIRED]** 
 
         
       
-      - **MaximumRetention** *(dict) --* **[REQUIRED]** Maximum retention period for an object, if a PUT of an object specifies a longer retention period the PUT object will fail.
+      - **DefaultRetention** *(dict) --* Default retention period for an object, if a PUT of an object does not specify a retention period this value will be converted to seconds and used.
+
+      
+        - **Days** *(integer) --* **[REQUIRED]** 
+
+        
+      
+      - **MaximumRetention** *(dict) --* Maximum retention period for an object, if a PUT of an object specifies a longer retention period the PUT object will fail.
 
       
         - **Days** *(integer) --* **[REQUIRED]** 
@@ -5191,6 +5821,133 @@ Client
           
         
     
+    
+    
+    :returns: None
+
+  .. py:method:: put_bucket_tagging(**kwargs)
+
+    
+
+    Sets the tags for a bucket.
+
+    
+
+    See also: `AWS API Documentation <https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/PutBucketTagging>`_    
+
+
+    **Request Syntax** 
+    ::
+
+      response = client.put_bucket_tagging(
+          Bucket='string',
+          Tagging={
+              'TagSet': [
+                  {
+                      'Key': 'string',
+                      'Value': 'string'
+                  },
+              ]
+          }
+      )
+    :type Bucket: string
+    :param Bucket: **[REQUIRED]** 
+
+      
+
+      
+
+    
+    :type Tagging: dict
+    :param Tagging: **[REQUIRED]** 
+
+      
+
+      
+
+    
+      - **TagSet** *(list) --* **[REQUIRED]** 
+
+        
+
+        
+
+      
+        - *(dict) --* 
+
+        
+          - **Key** *(string) --* **[REQUIRED]** Name of the tag.
+
+          
+          - **Value** *(string) --* **[REQUIRED]** Value of the tag.
+
+          
+        
+    
+    
+    
+    :returns: None
+
+  .. py:method:: put_bucket_versioning(**kwargs)
+
+    
+
+    Sets the versioning state of an existing bucket. To set the versioning state, you must be the bucket owner.
+
+    
+
+    See also: `AWS API Documentation <https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/PutBucketVersioning>`_    
+
+
+    **Request Syntax** 
+    ::
+
+      response = client.put_bucket_versioning(
+          Bucket='string',
+          MFA='string',
+          VersioningConfiguration={
+              'MFADelete': 'Enabled'|'Disabled',
+              'Status': 'Enabled'|'Suspended'
+          }
+      )
+    :type Bucket: string
+    :param Bucket: **[REQUIRED]** 
+
+      
+
+      
+
+    
+    :type MFA: string
+    :param MFA: 
+
+      The concatenation of the authentication device's serial number, a space, and the value that is displayed on your authentication device.
+
+      
+
+    
+    :type VersioningConfiguration: dict
+    :param VersioningConfiguration: **[REQUIRED]** 
+
+      
+
+      
+
+    
+      - **MFADelete** *(string) --* 
+
+        Specifies whether MFA delete is enabled in the bucket versioning configuration. This element is only returned if the bucket has been configured with MFA delete. If the bucket has never been so configured, this element is not returned.
+
+        
+
+      
+      - **Status** *(string) --* 
+
+        The versioning state of the bucket.
+
+        
+
+      
     
     
     :returns: None
@@ -5371,6 +6128,7 @@ Client
             'Expiration': 'string',
             'ETag': 'string',
             'ServerSideEncryption': 'AES256',
+            'VersionId': 'string',
             'SSECustomerAlgorithm': 'string',
             'SSECustomerKeyMD5': 'string',
             'SSEKMSKeyId': 'string',
@@ -5390,6 +6148,13 @@ Client
         
 
         - **ServerSideEncryption** *(string) --* The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).
+        
+
+        - **VersionId** *(string) --* 
+
+          Version of the object.
+
+          
         
 
         - **SSECustomerAlgorithm** *(string) --* If server-side encryption with a customer-provided encryption key was requested, the response will include this header confirming the encryption algorithm used.
@@ -5441,7 +6206,8 @@ Client
           GrantWrite='string',
           GrantWriteACP='string',
           Key='string',
-          RequestPayer='requester'
+          RequestPayer='requester',
+          VersionId='string'
       )
     :type ACL: string
     :param ACL: The canned ACL to apply to the object.
@@ -5522,6 +6288,14 @@ Client
     
     :type RequestPayer: string
     :param RequestPayer: Ignored by COS if present.
+
+    
+    :type VersionId: string
+    :param VersionId: 
+
+      VersionId used to reference a specific version of the object.
+
+      
 
     
     
@@ -5722,7 +6496,7 @@ Client
 
       response = client.upload_part_copy(
           Bucket='string',
-          CopySource='string' or {'Bucket': 'string', 'Key': 'string'},
+          CopySource='string' or {'Bucket': 'string', 'Key': 'string', 'VersionId': 'string'},
           CopySourceIfMatch='string',
           CopySourceIfModifiedSince=datetime(2015, 1, 1),
           CopySourceIfNoneMatch='string',
@@ -5742,7 +6516,7 @@ Client
 
     
     :type CopySource: str or dict
-    :param CopySource: **[REQUIRED]** The name of the source bucket, key name of the source object. You can either provide this value as a string or a dictionary.  The string form is {bucket}/{key} or {bucket}/{key} if you want to copy a specific version.  You can also provide this value as a dictionary.  The dictionary format is recommended over the string format because it is more explicit.  The dictionary format is: {'Bucket': 'bucket', 'Key': 'key'}.
+    :param CopySource: **[REQUIRED]** The name of the source bucket, key name of the source object, and optional version ID of the source object.  You can either provide this value as a string or a dictionary.  The string form is {bucket}/{key} or {bucket}/{key}?versionId={versionId} if you want to copy a specific version.  You can also provide this value as a dictionary.  The dictionary format is recommended over the string format because it is more explicit.  The dictionary format is: {'Bucket': 'bucket', 'Key': 'key', 'VersionId': 'id'}.  Note that the VersionId key is optional and may be omitted.
 
     
     :type CopySourceIfMatch: string
@@ -5819,6 +6593,7 @@ Client
       ::
 
         {
+            'CopySourceVersionId': 'string',
             'CopyPartResult': {
                 'ETag': 'string',
                 'LastModified': datetime(2015, 1, 1)
@@ -5834,6 +6609,13 @@ Client
       
 
       - *(dict) --* 
+        
+
+        - **CopySourceVersionId** *(string) --* 
+
+          The version of the source object that was copied, if you have enabled versioning on the source bucket.
+
+          
         
 
         - **CopyPartResult** *(dict) --* 
@@ -6051,6 +6833,7 @@ The available paginators are:
           Bucket='string',
           Delimiter='string',
           EncodingType='url',
+          MirrorDestination='string',
           Prefix='string',
           PaginationConfig={
               'MaxItems': 123,
@@ -6068,6 +6851,10 @@ The available paginators are:
     
     :type EncodingType: string
     :param EncodingType: Requests Amazon S3 to encode the object keys in the response and specifies the encoding method to use. An object key may contain any Unicode character; however, XML 1.0 parser cannot parse some characters, such as characters with an ASCII value from 0 to 10. For characters that are not supported in XML 1.0, you can add this parameter to request that Amazon S3 encode the keys in the response.
+
+    
+    :type MirrorDestination: string
+    :param MirrorDestination: Mirror source for object reads.
 
     
     :type Prefix: string
@@ -6262,6 +7049,7 @@ The available paginators are:
           Bucket='string',
           Delimiter='string',
           EncodingType='url',
+          MirrorDestination='string',
           Prefix='string',
           RequestPayer='requester',
           PaginationConfig={
@@ -6280,6 +7068,10 @@ The available paginators are:
     
     :type EncodingType: string
     :param EncodingType: Requests Amazon S3 to encode the object keys in the response and specifies the encoding method to use. An object key may contain any Unicode character; however, XML 1.0 parser cannot parse some characters, such as characters with an ASCII value from 0 to 10. For characters that are not supported in XML 1.0, you can add this parameter to request that Amazon S3 encode the keys in the response.
+
+    
+    :type MirrorDestination: string
+    :param MirrorDestination: Mirror source for object reads.
 
     
     :type Prefix: string
@@ -6690,6 +7482,7 @@ The available paginators are:
       response_iterator = paginator.paginate(
           Bucket='string',
           Key='string',
+          MirrorDestination='string',
           UploadId='string',
           RequestPayer='requester',
           PaginationConfig={
@@ -6704,6 +7497,10 @@ The available paginators are:
     
     :type Key: string
     :param Key: **[REQUIRED]** 
+
+    
+    :type MirrorDestination: string
+    :param MirrorDestination: Mirror source for object reads.
 
     
     :type UploadId: string
@@ -7031,7 +7828,9 @@ The available waiters are:
           IfNoneMatch='string',
           IfUnmodifiedSince=datetime(2015, 1, 1),
           Key='string',
+          MirrorDestination='string',
           Range='string',
+          VersionId='string',
           SSECustomerAlgorithm='string',
           SSECustomerKey='string',
           RequestPayer='requester',
@@ -7065,8 +7864,20 @@ The available waiters are:
     :param Key: **[REQUIRED]** 
 
     
+    :type MirrorDestination: string
+    :param MirrorDestination: Mirror source for object reads.
+
+    
     :type Range: string
     :param Range: Downloads the specified range bytes of an object. For more information about the HTTP Range header, go to http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35.
+
+    
+    :type VersionId: string
+    :param VersionId: 
+
+      VersionId used to reference a specific version of the object.
+
+      
 
     
     :type SSECustomerAlgorithm: string
@@ -7144,7 +7955,9 @@ The available waiters are:
           IfNoneMatch='string',
           IfUnmodifiedSince=datetime(2015, 1, 1),
           Key='string',
+          MirrorDestination='string',
           Range='string',
+          VersionId='string',
           SSECustomerAlgorithm='string',
           SSECustomerKey='string',
           RequestPayer='requester',
@@ -7178,8 +7991,20 @@ The available waiters are:
     :param Key: **[REQUIRED]** 
 
     
+    :type MirrorDestination: string
+    :param MirrorDestination: Mirror source for object reads.
+
+    
     :type Range: string
     :param Range: Downloads the specified range bytes of an object. For more information about the HTTP Range header, go to http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35.
+
+    
+    :type VersionId: string
+    :param VersionId: 
+
+      VersionId used to reference a specific version of the object.
+
+      
 
     
     :type SSECustomerAlgorithm: string
