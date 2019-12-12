@@ -20,6 +20,7 @@ import copy
 import logging
 import socket
 
+import ibm_botocore.exceptions
 import ibm_botocore.serialize
 import ibm_botocore.utils
 from ibm_botocore.signers import RequestSigner
@@ -30,14 +31,39 @@ from ibm_botocore.endpoint import EndpointCreator
 logger = logging.getLogger(__name__)
 
 
+VALID_STS_REGIONAL_ENDPOINTS_CONFIG = [
+    'legacy',
+    'regional',
+]
+LEGACY_GLOBAL_STS_REGIONS = [
+    'ap-northeast-1',
+    'ap-south-1',
+    'ap-southeast-1',
+    'ap-southeast-2',
+    'aws-global',
+    'ca-central-1',
+    'eu-central-1',
+    'eu-north-1',
+    'eu-west-1',
+    'eu-west-2',
+    'eu-west-3',
+    'sa-east-1',
+    'us-east-1',
+    'us-east-2',
+    'us-west-1',
+    'us-west-2',
+]
+
+
 class ClientArgsCreator(object):
     def __init__(self, event_emitter, user_agent, response_parser_factory,
-                 loader, exceptions_factory):
+                 loader, exceptions_factory, config_store):
         self._event_emitter = event_emitter
         self._user_agent = user_agent
         self._response_parser_factory = response_parser_factory
         self._loader = loader
         self._exceptions_factory = exceptions_factory
+        self._config_store = config_store
 
     def get_client_args(self, service_model, region_name, is_secure,
                         endpoint_url, verify, credentials, scoped_config,
@@ -113,9 +139,6 @@ class ClientArgsCreator(object):
             if raw_value is not None:
                 parameter_validation = ibm_botocore.utils.ensure_boolean(raw_value)
 
-        endpoint_config = endpoint_bridge.resolve(
-            service_name, region_name, endpoint_url, is_secure)
-
         # Override the user agent if specified in the client config.
         user_agent = self._user_agent
         if client_config is not None:
@@ -124,6 +147,13 @@ class ClientArgsCreator(object):
             if client_config.user_agent_extra is not None:
                 user_agent += ' %s' % client_config.user_agent_extra
 
+        endpoint_config = self._compute_endpoint_config(
+            service_name=service_name,
+            region_name=region_name,
+            endpoint_url=endpoint_url,
+            is_secure=is_secure,
+            endpoint_bridge=endpoint_bridge,
+        )
         # Create a new client config to be passed to the client based
         # on the final values. We do not want the user to be able
         # to try to modify an existing client with a client config.
@@ -141,8 +171,7 @@ class ClientArgsCreator(object):
                 client_cert=client_config.client_cert,
                 inject_host_prefix=client_config.inject_host_prefix,
             )
-        s3_config = self.compute_s3_config(scoped_config,
-                                           client_config)
+        s3_config = self.compute_s3_config(client_config)
         return {
             'service_name': service_name,
             'parameter_validation': parameter_validation,
@@ -154,29 +183,8 @@ class ClientArgsCreator(object):
             'socket_options': self._compute_socket_options(scoped_config)
         }
 
-    def compute_s3_config(self, scoped_config, client_config):
-        s3_configuration = None
-
-        # Check the scoped config first.
-        if scoped_config is not None:
-            s3_configuration = scoped_config.get('s3')
-            # Until we have proper validation of the config file (including
-            # nested types), we have to account for the fact that the s3
-            # key could be parsed as a string, e.g 's3 = foo'.
-            # In the case we'll ignore the key for now.
-            if not isinstance(s3_configuration, dict):
-                logger.debug("The s3 config key is not a dictionary type, "
-                             "ignoring its value of: %s", s3_configuration)
-                s3_configuration = None
-
-            # Convert logic for several s3 keys in the scoped config
-            # so that the various strings map to the appropriate boolean value.
-            if s3_configuration:
-                boolean_keys = ['use_accelerate_endpoint',
-                                'use_dualstack_endpoint',
-                                'payload_signing_enabled']
-                s3_configuration = self._convert_config_to_bool(
-                    s3_configuration, boolean_keys)
+    def compute_s3_config(self, client_config):
+        s3_configuration = self._config_store.get_config_variable('s3')
 
         # Next specific client config values takes precedence over
         # specific values in the scoped config.
@@ -194,14 +202,41 @@ class ClientArgsCreator(object):
 
         return s3_configuration
 
-    def _convert_config_to_bool(self, config_dict, keys):
-        # Make sure any further modifications to this section of the config
-        # will not affect the scoped config by making a copy of it.
-        config_copy = config_dict.copy()
-        present_keys = [k for k in keys if k in config_copy]
-        for key in present_keys:
-            config_copy[key] = ibm_botocore.utils.ensure_boolean(config_copy[key])
-        return config_copy
+    def _compute_endpoint_config(self, service_name, region_name, endpoint_url,
+                                 is_secure, endpoint_bridge):
+        endpoint_config = endpoint_bridge.resolve(
+            service_name, region_name, endpoint_url, is_secure)
+        if self._should_set_global_sts_endpoint(
+                service_name, region_name, endpoint_url):
+            self._set_global_sts_endpoint(endpoint_config, is_secure)
+        return endpoint_config
+
+    def _should_set_global_sts_endpoint(self, service_name, region_name,
+                                        endpoint_url):
+        if service_name != 'sts':
+            return False
+        if endpoint_url:
+            return False
+        return (
+            self._get_sts_regional_endpoints_config() == 'legacy' and
+            region_name in LEGACY_GLOBAL_STS_REGIONS
+        )
+
+    def _get_sts_regional_endpoints_config(self):
+        sts_regional_endpoints_config = self._config_store.get_config_variable(
+            'sts_regional_endpoints')
+        if not sts_regional_endpoints_config:
+            sts_regional_endpoints_config = 'legacy'
+        if sts_regional_endpoints_config not in \
+                VALID_STS_REGIONAL_ENDPOINTS_CONFIG:
+            raise ibm_botocore.exceptions.InvalidSTSRegionalEndpointsConfigError(
+                sts_regional_endpoints_config=sts_regional_endpoints_config)
+        return sts_regional_endpoints_config
+
+    def _set_global_sts_endpoint(self, endpoint_config, is_secure):
+        scheme = 'https' if is_secure else 'http'
+        endpoint_config['endpoint_url'] = '%s://sts.amazonaws.com' % scheme
+        endpoint_config['signing_region'] = 'us-east-1'
 
     def _get_default_s3_region(self, service_name, endpoint_bridge):
         # If a user is providing a custom URL, the endpoint resolver will

@@ -18,8 +18,10 @@ from tests import unittest
 import mock
 
 from ibm_botocore import args
+from ibm_botocore import exceptions
 from ibm_botocore.client import ClientEndpointBridge
 from ibm_botocore.config import Config
+from ibm_botocore.configprovider import ConfigValueStore
 from ibm_botocore.hooks import HierarchicalEmitter
 from ibm_botocore.model import ServiceModel
 
@@ -27,25 +29,43 @@ from ibm_botocore.model import ServiceModel
 class TestCreateClientArgs(unittest.TestCase):
     def setUp(self):
         self.event_emitter = mock.Mock(HierarchicalEmitter)
+        self.config_store = ConfigValueStore()
         self.args_create = args.ClientArgsCreator(
-            self.event_emitter, None, None, None, None)
+            self.event_emitter, None, None, None, None, self.config_store)
+        self.service_name = 's3'
         self.region = 'us-west-2'
         self.endpoint_url = 'https://ec2/'
-        self.service_model = mock.Mock(ServiceModel)
-        self.service_model.metadata = {
-            'serviceFullName': 'MyService',
-            'protocol': 'query'
-        }
-        self.service_model.operation_names = []
+        self.service_model = self._get_service_model()
         self.bridge = mock.Mock(ClientEndpointBridge)
-        self.bridge.resolve.return_value = {
-            'region_name': self.region, 'signature_version': 'v4',
-            'endpoint_url': self.endpoint_url,
-            'signing_name': 'ec2', 'signing_region': self.region,
-            'metadata': {}}
+        self._set_endpoint_bridge_resolve()
         self.default_socket_options = [
             (socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         ]
+
+    def _get_service_model(self, service_name=None):
+        if service_name is None:
+            service_name = self.service_name
+        service_model = mock.Mock(ServiceModel)
+        service_model.service_name = service_name
+        service_model.endpoint_prefix = service_name
+        service_model.metadata = {
+            'serviceFullName': 'MyService',
+            'protocol': 'query'
+        }
+        service_model.operation_names = []
+        return service_model
+
+    def _set_endpoint_bridge_resolve(self, **override_kwargs):
+        ret_val = {
+            'region_name': self.region,
+            'signature_version': 'v4',
+            'endpoint_url': self.endpoint_url,
+            'signing_name': self.service_name,
+            'signing_region': self.region,
+            'metadata': {}
+        }
+        ret_val.update(**override_kwargs)
+        self.bridge.resolve.return_value = ret_val
 
     def call_get_client_args(self, **override_kwargs):
         call_kwargs = {
@@ -80,85 +100,33 @@ class TestCreateClientArgs(unittest.TestCase):
         )
 
     def test_compute_s3_configuration(self):
-        scoped_config = {}
-        client_config = None
-        self.assertIsNone(
-            self.args_create.compute_s3_config(
-                scoped_config, client_config))
+        self.assertIsNone(self.args_create.compute_s3_config(None))
 
-    def test_compute_s3_config_only_scoped_config(self):
-        scoped_config = {
-            's3': {'use_accelerate_endpoint': True},
-        }
-        client_config = None
+    def test_compute_s3_config_only_config_store(self):
+        self.config_store.set_config_variable(
+            's3', {'use_accelerate_endpoint': True})
         self.assertEqual(
-            self.args_create.compute_s3_config(scoped_config, client_config),
-            {'use_accelerate_endpoint': True}
-        )
-
-    def test_client_s3_accelerate_from_varying_forms_of_true(self):
-        scoped_config= {'s3': {'use_accelerate_endpoint': 'True'}}
-        client_config = None
-
-        self.assertEqual(
-            self.args_create.compute_s3_config(
-                {'s3': {'use_accelerate_endpoint': 'True'}},
-                client_config=None),
-            {'use_accelerate_endpoint': True}
-        )
-        self.assertEqual(
-            self.args_create.compute_s3_config(
-                {'s3': {'use_accelerate_endpoint': 'true'}},
-                client_config=None),
-            {'use_accelerate_endpoint': True}
-        )
-        self.assertEqual(
-            self.args_create.compute_s3_config(
-                {'s3': {'use_accelerate_endpoint': True}},
-                client_config=None),
+            self.args_create.compute_s3_config(None),
             {'use_accelerate_endpoint': True}
         )
 
     def test_client_s3_accelerate_from_client_config(self):
         self.assertEqual(
             self.args_create.compute_s3_config(
-                scoped_config=None,
                 client_config=Config(s3={'use_accelerate_endpoint': True})
             ),
             {'use_accelerate_endpoint': True}
         )
 
-    def test_client_s3_accelerate_client_config_overrides_scoped(self):
+    def test_client_s3_accelerate_client_config_overrides_config_store(self):
+        self.config_store.set_config_variable(
+            's3', {'use_accelerate_endpoint': False})
         self.assertEqual(
             self.args_create.compute_s3_config(
-                scoped_config={'s3': {'use_accelerate_endpoint': False}},
                 client_config=Config(s3={'use_accelerate_endpoint': True})
             ),
             # client_config beats scoped_config
             {'use_accelerate_endpoint': True}
-        )
-
-    def test_client_s3_dualstack_handles_varying_forms_of_true(self):
-        scoped_config= {'s3': {'use_dualstack_endpoint': 'True'}}
-        client_config = None
-
-        self.assertEqual(
-            self.args_create.compute_s3_config(
-                {'s3': {'use_dualstack_endpoint': 'True'}},
-                client_config=None),
-            {'use_dualstack_endpoint': True}
-        )
-        self.assertEqual(
-            self.args_create.compute_s3_config(
-                {'s3': {'use_dualstack_endpoint': 'true'}},
-                client_config=None),
-            {'use_dualstack_endpoint': True}
-        )
-        self.assertEqual(
-            self.args_create.compute_s3_config(
-                {'s3': {'use_dualstack_endpoint': True}},
-                client_config=None),
-            {'use_dualstack_endpoint': True}
         )
 
     def test_max_pool_from_client_config_forwarded_to_endpoint_creator(self):

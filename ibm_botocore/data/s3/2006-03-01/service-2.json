@@ -167,6 +167,17 @@
       "input":{"shape":"DeleteBucketReplicationRequest"},
       "documentation":"Deletes the replication configuration from the bucket."
     },
+    "DeleteBucketTagging":{
+      "name":"DeleteBucketTagging",
+      "http":{
+        "method":"DELETE",
+        "requestUri":"/{Bucket}?tagging",
+        "responseCode":204
+      },
+      "input":{"shape":"DeleteBucketTaggingRequest"},
+      "documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/RESTBucketDELETEtagging.html",
+      "documentation":"<p>Deletes the tags from the bucket.</p>"
+    },
     "DeleteBucketWebsite":{
       "name":"DeleteBucketWebsite",
       "http":{
@@ -332,6 +343,28 @@
       "output":{"shape":"GetBucketReplicationOutput"},
       "documentation":"Returns the replication configuration of a bucket."
     },
+    "GetBucketTagging":{
+      "name":"GetBucketTagging",
+      "http":{
+        "method":"GET",
+        "requestUri":"/{Bucket}?tagging"
+      },
+      "input":{"shape":"GetBucketTaggingRequest"},
+      "output":{"shape":"GetBucketTaggingOutput"},
+      "documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/RESTBucketGETtagging.html",
+      "documentation":"<p>Returns the tag set associated with the bucket.</p>"
+    },
+    "GetBucketVersioning":{
+      "name":"GetBucketVersioning",
+      "http":{
+        "method":"GET",
+        "requestUri":"/{Bucket}?versioning"
+      },
+      "input":{"shape":"GetBucketVersioningRequest"},
+      "output":{"shape":"GetBucketVersioningOutput"},
+      "documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/RESTBucketGETversioningStatus.html",
+      "documentation":"<p>Returns the versioning state of a bucket.</p>"
+    },
     "GetObject":{
       "name":"GetObject",
       "http":{
@@ -473,6 +506,18 @@
       "__documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/mpUploadListMPUpload.html",
       "documentation":"This operation lists in-progress multipart uploads."
     },
+    "ListObjectVersions":{
+      "name":"ListObjectVersions",
+      "http":{
+        "method":"GET",
+        "requestUri":"/{Bucket}?versions"
+      },
+      "input":{"shape":"ListObjectVersionsRequest"},
+      "output":{"shape":"ListObjectVersionsOutput"},
+      "documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/RESTBucketGETVersion.html",
+      "documentation":"<p>Returns metadata about all of the versions of objects in a bucket.</p>",
+      "alias":"GetBucketObjectVersions"
+    },
     "ListObjects":{
       "name":"ListObjects",
       "http":{
@@ -488,6 +533,19 @@
       "documentation":"Returns some or all (up to 1000) of the objects in a bucket. You can use the request parameters as selection criteria to return a subset of the objects in a bucket.",
       "alias":"GetBucket"
     },
+    "ListObjectVersions":{
+      "name":"ListObjectVersions",
+      "http":{
+        "method":"GET",
+        "requestUri":"/{Bucket}?versions"
+      },
+      "input":{"shape":"ListObjectVersionsRequest"},
+      "output":{"shape":"ListObjectVersionsOutput"},
+      "documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/RESTBucketGETVersion.html",
+      "documentation":"<p>Returns metadata about all of the versions of objects in a bucket.</p>",
+      "alias":"GetBucketObjectVersions"
+    },
+
     "ListObjectsV2":{
       "name":"ListObjectsV2",
       "http":{
@@ -594,6 +652,26 @@
       },
       "input":{"shape":"PutBucketReplicationRequest"},
       "documentation":"Creates a new replication configuration (or replaces an existing one, if present)."
+    },
+    "PutBucketTagging":{
+      "name":"PutBucketTagging",
+      "http":{
+        "method":"PUT",
+        "requestUri":"/{Bucket}?tagging"
+      },
+      "input":{"shape":"PutBucketTaggingRequest"},
+      "documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/RESTBucketPUTtagging.html",
+      "documentation":"<p>Sets the tags for a bucket.</p>"
+    },
+    "PutBucketVersioning":{
+      "name":"PutBucketVersioning",
+      "http":{
+        "method":"PUT",
+        "requestUri":"/{Bucket}?versioning"
+      },
+      "input":{"shape":"PutBucketVersioningRequest"},
+      "documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/RESTBucketPUTVersioningStatus.html",
+      "documentation":"<p>Sets the versioning state of an existing bucket. To set the versioning state, you must be the bucket owner.</p>"
     },
     "PutObject":{
       "name":"PutObject",
@@ -1018,6 +1096,13 @@
         "Retention"
       ]
     },
+    "BucketVersioningStatus":{
+      "type":"string",
+      "enum":[
+        "Enabled",
+        "Suspended"
+      ]
+    },
     "Buckets":{
       "type":"list",
       "member":{
@@ -1133,6 +1218,12 @@
           "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).",
           "location":"header",
           "locationName":"x-amz-server-side-encryption"
+        },
+        "VersionId":{
+          "shape":"ObjectVersionId",
+          "documentation":"<p>Version of the object.</p>",
+          "location":"header",
+          "locationName":"x-amz-version-id"
         },
         "SSEKMSKeyId":{
           "shape":"SSEKMSKeyId",
@@ -1258,6 +1349,18 @@
           "documentation":"If the object expiration is configured, the response includes this header.",
           "location":"header",
           "locationName":"x-amz-expiration"
+        },
+        "CopySourceVersionId":{
+          "shape":"CopySourceVersionId",
+          "documentation":"<p/>",
+          "location":"header",
+          "locationName":"x-amz-copy-source-version-id"
+        },
+        "VersionId":{
+          "shape":"ObjectVersionId",
+          "documentation":"<p>Version ID of the newly created copy.</p>",
+          "location":"header",
+          "locationName":"x-amz-version-id"
         },
         "ServerSideEncryption":{
           "shape":"ServerSideEncryption",
@@ -1544,6 +1647,7 @@
       "sensitive":true
     },
     "CopySourceSSECustomerKeyMD5":{"type":"string"},
+    "CopySourceVersionId":{"type":"string"},
     "CreateBucketConfiguration":{
       "type":"structure",
       "members":{
@@ -1971,6 +2075,18 @@
         }
       }
     },
+    "DeleteBucketTaggingRequest":{
+      "type":"structure",
+      "required":["Bucket"],
+      "members":{
+        "Bucket":{
+          "shape":"BucketName",
+          "documentation":"<p/>",
+          "location":"uri",
+          "locationName":"Bucket"
+        }
+      }
+    },
     "DeleteBucketWebsiteRequest":{
       "type":"structure",
       "required":["Bucket"],
@@ -2045,6 +2161,12 @@
           "documentation":"The concatenation of the authentication device's serial number, a space, and the value that is displayed on your authentication device.",
           "location":"header",
           "locationName":"x-amz-mfa"
+        },
+        "VersionId":{
+          "shape":"ObjectVersionId",
+          "documentation":"<p>VersionId used to reference a specific version of the object.</p>",
+          "location":"querystring",
+          "locationName":"versionId"
         },
         "RequestPayer":{
           "shape":"RequestPayer",
@@ -2384,6 +2506,11 @@
           "shape":"BucketName",
           "location":"uri",
           "locationName":"Bucket"
+        },
+        "MirrorDestination":{
+          "shape":"MirrorDestination",
+          "location":"header",
+          "locationName":"Mirror-Destination"
         }
       }
     },
@@ -2572,6 +2699,59 @@
         }
       }
     },
+    "GetBucketTaggingOutput":{
+      "type":"structure",
+      "required":["TagSet"],
+      "members":{
+        "TagSet":{
+          "shape":"TagSet",
+          "documentation":"<p/>"
+        }
+      }
+    },
+    "GetBucketTaggingRequest":{
+      "type":"structure",
+      "required":["Bucket"],
+      "members":{
+        "Bucket":{
+          "shape":"BucketName",
+          "documentation":"<p/>",
+          "location":"uri",
+          "locationName":"Bucket"
+        },
+        "MirrorDestination":{
+          "shape":"MirrorDestination",
+          "location":"header",
+          "locationName":"Mirror-Destination"
+        }
+      }
+    },
+    "GetBucketVersioningOutput":{
+      "type":"structure",
+      "members":{
+        "Status":{
+          "shape":"BucketVersioningStatus",
+          "documentation":"<p>The versioning state of the bucket.</p>"
+        },
+        "MFADelete":{
+          "shape":"MFADeleteStatus",
+          "documentation":"<p>Specifies whether MFA delete is enabled in the bucket versioning configuration. This element is only returned if the bucket has been configured with MFA delete. If the bucket has never been so configured, this element is not returned.</p>",
+          "locationName":"MfaDelete"
+        }
+      }
+    },
+    "GetBucketVersioningRequest":{
+      "type":"structure",
+      "required":["Bucket"],
+      "members":{
+        "Bucket":{
+          "shape":"BucketName",
+          "documentation":"<p/>",
+          "location":"uri",
+          "locationName":"Bucket"
+        }
+      }
+    },
     "GetBucketWebsiteOutput":{
       "type":"structure",
       "members":{
@@ -2624,6 +2804,17 @@
           "shape":"ObjectKey",
           "location":"uri",
           "locationName":"Key"
+        },
+        "MirrorDestination":{
+          "shape":"MirrorDestination",
+          "location":"header",
+          "locationName":"Mirror-Destination"
+        },
+        "VersionId":{
+          "shape":"ObjectVersionId",
+          "documentation":"<p>VersionId used to reference a specific version of the object.</p>",
+          "location":"querystring",
+          "locationName":"versionId"
         },
         "RequestPayer":{
           "shape":"RequestPayer",
@@ -2687,6 +2878,12 @@
           "documentation":"This is set to the number of metadata entries not returned in x-amz-meta headers. This can happen if you create metadata using an API like SOAP that supports more flexible metadata than the REST API. For example, using SOAP, you can create metadata whose values are not legal HTTP headers.",
           "location":"header",
           "locationName":"x-amz-missing-meta"
+        },
+        "VersionId":{
+          "shape":"ObjectVersionId",
+          "documentation":"<p>Version of the object.</p>",
+          "location":"header",
+          "locationName":"x-amz-version-id"
         },
         "CacheControl":{
           "shape":"CacheControl",
@@ -2849,6 +3046,11 @@
           "location":"uri",
           "locationName":"Key"
         },
+        "MirrorDestination":{
+          "shape":"MirrorDestination",
+          "location":"header",
+          "locationName":"Mirror-Destination"
+        },
         "Range":{
           "shape":"Range",
           "documentation":"Downloads the specified range bytes of an object. For more information about the HTTP Range header, go to http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35.",
@@ -2890,6 +3092,12 @@
           "documentation":"Sets the Expires header of the response.",
           "location":"querystring",
           "locationName":"response-expires"
+        },
+        "VersionId":{
+          "shape":"ObjectVersionId",
+          "documentation":"<p>VersionId used to reference a specific version of the object.</p>",
+          "location":"querystring",
+          "locationName":"versionId"
         },
         "SSECustomerAlgorithm":{
           "shape":"SSECustomerAlgorithm",
@@ -3118,6 +3326,12 @@
           "location":"header",
           "locationName":"x-amz-missing-meta"
         },
+        "VersionId":{
+          "shape":"ObjectVersionId",
+          "documentation":"<p>Version of the object.</p>",
+          "location":"header",
+          "locationName":"x-amz-version-id"
+        },
         "CacheControl":{
           "shape":"CacheControl",
           "documentation":"Specifies caching behavior along the request/reply chain.",
@@ -3272,11 +3486,22 @@
           "location":"uri",
           "locationName":"Key"
         },
+        "MirrorDestination":{
+          "shape":"MirrorDestination",
+          "location":"header",
+          "locationName":"Mirror-Destination"
+        },
         "Range":{
           "shape":"Range",
           "documentation":"Downloads the specified range bytes of an object. For more information about the HTTP Range header, go to http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35.",
           "location":"header",
           "locationName":"Range"
+        },
+        "VersionId":{
+          "shape":"ObjectVersionId",
+          "documentation":"<p>VersionId used to reference a specific version of the object.</p>",
+          "location":"querystring",
+          "locationName":"versionId"
         },
         "SSECustomerAlgorithm":{
           "shape":"SSECustomerAlgorithm",
@@ -3859,6 +4084,11 @@
           "shape":"ObjectKey",
           "location":"uri",
           "locationName":"Key"
+        },
+        "MirrorDestination":{
+          "shape":"MirrorDestination",
+          "location":"header",
+          "locationName":"Mirror-Destination"
         }
       }
     },
@@ -3894,6 +4124,11 @@
           "location":"querystring",
           "locationName":"max-uploads"
         },
+        "MirrorDestination":{
+          "shape":"MirrorDestination",
+          "location":"header",
+          "locationName":"Mirror-Destination"
+        },
         "Prefix":{
           "shape":"Prefix",
           "documentation":"Lists in-progress uploads only for those keys that begin with the specified prefix.",
@@ -3905,6 +4140,112 @@
           "documentation":"Together with key-marker, specifies the multipart upload after which listing should begin. If key-marker is not specified, the upload-id-marker parameter is ignored.",
           "location":"querystring",
           "locationName":"upload-id-marker"
+        }
+      }
+    },
+    "ListObjectVersionsOutput":{
+      "type":"structure",
+      "members":{
+        "IsTruncated":{
+          "shape":"IsTruncated",
+          "documentation":"<p>A flag that indicates whether or not Amazon S3 returned all of the results that satisfied the search criteria. If your results were truncated, you can make a follow-up paginated request using the NextKeyMarker and NextVersionIdMarker response parameters as a starting place in another request to return the rest of the results.</p>"
+        },
+        "KeyMarker":{
+          "shape":"KeyMarker",
+          "documentation":"<p>Marks the last Key returned in a truncated response.</p>"
+        },
+        "VersionIdMarker":{
+          "shape":"VersionIdMarker",
+          "documentation":"<p/>"
+        },
+        "NextKeyMarker":{
+          "shape":"NextKeyMarker",
+          "documentation":"<p>Use this value for the key marker request parameter in a subsequent request.</p>"
+        },
+        "NextVersionIdMarker":{
+          "shape":"NextVersionIdMarker",
+          "documentation":"<p>Use this value for the next version id marker parameter in a subsequent request.</p>"
+        },
+        "Versions":{
+          "shape":"ObjectVersionList",
+          "documentation":"<p/>",
+          "locationName":"Version"
+        },
+        "DeleteMarkers":{
+          "shape":"DeleteMarkers",
+          "documentation":"<p/>",
+          "locationName":"DeleteMarker"
+        },
+        "Name":{
+          "shape":"BucketName",
+          "documentation":"<p/>"
+        },
+        "Prefix":{
+          "shape":"Prefix",
+          "documentation":"<p/>"
+        },
+        "Delimiter":{
+          "shape":"Delimiter",
+          "documentation":"<p/>"
+        },
+        "MaxKeys":{
+          "shape":"MaxKeys",
+          "documentation":"<p/>"
+        },
+        "CommonPrefixes":{
+          "shape":"CommonPrefixList",
+          "documentation":"<p/>"
+        },
+        "EncodingType":{
+          "shape":"EncodingType",
+          "documentation":"<p>Encoding type used by Amazon S3 to encode object keys in the response.</p>"
+        }
+      }
+    },
+    "ListObjectVersionsRequest":{
+      "type":"structure",
+      "required":["Bucket"],
+      "members":{
+        "Bucket":{
+          "shape":"BucketName",
+          "documentation":"<p/>",
+          "location":"uri",
+          "locationName":"Bucket"
+        },
+        "Delimiter":{
+          "shape":"Delimiter",
+          "documentation":"<p>A delimiter is a character you use to group keys.</p>",
+          "location":"querystring",
+          "locationName":"delimiter"
+        },
+        "EncodingType":{
+          "shape":"EncodingType",
+          "location":"querystring",
+          "locationName":"encoding-type"
+        },
+        "KeyMarker":{
+          "shape":"KeyMarker",
+          "documentation":"<p>Specifies the key to start with when listing objects in a bucket.</p>",
+          "location":"querystring",
+          "locationName":"key-marker"
+        },
+        "MaxKeys":{
+          "shape":"MaxKeys",
+          "documentation":"<p>Sets the maximum number of keys returned in the response. The response might contain fewer keys but will never contain more.</p>",
+          "location":"querystring",
+          "locationName":"max-keys"
+        },
+        "Prefix":{
+          "shape":"Prefix",
+          "documentation":"<p>Limits the response to keys that begin with the specified prefix.</p>",
+          "location":"querystring",
+          "locationName":"prefix"
+        },
+        "VersionIdMarker":{
+          "shape":"VersionIdMarker",
+          "documentation":"<p>Specifies the object version you want to start listing from.</p>",
+          "location":"querystring",
+          "locationName":"version-id-marker"
         }
       }
     },
@@ -3976,6 +4317,11 @@
           "documentation":"Sets the maximum number of keys returned in the response. The response might contain fewer keys but will never contain more.",
           "location":"querystring",
           "locationName":"max-keys"
+        },
+        "MirrorDestination":{
+          "shape":"MirrorDestination",
+          "location":"header",
+          "locationName":"Mirror-Destination"
         },
         "Prefix":{
           "shape":"Prefix",
@@ -4185,6 +4531,11 @@
           "location":"querystring",
           "locationName":"max-parts"
         },
+        "MirrorDestination":{
+          "shape":"MirrorDestination",
+          "location":"header",
+          "locationName":"Mirror-Destination"
+        },
         "PartNumberMarker":{
           "shape":"PartNumberMarker",
           "documentation":"Specifies the part after which listing should begin. Only parts with higher part numbers will be listed.",
@@ -4301,6 +4652,10 @@
       }
     },
     "MetricsId":{"type":"string"},
+    "MirrorDestination":{
+      "type":"string",
+      "documentation":"Mirror source for object reads."
+    },
     "MissingMeta":{"type":"integer"},
     "MultipartUpload":{
       "type":"structure",
@@ -4347,6 +4702,7 @@
     "NextPartNumberMarker":{"type":"integer"},
     "NextToken":{"type":"string"},
     "NextUploadIdMarker":{"type":"string"},
+    "NextVersionIdMarker":{"type":"string"},
     "NoSuchBucket":{
       "type":"structure",
       "members":{
@@ -4448,6 +4804,10 @@
         "Key":{
           "shape":"ObjectKey",
           "documentation":"Key name of the object to delete."
+        },
+        "VersionId":{
+          "shape":"ObjectVersionId",
+          "documentation":"<p>VersionId for the specific version of the object to delete.</p>"
         }
       }
     },
@@ -4479,6 +4839,54 @@
         "REDUCED_REDUNDANCY",
         "GLACIER"
       ]
+    },
+    "ObjectVersion":{
+      "type":"structure",
+      "members":{
+        "ETag":{
+          "shape":"ETag",
+          "documentation":"<p/>"
+        },
+        "Size":{
+          "shape":"Size",
+          "documentation":"<p>Size in bytes of the object.</p>"
+        },
+        "StorageClass":{
+          "shape":"ObjectVersionStorageClass",
+          "documentation":"<p>The class of storage used to store the object.</p>"
+        },
+        "Key":{
+          "shape":"ObjectKey",
+          "documentation":"<p>The object key.</p>"
+        },
+        "VersionId":{
+          "shape":"ObjectVersionId",
+          "documentation":"<p>Version ID of an object.</p>"
+        },
+        "IsLatest":{
+          "shape":"IsLatest",
+          "documentation":"<p>Specifies whether the object is (true) or is not (false) the latest version of an object.</p>"
+        },
+        "LastModified":{
+          "shape":"LastModified",
+          "documentation":"<p>Date and time the object was last modified.</p>"
+        },
+        "Owner":{
+          "shape":"Owner",
+          "documentation":"<p/>"
+        }
+      },
+      "documentation":"<p/>"
+    },
+    "ObjectVersionId":{"type":"string"},
+    "ObjectVersionList":{
+      "type":"list",
+      "member":{"shape":"ObjectVersion"},
+      "flattened":true
+    },
+    "ObjectVersionStorageClass":{
+      "type":"string",
+      "enum":["STANDARD"]
     },
     "Owner":{
       "type":"structure",
@@ -4537,12 +4945,7 @@
     "Prefix":{"type":"string"},
     "ProtectionConfiguration":{
       "type":"structure",
-      "required":[
-        "Status",
-        "MinimumRetention",
-        "DefaultRetention",
-        "MaximumRetention"
-      ],
+      "required":[],
       "members":{
         "Status":{
           "shape":"BucketProtectionStatus",
@@ -4827,6 +5230,68 @@
       },
       "payload":"ReplicationConfiguration"
     },
+    "PutBucketTaggingRequest":{
+      "type":"structure",
+      "required":[
+        "Bucket",
+        "Tagging"
+      ],
+      "members":{
+        "Bucket":{
+          "shape":"BucketName",
+          "documentation":"<p/>",
+          "location":"uri",
+          "locationName":"Bucket"
+        },
+        "ContentMD5":{
+          "shape":"ContentMD5",
+          "documentation":"<p/>",
+          "location":"header",
+          "locationName":"Content-MD5"
+        },
+        "Tagging":{
+          "shape":"Tagging",
+          "documentation":"<p/>",
+          "locationName":"Tagging",
+          "xmlNamespace":{"uri":"http://s3.amazonaws.com/doc/2006-03-01/"}
+        }
+      },
+      "payload":"Tagging"
+    },
+    "PutBucketVersioningRequest":{
+      "type":"structure",
+      "required":[
+        "Bucket",
+        "VersioningConfiguration"
+      ],
+      "members":{
+        "Bucket":{
+          "shape":"BucketName",
+          "documentation":"<p/>",
+          "location":"uri",
+          "locationName":"Bucket"
+        },
+        "ContentMD5":{
+          "shape":"ContentMD5",
+          "documentation":"<p/>",
+          "location":"header",
+          "locationName":"Content-MD5"
+        },
+        "MFA":{
+          "shape":"MFA",
+          "documentation":"<p>The concatenation of the authentication device's serial number, a space, and the value that is displayed on your authentication device.</p>",
+          "location":"header",
+          "locationName":"x-amz-mfa"
+        },
+        "VersioningConfiguration":{
+          "shape":"VersioningConfiguration",
+          "documentation":"<p/>",
+          "locationName":"VersioningConfiguration",
+          "xmlNamespace":{"uri":"http://s3.amazonaws.com/doc/2006-03-01/"}
+        }
+      },
+      "payload":"VersioningConfiguration"
+    },
     "PutBucketWebsiteRequest":{
       "type":"structure",
       "required":[
@@ -4930,6 +5395,12 @@
           "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-request-payer"
+        },
+        "VersionId":{
+          "shape":"ObjectVersionId",
+          "documentation":"<p>VersionId used to reference a specific version of the object.</p>",
+          "location":"querystring",
+          "locationName":"versionId"
         }
       },
       "payload":"AccessControlPolicy"
@@ -4954,6 +5425,12 @@
           "documentation":"The Server-side encryption algorithm used when storing this object in S3 (e.g., AES256).",
           "location":"header",
           "locationName":"x-amz-server-side-encryption"
+        },
+        "VersionId":{
+          "shape":"ObjectVersionId",
+          "documentation":"<p>Version of the object.</p>",
+          "location":"header",
+          "locationName":"x-amz-version-id"
         },
         "SSECustomerAlgorithm":{
           "shape":"SSECustomerAlgorithm",
@@ -5516,6 +5993,24 @@
         }
       }
     },
+    "TagSet":{
+      "type":"list",
+      "member":{
+        "shape":"Tag",
+        "locationName":"Tag"
+      }
+    },
+    "Tagging":{
+      "type":"structure",
+      "required":["TagSet"],
+      "members":{
+        "TagSet":{
+          "shape":"TagSet",
+          "documentation":"<p/>"
+        }
+      },
+      "documentation":"<p/>"
+    },
     "TargetBucket":{"type":"string"},
     "TargetGrant":{
       "type":"structure",
@@ -5629,6 +6124,12 @@
     "UploadPartCopyOutput":{
       "type":"structure",
       "members":{
+        "CopySourceVersionId":{
+          "shape":"CopySourceVersionId",
+          "documentation":"<p>The version of the source object that was copied, if you have enabled versioning on the source bucket.</p>",
+          "location":"header",
+          "locationName":"x-amz-copy-source-version-id"
+        },
         "CopyPartResult":{"shape":"CopyPartResult"},
         "ServerSideEncryption":{
           "shape":"ServerSideEncryption",
@@ -5892,6 +6393,22 @@
       "payload":"Body"
     },
     "Value":{"type":"string"},
+    "VersionIdMarker":{"type":"string"},
+    "VersioningConfiguration":{
+      "type":"structure",
+      "members":{
+        "MFADelete":{
+          "shape":"MFADelete",
+          "documentation":"<p>Specifies whether MFA delete is enabled in the bucket versioning configuration. This element is only returned if the bucket has been configured with MFA delete. If the bucket has never been so configured, this element is not returned.</p>",
+          "locationName":"MfaDelete"
+        },
+        "Status":{
+          "shape":"BucketVersioningStatus",
+          "documentation":"<p>The versioning state of the bucket.</p>"
+        }
+      },
+      "documentation":"<p>Describes the versioning state of an Amazon S3 bucket. For more information, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTVersioningStatus.html\">PUT Bucket versioning</a> in the <i>Amazon Simple Storage Service API Reference</i>.</p>"
+    },
     "WebsiteConfiguration":{
       "type":"structure",
       "members":{

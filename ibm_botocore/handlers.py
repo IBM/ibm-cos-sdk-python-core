@@ -57,6 +57,10 @@ REGISTER_LAST = object()
 # combination of uppercase letters, lowercase letters, numbers, periods
 # (.), hyphens (-), and underscores (_).
 VALID_BUCKET = re.compile(r'^[a-zA-Z0-9.\-_]{1,255}$')
+VALID_S3_ARN = re.compile(
+    r'^arn:(aws).*:s3:[a-z\-0-9]+:[0-9]{12}:accesspoint[/:]'
+    r'[a-zA-Z0-9\-]{1,63}$'
+)
 VERSION_ID_SUFFIX = re.compile(r'\?versionId=[^\s]+$')
 
 SERVICE_NAME_ALIASES = {
@@ -216,10 +220,11 @@ def validate_bucket_name(params, **kwargs):
     if 'Bucket' not in params:
         return
     bucket = params['Bucket']
-    if VALID_BUCKET.search(bucket) is None:
+    if not VALID_BUCKET.search(bucket) and not VALID_S3_ARN.search(bucket):
         error_msg = (
             'Invalid bucket name "%s": Bucket name must match '
-            'the regex "%s"' % (bucket, VALID_BUCKET.pattern))
+            'the regex "%s" or be an ARN matching the regex "%s"' % (
+                bucket, VALID_BUCKET.pattern, VALID_S3_ARN.pattern))
         raise ParamValidationError(report=error_msg)
 
 
@@ -306,7 +311,7 @@ def document_copy_source_form(section, event_name, **kwargs):
         value_portion = param_line.get_section('member-value')
         value_portion.clear_text()
         value_portion.write("'string' or {'Bucket': 'string', "
-                            "'Key': 'string'}")
+                            "'Key': 'string', 'VersionId': 'string'}")
     elif 'request-params' in event_name:
         param_section = section.get_section('CopySource')
         type_section = param_section.get_section('param-type')
@@ -315,15 +320,16 @@ def document_copy_source_form(section, event_name, **kwargs):
         doc_section = param_section.get_section('param-documentation')
         doc_section.clear_text()
         doc_section.write(
-            "The name of the source bucket, key name of the source object. "
-            "You can either "
+            "The name of the source bucket, key name of the source object, "
+            "and optional version ID of the source object.  You can either "
             "provide this value as a string or a dictionary.  The "
             "string form is {bucket}/{key} or "
-            "{bucket}/{key} if you want to copy a "
+            "{bucket}/{key}?versionId={versionId} if you want to copy a "
             "specific version.  You can also provide this value as a "
             "dictionary.  The dictionary format is recommended over "
             "the string format because it is more explicit.  The dictionary "
-            "format is: {'Bucket': 'bucket', 'Key': 'key'}."
+            "format is: {'Bucket': 'bucket', 'Key': 'key', 'VersionId': 'id'}."
+            "  Note that the VersionId key is optional and may be omitted."
         )
 
 
@@ -334,10 +340,10 @@ def handle_copy_source_param(params, **kwargs):
 
         * CopySource provided as a string.  We'll make a best effort
           to URL encode the key name as required.  This will require
-          parsing the bucket from the CopySource value
+          parsing the bucket and version id from the CopySource value
           and only encoding the key.
         * CopySource provided as a dict.  In this case we're
-          explicitly given the Bucket, Key so we're
+          explicitly given the Bucket, Key, and VersionId so we're
           able to encode the key and ensure this value is serialized
           and correctly sent to S3.
 
@@ -855,6 +861,8 @@ class ClientMethodAlias(object):
 class HeaderToHostHoister(object):
     """Takes a header and moves it to the front of the hoststring.
     """
+    _VALID_HOSTNAME = re.compile(r'(?!-)[a-z\d-]{1,63}(?<!-)$', re.IGNORECASE)
+
     def __init__(self, header_name):
         self._header_name = header_name
 
@@ -868,9 +876,18 @@ class HeaderToHostHoister(object):
         if self._header_name not in params['headers']:
             return
         header_value = params['headers'][self._header_name]
+        self._ensure_header_is_valid_host(header_value)
         original_url = params['url']
         new_url = self._prepend_to_host(original_url, header_value)
         params['url'] = new_url
+
+    def _ensure_header_is_valid_host(self, header):
+        match = self._VALID_HOSTNAME.match(header)
+        if not match:
+            raise ParamValidationError(report=(
+                'Hostnames must contain only - and alphanumeric characters, '
+                'and between 1 and 63 characters long.'
+            ))
 
     def _prepend_to_host(self, url, prefix):
         url_components = urlsplit(url)

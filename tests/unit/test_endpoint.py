@@ -11,11 +11,9 @@
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 import socket
-import requests
 from tests import unittest
 
 from mock import Mock, patch, sentinel
-from requests import ConnectionError
 
 from ibm_botocore.compat import six
 from ibm_botocore.awsrequest import AWSRequest
@@ -23,12 +21,13 @@ from ibm_botocore.endpoint import Endpoint, DEFAULT_TIMEOUT
 from ibm_botocore.endpoint import EndpointCreator
 from ibm_botocore.exceptions import EndpointConnectionError
 from ibm_botocore.exceptions import ConnectionClosedError
+from ibm_botocore.exceptions import HTTPClientError
 from ibm_botocore.httpsession import URLLib3Session
 from ibm_botocore.model import OperationModel, ServiceId
 
 
-def request_dict():
-    return {
+def request_dict(**kwargs):
+    base = {
         'headers': {},
         'body': '',
         'url_path': '/',
@@ -164,8 +163,8 @@ class TestRetryInterface(TestEndpointBase):
     def test_retry_on_socket_errors(self):
         self.event_emitter.emit.side_effect = self.get_emitter_responses(
             num_retries=1)
-        self.http_session.send.side_effect = ConnectionError()
-        with self.assertRaises(ConnectionError):
+        self.http_session.send.side_effect = HTTPClientError(error='wrapped')
+        with self.assertRaises(HTTPClientError):
             self.endpoint.make_request(self._operation, request_dict())
         self.assert_events_emitted(
             self.event_emitter,

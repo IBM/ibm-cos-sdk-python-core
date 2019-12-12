@@ -454,6 +454,21 @@ class InvalidS3AddressingStyleError(BotoCoreError):
     )
 
 
+class UnsupportedS3ArnError(BotoCoreError):
+    """Error when S3 arn provided to Bucket parameter is not supported"""
+    fmt = (
+        'S3 ARN {arn} provided to "Bucket" parameter is invalid. Only '
+        'ARNs for S3 access-points are supported.'
+    )
+
+
+class UnsupportedS3AccesspointConfigurationError(BotoCoreError):
+    """Error when an unsupported configuration is used with access-points"""
+    fmt = (
+        'Unsupported configuration when using S3 access-points: {msg}'
+    )
+
+
 class InvalidRetryConfigurationError(BotoCoreError):
     """Error when invalid retry configuration is specified"""
     fmt = (
@@ -468,6 +483,15 @@ class InvalidMaxRetryAttemptsError(InvalidRetryConfigurationError):
         'Value provided to "max_attempts": {provided_max_attempts} must '
         'be an integer greater than or equal to zero.'
     )
+
+
+class InvalidSTSRegionalEndpointsConfigError(BotoCoreError):
+    """Error when invalid sts regional endpoints configuration is specified"""
+    fmt = (
+        'STS regional endpoints option {sts_regional_endpoints_config} is '
+        'invaild. Valid options are: legacy and regional'
+    )
+
 
 class StubResponseError(BotoCoreError):
     fmt = 'Error getting response stub for operation {operation_name}: {reason}'

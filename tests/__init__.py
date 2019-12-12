@@ -45,6 +45,7 @@ from ibm_botocore.compat import urlparse
 from ibm_botocore.compat import parse_qs
 from ibm_botocore import utils
 from ibm_botocore import credentials
+from ibm_botocore.stub import Stubber
 
 
 _LOADER = ibm_botocore.loaders.Loader()
@@ -377,11 +378,11 @@ class RawResponse(BytesIO):
             contents = self.read()
 
 
-class ClientHTTPStubber(object):
-    def __init__(self, client, strict=True):
+class BaseHTTPStubber(object):
+    def __init__(self, obj_with_event_emitter, strict=True):
         self.reset()
         self._strict = strict
-        self._client = client
+        self._obj_with_event_emitter = obj_with_event_emitter
 
     def reset(self):
         self.requests = []
@@ -396,11 +397,15 @@ class ClientHTTPStubber(object):
         response = AWSResponse(url, status, headers, raw)
         self.responses.append(response)
 
+    @property
+    def _events(self):
+        raise NotImplementedError('_events')
+
     def start(self):
-        self._client.meta.events.register('before-send', self)
+        self._events.register('before-send', self)
 
     def stop(self):
-        self._client.meta.events.unregister('before-send', self)
+        self._events.unregister('before-send', self)
 
     def __enter__(self):
         self.start()
@@ -421,3 +426,109 @@ class ClientHTTPStubber(object):
             raise HTTPStubberException('Insufficient responses')
         else:
             return None
+
+
+class ClientHTTPStubber(BaseHTTPStubber):
+    @property
+    def _events(self):
+        return self._obj_with_event_emitter.meta.events
+
+
+class SessionHTTPStubber(BaseHTTPStubber):
+    @property
+    def _events(self):
+        return self._obj_with_event_emitter.get_component('event_emitter')
+
+
+class ConsistencyWaiterException(Exception):
+    pass
+
+
+class ConsistencyWaiter(object):
+    """
+    A waiter class for some check to reach a consistent state.
+
+    :type min_successes: int
+    :param min_successes: The minimum number of successful check calls to
+    treat the check as stable. Default of 1 success.
+
+    :type max_attempts: int
+    :param min_successes: The maximum number of times to attempt calling
+    the check. Default of 20 attempts.
+
+    :type delay: int
+    :param delay: The number of seconds to delay the next API call after a
+    failed check call. Default of 5 seconds.
+    """
+    def __init__(self, min_successes=1, max_attempts=20, delay=5,
+                 delay_initial_poll=False):
+        self.min_successes = min_successes
+        self.max_attempts = max_attempts
+        self.delay = delay
+        self.delay_initial_poll = delay_initial_poll
+
+    def wait(self, check, *args, **kwargs):
+        """
+        Wait until the check succeeds the configured number of times
+
+        :type check: callable
+        :param check: A callable that returns True or False to indicate
+        if the check succeeded or failed.
+
+        :type args: list
+        :param args: Any ordered arguments to be passed to the check.
+
+        :type kwargs: dict
+        :param kwargs: Any keyword arguments to be passed to the check.
+        """
+        attempts = 0
+        successes = 0
+        if self.delay_initial_poll:
+            time.sleep(self.delay)
+        while attempts < self.max_attempts:
+            attempts += 1
+            if check(*args, **kwargs):
+                successes += 1
+                if successes >= self.min_successes:
+                    return
+            else:
+                time.sleep(self.delay)
+        fail_msg = self._fail_message(attempts, successes)
+        raise ConsistencyWaiterException(fail_msg)
+
+    def _fail_message(self, attempts, successes):
+        format_args = (attempts, successes)
+        return 'Failed after %s attempts, only had %s successes' % format_args
+
+
+class StubbedSession(ibm_botocore.session.Session):
+    def __init__(self, *args, **kwargs):
+        super(StubbedSession, self).__init__(*args, **kwargs)
+        self._cached_clients = {}
+        self._client_stubs = {}
+
+    def create_client(self, service_name, *args, **kwargs):
+        if service_name not in self._cached_clients:
+            client = self._create_stubbed_client(service_name, *args, **kwargs)
+            self._cached_clients[service_name] = client
+        return self._cached_clients[service_name]
+
+    def _create_stubbed_client(self, service_name, *args, **kwargs):
+        client = super(StubbedSession, self).create_client(
+            service_name, *args, **kwargs)
+        stubber = Stubber(client)
+        self._client_stubs[service_name] = stubber
+        return client
+
+    def stub(self, service_name):
+        if service_name not in self._client_stubs:
+            self.create_client(service_name)
+        return self._client_stubs[service_name]
+
+    def activate_stubs(self):
+        for stub in self._client_stubs.values():
+            stub.activate()
+
+    def verify_stubs(self):
+        for stub in self._client_stubs.values():
+            stub.assert_no_pending_responses()
