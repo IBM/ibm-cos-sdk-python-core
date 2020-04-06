@@ -568,6 +568,23 @@ class TestHandlers(BaseSessionTest):
     def test_validation_is_noop_if_no_bucket_param_exists(self):
         self.assertIsNone(handlers.validate_bucket_name(params={}))
 
+    def test_validation_is_s3_accesspoint_arn(self):
+        try:
+            arn = 'arn:aws:s3:us-west-2:123456789012:accesspoint:endpoint'
+            handlers.validate_bucket_name({'Bucket': arn})
+        except ParamValidationError:
+            self.fail('The s3 arn: %s should pass validation' % arn)
+
+    def test_validation_is_global_s3_bucket_arn(self):
+        with self.assertRaises(ParamValidationError):
+            arn = 'arn:aws:s3:::mybucket'
+            handlers.validate_bucket_name({'Bucket': arn})
+
+    def test_validation_is_other_service_arn(self):
+        with self.assertRaises(ParamValidationError):
+            arn = 'arn:aws:ec2:us-west-2:123456789012:instance:myinstance'
+            handlers.validate_bucket_name({'Bucket': arn})
+
     def test_validate_non_ascii_metadata_values(self):
         with self.assertRaises(ParamValidationError):
             handlers.validate_ascii_metadata({'Metadata': {'foo': u'\u2713'}})
@@ -717,13 +734,6 @@ class TestHandlers(BaseSessionTest):
         handlers.decode_list_object_v2(parsed, context=context)
         self.assertEqual(parsed['CommonPrefixes'][0]['Prefix'],
                          u'\xe7\xf6s% asd\x08 c')
-
-    def test_get_bucket_location_optional(self):
-        # This handler should no-op if another hook (i.e. stubber) has already
-        # filled in response
-        response = {"LocationConstraint": "eu-west-1"}
-        handlers.parse_get_bucket_location(response, None),
-        self.assertEqual(response["LocationConstraint"], "eu-west-1")
 
     def test_set_operation_specific_signer_no_auth_type(self):
         signing_name = 'myservice'
@@ -1146,3 +1156,13 @@ class TestPrependToHost(unittest.TestCase):
         prepended = self._prepend_to_host(
             'https://bar.baz.example.com/path', 'foo')
         self.assertEqual(prepended, 'https://foo.bar.baz.example.com/path')
+
+    def test_does_validate_long_host(self):
+        with self.assertRaises(ParamValidationError):
+           self._prepend_to_host(
+               'https://example.com/path', 'toolong'*100)
+
+    def test_does_validate_host_with_illegal_char(self):
+        with self.assertRaises(ParamValidationError):
+           self._prepend_to_host(
+               'https://example.com/path', 'host#name')

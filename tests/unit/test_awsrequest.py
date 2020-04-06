@@ -471,9 +471,6 @@ class TestAWSHTTPConnection(unittest.TestCase):
         with self.assertRaises(socket.error):
             conn._tunnel()
 
-    @unittest.skipIf(sys.version_info[:2] == (2, 6),
-                     ("``_tunnel()`` function defaults to standard "
-                      "http library function when not py26."))
     def test_tunnel_uses_std_lib(self):
         s = FakeSocket(b'HTTP/1.1 200 OK\r\n')
         conn = AWSHTTPConnection('s3.amazonaws.com', 443)
@@ -549,7 +546,7 @@ class TestAWSHTTPConnectionPool(unittest.TestCase):
 
 class TestPrepareRequestDict(unittest.TestCase):
     def setUp(self):
-        self.user_agent = 'botocore/1.0'
+        self.user_agent = 'ibm_botocore/1.0'
         self.endpoint_url = 'https://s3.amazonaws.com'
         self.base_request_dict = {
             'body': '',

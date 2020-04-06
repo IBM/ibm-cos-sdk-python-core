@@ -18,7 +18,7 @@ response.
 
 The main test is contained in ``test_response_parser.py`` and is
 implemented as a nose generator.  Each time through the loop an XML
-file is read and passed to a ``botocore.response.XmlResponse``
+file is read and passed to a ``ibm_botocore.response.XmlResponse``
 object.  The corresponding JSON file is then parsed and compared to
 the value created by the parser.  If the are equal, the test passes.  If
 they are not equal, both the expected result and the actual result are

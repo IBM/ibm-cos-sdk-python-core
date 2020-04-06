@@ -43,11 +43,11 @@ will attempt to load models outside of the models we ship with
 ibm_botocore.  When you create a ``Loader``, there are two paths
 automatically added to the model search path:
 
-    * <botocore root>/data/
+    * <ibm_botocore root>/data/
     * ~/.aws/models
 
 The first value is the path where all the model files shipped with
-botocore are located.
+ibm_botocore are located.
 
 The second path is so that users can just drop new model files in
 ``~/.aws/models`` without having to mess around with the AWS_DATA_PATH.
@@ -209,7 +209,7 @@ class Loader(object):
 
     """
     FILE_LOADER_CLASS = JSONFileLoader
-    # The included models in botocore/data/ that we ship with ibm_botocore.
+    # The included models in ibm_botocore/data/ that we ship with ibm_botocore.
     BUILTIN_DATA_PATH = os.path.join(BOTOCORE_ROOT, 'data')
     # For convenience we automatically add ~/.aws/models to the data path.
     CUSTOMER_DATA_PATH = os.path.join(os.path.expanduser('~'),

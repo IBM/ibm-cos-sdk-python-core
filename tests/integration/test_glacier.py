@@ -27,7 +27,7 @@ class TestGlacier(unittest.TestCase):
     # is also using this vault in parallel, so don't rely on things like
     # number of archives in a vault.
 
-    VAULT_NAME = 'botocore-integ-test-vault'
+    VAULT_NAME = 'ibm_botocore-integ-test-vault'
 
     def setUp(self):
         self.session = ibm_botocore.session.get_session()

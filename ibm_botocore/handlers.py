@@ -484,8 +484,7 @@ def parse_get_bucket_location(parsed, http_response, **kwargs):
     # The "parsed" passed in only has the ResponseMetadata
     # filled out.  This handler will fill in the LocationConstraint
     # value.
-    if 'LocationConstraint' in parsed:
-        # Response already set - a stub?
+    if http_response.raw is None:
         return
     response_body = http_response.content
     parser = xml.etree.cElementTree.XMLParser(
@@ -954,7 +953,6 @@ BUILTIN_HANDLERS = [
     ('before-call.s3.PutBucketLogging', conditionally_calculate_md5),
     ('before-call.s3.PutBucketNotification', conditionally_calculate_md5),
     ('before-call.s3.PutBucketPolicy', conditionally_calculate_md5),
-    ('before-call.s3.PutBucketProtectionConfiguration', calculate_md5),
     ('before-call.s3.PutBucketRequestPayment', conditionally_calculate_md5),
     ('before-call.s3.PutBucketVersioning', conditionally_calculate_md5),
     ('before-call.s3.PutBucketWebsite', conditionally_calculate_md5),

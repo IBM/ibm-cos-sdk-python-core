@@ -22,7 +22,6 @@ import os
 import platform
 import socket
 import warnings
-import collections
 
 from ibm_botocore import __version__
 from ibm_botocore import UNSIGNED
@@ -49,6 +48,7 @@ from ibm_botocore import waiter
 from ibm_botocore import retryhandler, translate
 from ibm_botocore import utils
 from ibm_botocore.utils import EVENT_ALIASES
+from ibm_botocore.compat import MutableMapping
 
 
 logger = logging.getLogger(__name__)
@@ -57,7 +57,7 @@ logger = logging.getLogger(__name__)
 class Session(object):
     """
     The Session object collects together useful functionality
-    from `botocore` as well as important data such as configuration
+    from `ibm_botocore` as well as important data such as configuration
     information and credentials into a single, easy-to-use object.
 
     :ivar available_profiles: A list of profiles defined in the config
@@ -243,7 +243,7 @@ class Session(object):
         # the old one will be constructed, but only with the supplied methods
         # being added to the chain. This chain will be consulted for a value
         # and then thrown out. This is not efficient, nor is the methods arg
-        # used in botocore, this is just for backwards compatibility.
+        # used in ibm_botocore, this is just for backwards compatibility.
         chain_builder = SubsetChainConfigFactory(session=self, methods=methods)
         mapping = create_botocore_default_config_mapping(self)
         for name, config_options in self.session_var_map.items():
@@ -711,7 +711,7 @@ class Session(object):
                 warnings.warn(
                     'Fetching the %s component with the get_component() '
                     'method is deprecated as the component has always been '
-                    'considered an internal interface of botocore' % name,
+                    'considered an internal interface of ibm_botocore' % name,
                     DeprecationWarning)
                 return self._internal_components.get_component(name)
             raise
@@ -1023,7 +1023,7 @@ class ComponentLocator(object):
             pass
 
 
-class SessionVarDict(collections.MutableMapping):
+class SessionVarDict(MutableMapping):
     def __init__(self, session, session_vars):
         self._session = session
         self._store = copy.copy(session_vars)

@@ -5,7 +5,7 @@ import ibm_botocore
 
 requires = ['jmespath>=0.7.1,<1.0.0',
             'docutils>=0.10,<0.16',
-            'requests>=2.18,<2.23 ',
+            'requests>=2.18,<3.0',
             'python-dateutil>=2.1,<3.0.0']
 
 setup(

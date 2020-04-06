@@ -69,7 +69,7 @@ class TestElasticTranscoder(unittest.TestCase):
         input_bucket = self.create_bucket()
         output_bucket = self.create_bucket()
         role = self.create_iam_role()
-        pipeline_name = 'botocore-test-create-%s' % random_chars(10)
+        pipeline_name = 'ibm_botocore-test-create-%s' % random_chars(10)
 
         parsed = self.client.create_pipeline(
             InputBucket=input_bucket, OutputBucket=output_bucket,

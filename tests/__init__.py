@@ -27,13 +27,7 @@ from io import BytesIO
 from subprocess import Popen, PIPE
 
 from dateutil.tz import tzlocal
-# The unittest module got a significant overhaul
-# in 2.7, so if we're in 2.6 we can use the backported
-# version unittest2.
-if sys.version_info[:2] == (2, 6):
-    import unittest2 as unittest
-else:
-    import unittest
+import unittest
 
 from nose.tools import assert_equal
 
@@ -92,7 +86,7 @@ def create_session(**kwargs):
     # so that we reused the same models across tests.
     session = ibm_botocore.session.Session(**kwargs)
     session.register_component('data_loader', _LOADER)
-    session.set_config_variable('credentials_file', 'noexist/foo/botocore')
+    session.set_config_variable('credentials_file', 'noexist/foo/ibm_botocore')
     return session
 
 

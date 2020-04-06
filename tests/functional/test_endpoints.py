@@ -40,12 +40,14 @@ SERVICE_RENAMES = {
     'elb': 'elastic-load-balancing',
     'elbv2': 'elastic-load-balancing-v2',
     'es': 'elasticsearch-service',
-    'events': 'cloudwatch-events',
+    'events': 'eventbridge',
     'globalaccelerator': 'global-accelerator',
     'iot-data': 'iot-data-plane',
     'iot-jobs-data': 'iot-jobs-data-plane',
     'iot1click-devices': 'iot-1click-devices-service',
     'iot1click-projects': 'iot-1click-projects',
+    'iotevents-data': 'iot-events-data',
+    'iotevents': 'iot-events',
     'kinesisanalytics': 'kinesis-analytics',
     'kinesisanalyticsv2': 'kinesis-analytics-v2',
     'kinesisvideo': 'kinesis-video',
@@ -80,9 +82,14 @@ ENDPOINT_PREFIX_OVERRIDE = {
     'application-autoscaling': 'autoscaling',
     # For neptune, we send requests to the RDS endpoint.
     'neptune': 'rds',
+    'docdb': 'rds',
+    # iotevents data endpoints.json and service-2.json don't line up.
+    'ioteventsdata': 'data.iotevents',
+    'iotsecuredtunneling': 'api.tunneling.iot',
 }
 NOT_SUPPORTED_IN_SDK = [
     'mobileanalytics',
+    'transcribestreaming',
 ]
 
 
@@ -139,7 +146,7 @@ def _assert_known_endpoint_prefix(endpoint_prefix, known_endpoint_prefixes):
 def test_service_name_matches_endpoint_prefix():
     # Generates tests for each service to verify that the computed service
     # named based on the service id matches the service name used to
-    # create a client (i.e the directory name in botocore/data)
+    # create a client (i.e the directory name in ibm_botocore/data)
     # unless there is an explicit exception.
     session = get_session()
     loader = session.get_component('data_loader')

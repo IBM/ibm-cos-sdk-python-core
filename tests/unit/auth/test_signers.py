@@ -358,7 +358,7 @@ class TestS3SigV4Auth(BaseTestWithFixedDate):
                                     'Root=foo;Parent=bar;Sampleid=1')
 
     def test_blacklist_headers(self):
-        self._test_blacklist_header('user-agent', 'botocore/1.4.11')
+        self._test_blacklist_header('user-agent', 'ibm_botocore/1.4.11')
 
     def test_uses_sha256_if_config_value_is_true(self):
         self.client_config.s3['payload_signing_enabled'] = True

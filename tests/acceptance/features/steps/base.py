@@ -77,7 +77,7 @@ def then_expected_error(context, code):
 
 @then(u'the value at "{}" should be a list')
 def then_expected_type_is_list(context, expression):
-    # In botocore, if there are no values with an element,
+    # In ibm_botocore, if there are no values with an element,
     # it will not appear in the response dict, so it's actually
     # ok if the element does not exist (and is not a list).
     # If an exception happened the test will have already failed,

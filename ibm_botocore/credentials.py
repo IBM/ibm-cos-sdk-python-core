@@ -715,7 +715,7 @@ class BaseAssumeRoleCredentialFetcher(CachedCredentialFetcher):
         )
 
     def _generate_assume_role_name(self):
-        self._role_session_name = 'botocore-session-%s' % (int(time.time()))
+        self._role_session_name = 'ibm_botocore-session-%s' % (int(time.time()))
         self._assume_kwargs['RoleSessionName'] = self._role_session_name
         self._using_default_session_name = True
 
@@ -924,7 +924,7 @@ class CredentialProvider(object):
                     found.append(mapping[key_name])
                 except KeyError:
                     raise PartialCredentialsError(provider=self.METHOD, cred_var=key_name)
-        return found 
+        return found
 
 
 class ProcessProvider(CredentialProvider):
@@ -2191,7 +2191,7 @@ class DefaultTokenManager(TokenManager):
               will not be verified.
             * path/to/cert/bundle.pem - A filename of the CA cert bundle to
               uses.  You can specify this argument if you want to use a
-              different CA cert bundle than the one used by botocore.
+              different CA cert bundle than the one used by ibm_botocore.
         """
         if api_key_id is None and auth_function is None:
             raise RuntimeError('api_key_id and auth_function cannot both be None')
@@ -2664,7 +2664,7 @@ class OAuth2Credentials(Credentials):
               will not be verified.
             * path/to/cert/bundle.pem - A filename of the CA cert bundle to
               uses.  You can specify this argument if you want to use a
-              different CA cert bundle than the one used by botocore.
+              different CA cert bundle than the one used by ibm_botocore.
         """
         self.api_key_id = api_key_id
         self.service_instance_id = service_instance_id

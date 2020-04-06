@@ -176,12 +176,6 @@ class TestCreateClientArgs(unittest.TestCase):
             endpoint_url='http://other.com/')
         self.assertEqual(client_args['client_config'].region_name, None)
 
-    def test_provide_retry_config(self):
-        config = ibm_botocore.config.Config(retries={'max_attempts': 10})
-        client_args = self.call_get_client_args(client_config=config)
-        self.assertEqual(
-            client_args['client_config'].retries, {'max_attempts': 10})
-
     def test_tcp_keepalive_enabled(self):
         scoped_config = {'tcp_keepalive': 'true'}
         with mock.patch('ibm_botocore.args.EndpointCreator') as m:
@@ -215,3 +209,163 @@ class TestCreateClientArgs(unittest.TestCase):
                     (socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
                 ]
             )
+
+    def test_sts_override_resolved_endpoint_for_legacy_region(self):
+        self.config_store.set_config_variable(
+            'sts_regional_endpoints', 'legacy')
+        client_args = self.call_get_client_args(
+            service_model=self._get_service_model('sts'),
+            region_name='us-west-2', endpoint_url=None
+        )
+        self.assertEqual(
+            client_args['endpoint'].host, 'https://sts.amazonaws.com')
+        self.assertEqual(
+            client_args['request_signer'].region_name, 'us-east-1')
+
+    def test_sts_use_resolved_endpoint_for_nonlegacy_region(self):
+        resolved_endpoint = 'https://resolved-endpoint'
+        resolved_region = 'resolved-region'
+        self._set_endpoint_bridge_resolve(
+            endpoint_url=resolved_endpoint,
+            signing_region=resolved_region
+        )
+        self.config_store.set_config_variable(
+            'sts_regional_endpoints', 'legacy')
+        client_args = self.call_get_client_args(
+            service_model=self._get_service_model('sts'),
+            region_name='ap-east-1', endpoint_url=None
+        )
+        self.assertEqual(client_args['endpoint'].host, resolved_endpoint)
+        self.assertEqual(
+            client_args['request_signer'].region_name, resolved_region)
+
+    def test_sts_use_resolved_endpoint_for_regional_configuration(self):
+        resolved_endpoint = 'https://resolved-endpoint'
+        resolved_region = 'resolved-region'
+        self._set_endpoint_bridge_resolve(
+            endpoint_url=resolved_endpoint,
+            signing_region=resolved_region
+        )
+        self.config_store.set_config_variable(
+            'sts_regional_endpoints', 'regional')
+        client_args = self.call_get_client_args(
+            service_model=self._get_service_model('sts'),
+            region_name='us-west-2', endpoint_url=None
+        )
+        self.assertEqual(client_args['endpoint'].host, resolved_endpoint)
+        self.assertEqual(
+            client_args['request_signer'].region_name, resolved_region)
+
+    def test_sts_with_endpoint_override_and_legacy_configured(self):
+        override_endpoint = 'https://override-endpoint'
+        self._set_endpoint_bridge_resolve(endpoint_url=override_endpoint)
+        self.config_store.set_config_variable(
+            'sts_regional_endpoints', 'legacy')
+        client_args = self.call_get_client_args(
+            service_model=self._get_service_model('sts'),
+            region_name='us-west-2', endpoint_url=override_endpoint
+        )
+        self.assertEqual(client_args['endpoint'].host, override_endpoint)
+
+    def test_sts_http_scheme_for_override_endpoint(self):
+        self.config_store.set_config_variable(
+            'sts_regional_endpoints', 'legacy')
+        client_args = self.call_get_client_args(
+            service_model=self._get_service_model('sts'),
+            region_name='us-west-2', endpoint_url=None, is_secure=False,
+
+        )
+        self.assertEqual(
+            client_args['endpoint'].host, 'http://sts.amazonaws.com')
+
+    def test_sts_regional_endpoints_defaults_to_legacy_if_not_set(self):
+        self.config_store.set_config_variable(
+            'sts_regional_endpoints', None)
+        client_args = self.call_get_client_args(
+            service_model=self._get_service_model('sts'),
+            region_name='us-west-2', endpoint_url=None
+        )
+        self.assertEqual(
+            client_args['endpoint'].host, 'https://sts.amazonaws.com')
+        self.assertEqual(
+            client_args['request_signer'].region_name, 'us-east-1')
+
+    def test_invalid_sts_regional_endpoints(self):
+        self.config_store.set_config_variable(
+            'sts_regional_endpoints', 'invalid')
+        with self.assertRaises(
+                exceptions.InvalidSTSRegionalEndpointsConfigError):
+            self.call_get_client_args(
+                service_model=self._get_service_model('sts'),
+                region_name='us-west-2', endpoint_url=None
+            )
+
+    def test_provides_total_max_attempts(self):
+        config = ibm_botocore.config.Config(retries={'total_max_attempts': 10})
+        client_args = self.call_get_client_args(client_config=config)
+        self.assertEqual(
+            client_args['client_config'].retries['total_max_attempts'], 10)
+
+    def test_provides_total_max_attempts_has_precedence(self):
+        config = ibm_botocore.config.Config(retries={'total_max_attempts': 10,
+                                                 'max_attempts': 5})
+        client_args = self.call_get_client_args(client_config=config)
+        self.assertEqual(
+            client_args['client_config'].retries['total_max_attempts'], 10)
+        self.assertNotIn('max_attempts', client_args['client_config'].retries)
+
+    def test_provide_retry_config_maps_total_max_attempts(self):
+        config = ibm_botocore.config.Config(retries={'max_attempts': 10})
+        client_args = self.call_get_client_args(client_config=config)
+        self.assertEqual(
+            client_args['client_config'].retries['total_max_attempts'], 11)
+        self.assertNotIn('max_attempts', client_args['client_config'].retries)
+
+    def test_can_merge_max_attempts(self):
+        self.config_store.set_config_variable('max_attempts', 4)
+        config = self.call_get_client_args()['client_config']
+        self.assertEqual(config.retries['total_max_attempts'], 4)
+
+    def test_uses_config_value_if_present_for_max_attempts(self):
+        config = self.call_get_client_args(
+                client_config=Config(retries={'max_attempts': 2})
+        )['client_config']
+        self.assertEqual(config.retries['total_max_attempts'], 3)
+
+    def test_uses_client_config_over_config_store_max_attempts(self):
+        self.config_store.set_config_variable('max_attempts', 4)
+        config = self.call_get_client_args(
+                client_config=Config(retries={'max_attempts': 2})
+        )['client_config']
+        self.assertEqual(config.retries['total_max_attempts'], 3)
+
+    def test_uses_client_config_total_over_config_store_max_attempts(self):
+        self.config_store.set_config_variable('max_attempts', 4)
+        config = self.call_get_client_args(
+                client_config=Config(retries={'total_max_attempts': 2})
+        )['client_config']
+        self.assertEqual(config.retries['total_max_attempts'], 2)
+
+    def test_max_attempts_unset_if_retries_is_none(self):
+        config = self.call_get_client_args(
+                client_config=Config(retries=None)
+        )['client_config']
+        self.assertEqual(config.retries, {'mode': 'legacy'})
+
+    def test_retry_mode_set_on_config_store(self):
+        self.config_store.set_config_variable('retry_mode', 'standard')
+        config = self.call_get_client_args()['client_config']
+        self.assertEqual(config.retries['mode'], 'standard')
+
+    def test_retry_mode_set_on_client_config(self):
+        config = self.call_get_client_args(
+                client_config=Config(retries={'mode': 'standard'})
+        )['client_config']
+        self.assertEqual(config.retries['mode'], 'standard')
+
+    def test_client_config_beats_config_store(self):
+        self.config_store.set_config_variable('retry_mode', 'adaptive')
+        config = self.call_get_client_args(
+                client_config=Config(retries={'mode': 'standard'})
+        )['client_config']
+        self.assertEqual(config.retries['mode'], 'standard')

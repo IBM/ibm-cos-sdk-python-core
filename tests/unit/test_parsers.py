@@ -12,20 +12,19 @@
 # language governing permissions and limitations under the License.
 from tests import unittest, RawResponse
 import datetime
-import collections
 
 from dateutil.tz import tzutc
 from nose.tools import assert_equal
 
 from ibm_botocore import parsers
 from ibm_botocore import model
-from ibm_botocore.compat import json
+from ibm_botocore.compat import json, MutableMapping
 
 
 # HTTP responses will typically return a custom HTTP
 # dict.  We want to ensure we're able to work with any
 # kind of mutable mapping implementation.
-class CustomHeaderDict(collections.MutableMapping):
+class CustomHeaderDict(MutableMapping):
     def __init__(self, original_dict):
         self._d = original_dict
 
@@ -610,7 +609,7 @@ class TestRESTXMLResponses(unittest.TestCase):
         # This is to handle the scenario when something is modeled
         # as a structure and instead a list of structures is returned.
         # For this case, a single element from the list should be parsed
-        # For botocore, this will be the first element.
+        # For ibm_botocore, this will be the first element.
         # Currently, this logic may happen in s3's GetBucketLifecycle
         # operation.
         headers = {}
