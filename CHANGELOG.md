@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2.6.1
+
+### Content
+
+#### Defect Fixes
+
+* COSSDK-68522: <https://github.com/IBM/ibm-cos-sdk-python-core/issues/9>
+* IBM Python SDK aligned with AWS Python SDK - Boto3(v1.12.26), Botocore(v1.15.26) and S3transfer(v0.3.3)
+* Add IntelliJ / PyCharm IDE to gitignore
+* Drop support for Python 2.7 and 3.4
+
 ## 2.6.0
 
 ### Content
