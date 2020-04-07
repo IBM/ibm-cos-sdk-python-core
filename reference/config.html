@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Config Reference &mdash; ibm_botocore 2.6.0 documentation</title>
+    <title>Config Reference &mdash; ibm_botocore 2.6.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -23,7 +23,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '2.6.0',
+        VERSION:     '2.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -32,7 +32,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="ibm_botocore 2.6.0 documentation" href="../index.html" />
+    <link rel="top" title="ibm_botocore 2.6.1 documentation" href="../index.html" />
     <link rel="next" title="Available Services" href="index.html" />
     <link rel="prev" title="Welcome to IBM COS Core Library for Python" href="../index.html" />
   
@@ -52,7 +52,7 @@
         <li class="right" >
           <a href="../index.html" title="Welcome to IBM COS Core Library for Python"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">ibm_botocore 2.6.0 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">ibm_botocore 2.6.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -62,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">ibm_botocore 2.6.0 documentation</a>
+    ../index.html" class="text-logo">ibm_botocore 2.6.1 documentation</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -179,11 +179,31 @@ Endpoints will be addressed as such: mybucket.s3.amazonaws.com</li>
 addressed as such: s3.amazonaws.com/mybucket</li>
 </ul>
 </li>
+<li>'us_east_1_regional_endpoint' - Refers to what S3 endpoint to use
+when the region is configured to be us-east-1. Values must be a
+string that equals:<blockquote>
+<div><ul>
+<li>regional -- Use the us-east-1.amazonaws.com endpoint if the
+client is configured to use the us-east-1 region.</li>
+<li>legacy -- Use the s3.amazonaws.com endpoint if the client is
+configured to use the us-east-1 region. This is the default if
+the configuration option is not specified.</li>
+</ul>
+</div></blockquote>
+</li>
 </ul>
 </li>
 <li><strong>retries</strong> (<em>dict</em>) -- <p>A dictionary for retry specific configurations.
 Valid keys are:</p>
 <ul>
+<li>'total_max_attempts' -- An integer representing the maximum number of
+total attempts that will be made on a single request.  This includes
+the initial request, so a value of 1 indicates that no requests
+will be retried.  If <tt class="docutils literal"><span class="pre">total_max_attempts</span></tt> and <tt class="docutils literal"><span class="pre">max_attempts</span></tt>
+are both provided, <tt class="docutils literal"><span class="pre">total_max_attempts</span></tt> takes precedence.
+<tt class="docutils literal"><span class="pre">total_max_attempts</span></tt> is preferred over <tt class="docutils literal"><span class="pre">max_attempts</span></tt> because
+it maps to the <tt class="docutils literal"><span class="pre">AWS_MAX_ATTEMPTS</span></tt> environment variable and
+the <tt class="docutils literal"><span class="pre">max_attempts</span></tt> config file value.</li>
 <li>'max_attempts' -- An integer representing the maximum number of
 retry attempts that will be made on a single request. For
 example, setting this value to 2 will result in the request
@@ -191,6 +211,16 @@ being retried at most two times after the initial request. Setting
 this value to 0 will result in no retries ever being attempted on
 the initial request. If not provided, the number of retries will
 default to whatever is modeled, which is typically four retries.</li>
+<li>'mode' -- A string representing the type of retry mode ibm_botocore
+should use.  Valid values are:<blockquote>
+<div><ul>
+<li><tt class="docutils literal"><span class="pre">legacy</span></tt> - The pre-existing retry behavior.</li>
+<li><tt class="docutils literal"><span class="pre">standard</span></tt> - The standardized set of retry rules.  This
+will also default to 3 max attempts unless overridden.</li>
+<li><tt class="docutils literal"><span class="pre">adaptive</span></tt> - Retries with additional client side throttling.</li>
+</ul>
+</div></blockquote>
+</li>
 </ul>
 </li>
 <li><strong>client_cert</strong> (<em>str, (str, str)</em>) -- <p>The path to a certificate for TLS client authentication.</p>
@@ -259,7 +289,7 @@ config objects.</dd>
         <li class="right" >
           <a href="../index.html" title="Welcome to IBM COS Core Library for Python"
              >previous</a> |</li>
-        <li><a href="../index.html">ibm_botocore 2.6.0 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">ibm_botocore 2.6.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
 <script type="text/javascript">
