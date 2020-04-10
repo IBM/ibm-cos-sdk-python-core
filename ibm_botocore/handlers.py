@@ -953,6 +953,7 @@ BUILTIN_HANDLERS = [
     ('before-call.s3.PutBucketLogging', conditionally_calculate_md5),
     ('before-call.s3.PutBucketNotification', conditionally_calculate_md5),
     ('before-call.s3.PutBucketPolicy', conditionally_calculate_md5),
+    ('before-call.s3.PutBucketProtectionConfiguration', calculate_md5),
     ('before-call.s3.PutBucketRequestPayment', conditionally_calculate_md5),
     ('before-call.s3.PutBucketVersioning', conditionally_calculate_md5),
     ('before-call.s3.PutBucketWebsite', conditionally_calculate_md5),
