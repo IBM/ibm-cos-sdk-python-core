@@ -17,7 +17,7 @@ import re
 import logging
 
 __author__ = 'IBM'
-__version__ = '2.6.1'
+__version__ = '2.6.2'
 
 
 class NullHandler(logging.Handler):
