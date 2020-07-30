@@ -3163,6 +3163,18 @@
           "documentation":"<p>The count of parts this object has.</p>",
           "location":"header",
           "locationName":"x-amz-mp-parts-count"
+        },
+        "IbmRestoredCopyStorageClass":{
+          "shape":"StorageClass",
+          "documentation":"This header is only included if an object has transition metadata.  This header will indicate the transition storage class and time of transition.  If this header and the x-amz-restore header are both included, this header will indicate the time at which the object was originally archived.",
+          "location":"header",
+          "locationName":"x-ibm-restored-copy-storage-class"
+        },
+        "IbmTransition":{
+          "shape":"IbmTransition",
+          "documentation":"This header is only included if an object has transition metadata.  This header will indicate the transition storage class and time of transition.  If this header and the x-amz-restore header are both included, this header will indicate the time at which the object was originally archived.",
+          "location":"header",
+          "locationName":"x-ibm-transition"
         }
       },
       "payload":"Body"
@@ -3459,18 +3471,6 @@
           "location":"header",
           "locationName":"x-amz-expiration"
         },
-        "IbmTransition":{
-          "shape":"IbmTransition",
-          "documentation":"This header is only included if an object has transition metadata.  This header will indicate the transition storage class and time of transition.  If this header and the x-amz-restore header are both included, this header will indicate the time at which the object was originally archived.",
-          "location":"header",
-          "locationName":"x-ibm-transition"
-        },
-        "IbmRestoredCopyStorageClass":{
-          "shape":"IbmRestoredCopyStorageClass",
-          "documentation":"This header is only included if an object has transition metadata.  This header will indicate the transition storage class and time of transition.  If this header and the x-amz-restore header are both included, this header will indicate the time at which the object was originally archived.",
-          "location":"header",
-          "locationName":"x-ibm-restored-copy-storage-class"
-        },
         "Restore":{
           "shape":"Restore",
           "documentation":"<p>If the object is an archived object (an object whose storage class is GLACIER), the response includes this header if either the archive restoration is in progress (see <a>RestoreObject</a> or an archive copy is already restored.</p> <p> If an archive copy is already restored, the header value indicates when Amazon S3 is scheduled to delete the object copy. For example:</p> <p> <code>x-amz-restore: ongoing-request=\"false\", expiry-date=\"Fri, 23 Dec 2012 00:00:00 GMT\"</code> </p> <p>If the object restoration is in progress, the header returns the value <code>ongoing-request=\"true\"</code>.</p> <p>For more information about archiving objects, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lifecycle-mgmt.html#lifecycle-transition-general-considerations\">Transitioning Objects: General Considerations</a>.</p>",
@@ -3619,6 +3619,18 @@
           "documentation":"<p>The count of parts this object has.</p>",
           "location":"header",
           "locationName":"x-amz-mp-parts-count"
+        },
+        "IbmRestoredCopyStorageClass":{
+          "shape":"StorageClass",
+          "documentation":"This header is only included if an object has transition metadata.  This header will indicate the transition storage class and time of transition.  If this header and the x-amz-restore header are both included, this header will indicate the time at which the object was originally archived.",
+          "location":"header",
+          "locationName":"x-ibm-restored-copy-storage-class"
+        },
+        "IbmTransition":{
+          "shape":"IbmTransition",
+          "documentation":"This header is only included if an object has transition metadata.  This header will indicate the transition storage class and time of transition.  If this header and the x-amz-restore header are both included, this header will indicate the time at which the object was originally archived.",
+          "location":"header",
+          "locationName":"x-ibm-transition"
         }
       }
     },
@@ -3915,8 +3927,6 @@
       "flattened":true
     },
     "LastModified":{"type":"timestamp"},
-    "IbmTransition":{"type":"string"},
-    "IbmRestoredCopyStorageClass":{"type":"string"},
     "LegalHold":{
       "type":"structure",
       "members":{
@@ -5108,9 +5118,14 @@
     "ObjectStorageClass":{
       "type":"string",
       "enum":[
+        "ACCELERATED",
         "STANDARD",
         "REDUCED_REDUNDANCY",
-        "GLACIER"
+        "GLACIER",
+        "STANDARD_IA",
+        "ONEZONE_IA",
+        "INTELLIGENT_TIERING",
+        "DEEP_ARCHIVE"
       ]
     },
     "ObjectVersion":{
@@ -6261,9 +6276,14 @@
     "StorageClass":{
       "type":"string",
       "enum":[
+        "ACCELERATED",
         "STANDARD",
         "REDUCED_REDUNDANCY",
-        "STANDARD_IA"
+        "STANDARD_IA",
+        "ONEZONE_IA",
+        "INTELLIGENT_TIERING",
+        "GLACIER",
+        "DEEP_ARCHIVE"
       ]
     },
     "StorageClassAnalysis":{
@@ -6361,7 +6381,10 @@
     "Tier":{
       "type":"string",
       "enum":[
-        "Bulk"
+        "Accelerated",
+        "Standard",
+        "Bulk",
+        "Expedited"
       ]
     },
     "Token":{"type":"string"},
@@ -6440,7 +6463,12 @@
     "TransitionStorageClass":{
       "type":"string",
       "enum":[
-        "GLACIER"
+        "ACCELERATED",
+        "GLACIER",
+        "STANDARD_IA",
+        "ONEZONE_IA",
+        "INTELLIGENT_TIERING",
+        "DEEP_ARCHIVE"
       ]
     },
     "Type":{
@@ -6768,7 +6796,8 @@
       },
       "documentation":"<p>Specifies website configuration parameters for an Amazon S3 bucket.</p>"
     },
-    "WebsiteRedirectLocation":{"type":"string"}
+    "WebsiteRedirectLocation":{"type":"string"},
+    "IbmTransition":{"type":"string"}
   },
   "documentation":"<p/>"
 }
