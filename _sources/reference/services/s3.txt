@@ -986,7 +986,7 @@ Client
           RetentionLegalHoldId='string',
           RetentionPeriod=123,
           ServerSideEncryption='AES256',
-          StorageClass='STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA',
+          StorageClass='ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE',
           WebsiteRedirectLocation='string',
           SSECustomerAlgorithm='string',
           SSECustomerKey='string',
@@ -1796,7 +1796,7 @@ Client
               'string': 'string'
           },
           ServerSideEncryption='AES256',
-          StorageClass='STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA',
+          StorageClass='ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE',
           WebsiteRedirectLocation='string',
           SSECustomerAlgorithm='string',
           SSECustomerKey='string',
@@ -5328,7 +5328,7 @@ Client
                         {
                             'Date': datetime(2015, 1, 1),
                             'Days': 123,
-                            'StorageClass': 'GLACIER'
+                            'StorageClass': 'ACCELERATED'|'GLACIER'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'DEEP_ARCHIVE'
                         },
                     ]
                 },
@@ -5801,7 +5801,7 @@ Client
                         'Status': 'Enabled'|'Disabled',
                         'Destination': {
                             'Bucket': 'string',
-                            'StorageClass': 'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'
+                            'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'
                         }
                     },
                 ]
@@ -6466,10 +6466,12 @@ Client
             'SSECustomerAlgorithm': 'string',
             'SSECustomerKeyMD5': 'string',
             'SSEKMSKeyId': 'string',
-            'StorageClass': 'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA',
+            'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE',
             'RequestCharged': 'requester',
             'ReplicationStatus': 'COMPLETE'|'PENDING'|'FAILED'|'REPLICA',
-            'PartsCount': 123
+            'PartsCount': 123,
+            'IbmRestoredCopyStorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE',
+            'IbmTransition': 'string'
         }
       **Response Structure** 
 
@@ -6674,6 +6676,12 @@ Client
           The count of parts this object has.
 
           
+        
+
+        - **IbmRestoredCopyStorageClass** *(string) --* This header is only included if an object has transition metadata. This header will indicate the transition storage class and time of transition. If this header and the x-amz-restore header are both included, this header will indicate the time at which the object was originally archived.
+        
+
+        - **IbmTransition** *(string) --* This header is only included if an object has transition metadata. This header will indicate the transition storage class and time of transition. If this header and the x-amz-restore header are both included, this header will indicate the time at which the object was originally archived.
     
 
   .. py:method:: get_object_acl(**kwargs)
@@ -7293,8 +7301,6 @@ Client
             'DeleteMarker': True|False,
             'AcceptRanges': 'string',
             'Expiration': 'string',
-            'IbmTransition': 'string',
-            'IbmRestoredCopyStorageClass': 'string',
             'Restore': 'string',
             'LastModified': datetime(2015, 1, 1),
             'ContentLength': 123,
@@ -7318,10 +7324,12 @@ Client
             'SSECustomerAlgorithm': 'string',
             'SSECustomerKeyMD5': 'string',
             'SSEKMSKeyId': 'string',
-            'StorageClass': 'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA',
+            'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE',
             'RequestCharged': 'requester',
             'ReplicationStatus': 'COMPLETE'|'PENDING'|'FAILED'|'REPLICA',
-            'PartsCount': 123
+            'PartsCount': 123,
+            'IbmRestoredCopyStorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE',
+            'IbmTransition': 'string'
         }
       **Response Structure** 
 
@@ -7345,12 +7353,6 @@ Client
           If the object expiration is configured (see PUT Bucket lifecycle), the response includes this header. It includes the expiry-date and rule-id key-value pairs providing object expiration information. The value of the rule-id is URL encoded.
 
           
-        
-
-        - **IbmTransition** *(string) --* This header is only included if an object has transition metadata. This header will indicate the transition storage class and time of transition. If this header and the x-amz-restore header are both included, this header will indicate the time at which the object was originally archived.
-        
-
-        - **IbmRestoredCopyStorageClass** *(string) --* This header is only included if an object has transition metadata. This header will indicate the transition storage class and time of transition. If this header and the x-amz-restore header are both included, this header will indicate the time at which the object was originally archived.
         
 
         - **Restore** *(string) --* 
@@ -7554,6 +7556,12 @@ Client
           The count of parts this object has.
 
           
+        
+
+        - **IbmRestoredCopyStorageClass** *(string) --* This header is only included if an object has transition metadata. This header will indicate the transition storage class and time of transition. If this header and the x-amz-restore header are both included, this header will indicate the time at which the object was originally archived.
+        
+
+        - **IbmTransition** *(string) --* This header is only included if an object has transition metadata. This header will indicate the transition storage class and time of transition. If this header and the x-amz-restore header are both included, this header will indicate the time at which the object was originally archived.
     
 
   .. py:method:: list_bucket_analytics_configurations(**kwargs)
@@ -8712,7 +8720,7 @@ Client
                     'UploadId': 'string',
                     'Key': 'string',
                     'Initiated': datetime(2015, 1, 1),
-                    'StorageClass': 'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA',
+                    'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE',
                     'Owner': {
                         'DisplayName': 'string',
                         'ID': 'string'
@@ -9480,7 +9488,7 @@ Client
                     'LastModified': datetime(2015, 1, 1),
                     'ETag': 'string',
                     'Size': 123,
-                    'StorageClass': 'STANDARD'|'REDUCED_REDUNDANCY'|'GLACIER',
+                    'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'GLACIER'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'DEEP_ARCHIVE',
                     'Owner': {
                         'DisplayName': 'string',
                         'ID': 'string'
@@ -9826,7 +9834,7 @@ Client
                     'LastModified': datetime(2015, 1, 1),
                     'ETag': 'string',
                     'Size': 123,
-                    'StorageClass': 'STANDARD'|'REDUCED_REDUNDANCY'|'GLACIER',
+                    'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'GLACIER'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'DEEP_ARCHIVE',
                     'Owner': {
                         'DisplayName': 'string',
                         'ID': 'string'
@@ -10185,7 +10193,7 @@ Client
                 'DisplayName': 'string',
                 'ID': 'string'
             },
-            'StorageClass': 'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA',
+            'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE',
             'RequestCharged': 'requester'
         }
       **Response Structure** 
@@ -11454,7 +11462,7 @@ Client
                           {
                               'Date': datetime(2015, 1, 1),
                               'Days': 123,
-                              'StorageClass': 'GLACIER'
+                              'StorageClass': 'ACCELERATED'|'GLACIER'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'DEEP_ARCHIVE'
                           },
                       ]
                   },
@@ -11887,7 +11895,7 @@ Client
                       'Status': 'Enabled'|'Disabled',
                       'Destination': {
                           'Bucket': 'string',
-                          'StorageClass': 'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'
+                          'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'
                       }
                   },
               ]
@@ -12548,7 +12556,7 @@ Client
           RetentionLegalHoldId='string',
           RetentionPeriod=123,
           ServerSideEncryption='AES256',
-          StorageClass='STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA',
+          StorageClass='ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE',
           WebsiteRedirectLocation='string',
           SSECustomerAlgorithm='string',
           SSECustomerKey='string',
@@ -13421,7 +13429,7 @@ Client
           RestoreRequest={
               'Days': 123,
               'GlacierJobParameters': {
-                  'Tier': 'Bulk'
+                  'Tier': 'Accelerated'|'Standard'|'Bulk'|'Expedited'
               }
           }
       )
@@ -14440,7 +14448,7 @@ The available paginators are:
                     'UploadId': 'string',
                     'Key': 'string',
                     'Initiated': datetime(2015, 1, 1),
-                    'StorageClass': 'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA',
+                    'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE',
                     'Owner': {
                         'DisplayName': 'string',
                         'ID': 'string'
@@ -14774,7 +14782,7 @@ The available paginators are:
                     'LastModified': datetime(2015, 1, 1),
                     'ETag': 'string',
                     'Size': 123,
-                    'StorageClass': 'STANDARD'|'REDUCED_REDUNDANCY'|'GLACIER',
+                    'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'GLACIER'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'DEEP_ARCHIVE',
                     'Owner': {
                         'DisplayName': 'string',
                         'ID': 'string'
@@ -15119,7 +15127,7 @@ The available paginators are:
                     'LastModified': datetime(2015, 1, 1),
                     'ETag': 'string',
                     'Size': 123,
-                    'StorageClass': 'STANDARD'|'REDUCED_REDUNDANCY'|'GLACIER',
+                    'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'GLACIER'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'DEEP_ARCHIVE',
                     'Owner': {
                         'DisplayName': 'string',
                         'ID': 'string'
@@ -15478,7 +15486,7 @@ The available paginators are:
                 'DisplayName': 'string',
                 'ID': 'string'
             },
-            'StorageClass': 'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA',
+            'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE',
             'RequestCharged': 'requester',
             'NextToken': 'string'
         }
