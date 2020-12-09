@@ -1100,7 +1100,7 @@ class EnvProvider(CredentialProvider):
                 self.environ, self._mapping['ibm_api_key_id'],
                 self._mapping['ibm_service_instance_id'],
                 self._mapping['ibm_auth_endpoint'])
-            
+
             return OAuth2Credentials(api_key_id=ibm_api_key_id,
                                      service_instance_id=ibm_service_instance_id,
                                      auth_endpoint=ibm_auth_endpoint,
@@ -1316,7 +1316,7 @@ class ConfigProvider(CredentialProvider):
                             self._config_filename)
                 ibm_api_key_id, ibm_service_instance_id, ibm_auth_endpoint = self._extract_creds_from_mapping(
                     profile_config, self.IBM_COS_API_KEY_ID, self.IBM_COS_SERVICE_INSTANCE_ID, self.IBM_COS_AUTH_ENDPOINT)
-                
+
                 return OAuth2Credentials(api_key_id=ibm_api_key_id,
                                          service_instance_id=ibm_service_instance_id,
                                          auth_endpoint=ibm_auth_endpoint,
@@ -2171,7 +2171,7 @@ class DefaultTokenManager(TokenManager):
             API_TOKEN_URL will be used.
 
         :type time_fetcher: datetime
-        
+
         :param time_fetcher: current date and time used for calculating
             expiration time for token.
 
@@ -2222,10 +2222,10 @@ class DefaultTokenManager(TokenManager):
 
     def _cleanup(self):
         """
-        Cleaup resources 
+        Cleaup resources
         """
         self.stop_refresh_thread()
-        
+
     def stop_refresh_thread(self):
         """
         Stop the background thread
@@ -2233,10 +2233,10 @@ class DefaultTokenManager(TokenManager):
         if not self._shutdown:
             self._shutdown = True
             if self._background_thread:
-                if self._background_thread.isAlive():
+                if self._background_thread.is_alive():
                     self.wakeup_refresh_thread()
                     self._background_thread_stopped_event.wait(3)
-        
+
     def wakeup_refresh_thread(self):
         """
         Force the background thread to wakeup and refresh
@@ -2268,7 +2268,7 @@ class DefaultTokenManager(TokenManager):
                 self._background_thread_wakeup_event.wait(new_remaining)
         except Exception as e:
              logger.error("Exiting background refresh thread: " + str(e))
-            
+
         self._background_thread_stopped_event.set()
 
     def get_token(self):
@@ -2288,15 +2288,15 @@ class DefaultTokenManager(TokenManager):
 
                         if self._background_thread:
                             # check to see if the thread is still running
-                            if not self._background_thread.isAlive():
+                            if not self._background_thread.is_alive():
                                 self._background_thread = None
-                        
+
                         if not self._background_thread:
                             self._background_thread = threading.Thread(target=self._background_refresher)
                             self._background_thread.daemon = True
                             self._background_thread.start()
                 finally:
-                    self._initial_token_set_event.set(); 
+                    self._initial_token_set_event.set();
                     self._refresh_lock.release()
             else:
                 self._initial_token_set_event.wait(5);
@@ -2304,17 +2304,17 @@ class DefaultTokenManager(TokenManager):
         return self._get_cache_token()
 
     def set_verify(self, verify):
-        """ Turn on/off ssl cert verify 
+        """ Turn on/off ssl cert verify
         """
         self._verify = verify
 
     def get_verify(self):
-        """ True/False - get if ssl cert verify is enabled 
+        """ True/False - get if ssl cert verify is enabled
         """
         return self._verify
 
     def _seconds_remaining(self):
-        """ Seconds to expiry time 
+        """ Seconds to expiry time
         """
         if not self._expiry_time:
             return -1
@@ -2322,7 +2322,7 @@ class DefaultTokenManager(TokenManager):
         return total_seconds(delta)
 
     def _get_token_url(self):
-        """ Get the IAM server url if set 
+        """ Get the IAM server url if set
         If not set use the default usl
         """
         if self.auth_endpoint:
@@ -2335,7 +2335,7 @@ class DefaultTokenManager(TokenManager):
         """
         if config:
             self.proxies = config.proxies
-        
+
     def _get_data(self):
         """ Get the data posted to IAM server
         If refresh token exists request a token refresh
@@ -2449,7 +2449,7 @@ class DefaultTokenManager(TokenManager):
                     return
                 self._protected_refresh(is_mandatory=True)
 
-    
+
     def _protected_refresh(self, is_mandatory):
         """Performs mandatory or advisory refresh.
         Precondition: this method should only be called if you've acquired
@@ -2462,7 +2462,7 @@ class DefaultTokenManager(TokenManager):
             logger.warning("Refreshing temporary credentials failed "
                            "during %s refresh period.",
                            period_name, exc_info=True)
-            
+
             if is_mandatory:
                 if self._is_expired():
                     self._set_cache_token() # clear the cache
@@ -2470,7 +2470,7 @@ class DefaultTokenManager(TokenManager):
 
             # if token hasnt expired continue to use it
             return
-        
+
         self._set_from_data(metadata)
 
     def _get_initial_token(self, retry_count=3, retry_delay=1):
@@ -2490,43 +2490,43 @@ class DefaultTokenManager(TokenManager):
                     logger.warning("Problem fetching initial IAM token.", exc_info=True)
                     self._set_cache_token() # clear the cache
                     raise
-        
+
         self._set_from_data(metadata)
         self._set_refresh_timeouts()
 
-    def _get_cache_refresh_token(self): 
+    def _get_cache_refresh_token(self):
         """ get the cached refresh token from previous call to IAM server
-        """  
+        """
         return self._refresh_token
 
-       
-    def _get_cache_token(self): 
+
+    def _get_cache_token(self):
         """ get the cached access token from previous call to IAM server
-        """  
+        """
         with self._token_update_lock:
             if self._token:
                 if self._seconds_remaining() <= 0:
                     return None
-                
+
             return self._token
 
 
-    def _set_cache_token(self, 
-                          access_token=None, 
-                          refresh_token=None, 
-                          token_type=None, 
+    def _set_cache_token(self,
+                          access_token=None,
+                          refresh_token=None,
+                          token_type=None,
                           refresh_in_secs=None):
         """ cache token and expiry date details retrieved in call to IAM server
         if the token is expired raise an exception and return error to user
-        """  
+        """
         with self._token_update_lock:
             self._token = access_token
             self._refresh_token = refresh_token
             self._token_type = token_type
-            
+
             if refresh_in_secs is None:
                 self._expiry_time = None
-            else:        
+            else:
                 _refresh_in_secs = self.REFRESH_OVERRIDE_IN_SECS if self.REFRESH_OVERRIDE_IN_SECS > 0 else refresh_in_secs
                 # Add expires_in to current system time.
                 self._expiry_time = self._time_fetcher() + datetime.timedelta(seconds=_refresh_in_secs)
@@ -2536,11 +2536,11 @@ class DefaultTokenManager(TokenManager):
                     self._refresh_token = None
                     self._token_type = None
                     self._expiry_time = None
-                    
+
                     msg = ("Credentials fetched ok : but are expired.")
                     logger.warning(msg)
                     raise RuntimeError(msg)
-                    
+
                 logger.debug("Retrieved credentials will expire at: %s", self._expiry_time)
 
 
@@ -2548,7 +2548,7 @@ class DefaultTokenManager(TokenManager):
         """ extract required values from metadata returned from IAM server
         """
         _refresh_token = data['refresh_token'] if 'refresh_token' in data  else None
-        self._set_cache_token(data['access_token'], _refresh_token, data['token_type'], data['expires_in'])        
+        self._set_cache_token(data['access_token'], _refresh_token, data['token_type'], data['expires_in'])
 
     def _set_refresh_timeouts(self):
         """
@@ -2568,7 +2568,7 @@ class DefaultTokenManager(TokenManager):
 class DelegatedTokenManager(DefaultTokenManager):
     """ Requests and processes IAM delegate tokens
         Delegate token refreshed every six days """
-    def __init__(self, 
+    def __init__(self,
                  api_key_id=None,
                  service_instance_id=None,
                  auth_endpoint=None,
@@ -2577,7 +2577,7 @@ class DelegatedTokenManager(DefaultTokenManager):
                  verify=True,
                  receiver_client_ids=None):
 
-        super(DelegatedTokenManager, self).__init__(api_key_id, 
+        super(DelegatedTokenManager, self).__init__(api_key_id,
                                                     service_instance_id,
                                                     auth_endpoint,
                                                     time_fetcher,
@@ -2598,11 +2598,11 @@ class DelegatedTokenManager(DefaultTokenManager):
             data[u'receiver_client_ids'] = u'%s' % self._receiver_client_ids
 
         return data
-        
+
     def _set_from_data(self, data):
         """ extract required values from metadata returned from IAM server """
         _REFRESH_SIX_DAYS_IN_SECS = 518400  #refresh delgate token every 6days
-        self._set_cache_token(data['delegated_refresh_token'], 
+        self._set_cache_token(data['delegated_refresh_token'],
                               None,
                               data.get('token_type'),
                               _REFRESH_SIX_DAYS_IN_SECS)
@@ -2746,4 +2746,3 @@ class OAuth2Credentials(Credentials):
         # Signer is only interested in token, and besides, we might not even have api key
         return ReadOnlyCredentials(
             None, None, token)
-

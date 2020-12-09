@@ -220,6 +220,17 @@
       "__documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/RESTObjectDELETE.html",
       "documentation":"<p>Removes the null version (if there is one) of an object and inserts a delete marker, which becomes the latest version of the object. If there isn't a null version, Amazon S3 does not remove any objects.</p> <p>To remove a specific version, you must be the bucket owner and you must use the version Id subresource. Using this subresource permanently deletes the version. If the object deleted is a delete marker, Amazon S3 sets the response header, <code>x-amz-delete-marker</code>, to true. </p> <p>If the object you want to delete is in a bucket where the bucket versioning configuration is MFA Delete enabled, you must include the <code>x-amz-mfa</code> request header in the DELETE <code>versionId</code> request. Requests that include <code>x-amz-mfa</code> must use HTTPS. </p> <p> For more information about MFA Delete, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMFADelete.html\">Using MFA Delete</a>. To see sample requests that use versioning, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectDELETE.html#ExampleVersionObjectDelete\">Sample Request</a>. </p> <p>You can delete objects by explicitly calling the DELETE Object API or configure its lifecycle (<a>PutBucketLifecycle</a>) to enable Amazon S3 to remove them for you. If you want to block users or accounts from removing or deleting objects from your bucket, you must deny them the <code>s3:DeleteObject</code>, <code>s3:DeleteObjectVersion</code>, and <code>s3:PutLifeCycleConfiguration</code> actions. </p> <p>The following operation is related to <code>DeleteObject</code>:</p> <ul> <li> <p> <a>PutObject</a> </p> </li> </ul>"
     },
+    "DeleteObjectTagging":{
+      "name":"DeleteObjectTagging",
+      "http":{
+        "method":"DELETE",
+        "requestUri":"/{Bucket}/{Key+}?tagging",
+        "responseCode":204
+      },
+      "input":{"shape":"DeleteObjectTaggingRequest"},
+      "output":{"shape":"DeleteObjectTaggingOutput"},
+      "documentation":"<p>Removes the entire tag set from the specified object. For more information about managing object tags, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/object-tagging.html\"> Object Tagging</a>.</p> <p>To use this operation, you must have permission to perform the <code>s3:DeleteObjectTagging</code> action.</p> <p>To delete tags of a specific object version, add the <code>versionId</code> query parameter in the request. You will need permission for the <code>s3:DeleteObjectVersionTagging</code> action.</p> <p>The following operations are related to <code>DeleteBucketMetricsConfiguration</code>:</p> <ul> <li> <p> <a>PutObjectTagging</a> </p> </li> <li> <p> <a>GetObjectTagging</a> </p> </li> </ul>"
+    },
     "DeleteObjects":{
       "name":"DeleteObjects",
       "http":{
@@ -231,6 +242,16 @@
       "__documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/multiobjectdeleteapi.html",
       "documentation":"<p>This operation enables you to delete multiple objects from a bucket using a single HTTP request. If you know the object keys that you want to delete, then this operation provides a suitable alternative to sending individual delete requests, reducing per-request overhead.</p> <p>The request contains a list of up to 1000 keys that you want to delete. In the XML, you provide the object key names, and optionally, version IDs if you want to delete a specific version of the object from a versioning-enabled bucket. For each key, Amazon S3 performs a delete operation and returns the result of that delete, success, or failure, in the response. Note that if the object specified in the request is not found, Amazon S3 returns the result as deleted.</p> <p> The operation supports two modes for the response: verbose and quiet. By default, the operation uses verbose mode in which the response includes the result of deletion of each key in your request. In quiet mode the response includes only keys where the delete operation encountered an error. For a successful deletion, the operation does not return any information about the delete in the response body.</p> <p>When performing this operation on an MFA Delete enabled bucket, that attempts to delete any versioned objects, you must include an MFA token. If you do not provide one, the entire request will fail, even if there are non-versioned objects you are trying to delete. If you provide an invalid token, whether there are versioned keys in the request or not, the entire Multi-Object Delete request will fail. For information about MFA Delete, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html#MultiFactorAuthenticationDelete\"> MFA Delete</a>.</p> <p>Finally, the Content-MD5 header is required for all Multi-Object Delete requests. Amazon S3 uses the header value to ensure that your request body has not been altered in transit.</p> <p>The following operations are related to <code>DeleteObjects</code>:</p> <ul> <li> <p> <a>CreateMultipartUpload</a> </p> </li> <li> <p> <a>UploadPart</a> </p> </li> <li> <p> <a>CompleteMultipartUpload</a> </p> </li> <li> <p> <a>ListParts</a> </p> </li> <li> <p> <a>AbortMultipartUpload</a> </p> </li> </ul>",
       "alias":"DeleteMultipleObjects"
+    },
+    "DeletePublicAccessBlock":{
+      "name":"DeletePublicAccessBlock",
+      "http":{
+        "method":"DELETE",
+        "requestUri":"/{Bucket}?publicAccessBlock",
+        "responseCode":204
+      },
+      "input":{"shape":"DeletePublicAccessBlockRequest"},
+      "documentation":"<p>Removes the <code>PublicAccessBlock</code> configuration for an Amazon S3 bucket. To use this operation, you must have the <code>s3:PutBucketPublicAccessBlock</code> permission. For more information about permissions, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources\">Permissions Related to Bucket Subresource Operations</a> and <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/s3-access-control.html\">Managing Access Permissions to Your Amazon S3 Resources</a>.</p> <p>The following operations are related to <code>DeleteBucketMetricsConfiguration</code>:</p> <ul> <li> <p> <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html\">Using Amazon S3 Block Public Access</a> </p> </li> <li> <p> <a>GetPublicAccessBlock</a> </p> </li> <li> <p> <a>PutPublicAccessBlock</a> </p> </li> <li> <p> <a>GetBucketPolicyStatus</a> </p> </li> </ul>"
     },
     "ExtendObjectRetention":{
       "name":"ExtendObjectRetention",
@@ -302,7 +323,7 @@
       },
       "input":{"shape":"GetBucketInventoryConfigurationRequest"},
       "output":{"shape":"GetBucketInventoryConfigurationOutput"},
-      "documentation":"Returns an inventory configuration (identified by the inventory ID) from the bucket."
+      "documentation":"<p>Returns an inventory configuration (identified by the inventory configuration ID) from the bucket.</p> <p>To use this operation, you must have permissions to perform the <code>s3:GetInventoryConfiguration</code> action. The bucket owner has this permission by default and can grant this permission to others. For more information about permissions, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources\">Permissions Related to Bucket Subresource Operations</a> and <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/s3-access-control.html\">Managing Access Permissions to Your Amazon S3 Resources</a>.</p> <p>For information about the Amazon S3 inventory feature, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-inventory.html\">Amazon S3 Inventory</a>.</p> <p>The following operations are related to <code>GetBucketInventoryConfiguration</code>:</p> <ul> <li> <p> <a>DeleteBucketInventoryConfiguration</a> </p> </li> <li> <p> <a>ListBucketInventoryConfigurations</a> </p> </li> <li> <p> <a>PutBucketInventoryConfiguration</a> </p> </li> </ul>"
     },
     "GetBucketLifecycleConfiguration":{
       "name":"GetBucketLifecycleConfiguration",
@@ -333,7 +354,7 @@
       },
       "input":{"shape":"GetBucketMetricsConfigurationRequest"},
       "output":{"shape":"GetBucketMetricsConfigurationOutput"},
-      "documentation":"Gets a metrics configuration (specified by the metrics configuration ID) from the bucket."
+      "documentation":"<p>Gets a metrics configuration (specified by the metrics configuration ID) from the bucket. Note that this doesn't include the daily storage metrics.</p> <p> To use this operation, you must have permissions to perform the <code>s3:GetMetricsConfiguration</code> action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources\">Permissions Related to Bucket Subresource Operations</a> and <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/s3-access-control.html\">Managing Access Permissions to Your Amazon S3 Resources</a>.</p> <p> For information about CloudWatch request metrics for Amazon S3, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/cloudwatch-monitoring.html\">Monitoring Metrics with Amazon CloudWatch</a>.</p> <p>The following operations are related to <code>GetBucketMetricsConfiguration</code>:</p> <ul> <li> <p> <a>PutBucketMetricsConfiguration</a> </p> </li> <li> <p> <a>DeleteBucketMetricsConfiguration</a> </p> </li> <li> <p> <a>ListBucketMetricsConfigurations</a> </p> </li> <li> <p> <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/cloudwatch-monitoring.html\">Monitoring Metrics with Amazon CloudWatch</a> </p> </li> </ul>"
     },
     "GetBucketProtectionConfiguration":{
       "name":"GetBucketProtectionConfiguration",
@@ -415,6 +436,16 @@
       "__documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/RESTObjectGETacl.html",
       "documentation":"<p>Returns the access control list (ACL) of an object. To use this operation, you must have READ_ACP access to the object.</p> <p> <b>Versioning</b> </p> <p>By default, GET returns ACL information about the current version of an object. To return ACL information about a different version, use the versionId subresource.</p> <p>The following operations are related to <code>GetObjectAcl</code>:</p> <ul> <li> <p> <a>GetObject</a> </p> </li> <li> <p> <a>DeleteObject</a> </p> </li> <li> <p> <a>PutObject</a> </p> </li> </ul>"
     },
+    "GetObjectTagging":{
+      "name":"GetObjectTagging",
+      "http":{
+        "method":"GET",
+        "requestUri":"/{Bucket}/{Key+}?tagging"
+      },
+      "input":{"shape":"GetObjectTaggingRequest"},
+      "output":{"shape":"GetObjectTaggingOutput"},
+      "documentation":"<p>Returns the tag-set of an object. You send the GET request against the tagging subresource associated with the object.</p> <p>To use this operation, you must have permission to perform the <code>s3:GetObjectTagging</code> action. By default, the GET operation returns information about current version of an object. For a versioned bucket, you can have multiple versions of an object in your bucket. To retrieve tags of any other version, use the versionId query parameter. You also need permission for the <code>s3:GetObjectVersionTagging</code> action.</p> <p> By default, the bucket owner has this permission and can grant this permission to others.</p> <p> For information about the Amazon S3 object tagging feature, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/object-tagging.html\">Object Tagging</a>.</p> <p>The following operation is related to <code>GetObjectTagging</code>:</p> <ul> <li> <p> <a>PutObjectTagging</a> </p> </li> </ul>"
+    },
     "GetObjectTorrent":{
       "name":"GetObjectTorrent",
       "http":{
@@ -424,7 +455,17 @@
       "input":{"shape":"GetObjectTorrentRequest"},
       "output":{"shape":"GetObjectTorrentOutput"},
       "__documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/RESTObjectGETtorrent.html",
-      "documentation":"Return torrent files from a bucket."
+      "documentation":"<p>Return torrent files from a bucket. BitTorrent can save you bandwidth when you're distributing large files. For more information about BitTorrent, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/S3Torrent.html\">Amazon S3 Torrent</a>.</p> <note> <p>You can get torrent only for objects that are less than 5 GB in size and that are not encrypted using server-side encryption with customer-provided encryption key.</p> </note> <p>To use GET, you must have READ access to the object.</p> <p>The following operation is related to <code>GetObjectTorrent</code>:</p> <ul> <li> <p> <a>GetObject</a> </p> </li> </ul>"
+    },
+    "GetPublicAccessBlock":{
+      "name":"GetPublicAccessBlock",
+      "http":{
+        "method":"GET",
+        "requestUri":"/{Bucket}?publicAccessBlock"
+      },
+      "input":{"shape":"GetPublicAccessBlockRequest"},
+      "output":{"shape":"GetPublicAccessBlockOutput"},
+      "documentation":"<p>Retrieves the <code>PublicAccessBlock</code> configuration for an Amazon S3 bucket. To use this operation, you must have the <code>s3:GetBucketPublicAccessBlock</code> permission. For more information about Amazon S3 permissions, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/using-with-s3-actions.html\">Specifying Permissions in a Policy</a>.</p> <important> <p>When Amazon S3 evaluates the <code>PublicAccessBlock</code> configuration for a bucket or an object, it checks the <code>PublicAccessBlock</code> configuration for both the bucket (or the bucket that contains the object) and the bucket owner's account. If the <code>PublicAccessBlock</code> settings are different between the bucket and the account, Amazon S3 uses the most restrictive combination of the bucket-level and account-level settings.</p> </important> <p>For more information about when Amazon S3 considers a bucket or an object public, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html#access-control-block-public-access-policy-status\">The Meaning of \"Public\"</a>.</p> <p>The following operations are related to <code>GetPublicAccessBlock</code>:</p> <ul> <li> <p> <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html\">Using Amazon S3 Block Public Access</a> </p> </li> <li> <p> <a>PutPublicAccessBlock</a> </p> </li> <li> <p> <a>GetPublicAccessBlock</a> </p> </li> <li> <p> <a>DeletePublicAccessBlock</a> </p> </li> </ul>"
     },
     "HeadBucket":{
       "name":"HeadBucket",
@@ -719,6 +760,25 @@
       "__documentationUrl":"http://docs.amazonwebservices.com/AmazonS3/latest/API/RESTObjectPUTacl.html",
       "documentation":"<p>Uses the <code>acl</code> subresource to set the access control list (ACL) permissions for an object that already exists in a bucket. You must have <code>WRITE_ACP</code> permission to set the ACL of an object.</p> <p>Depending on your application needs, you can choose to set the ACL on an object using either the request body or the headers. For example, if you have an existing application that updates a bucket ACL using the request body, you can continue to use that approach.</p> <p> <b>Access Permissions</b> </p> <p>You can set access permissions using one of the following methods:</p> <ul> <li> <p>Specify a canned ACL with the <code>x-amz-acl</code> request header. Amazon S3 supports a set of predefined ACLs, known as canned ACLs. Each canned ACL has a predefined set of grantees and permissions. Specify the canned ACL name as the value of <code>x-amz-ac</code>l. If you use this header, you cannot use other access control-specific headers in your request. For more information, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL\">Canned ACL</a>.</p> </li> <li> <p>Specify access permissions explicitly with the <code>x-amz-grant-read</code>, <code>x-amz-grant-read-acp</code>, <code>x-amz-grant-write-acp</code>, and <code>x-amz-grant-full-control</code> headers. When using these headers, you specify explicit access permissions and grantees (AWS accounts or Amazon S3 groups) who will receive the permission. If you use these ACL-specific headers, you cannot use <code>x-amz-acl</code> header to set a canned ACL. These parameters map to the set of permissions that Amazon S3 supports in an ACL. For more information, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html\">Access Control List (ACL) Overview</a>.</p> <p>You specify each grantee as a type=value pair, where the type is one of the following:</p> <ul> <li> <p> <code>emailAddress</code> – if the value specified is the email address of an AWS account</p> </li> <li> <p> <code>id</code> – if the value specified is the canonical user ID of an AWS account</p> </li> <li> <p> <code>uri</code> – if you are granting permissions to a predefined group</p> </li> </ul> <p>For example, the following <code>x-amz-grant-read</code> header grants list objects permission to the two AWS accounts identified by their email addresses.</p> <p> <code>x-amz-grant-read: emailAddress=\"xyz@amazon.com\", emailAddress=\"abc@amazon.com\" </code> </p> </li> </ul> <p>You can use either a canned ACL or specify access permissions explicitly. You cannot do both.</p> <p> <b>Grantee Values</b> </p> <p>You can specify the person (grantee) to whom you're assigning access rights (using request elements) in the following ways:</p> <ul> <li> <p>By Email address:</p> <p> <code>&lt;Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"AmazonCustomerByEmail\"&gt;&lt;EmailAddress&gt;&lt;&gt;Grantees@email.com&lt;&gt;&lt;/EmailAddress&gt;lt;/Grantee&gt;</code> </p> <p>The grantee is resolved to the CanonicalUser and, in a response to a GET Object acl request, appears as the CanonicalUser.</p> </li> <li> <p>By the person's ID:</p> <p> <code>&lt;Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CanonicalUser\"&gt;&lt;ID&gt;&lt;&gt;ID&lt;&gt;&lt;/ID&gt;&lt;DisplayName&gt;&lt;&gt;GranteesEmail&lt;&gt;&lt;/DisplayName&gt; &lt;/Grantee&gt;</code> </p> <p>DisplayName is optional and ignored in the request.</p> </li> <li> <p>By URI:</p> <p> <code>&lt;Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"Group\"&gt;&lt;URI&gt;&lt;&gt;http://acs.amazonaws.com/groups/global/AuthenticatedUsers&lt;&gt;&lt;/URI&gt;&lt;/Grantee&gt;</code> </p> </li> </ul> <p> <b>Versioning</b> </p> <p>The ACL of an object is set at the object version level. By default, PUT sets the ACL of the current version of an object. To set the ACL of a different version, use the <code>versionId</code> subresource.</p> <p class=\"title\"> <b>Related Resources</b> </p> <ul> <li> <p> <a>CopyObject</a> </p> </li> <li> <p> <a>GetObject</a> </p> </li> </ul>"
     },
+    "PutObjectTagging":{
+      "name":"PutObjectTagging",
+      "http":{
+        "method":"PUT",
+        "requestUri":"/{Bucket}/{Key+}?tagging"
+      },
+      "input":{"shape":"PutObjectTaggingRequest"},
+      "output":{"shape":"PutObjectTaggingOutput"},
+      "documentation":"<p>Sets the supplied tag-set to an object that already exists in a bucket</p> <p>A tag is a key-value pair. You can associate tags with an object by sending a PUT request against the tagging subresource that is associated with the object. You can retrieve tags by sending a GET request. For more information, see <a>GetObjectTagging</a>.</p> <p>For tagging-related restrictions related to characters and encodings, see <a href=\"https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/allocation-tag-restrictions.html\">Tag Restrictions</a>. Note that Amazon S3 limits the maximum number of tags to 10 tags per object.</p> <p>To use this operation, you must have permission to perform the <code>s3:PutObjectTagging</code> action. By default, the bucket owner has this permission and can grant this permission to others.</p> <p>To put tags of any other version, use the <code>versionId</code> query parameter. You also need permission for the <code>s3:PutObjectVersionTagging</code> action.</p> <p>For information about the Amazon S3 object tagging feature, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/object-tagging.html\">Object Tagging</a>.</p> <p class=\"title\"> <b>Special Errors</b> </p> <ul> <li> <p class=\"title\"> <b/> </p> <ul> <li> <p> <i>Code: InvalidTagError </i> </p> </li> <li> <p> <i>Cause: The tag provided was not a valid tag. This error can occur if the tag did not pass input validation. For more information, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/object-tagging.html\">Object Tagging</a>.</i> </p> </li> </ul> </li> <li> <p class=\"title\"> <b/> </p> <ul> <li> <p> <i>Code: MalformedXMLError </i> </p> </li> <li> <p> <i>Cause: The XML provided does not match the schema.</i> </p> </li> </ul> </li> <li> <ul> <li> <p> <i>Code: OperationAbortedError </i> </p> </li> <li> <p> <i>Cause: A conflicting conditional operation is currently in progress against this resource. Please try again.</i> </p> </li> </ul> </li> <li> <ul> <li> <p> <i>Code: InternalError</i> </p> </li> <li> <p> <i>Cause: The service was unable to apply the provided tag to the object.</i> </p> </li> </ul> </li> </ul> <p class=\"title\"> <b>Related Resources</b> </p> <ul> <li> <p> <a>GetObjectTagging</a> </p> </li> </ul>"
+    },
+    "PutPublicAccessBlock":{
+      "name":"PutPublicAccessBlock",
+      "http":{
+        "method":"PUT",
+        "requestUri":"/{Bucket}?publicAccessBlock"
+      },
+      "input":{"shape":"PutPublicAccessBlockRequest"},
+      "documentation":"<p>Creates or modifies the <code>PublicAccessBlock</code> configuration for an Amazon S3 bucket. To use this operation, you must have the <code>s3:PutBucketPublicAccessBlock</code> permission. For more information about Amazon S3 permissions, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/using-with-s3-actions.html\">Specifying Permissions in a Policy</a>.</p> <important> <p>When Amazon S3 evaluates the <code>PublicAccessBlock</code> configuration for a bucket or an object, it checks the <code>PublicAccessBlock</code> configuration for both the bucket (or the bucket that contains the object) and the bucket owner's account. If the <code>PublicAccessBlock</code> configurations are different between the bucket and the account, Amazon S3 uses the most restrictive combination of the bucket-level and account-level settings.</p> </important> <p>For more information about when Amazon S3 considers a bucket or an object public, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html#access-control-block-public-access-policy-status\">The Meaning of \"Public\"</a>.</p> <p class=\"title\"> <b>Related Resources</b> </p> <ul> <li> <p> <a>GetPublicAccessBlock</a> </p> </li> <li> <p> <a>DeletePublicAccessBlock</a> </p> </li> <li> <p> <a>GetBucketPolicyStatus</a> </p> </li> <li> <p> <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html\">Using Amazon S3 Block Public Access</a> </p> </li> </ul>"
+    },
     "RestoreObject":{
       "name":"RestoreObject",
       "http":{
@@ -866,6 +926,12 @@
         "Prefix":{
           "shape":"Prefix",
           "documentation":"<p>The prefix to use when evaluating an AND predicate: The prefix that an object must have to be included in the metrics results.</p>"
+        },
+        "Tags":{
+          "shape":"TagSet",
+          "documentation":"<p>The list of tags to use when evaluating an AND predicate.</p>",
+          "flattened":true,
+          "locationName":"Tag"
         }
       },
       "documentation":"<p>A conjunction (logical AND) of predicates, which is used in evaluating a metrics filter. The operator must have at least two predicates in any combination, and an object must match all of the predicates for the filter to apply.</p>"
@@ -978,7 +1044,7 @@
         },
         "CreationDate":{
           "shape":"CreationDate",
-          "documentation":"Date the bucket was created."
+          "documentation":"<p>Date the bucket was created.</p>"
         },
         "LocationConstraint":{
           "shape":"BucketLocationConstraint",
@@ -1229,6 +1295,7 @@
     },
     "CloudFunctionInvocationRole":{"type":"string"},
     "Code":{"type":"string"},
+    "Comments":{"type":"string"},
     "CommonPrefix":{
       "type":"structure",
       "members":{
@@ -1589,6 +1656,12 @@
           "location":"header",
           "locationName":"x-amz-metadata-directive"
         },
+        "TaggingDirective":{
+          "shape":"TaggingDirective",
+          "documentation":"<p>Specifies whether the object tag-set are copied from the source object or replaced with tag-set provided in the request.</p>",
+          "location":"header",
+          "locationName":"x-amz-tagging-directive"
+        },
         "RetentionDirective":{
           "shape":"RetentionDirective",
           "documentation":"This header controls how the Protection state of the source object is copied to the destination object.If copied, the retention period and all legal holds are copied onto the new object. The legal hold date's is set to the date of the copy.",
@@ -1678,6 +1751,12 @@
           "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-request-payer"
+        },
+        "Tagging":{
+          "shape":"TaggingHeader",
+          "documentation":"<p>The tag-set for the object destination object this value must be used in conjunction with the <code>TaggingDirective</code>. The tag-set must be encoded as URL Query parameters.</p>",
+          "location":"header",
+          "locationName":"x-amz-tagging"
         }
       }
     },
@@ -2016,6 +2095,12 @@
           "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-request-payer"
+        },
+        "Tagging":{
+          "shape":"TaggingHeader",
+          "documentation":"<p>The tag-set for the object. The tag-set must be encoded as URL Query parameters.</p>",
+          "location":"header",
+          "locationName":"x-amz-tagging"
         }
       }
     },
@@ -2284,6 +2369,44 @@
         }
       }
     },
+    "DeleteObjectTaggingOutput":{
+      "type":"structure",
+      "members":{
+        "VersionId":{
+          "shape":"ObjectVersionId",
+          "documentation":"<p>The versionId of the object the tag-set was removed from.</p>",
+          "location":"header",
+          "locationName":"x-amz-version-id"
+        }
+      }
+    },
+    "DeleteObjectTaggingRequest":{
+      "type":"structure",
+      "required":[
+        "Bucket",
+        "Key"
+      ],
+      "members":{
+        "Bucket":{
+          "shape":"BucketName",
+          "documentation":"<p>The bucket name containing the objects from which to remove the tags. </p> <p>When using this API with an access point, you must direct requests to the access point hostname. The access point hostname takes the form <i>AccessPointName</i>-<i>AccountId</i>.s3-accesspoint.<i>Region</i>.amazonaws.com. When using this operation using an access point through the AWS SDKs, you provide the access point ARN in place of the bucket name. For more information about access point ARNs, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/using-access-points.html\">Using Access Points</a> in the <i>Amazon Simple Storage Service Developer Guide</i>.</p>",
+          "location":"uri",
+          "locationName":"Bucket"
+        },
+        "Key":{
+          "shape":"ObjectKey",
+          "documentation":"<p>Name of the tag.</p>",
+          "location":"uri",
+          "locationName":"Key"
+        },
+        "VersionId":{
+          "shape":"ObjectVersionId",
+          "documentation":"<p>The versionId of the object that the tag-set will be removed from.</p>",
+          "location":"querystring",
+          "locationName":"versionId"
+        }
+      }
+    },
     "DeleteObjectsOutput":{
       "type":"structure",
       "members":{
@@ -2336,6 +2459,18 @@
         }
       },
       "payload":"Delete"
+    },
+    "DeletePublicAccessBlockRequest":{
+      "type":"structure",
+      "required":["Bucket"],
+      "members":{
+        "Bucket":{
+          "shape":"BucketName",
+          "documentation":"<p>The Amazon S3 bucket whose <code>PublicAccessBlock</code> configuration you want to delete. </p>",
+          "location":"uri",
+          "locationName":"Bucket"
+        }
+      }
     },
     "DeletedObject":{
       "type":"structure",
@@ -2838,6 +2973,7 @@
       "members":{
         "Bucket":{
           "shape":"BucketName",
+          "documentation":"<p>The name of the Amazon S3 bucket whose policy status you want to retrieve.</p>",
           "location":"uri",
           "locationName":"Bucket"
         }
@@ -3186,6 +3322,12 @@
           "location":"header",
           "locationName":"x-amz-mp-parts-count"
         },
+        "TagCount":{
+          "shape":"TagCount",
+          "documentation":"<p>The number of tags, if any, on the object.</p>",
+          "location":"header",
+          "locationName":"x-amz-tagging-count"
+        },
         "IbmRestoredCopyStorageClass":{
           "shape":"StorageClass",
           "documentation":"This header is only included if an object has transition metadata.  This header will indicate the transition storage class and time of transition.  If this header and the x-amz-restore header are both included, this header will indicate the time at which the object was originally archived.",
@@ -3329,6 +3471,49 @@
         }
       }
     },
+    "GetObjectTaggingOutput":{
+      "type":"structure",
+      "required":["TagSet"],
+      "members":{
+        "VersionId":{
+          "shape":"ObjectVersionId",
+          "documentation":"<p>The versionId of the object for which you got the tagging information.</p>",
+          "location":"header",
+          "locationName":"x-amz-version-id"
+        },
+        "TagSet":{
+          "shape":"TagSet",
+          "documentation":"<p>Contains the tag set.</p>"
+        }
+      }
+    },
+    "GetObjectTaggingRequest":{
+      "type":"structure",
+      "required":[
+        "Bucket",
+        "Key"
+      ],
+      "members":{
+        "Bucket":{
+          "shape":"BucketName",
+          "documentation":"<p>The bucket name containing the object for which to get the tagging information. </p> <p>When using this API with an access point, you must direct requests to the access point hostname. The access point hostname takes the form <i>AccessPointName</i>-<i>AccountId</i>.s3-accesspoint.<i>Region</i>.amazonaws.com. When using this operation using an access point through the AWS SDKs, you provide the access point ARN in place of the bucket name. For more information about access point ARNs, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/using-access-points.html\">Using Access Points</a> in the <i>Amazon Simple Storage Service Developer Guide</i>.</p>",
+          "location":"uri",
+          "locationName":"Bucket"
+        },
+        "Key":{
+          "shape":"ObjectKey",
+          "documentation":"<p>Object key for which to get the tagging information.</p>",
+          "location":"uri",
+          "locationName":"Key"
+        },
+        "VersionId":{
+          "shape":"ObjectVersionId",
+          "documentation":"<p>The versionId of the object for which to get the tagging information.</p>",
+          "location":"querystring",
+          "locationName":"versionId"
+        }
+      }
+    },
     "GetObjectTorrentOutput":{
       "type":"structure",
       "members":{
@@ -3369,6 +3554,28 @@
           "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-request-payer"
+        }
+      }
+    },
+    "GetPublicAccessBlockOutput":{
+      "type":"structure",
+      "members":{
+        "PublicAccessBlockConfiguration":{
+          "shape":"PublicAccessBlockConfiguration",
+          "documentation":"<p>The <code>PublicAccessBlock</code> configuration currently in effect for this Amazon S3 bucket.</p>"
+        }
+      },
+      "payload":"PublicAccessBlockConfiguration"
+    },
+    "GetPublicAccessBlockRequest":{
+      "type":"structure",
+      "required":["Bucket"],
+      "members":{
+        "Bucket":{
+          "shape":"BucketName",
+          "documentation":"<p>The name of the Amazon S3 bucket whose <code>PublicAccessBlock</code> configuration you want to retrieve. </p>",
+          "location":"uri",
+          "locationName":"Bucket"
         }
       }
     },
@@ -3916,6 +4123,7 @@
     },
     "IsEnabled":{"type":"boolean"},
     "IsLatest":{"type":"boolean"},
+    "IsPublic":{"type":"boolean"},
     "IsTruncated":{"type":"boolean"},
     "KeyCount":{"type":"integer"},
     "KeyMarker":{"type":"string"},
@@ -4038,7 +4246,12 @@
         "Prefix":{
           "shape":"Prefix",
           "documentation":"<p>Prefix identifying one or more objects to which the rule applies.</p>"
+        },
+        "Tag":{
+          "shape":"Tag",
+          "documentation":"<p>This tag must exist in the object's tag set in order for the rule to apply.</p>"
         }
+
       },
       "documentation":"<p>The <code>Filter</code> is used to identify objects that a Lifecycle Rule applies to. A <code>Filter</code> must have exactly one of <code>Prefix</code>, <code>Tag</code>, or <code>And</code> specified.</p>"
     },
@@ -4881,6 +5094,12 @@
         "Prefix":{
           "shape":"Prefix",
           "documentation":"<p>The prefix used when evaluating an AND predicate.</p>"
+        },
+        "Tags":{
+          "shape":"TagSet",
+          "documentation":"<p>The list of tags used when evaluating an AND predicate.</p>",
+          "flattened":true,
+          "locationName":"Tag"
         }
       },
       "documentation":"<p>A conjunction (logical AND) of predicates, which is used in evaluating a metrics filter. The operator must have at least two predicates, and an object must match all of the predicates in order for the filter to apply.</p>"
@@ -5293,6 +5512,23 @@
         "http",
         "https"
       ]
+    },
+    "PublicAccessBlockConfiguration":{
+      "type":"structure",
+      "members":{
+        "BlockPublicAcls":{
+          "shape":"Setting",
+          "documentation":"<p>Specifies whether Amazon S3 should block public access control lists (ACLs) for this bucket and objects in this bucket. Setting this element to <code>TRUE</code> causes the following behavior:</p> <ul> <li> <p>PUT Bucket acl and PUT Object acl calls fail if the specified ACL is public.</p> </li> <li> <p>PUT Object calls fail if the request includes a public ACL.</p> </li> <li> <p>PUT Bucket calls fail if the request includes a public ACL.</p> </li> </ul> <p>Enabling this setting doesn't affect existing policies or ACLs.</p>",
+          "locationName":"BlockPublicAcls"
+        },
+        "IgnorePublicAcls":{
+          "shape":"Setting",
+          "documentation":"<p>Specifies whether Amazon S3 should ignore public ACLs for this bucket and objects in this bucket. Setting this element to <code>TRUE</code> causes Amazon S3 to ignore all public ACLs on this bucket and objects in this bucket.</p> <p>Enabling this setting doesn't affect the persistence of any existing ACLs and doesn't prevent new public ACLs from being set.</p>",
+          "locationName":"IgnorePublicAcls"
+
+        }
+      },
+      "documentation":"<p>The PublicAccessBlock configuration that you want to apply to this Amazon S3 bucket. You can enable the configuration options in any combination. For more information about when Amazon S3 considers a bucket or object public, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html#access-control-block-public-access-policy-status\">The Meaning of \"Public\"</a> in the <i>Amazon Simple Storage Service Developer Guide</i>. </p>"
     },
     "PutBucketAccelerateConfigurationRequest":{
       "type":"structure",
@@ -5965,9 +6201,95 @@
           "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-request-payer"
+        },
+        "Tagging":{
+          "shape":"TaggingHeader",
+          "documentation":"<p>The tag-set for the object. The tag-set must be encoded as URL Query parameters. (For example, \"Key1=Value1\")</p>",
+          "location":"header",
+          "locationName":"x-amz-tagging"
         }
       },
       "payload":"Body"
+    },
+    "PutObjectTaggingOutput":{
+      "type":"structure",
+      "members":{
+        "VersionId":{
+          "shape":"ObjectVersionId",
+          "documentation":"<p>The versionId of the object the tag-set was added to.</p>",
+          "location":"header",
+          "locationName":"x-amz-version-id"
+        }
+      }
+    },
+    "PutObjectTaggingRequest":{
+      "type":"structure",
+      "required":[
+        "Bucket",
+        "Key",
+        "Tagging"
+      ],
+      "members":{
+        "Bucket":{
+          "shape":"BucketName",
+          "documentation":"<p>The bucket name containing the object. </p> <p>When using this API with an access point, you must direct requests to the access point hostname. The access point hostname takes the form <i>AccessPointName</i>-<i>AccountId</i>.s3-accesspoint.<i>Region</i>.amazonaws.com. When using this operation using an access point through the AWS SDKs, you provide the access point ARN in place of the bucket name. For more information about access point ARNs, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/using-access-points.html\">Using Access Points</a> in the <i>Amazon Simple Storage Service Developer Guide</i>.</p>",
+          "location":"uri",
+          "locationName":"Bucket"
+        },
+        "Key":{
+          "shape":"ObjectKey",
+          "documentation":"<p>Name of the tag.</p>",
+          "location":"uri",
+          "locationName":"Key"
+        },
+        "VersionId":{
+          "shape":"ObjectVersionId",
+          "documentation":"<p>The versionId of the object that the tag-set will be added to.</p>",
+          "location":"querystring",
+          "locationName":"versionId"
+        },
+        "ContentMD5":{
+          "shape":"ContentMD5",
+          "documentation":"<p>The MD5 hash for the request body.</p>",
+          "location":"header",
+          "locationName":"Content-MD5"
+        },
+        "Tagging":{
+          "shape":"Tagging",
+          "documentation":"<p>Container for the <code>TagSet</code> and <code>Tag</code> elements</p>",
+          "locationName":"Tagging",
+          "xmlNamespace":{"uri":"http://s3.amazonaws.com/doc/2006-03-01/"}
+        }
+      },
+      "payload":"Tagging"
+    },
+    "PutPublicAccessBlockRequest":{
+      "type":"structure",
+      "required":[
+        "Bucket",
+        "PublicAccessBlockConfiguration"
+      ],
+      "members":{
+        "Bucket":{
+          "shape":"BucketName",
+          "documentation":"<p>The name of the Amazon S3 bucket whose <code>PublicAccessBlock</code> configuration you want to set.</p>",
+          "location":"uri",
+          "locationName":"Bucket"
+        },
+        "ContentMD5":{
+          "shape":"ContentMD5",
+          "documentation":"<p>The MD5 hash of the <code>PutPublicAccessBlock</code> request body. </p>",
+          "location":"header",
+          "locationName":"Content-MD5"
+        },
+        "PublicAccessBlockConfiguration":{
+          "shape":"PublicAccessBlockConfiguration",
+          "documentation":"<p>The <code>PublicAccessBlock</code> configuration that you want to apply to this Amazon S3 bucket. You can enable the configuration options in any combination. For more information about when Amazon S3 considers a bucket or object public, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html#access-control-block-public-access-policy-status\">The Meaning of \"Public\"</a> in the <i>Amazon Simple Storage Service Developer Guide</i>.</p>",
+          "locationName":"PublicAccessBlockConfiguration",
+          "xmlNamespace":{"uri":"http://s3.amazonaws.com/doc/2006-03-01/"}
+        }
+      },
+      "payload":"PublicAccessBlockConfiguration"
     },
     "QueueArn":{"type":"string"},
     "QueueConfiguration":{
@@ -6293,6 +6615,7 @@
         "AES256"
       ]
     },
+    "Setting":{"type":"boolean"},
     "Size":{"type":"integer"},
     "StartAfter":{"type":"string"},
     "StorageClass":{
@@ -6359,6 +6682,7 @@
       },
       "documentation":"<p>A container of a key value name pair.</p>"
     },
+    "TagCount":{"type":"integer"},
     "TagSet":{
       "type":"list",
       "member":{
@@ -6377,6 +6701,14 @@
       },
       "documentation":"<p>Container for <code>TagSet</code> elements.</p>"
     },
+    "TaggingDirective":{
+      "type":"string",
+      "enum":[
+        "COPY",
+        "REPLACE"
+      ]
+    },
+    "TaggingHeader":{"type":"string"},
     "TargetBucket":{"type":"string"},
     "TargetGrant":{
       "type":"structure",
