@@ -17,7 +17,7 @@ import re
 import logging
 
 __author__ = 'IBM'
-__version__ = '2.9.0'
+__version__ = '2.10.0'
 
 
 class NullHandler(logging.Handler):
@@ -47,6 +47,12 @@ _xform_cache = {
     ('CreateStorediSCSIVolume', '-'): 'create-stored-iscsi-volume',
     ('ListHITsForQualificationType', '_'): 'list_hits_for_qualification_type',
     ('ListHITsForQualificationType', '-'): 'list-hits-for-qualification-type',
+    ('ExecutePartiQLStatement', '_'): 'execute_partiql_statement',
+    ('ExecutePartiQLStatement', '-'): 'execute-partiql-statement',
+    ('ExecutePartiQLTransaction', '_'): 'execute_partiql_transaction',
+    ('ExecutePartiQLTransaction', '-'): 'execute-partiql-transaction',
+    ('ExecutePartiQLBatch', '_'): 'execute_partiql_batch',
+    ('ExecutePartiQLBatch', '-'): 'execute-partiql-batch',
 }
 # The items in this dict represent partial renames to apply globally to all
 # services which might have a matching argument or operation. This way a

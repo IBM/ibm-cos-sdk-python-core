@@ -19,7 +19,7 @@ setup(
     packages=find_packages(exclude=['tests*']),
     package_data={'ibm_botocore': ['cacert.pem', 'data/*.json', 'data/*/*.json']},
     include_package_data=True,
-    python_requires='~=3.5',
+    python_requires='~=3.6',
     install_requires=requires,
     license="Apache License 2.0",
     classifiers=(
@@ -30,9 +30,9 @@ setup(
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8'
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9'
     ),
 )

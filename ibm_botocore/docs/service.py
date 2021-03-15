@@ -13,6 +13,7 @@
 from ibm_botocore.exceptions import DataNotFoundError
 from ibm_botocore.docs.utils import get_official_service_name
 from ibm_botocore.docs.client import ClientDocumenter
+from ibm_botocore.docs.client import ClientExceptionsDocumenter
 from ibm_botocore.docs.waiter import WaiterDocumenter
 from ibm_botocore.docs.paginator import PaginatorDocumenter
 from ibm_botocore.docs.bcdoc.restdoc import DocumentStructure
@@ -32,6 +33,7 @@ class ServiceDocumenter(object):
             'title',
             'table-of-contents',
             'client-api',
+            'client-exceptions',
             'paginator-api',
             'waiter-api'
         ]
@@ -47,6 +49,7 @@ class ServiceDocumenter(object):
         self.title(doc_structure.get_section('title'))
         self.table_of_contents(doc_structure.get_section('table-of-contents'))
         self.client_api(doc_structure.get_section('client-api'))
+        self.client_exceptions(doc_structure.get_section('client-exceptions'))
         self.paginator_api(doc_structure.get_section('paginator-api'))
         self.waiter_api(doc_structure.get_section('waiter-api'))
         return doc_structure.flush_structure()
@@ -70,6 +73,9 @@ class ServiceDocumenter(object):
             pass
 
         ClientDocumenter(self._client, examples).document_client(section)
+
+    def client_exceptions(self, section):
+        ClientExceptionsDocumenter(self._client).document_exceptions(section)
 
     def paginator_api(self, section):
         try:

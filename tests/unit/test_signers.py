@@ -434,6 +434,20 @@ class TestSigner(BaseSignerTest):
             region_name='param-override'
         )
 
+    def test_sign_override_signing_name_from_context(self):
+        auth = mock.Mock()
+        auth_types = {
+            'v4': auth
+        }
+        self.request.context = {'signing': {'signing_name': 'override_name'}}
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS, auth_types):
+            self.signer.sign('operation_name', self.request)
+        auth.assert_called_with(
+            credentials=ReadOnlyCredentials('key', 'secret', None),
+            service_name='override_name',
+            region_name='region_name'
+        )
+
     def test_sign_with_expires_in(self):
         auth = mock.Mock()
         auth_types = {
@@ -922,6 +936,8 @@ class TestGeneratePresignedPost(unittest.TestCase):
 
         self.client.generate_presigned_post(
             self.bucket, self.key, Fields=fields, Conditions=conditions)
+
+        self.assertEqual(fields, {'acl': 'public-read'})
 
         _, post_kwargs = self.presign_post_mock.call_args
         request_dict = post_kwargs['request_dict']

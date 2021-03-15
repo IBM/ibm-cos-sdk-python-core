@@ -20,6 +20,7 @@ import copy
 import logging
 import os
 import platform
+import re
 import socket
 import warnings
 
@@ -32,8 +33,10 @@ from ibm_botocore.configprovider import ConfigValueStore
 from ibm_botocore.configprovider import ConfigChainFactory
 from ibm_botocore.configprovider import create_botocore_default_config_mapping
 from ibm_botocore.configprovider import BOTOCORE_DEFAUT_SESSION_VARIABLES
-from ibm_botocore.exceptions import ConfigNotFound, ProfileNotFound
-from ibm_botocore.exceptions import UnknownServiceError, PartialCredentialsError
+from ibm_botocore.exceptions import (
+    ConfigNotFound, ProfileNotFound, UnknownServiceError,
+    PartialCredentialsError,
+)
 from ibm_botocore.errorfactory import ClientExceptionsFactory
 from ibm_botocore import handlers
 from ibm_botocore.hooks import HierarchicalEmitter, first_non_none_response
@@ -47,7 +50,7 @@ from ibm_botocore import paginate
 from ibm_botocore import waiter
 from ibm_botocore import retryhandler, translate
 from ibm_botocore import utils
-from ibm_botocore.utils import EVENT_ALIASES
+from ibm_botocore.utils import EVENT_ALIASES, validate_region_name
 from ibm_botocore.compat import MutableMapping
 
 
@@ -464,7 +467,7 @@ class Session(object):
         Where:
 
          - agent_name is the value of the `user_agent_name` attribute
-           of the session object (`Boto` by default).
+           of the session object (`Botocore` by default).
          - agent_version is the value of the `user_agent_version`
            attribute of the session object (the ibm_botocore version by default).
            by default.
@@ -897,7 +900,7 @@ class Session(object):
         monitor = self._get_internal_component('monitor')
         if monitor is not None:
             monitor.register(client.meta.events)
-            
+
         # Register custom callbacks
         self._ibm_service_instance_id = ibm_service_instance_id
         client.meta.events.register('provide-client-params.s3.CreateBucket', self.check_service_instance_id)
@@ -928,6 +931,8 @@ class Session(object):
                 region_name = config.region_name
             else:
                 region_name = self.get_config_variable('region')
+
+        validate_region_name(region_name)
         # For any client that we create in retrieving credentials
         # we want to create it using the same region as specified in
         # creating this client. It is important to note though that the

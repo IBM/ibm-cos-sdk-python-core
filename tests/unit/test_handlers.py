@@ -38,6 +38,7 @@ from ibm_botocore.model import DenormalizedStructureBuilder
 from ibm_botocore.session import Session
 from ibm_botocore.signers import RequestSigner
 from ibm_botocore.credentials import Credentials
+from ibm_botocore.utils import conditionally_calculate_md5
 from ibm_botocore import handlers
 
 
@@ -575,6 +576,16 @@ class TestHandlers(BaseSessionTest):
         except ParamValidationError:
             self.fail('The s3 arn: %s should pass validation' % arn)
 
+    def test_validation_is_s3_outpost_arn(self):
+        try:
+            arn = (
+                'arn:aws:s3-outposts:us-west-2:123456789012:outpost:'
+                'op-01234567890123456:accesspoint:myaccesspoint'
+            )
+            handlers.validate_bucket_name({'Bucket': arn})
+        except ParamValidationError:
+            self.fail('The s3 arn: %s should pass validation' % arn)
+
     def test_validation_is_global_s3_bucket_arn(self):
         with self.assertRaises(ParamValidationError):
             arn = 'arn:aws:s3:::mybucket'
@@ -938,7 +949,7 @@ class TestAddMD5(BaseMD5Test):
                         'method': 'PUT',
                         'headers': {}}
         context = self.get_context()
-        handlers.conditionally_calculate_md5(
+        conditionally_calculate_md5(
             request_dict, request_signer=request_signer, context=context)
         self.assertTrue('Content-MD5' in request_dict['headers'])
 
@@ -952,7 +963,7 @@ class TestAddMD5(BaseMD5Test):
                         'method': 'PUT',
                         'headers': {}}
         context = self.get_context({'payload_signing_enabled': False})
-        handlers.conditionally_calculate_md5(
+        conditionally_calculate_md5(
             request_dict, request_signer=request_signer, context=context)
         self.assertTrue('Content-MD5' in request_dict['headers'])
 
@@ -967,8 +978,8 @@ class TestAddMD5(BaseMD5Test):
 
         context = self.get_context()
         self.set_md5_available(False)
-        with mock.patch('ibm_botocore.handlers.MD5_AVAILABLE', False):
-            handlers.conditionally_calculate_md5(
+        with mock.patch('ibm_botocore.utils.MD5_AVAILABLE', False):
+            conditionally_calculate_md5(
                 request_dict, request_signer=request_signer, context=context)
             self.assertFalse('Content-MD5' in request_dict['headers'])
 
@@ -983,7 +994,7 @@ class TestAddMD5(BaseMD5Test):
 
         self.set_md5_available(False)
         with self.assertRaises(MD5UnavailableError):
-            handlers.calculate_md5(
+            conditionally_calculate_md5(
                 request_dict, request_signer=request_signer)
 
     def test_adds_md5_when_s3v2(self):
@@ -995,7 +1006,7 @@ class TestAddMD5(BaseMD5Test):
                         'method': 'PUT',
                         'headers': {}}
         context = self.get_context()
-        handlers.conditionally_calculate_md5(
+        conditionally_calculate_md5(
             request_dict, request_signer=request_signer, context=context)
         self.assertTrue('Content-MD5' in request_dict['headers'])
 
@@ -1005,7 +1016,7 @@ class TestAddMD5(BaseMD5Test):
             'headers': {}
         }
         self.md5_digest.return_value = b'8X\xf6"0\xac<\x91_0\x0cfC\x12\xc6?'
-        handlers.calculate_md5(request_dict)
+        conditionally_calculate_md5(request_dict)
         self.assertEqual(request_dict['headers']['Content-MD5'],
                          'OFj2IjCsPJFfMAxmQxLGPw==')
 
@@ -1015,7 +1026,18 @@ class TestAddMD5(BaseMD5Test):
             'headers': {}
         }
         self.md5_digest.return_value = b'8X\xf6"0\xac<\x91_0\x0cfC\x12\xc6?'
-        handlers.calculate_md5(request_dict)
+        conditionally_calculate_md5(request_dict)
+        self.assertEqual(
+            request_dict['headers']['Content-MD5'],
+            'OFj2IjCsPJFfMAxmQxLGPw==')
+
+    def test_add_md5_with_empty_body(self):
+        request_dict = {
+            'body': b'',
+            'headers': {}
+        }
+        self.md5_digest.return_value = b'8X\xf6"0\xac<\x91_0\x0cfC\x12\xc6?'
+        conditionally_calculate_md5(request_dict)
         self.assertEqual(
             request_dict['headers']['Content-MD5'],
             'OFj2IjCsPJFfMAxmQxLGPw==')
@@ -1026,7 +1048,7 @@ class TestAddMD5(BaseMD5Test):
             'headers': {}
         }
         self.md5_digest.return_value = b'8X\xf6"0\xac<\x91_0\x0cfC\x12\xc6?'
-        handlers.calculate_md5(request_dict)
+        conditionally_calculate_md5(request_dict)
         self.assertEqual(
             request_dict['headers']['Content-MD5'],
             'OFj2IjCsPJFfMAxmQxLGPw==')

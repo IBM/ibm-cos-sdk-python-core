@@ -49,6 +49,7 @@ from ibm_botocore.compat import json, formatdate
 from ibm_botocore.utils import parse_to_aware_datetime
 from ibm_botocore.utils import percent_encode
 from ibm_botocore.utils import is_json_value_header
+from ibm_botocore.utils import conditionally_calculate_md5
 from ibm_botocore import validate
 
 
@@ -184,6 +185,12 @@ class Serializer(object):
 
         return host_prefix_expression.format(**format_kwargs)
 
+    def _prepare_additional_traits(self, request, operation_model):
+        """Determine if additional traits are required for given model"""
+        if operation_model.http_checksum_required:
+            conditionally_calculate_md5(request)
+        return request
+
 
 class QuerySerializer(Serializer):
 
@@ -210,6 +217,8 @@ class QuerySerializer(Serializer):
         if host_prefix is not None:
             serialized['host_prefix'] = host_prefix
 
+        serialized = self._prepare_additional_traits(serialized,
+                operation_model)
         return serialized
 
     def _serialize(self, serialized, value, shape, prefix=''):
@@ -343,6 +352,8 @@ class JSONSerializer(Serializer):
         if host_prefix is not None:
             serialized['host_prefix'] = host_prefix
 
+        serialized = self._prepare_additional_traits(serialized,
+                operation_model)
         return serialized
 
     def _serialize(self, serialized, value, shape, key=None):
@@ -460,6 +471,8 @@ class BaseRestSerializer(Serializer):
         if host_prefix is not None:
             serialized['host_prefix'] = host_prefix
 
+        serialized = self._prepare_additional_traits(serialized,
+                operation_model)
         return serialized
 
     def _render_uri_template(self, uri_template, params):

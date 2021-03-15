@@ -48,6 +48,7 @@ SERVICE_RENAMES = {
     'iot1click-projects': 'iot-1click-projects',
     'iotevents-data': 'iot-events-data',
     'iotevents': 'iot-events',
+    'iotwireless': 'iot-wireless',
     'kinesisanalytics': 'kinesis-analytics',
     'kinesisanalyticsv2': 'kinesis-analytics-v2',
     'kinesisvideo': 'kinesis-video',
@@ -68,6 +69,7 @@ SERVICE_RENAMES = {
     'secretsmanager': 'secrets-manager',
     'serverlessrepo': 'serverlessapplicationrepository',
     'servicecatalog': 'service-catalog',
+    'servicecatalog-appregistry': 'service-catalog-appregistry',
     'stepfunctions': 'sfn',
     'storagegateway': 'storage-gateway',
 }
@@ -86,7 +88,9 @@ ENDPOINT_PREFIX_OVERRIDE = {
     # iotevents data endpoints.json and service-2.json don't line up.
     'ioteventsdata': 'data.iotevents',
     'iotsecuredtunneling': 'api.tunneling.iot',
+    'iotwireless': 'api.iotwireless',
 }
+
 NOT_SUPPORTED_IN_SDK = [
     'mobileanalytics',
     'transcribestreaming',
