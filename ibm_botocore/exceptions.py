@@ -14,7 +14,7 @@
 from __future__ import unicode_literals
 
 import requests
-from requests.packages import urllib3
+import urllib3
 
 
 def _exception_from_packed_args(exception_cls, args=None, kwargs=None):
@@ -95,6 +95,11 @@ class ConnectionError(BotoCoreError):
 
 class InvalidIMDSEndpointError(BotoCoreError):
     fmt = 'Invalid endpoint EC2 Instance Metadata endpoint: {endpoint}'
+
+
+class InvalidIMDSEndpointModeError(BotoCoreError):
+    fmt = ('Invalid EC2 Instance Metadata endpoint mode: {mode}'
+        ' Valid endpoint modes (case-insensitive): {valid_modes}.')
 
 
 class EndpointConnectionError(ConnectionError):
@@ -197,6 +202,20 @@ class UnknownEndpointError(BaseEndpointResolverError, ValueError):
     fmt = (
         'Unable to construct an endpoint for '
         '{service_name} in region {region_name}')
+
+
+class UnknownFIPSEndpointError(BaseEndpointResolverError):
+    """
+    Could not construct a FIPS endpoint.
+
+    :ivar service_name: The name of the service.
+    :ivar region_name: The name of the region.
+    """
+    fmt = (
+        'The provided FIPS pseudo-region "{region_name}" is not known for '
+        'the service "{service_name}". A FIPS compliant endpoint cannot be '
+        'constructed.'
+    )
 
 
 class ProfileNotFound(BotoCoreError):
@@ -501,11 +520,19 @@ class UnsupportedOutpostResourceError(BotoCoreError):
     )
 
 
+class UnsupportedS3ConfigurationError(BotoCoreError):
+    """Error when an unsupported configuration is used with access-points"""
+    fmt = (
+        'Unsupported configuration when using S3: {msg}'
+    )
+
+
 class UnsupportedS3AccesspointConfigurationError(BotoCoreError):
     """Error when an unsupported configuration is used with access-points"""
     fmt = (
         'Unsupported configuration when using S3 access-points: {msg}'
     )
+
 
 class InvalidEndpointDiscoveryConfigurationError(BotoCoreError):
     """Error when invalid value supplied for endpoint_discovery_enabled"""
@@ -513,6 +540,7 @@ class InvalidEndpointDiscoveryConfigurationError(BotoCoreError):
         'Unsupported configuration value for endpoint_discovery_enabled. '
         'Expected one of ("true", "false", "auto") but got {config_value}.'
     )
+
 
 class UnsupportedS3ControlConfigurationError(BotoCoreError):
     """Error when an unsupported configuration is used with S3 Control"""
@@ -594,6 +622,10 @@ class MD5UnavailableError(BotoCoreError):
     fmt = "This system does not support MD5 generation."
 
 
+class MissingDependencyException(BotoCoreError):
+    fmt = "Missing Dependency: {msg}"
+
+
 class MetadataRetrievalError(BotoCoreError):
     fmt = "Error retrieving metadata: {error_msg}"
 
@@ -633,4 +665,10 @@ class UnauthorizedSSOTokenError(SSOError):
 class CapacityNotAvailableError(BotoCoreError):
     fmt = (
         'Insufficient request capacity available.'
+    )
+
+
+class InvalidProxiesConfigError(BotoCoreError):
+    fmt = (
+        'Invalid configuration value(s) provided for proxies_config.'
     )

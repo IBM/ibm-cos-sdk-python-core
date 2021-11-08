@@ -45,6 +45,7 @@ from ibm_botocore.utils import InstanceMetadataFetcher, parse_key_val_file
 from ibm_botocore.utils import ContainerMetadataFetcher
 from ibm_botocore.utils import FileWebIdentityTokenLoader
 from ibm_botocore.utils import SSOTokenLoader
+from ibm_botocore.utils import resolve_imds_endpoint_mode
 
 
 logger = logging.getLogger(__name__)
@@ -71,7 +72,8 @@ def create_credential_resolver(session, cache=None, region_name=None):
     imds_config = {
         'ec2_metadata_service_endpoint': session.get_config_variable(
             'ec2_metadata_service_endpoint'),
-        'imds_use_ipv6': session.get_config_variable('imds_use_ipv6')
+        'ec2_metadata_service_endpoint_mode': resolve_imds_endpoint_mode(
+            session)
     }
 
     if cache is None:
@@ -291,8 +293,14 @@ class JSONFileCache(object):
 
     CACHE_DIR = os.path.expanduser(os.path.join('~', '.aws', 'boto', 'cache'))
 
-    def __init__(self, working_dir=CACHE_DIR):
+    def __init__(self, working_dir=CACHE_DIR, dumps_func=None):
         self._working_dir = working_dir
+        if dumps_func is None:
+            dumps_func = self._default_dumps
+        self._dumps = dumps_func
+
+    def _default_dumps(self, obj):
+        return json.dumps(obj, default=_serialize_if_needed)
 
     def __contains__(self, cache_key):
         actual_key = self._convert_cache_key(cache_key)
@@ -310,7 +318,7 @@ class JSONFileCache(object):
     def __setitem__(self, cache_key, value):
         full_key = self._convert_cache_key(cache_key)
         try:
-            file_content = json.dumps(value, default=_serialize_if_needed)
+            file_content = self._dumps(value)
         except (TypeError, ValueError):
             raise ValueError("Value cannot be cached, must be "
                              "JSON serializable: %s" % value)
@@ -2314,6 +2322,26 @@ class DefaultTokenManager(TokenManager):
     _advisory_refresh_timeout = 0
     _mandatory_refresh_timeout = 0
     REFRESH_OVERRIDE_IN_SECS = 0 # force refresh in this number of secs
+    DEFAULT_AUTH_FUNCTION_TIMEOUT = 5
+
+    @staticmethod
+    def get_default_auth_function_timeout():
+        """
+        Return the class variable DEFAULT_AUTH_FUNCTION_TIMEOUT
+        This variable represents the timeout value
+        when requesting a new auth token
+        """
+        return DefaultTokenManager.DEFAULT_AUTH_FUNCTION_TIMEOUT
+
+    @staticmethod
+    def set_default_auth_function_timeout(timeout=DEFAULT_AUTH_FUNCTION_TIMEOUT):
+        """
+        Assign the class variable DEFAULT_AUTH_FUNCTION_TIMEOUT
+        Overrides the default timeout (5 seconds) when requesting
+        a new auth token
+        :param timeout: The timeout value in seconds when requesting a new auth token
+        """
+        DefaultTokenManager.DEFAULT_AUTH_FUNCTION_TIMEOUT = timeout
 
     def __init__(self,
                  api_key_id=None,
@@ -2530,7 +2558,7 @@ class DefaultTokenManager(TokenManager):
                                  url=self._get_token_url(),
                                  data=self._get_data(),
                                  headers=self._get_headers(),
-                                 timeout=5,
+                                 timeout=DefaultTokenManager.get_default_auth_function_timeout(),
                                  proxies=self.proxies,
                                  verify=self.get_verify())
 

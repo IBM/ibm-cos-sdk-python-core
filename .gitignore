@@ -103,3 +103,4 @@ venv.bak/
 
 # IntelliJ / PyCharm IDE
 .idea/
+.project

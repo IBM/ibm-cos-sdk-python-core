@@ -3,9 +3,12 @@ from setuptools import setup, find_packages
 
 import ibm_botocore
 
-requires = ['jmespath>=0.7.1,<1.0.0',
-            'requests>=2.18,<3.0',
-            'python-dateutil>=2.1,<3.0.0']
+requires = [
+    'jmespath>=0.7.1,<1.0.0',
+    'python-dateutil>=2.1,<3.0.0',
+    'requests>=2.26,<3.0',
+    'urllib3>=1.26.7,<1.27',
+]
 
 setup(
     name='ibm-cos-sdk-core',
@@ -19,10 +22,10 @@ setup(
     packages=find_packages(exclude=['tests*']),
     package_data={'ibm_botocore': ['cacert.pem', 'data/*.json', 'data/*/*.json']},
     include_package_data=True,
-    python_requires='~=3.6',
     install_requires=requires,
     license="Apache License 2.0",
-    classifiers=(
+    python_requires=">= 3.6",
+    classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'Intended Audience :: System Administrators',
@@ -34,5 +37,5 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9'
-    ),
+    ],
 )

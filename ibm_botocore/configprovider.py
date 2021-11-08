@@ -78,10 +78,14 @@ BOTOCORE_DEFAUT_SESSION_VARIABLES = {
         'ec2_metadata_service_endpoint',
         'AWS_EC2_METADATA_SERVICE_ENDPOINT',
         None, None),
+    'ec2_metadata_service_endpoint_mode': (
+        'ec2_metadata_service_endpoint_mode',
+        'AWS_EC2_METADATA_SERVICE_ENDPOINT_MODE',
+        None, None),
     'imds_use_ipv6': (
         'imds_use_ipv6',
         'AWS_IMDS_USE_IPV6',
-        False, None),
+        False, utils.ensure_boolean),
     'parameter_validation': ('parameter_validation', None, True, None),
     # Client side monitoring configurations.
     # Note: These configurations are considered internal to ibm_botocore.
@@ -128,9 +132,21 @@ DEFAULT_S3_CONFIG_VARS = {
         ['s3_us_east_1_regional_endpoint',
          ('s3', 'us_east_1_regional_endpoint')],
         'AWS_S3_US_EAST_1_REGIONAL_ENDPOINT', None, None
-    )
+    ),
+    's3_disable_multiregion_access_points': (
+        ('s3', 's3_disable_multiregion_access_points'),
+        'AWS_S3_DISABLE_MULTIREGION_ACCESS_POINTS', None, utils.ensure_boolean
+    ),
 }
-
+# A mapping for the proxy specific configuration vars. These are
+# used to configure how ibm_botocore interacts with proxy setups while
+# sending requests.
+DEFAULT_PROXIES_CONFIG_VARS = {
+    'proxy_ca_bundle': ('proxy_ca_bundle', None, None, None),
+    'proxy_client_cert': ('proxy_client_cert', None, None, None),
+    'proxy_use_forwarding_for_https': (
+        'proxy_use_forwarding_for_https', None, None, utils.normalize_boolean),
+}
 
 def create_botocore_default_config_mapping(session):
     chain_builder = ConfigChainFactory(session=session)
@@ -139,6 +155,10 @@ def create_botocore_default_config_mapping(session):
     config_mapping['s3'] = SectionConfigProvider(
         's3', session, _create_config_chain_mapping(
             chain_builder, DEFAULT_S3_CONFIG_VARS)
+    )
+    config_mapping['proxies_config'] = SectionConfigProvider(
+        'proxies_config', session, _create_config_chain_mapping(
+            chain_builder, DEFAULT_PROXIES_CONFIG_VARS)
     )
     return config_mapping
 

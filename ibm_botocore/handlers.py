@@ -42,6 +42,7 @@ from ibm_botocore.utils import percent_encode, SAFE_CHARS
 from ibm_botocore.utils import switch_host_with_param
 from ibm_botocore.utils import hyphenize_service_id
 from ibm_botocore.utils import conditionally_calculate_md5
+from ibm_botocore.utils import is_global_accesspoint
 
 from ibm_botocore import retryhandler
 from ibm_botocore import utils
@@ -61,8 +62,8 @@ REGISTER_LAST = object()
 # (.), hyphens (-), and underscores (_).
 VALID_BUCKET = re.compile(r'^[a-zA-Z0-9.\-_]{1,255}$')
 _ACCESSPOINT_ARN = (
-    r'^arn:(aws).*:s3:[a-z\-0-9]+:[0-9]{12}:accesspoint[/:]'
-    r'[a-zA-Z0-9\-]{1,63}$'
+    r'^arn:(aws).*:(s3|s3-object-lambda):[a-z\-0-9]*:[0-9]{12}:accesspoint[/:]'
+    r'[a-zA-Z0-9\-.]{1,63}$'
 )
 _OUTPOST_ARN = (
     r'^arn:(aws).*:s3-outposts:[a-z\-0-9]+:[0-9]{12}:outpost[/:]'
@@ -78,6 +79,32 @@ SERVICE_NAME_ALIASES = {
 
 def handle_service_name_alias(service_name, **kwargs):
     return SERVICE_NAME_ALIASES.get(service_name, service_name)
+
+
+def escape_xml_payload(params, **kwargs):
+    # Replace \r and \n with the escaped sequence over the whole XML document
+    # to avoid linebreak normalization modifying customer input when the
+    # document is parsed. Ideally, we would do this in ElementTree.tostring,
+    # but it doesn't allow us to override entity escaping for text fields. For
+    # this operation \r and \n can only appear in the XML document if they were
+    # passed as part of the customer input.
+    body = params['body']
+    replaced = False
+    if b'\r' in body:
+        replaced = True
+        body = body.replace(b'\r', b'&#xD;')
+    if b'\n' in body:
+        replaced = True
+        body = body.replace(b'\n', b'&#xA;')
+
+    if not replaced:
+        return
+
+    params['body'] = body
+    if 'Content-MD5' in params['headers']:
+        # The Content-MD5 is now wrong, so we'll need to recalculate it
+        del params['headers']['Content-MD5']
+        conditionally_calculate_md5(params, **kwargs)
 
 
 def check_for_200_error(response, **kwargs):
@@ -149,7 +176,10 @@ def set_operation_specific_signer(context, signing_name, **kwargs):
     if auth_type.startswith('v4'):
         signature_version = 'v4'
         if signing_name == 's3':
-            signature_version = 's3v4'
+            if is_global_accesspoint(context):
+                signature_version = 's3v4a'
+            else:
+                signature_version = 's3v4'
 
         # If the operation needs an unsigned body, we set additional context
         # allowing the signer to be aware of this.
@@ -903,6 +933,12 @@ def inject_api_version_header_if_needed(model, params, **kwargs):
     params['headers']['x-amz-api-version'] = model.service_model.api_version
 
 
+def remove_lex_v2_start_conversation(class_attributes, **kwargs):
+    """Operation requires h2 which is currently unsupported in Python"""
+    if 'start_conversation' in class_attributes:
+        del class_attributes['start_conversation']
+
+
 # This is a list of (event_name, handler).
 # When a Session is created, everything in this list will be
 # automatically registered with that Session.
@@ -918,6 +954,7 @@ BUILTIN_HANDLERS = [
     ('creating-client-class', add_generate_presigned_url),
     ('creating-client-class.s3', add_generate_presigned_post),
     ('creating-client-class.iot-data', check_openssl_supports_tls_version_1_2),
+    ('creating-client-class.lex-runtime-v2', remove_lex_v2_start_conversation),
     ('after-call.iam', json_decode_policies),
 
     ('after-call.ec2.GetConsoleOutput', decode_console_output),
@@ -948,6 +985,8 @@ BUILTIN_HANDLERS = [
     ('before-call.s3', add_expect_header),
     ('before-call.s3.PutObject', conditionally_calculate_md5),
     ('before-call.s3.UploadPart', conditionally_calculate_md5),
+    ('before-call.s3.DeleteObjects', escape_xml_payload),
+    ('before-call.s3.PutBucketLifecycleConfiguration', escape_xml_payload),
     ('before-call.s3.CompleteMultipartUpload', conditionally_calculate_md5),
     # IBM COS requires MD5 for UploadPart and CompleteMultipartUpload when
     #   PutBucketProtectionConfiguration has been set on the bucket

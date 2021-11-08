@@ -13,7 +13,7 @@
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 import ibm_botocore.config
-from tests import unittest, create_session, temporary_file
+from tests import unittest, create_session, temporary_file, requires_crt
 import os
 import logging
 import tempfile
@@ -407,6 +407,22 @@ class TestSessionUserAgent(BaseSessionTest):
         user_agent = self.session.user_agent()
         self.assertTrue(user_agent.endswith('custom-thing/other'))
         self.assertIn('exec-env/FooEnv', user_agent)
+
+    @requires_crt()
+    def test_crt_user_agent_appended(self):
+        user_agent = self.session.user_agent()
+        self.assertIn(' awscrt/', user_agent)
+        self.assertNotIn('awscrt/Unknown', user_agent)
+
+    @requires_crt()
+    def test_crt_and_extra_user_agent(self):
+        user_agent = self.session.user_agent()
+        self.assertIn(' awscrt/', user_agent)
+        self.assertNotIn('custom-thing/other', user_agent)
+        self.session.user_agent_extra = 'custom-thing/other'
+        user_agent_w_extra = self.session.user_agent()
+        self.assertIn(' awscrt/', user_agent)
+        self.assertTrue(user_agent_w_extra.endswith('custom-thing/other'))
 
 
 class TestConfigLoaderObject(BaseSessionTest):
@@ -863,12 +879,12 @@ class TestSessionRegionSetup(BaseSessionTest):
     def test_new_session_with_valid_region(self):
         s3_client = self.session.create_client('s3', 'us-west-2')
         self.assertIsInstance(s3_client, client.BaseClient)
-        self.assertEquals(s3_client.meta.region_name, 'us-west-2')
+        self.assertEqual(s3_client.meta.region_name, 'us-west-2')
 
     def test_new_session_with_unknown_region(self):
         s3_client = self.session.create_client('s3', 'MyCustomRegion1')
         self.assertIsInstance(s3_client, client.BaseClient)
-        self.assertEquals(s3_client.meta.region_name, 'MyCustomRegion1')
+        self.assertEqual(s3_client.meta.region_name, 'MyCustomRegion1')
 
     def test_new_session_with_invalid_region(self):
         with self.assertRaises(ibm_botocore.exceptions.InvalidRegionError):

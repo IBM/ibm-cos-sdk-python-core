@@ -143,6 +143,192 @@ class TestValidateJSONValueTrait(BaseTestValidate):
             ])
 
 
+class TestValidateDocumentType(BaseTestValidate):
+    def test_accepts_document_type_string(self):
+        self.shapes = {
+            'Input': {
+                'type': 'structure',
+                'members': {
+                    'inlineDocument': {
+                        'shape': 'DocumentType',
+                    }
+                }
+            },
+            'DocumentType': {
+                'type': 'structure',
+                'document': True
+            }
+        }
+        errors = self.get_validation_error_message(
+            given_shapes=self.shapes,
+            input_params={
+                'inlineDocument': {'data': [1, 2.3, '3',
+                                            {'foo': None}],
+                                   'unicode': u'\u2713'}
+            })
+        error_msg = errors.generate_report()
+        self.assertEqual(error_msg, '')
+
+
+    def test_validate_document_type_string(self):
+        self.shapes = {
+            'Input': {
+                'type': 'structure',
+                'members': {
+                    'inlineDocument': {
+                        'shape': 'DocumentType',
+                    }
+                }
+            },
+            'DocumentType': {
+                'type': 'structure',
+                'document': True
+            }
+        }
+
+        invalid_document = object()
+        self.assert_has_validation_errors(
+            given_shapes=self.shapes,
+            input_params={
+                'inlineDocument': {
+                    'number': complex(1j),
+                    'date': datetime(2017, 4, 27, 0, 0),
+                    'list': [invalid_document],
+                    'dict': {'foo': (1, 2, 3)}
+                }
+            },
+            errors=[
+                ('Invalid type for document parameter number'),
+                ('Invalid type for document parameter date'),
+                ('Invalid type for document parameter list[0]'),
+                ('Invalid type for document parameter foo'),
+            ])
+
+
+class TestValidateTaggedUnion(BaseTestValidate):
+    def test_accepts_one_member(self):
+        self.shapes = {
+            'Input': {
+                'type': 'structure',
+                'members': {
+                    'taggedUnion': {
+                        'shape': 'TaggedUnionType',
+                    }
+                }
+            },
+            'TaggedUnionType': {
+                'type': 'structure',
+                'union': True,
+                'members': {
+                    'Foo': {'shape': 'StringType'},
+                    'Bar': {'shape': 'StringType'},
+                }
+            },
+            'StringType': {'type': 'string'}
+        }
+        errors = self.get_validation_error_message(
+            given_shapes=self.shapes,
+            input_params={
+                'taggedUnion': {'Foo': "mystring"}
+            }
+        )
+        error_msg = errors.generate_report()
+        self.assertEqual(error_msg, '')
+
+
+    def test_validate_one_member_is_set(self):
+        self.shapes = {
+            'Input': {
+                'type': 'structure',
+                'members': {
+                    'taggedUnion': {
+                        'shape': 'TaggedUnionType',
+                    }
+                }
+            },
+            'TaggedUnionType': {
+                'type': 'structure',
+                'union': True,
+                'members': {
+                    'Foo': {'shape': 'StringType'},
+                    'Bar': {'shape': 'StringType'},
+                }
+            },
+            'StringType': {'type': 'string'}
+        }
+        errors = self.get_validation_error_message(
+            given_shapes=self.shapes,
+            input_params={
+                'taggedUnion': {'Foo': "mystring",
+                                'Bar': "mystring2"
+                                }
+            }
+        )
+        error_msg = errors.generate_report()
+        self.assertIn(
+            'Invalid number of parameters set for tagged union structure',
+            error_msg
+        )
+
+    def test_validate_known_member_is_set(self):
+        self.shapes = {
+            'Input': {
+                'type': 'structure',
+                'members': {
+                    'taggedUnion': {
+                        'shape': 'TaggedUnionType',
+                    }
+                }
+            },
+            'TaggedUnionType': {
+                'type': 'structure',
+                'union': True,
+                'members': {
+                    'Foo': {'shape': 'StringType'},
+                    'Bar': {'shape': 'StringType'},
+                }
+            },
+            'StringType': {'type': 'string'}
+        }
+        errors = self.get_validation_error_message(
+            given_shapes=self.shapes,
+            input_params={
+                'taggedUnion': {'unknown': "mystring"}
+            }
+        )
+        error_msg = errors.generate_report()
+        self.assertIn('Unknown parameter in taggedUnion', error_msg)
+
+    def test_validate_structure_is_not_empty(self):
+        self.shapes = {
+            'Input': {
+                'type': 'structure',
+                'members': {
+                    'taggedUnion': {
+                        'shape': 'TaggedUnionType',
+                    }
+                }
+            },
+            'TaggedUnionType': {
+                'type': 'structure',
+                'union': True,
+                'members': {
+                    'Foo': {'shape': 'StringType'},
+                    'Bar': {'shape': 'StringType'},
+                }
+            },
+            'StringType': {'type': 'string'}
+        }
+        errors = self.get_validation_error_message(
+            given_shapes=self.shapes,
+            input_params={
+                'taggedUnion': {}
+            }
+        )
+        error_msg = errors.generate_report()
+        self.assertIn('Must set one of the following keys', error_msg)
+
+
 class TestValidateTypes(BaseTestValidate):
     def setUp(self):
         self.shapes = {
@@ -278,8 +464,8 @@ class TestValidateRanges(BaseTestValidate):
                 'Long': -10,
             },
             errors=[
-                'Invalid range for parameter Int',
-                'Invalid range for parameter Long',
+                'Invalid value for parameter Int',
+                'Invalid value for parameter Long',
             ]
         )
 
@@ -423,7 +609,7 @@ class TestValidationFloatType(BaseTestValidate):
                 'Float': 1,
             },
             errors=[
-                'Invalid range for parameter Float',
+                'Invalid value for parameter Float',
             ]
         )
 
@@ -441,7 +627,7 @@ class TestValidationFloatType(BaseTestValidate):
                 'Float': decimal.Decimal('1'),
             },
             errors=[
-                'Invalid range for parameter Float',
+                'Invalid value for parameter Float',
             ]
         )
 

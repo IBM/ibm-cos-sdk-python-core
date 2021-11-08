@@ -70,7 +70,6 @@ def type_check(valid_types):
 def range_check(name, value, shape, error_type, errors):
     failed = False
     min_allowed = float('-inf')
-    max_allowed = float('inf')
     if 'min' in shape.metadata:
         min_allowed = shape.metadata['min']
         if value < min_allowed:
@@ -82,8 +81,7 @@ def range_check(name, value, shape, error_type, errors):
             if value < min_allowed:
                 failed = True
     if failed:
-        errors.report(name, error_type, param=value,
-                      valid_range=[min_allowed, max_allowed])
+        errors.report(name, error_type, param=value, min_allowed=min_allowed)
 
 
 class ValidationErrors(object):
@@ -117,20 +115,33 @@ class ValidationErrors(object):
                                         str(type(additional['param'])),
                                         ', '.join(additional['valid_types']))
         elif error_type == 'invalid range':
-            min_allowed = additional['valid_range'][0]
-            max_allowed = additional['valid_range'][1]
-            return ('Invalid range for parameter %s, value: %s, valid range: '
-                    '%s-%s' % (name, additional['param'],
-                               min_allowed, max_allowed))
+            min_allowed = additional['min_allowed']
+            return ('Invalid value for parameter %s, value: %s, '
+                    'valid min value: %s' % (name, additional['param'],
+                                             min_allowed))
         elif error_type == 'invalid length':
-            min_allowed = additional['valid_range'][0]
-            max_allowed = additional['valid_range'][1]
-            return ('Invalid length for parameter %s, value: %s, valid range: '
-                    '%s-%s' % (name, additional['param'],
-                               min_allowed, max_allowed))
+            min_allowed = additional['min_allowed']
+            return ('Invalid length for parameter %s, value: %s, '
+                    'valid min length: %s' % (name, additional['param'],
+                                              min_allowed))
         elif error_type == 'unable to encode to json':
             return 'Invalid parameter %s must be json serializable: %s' \
                 % (name, additional['type_error'])
+        elif error_type == 'invalid type for document':
+            return 'Invalid type for document parameter %s, value: %s, type: %s, ' \
+                   'valid types: %s' % (name, additional['param'],
+                                        str(type(additional['param'])),
+                                        ', '.join(additional['valid_types']))
+        elif error_type == 'more than one input':
+            return 'Invalid number of parameters set for tagged union structure' \
+                    ' %s. Can only set one of the following keys: %s.' % (
+                        name, '. '.join(additional['members'])
+                    )
+        elif error_type == 'empty input':
+            return 'Must set one of the following keys for tagged union' \
+                    'structure %s: %s.' % (
+                        name, '. '.join(additional['members'])
+                    )
 
     def _get_name(self, name):
         if not name:
@@ -168,6 +179,8 @@ class ParamValidator(object):
     def _check_special_validation_cases(self, shape):
         if is_json_value_header(shape):
             return self._validate_jsonvalue_string
+        if shape.type_name == 'structure' and shape.is_document_type:
+            return self._validate_document
 
     def _validate(self, params, shape, errors, name):
         special_validator = self._check_special_validation_cases(shape)
@@ -185,8 +198,35 @@ class ParamValidator(object):
         except (ValueError, TypeError) as e:
             errors.report(name, 'unable to encode to json', type_error=e)
 
+    def _validate_document(self, params, shape, errors, name):
+        if params is None:
+            return
+
+        if isinstance(params, dict):
+            for key in params:
+                self._validate_document(params[key], shape, errors, key)
+        elif isinstance(params, list):
+            for index, entity in enumerate(params):
+                self._validate_document(entity, shape, errors,
+                                        '%s[%d]' % (name, index))
+        elif not isinstance(params, (six.string_types, int, bool, float)):
+            valid_types = (str, int, bool, float, list, dict)
+            valid_type_names = [six.text_type(t) for t in valid_types]
+            errors.report(name, 'invalid type for document',
+                          param=params,
+                          param_type=type(params),
+                          valid_types=valid_type_names)
+
     @type_check(valid_types=(dict,))
     def _validate_structure(self, params, shape, errors, name):
+        if shape.is_tagged_union:
+            if len(params) == 0:
+                errors.report(name, 'empty input', members=shape.members)
+            elif len(params) > 1:
+                errors.report(
+                    name, 'more than one input', members=shape.members
+                )
+
         # Validate required fields.
         for required_member in shape.metadata.get('required', []):
             if required_member not in params:
