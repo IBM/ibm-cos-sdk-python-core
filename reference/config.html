@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Config Reference &mdash; ibm_botocore 2.10.0 documentation</title>
+    <title>Config Reference &mdash; ibm_botocore 2.11.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -23,7 +23,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '2.10.0',
+        VERSION:     '2.11.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -32,7 +32,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="ibm_botocore 2.10.0 documentation" href="../index.html" />
+    <link rel="top" title="ibm_botocore 2.11.0 documentation" href="../index.html" />
     <link rel="next" title="Available Services" href="index.html" />
     <link rel="prev" title="Welcome to IBM COS Core Library for Python" href="../index.html" />
   
@@ -52,7 +52,7 @@
         <li class="right" >
           <a href="../index.html" title="Welcome to IBM COS Core Library for Python"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">ibm_botocore 2.10.0 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">ibm_botocore 2.11.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -62,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">ibm_botocore 2.10.0 documentation</a>
+    ../index.html" class="text-logo">ibm_botocore 2.11.0 documentation</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -157,6 +157,23 @@ value of 10 is used.</li>
 endpoint, e.g.:
 {'http': 'foo.bar:3128', 'http://hostname': 'foo.bar:4012'}.
 The proxies are used on each request.</li>
+<li><strong>proxies_config</strong> (<em>dict</em>) -- <p>A dictionary of additional proxy configurations.
+Valid keys are:</p>
+<ul>
+<li>'proxy_ca_bundle' -- The path to a custom certificate bundle to use
+when establishing SSL/TLS connections with proxy.</li>
+<li>'proxy_client_cert' -- The path to a certificate for proxy
+TLS client authentication.<p>When a str is provided it is treated as a path to a proxy client
+certificate. When a two element tuple is provided, it will be
+interpreted as the path to the client certificate, and the path
+to the certificate key.</p>
+</li>
+<li>'proxy_use_forwarding_for_https' -- For HTTPS proxies,
+forward your requests to HTTPS destinations with an absolute
+URI. We strongly recommend you only use this option with
+trusted or corporate proxies. Value must be boolean.</li>
+</ul>
+</li>
 <li><strong>s3</strong> (<em>dict</em>) -- <p>A dictionary of s3 specific configurations.
 Valid keys are:</p>
 <ul>
@@ -291,7 +308,7 @@ config objects.</dd>
         <li class="right" >
           <a href="../index.html" title="Welcome to IBM COS Core Library for Python"
              >previous</a> |</li>
-        <li><a href="../index.html">ibm_botocore 2.10.0 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">ibm_botocore 2.11.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -307,7 +324,7 @@ config objects.</dd>
     </script>
     <a href="http://aws.amazon.com/privacy">Privacy</a> | <a href="http://aws.amazon.com/terms">Site Terms</a> | <a
         href="#" onclick="shortbread.customizeCookies();">Cookie preferences</a> |
-    &copy; Copyright 2013, Mitch Garnaat <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+    &copy; Copyright 2013, Mitch Garnaat <a href="https://www.sphinx-doc.org/">Sphinx</a>.
 </div>
   </body>
 </html>
