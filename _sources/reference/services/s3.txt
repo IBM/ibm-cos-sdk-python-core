@@ -322,7 +322,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -474,6 +474,16 @@ Client
 
      
 
+    .. warning::
+
+       
+
+      You cannot use ``Content-Type: application/x-www-form-urlencoded`` with Complete Multipart Upload requests. Also, if you do not provide a ``Content-Type`` header, ``CompleteMultipartUpload`` returns a 200 OK response.
+
+       
+
+     
+
     For more information about multipart uploads, see `Uploading Objects Using Multipart Upload <https://docs.aws.amazon.com/AmazonS3/latest/dev/uploadobjusingmpu.html>`__ .
 
      
@@ -583,7 +593,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -607,6 +617,10 @@ Client
       - **Parts** *(list) --* 
 
         Array of CompletedPart data types.
+
+         
+
+        If you do not supply a valid ``Part`` with your request, the service sends back an HTTP 400 response.
 
         
 
@@ -708,7 +722,7 @@ Client
 
            
 
-          When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+          When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
           
         
@@ -722,14 +736,14 @@ Client
 
         - **Expiration** *(string) --* 
 
-          If the object expiration is configured, this will contain the expiration date (expiry-date) and rule ID (rule-id). The value of rule-id is URL encoded.
+          If the object expiration is configured, this will contain the expiration date (``expiry-date`` ) and rule ID (``rule-id`` ). The value of ``rule-id`` is URL-encoded.
 
           
         
 
         - **ETag** *(string) --* 
 
-          Entity tag that identifies the newly created object's data. Objects with different object data will have different entity tags. The entity tag is an opaque string. The entity tag may or may not be an MD5 digest of the object data. If the entity tag is not an MD5 digest of the object data, it will contain one or more nonhexadecimal characters and/or will consist of less than 32 or more than 32 hexadecimal digits.
+          Entity tag that identifies the newly created object's data. Objects with different object data will have different entity tags. The entity tag is an opaque string. The entity tag may or may not be an MD5 digest of the object data. If the entity tag is not an MD5 digest of the object data, it will contain one or more nonhexadecimal characters and/or will consist of less than 32 or more than 32 hexadecimal digits. For more information about how the entity tag is calculated, see `Checking object integrity <https://docs.aws.amazon.com/AmazonS3/latest/userguide/checking-object-integrity.html>`__ in the *Amazon S3 User Guide* .
 
           
         
@@ -822,7 +836,7 @@ Client
 
        
 
-      You can store individual objects of up to 5 TB in Amazon S3. You create a copy of your object up to 5 GB in size in a single atomic action using this API. However, to copy an object greater than 5 GB, you must use the multipart upload Upload Part - Copy API. For more information, see `Copy Object Using the REST Multipart Upload API <https://docs.aws.amazon.com/AmazonS3/latest/dev/CopyingObjctsUsingRESTMPUapi.html>`__ .
+      You can store individual objects of up to 5 TB in Amazon S3. You create a copy of your object up to 5 GB in size in a single atomic action using this API. However, to copy an object greater than 5 GB, you must use the multipart upload Upload Part - Copy (UploadPartCopy) API. For more information, see `Copy Object Using the REST Multipart Upload API <https://docs.aws.amazon.com/AmazonS3/latest/dev/CopyingObjctsUsingRESTMPUapi.html>`__ .
 
        
 
@@ -876,7 +890,7 @@ Client
 
      
 
-     ** ``x-amz-copy-source-if`` Headers**  
+     **x-amz-copy-source-if Headers**  
 
      
 
@@ -947,6 +961,32 @@ Client
      
 
     When copying an object, you can optionally use headers to grant ACL-based permissions. By default, all objects are private. Only the owner has full access control. When adding a new object, you can grant permissions to individual Amazon Web Services accounts or to predefined groups defined by Amazon S3. These permissions are then added to the ACL on the object. For more information, see `Access Control List (ACL) Overview <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html>`__ and `Managing ACLs Using the REST API <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-using-rest-api.html>`__ . 
+
+     
+
+    If the bucket that you're copying objects to uses the bucket owner enforced setting for S3 Object Ownership, ACLs are disabled and no longer affect permissions. Buckets that use this setting only accept PUT requests that don't specify an ACL or PUT requests that specify bucket owner full control ACLs, such as the ``bucket-owner-full-control`` canned ACL or an equivalent form of this ACL expressed in the XML format.
+
+     
+
+    For more information, see `Controlling ownership of objects and disabling ACLs <https://docs.aws.amazon.com/AmazonS3/latest/userguide/about-object-ownership.html>`__ in the *Amazon S3 User Guide* .
+
+     
+
+    .. note::
+
+       
+
+      If your bucket uses the bucket owner enforced setting for Object Ownership, all objects written to the bucket by any account will be owned by the bucket owner.
+
+       
+
+     
+
+     **Checksums**  
+
+     
+
+    When copying an object, if it has a checksum, that checksum will be copied to the new object by default. When you copy the object over, you may optionally specify a different checksum algorithm to use with the ``x-amz-checksum-algorithm`` header.
 
      
 
@@ -1029,7 +1069,7 @@ Client
           RetentionLegalHoldId='string',
           RetentionPeriod=123,
           ServerSideEncryption='AES256',
-          StorageClass='ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS',
+          StorageClass='ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS'|'GLACIER_IR',
           WebsiteRedirectLocation='string',
           SSECustomerAlgorithm='string',
           SSECustomerKey='string',
@@ -1064,7 +1104,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -1529,14 +1569,32 @@ Client
 
      
 
-    When creating a bucket using this operation, you can optionally specify the accounts or groups that should be granted specific permissions on the bucket. There are two ways to grant the appropriate permissions using the request headers.
+     **Access control lists (ACLs)**  
+
+     
+
+    When creating a bucket using this operation, you can optionally configure the bucket ACL to specify the accounts or groups that should be granted specific permissions on the bucket.
+
+     
+
+    .. warning::
+
+       
+
+      If your CreateBucket request sets bucket owner enforced for S3 Object Ownership and specifies a bucket ACL that provides access to an external Amazon Web Services account, your request fails with a ``400`` error and returns the ``InvalidBucketAclWithObjectOwnership`` error code. For more information, see `Controlling object ownership <https://docs.aws.amazon.com/AmazonS3/latest/userguide/about-object-ownership.html>`__ in the *Amazon S3 User Guide* .
+
+       
+
+     
+
+    There are two ways to grant the appropriate permissions using the request headers.
 
      
 
      
     * Specify a canned ACL using the ``x-amz-acl`` request header. Amazon S3 supports a set of predefined ACLs, known as *canned ACLs* . Each canned ACL has a predefined set of grantees and permissions. For more information, see `Canned ACL <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL>`__ . 
      
-    * Specify access permissions explicitly using the ``x-amz-grant-read`` , ``x-amz-grant-write`` , ``x-amz-grant-read-acp`` , ``x-amz-grant-write-acp`` , and ``x-amz-grant-full-control`` headers. These headers map to the set of permissions Amazon S3 supports in an ACL. For more information, see `Access control list (ACL) overview <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html>`__ . You specify each grantee as a type=value pair, where the type is one of the following: 
+    * Specify access permissions explicitly using the ``x-amz-grant-read`` , ``x-amz-grant-write`` , ``x-amz-grant-read-acp`` , ``x-amz-grant-write-acp`` , and ``x-amz-grant-full-control`` headers. These headers map to the set of permissions Amazon S3 supports in an ACL. For more information, see `Access control list (ACL) overview <https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html>`__ . You specify each grantee as a type=value pair, where the type is one of the following: 
 
        
       * ``id`` – if the value specified is the canonical user ID of an Amazon Web Services account 
@@ -1603,11 +1661,17 @@ Client
 
      
 
-    If your ``CreateBucket`` request specifies ACL permissions and the ACL is public-read, public-read-write, authenticated-read, or if you specify access permissions explicitly through any other ACL, both ``s3:CreateBucket`` and ``s3:PutBucketAcl`` permissions are needed. If the ACL the ``CreateBucket`` request is private, only ``s3:CreateBucket`` permission is needed. 
+    In addition to ``s3:CreateBucket`` , the following permissions are required when your CreateBucket includes specific headers:
 
      
 
-    If ``ObjectLockEnabledForBucket`` is set to true in your ``CreateBucket`` request, ``s3:PutBucketObjectLockConfiguration`` and ``s3:PutBucketVersioning`` permissions are required.
+     
+    * **ACLs** - If your ``CreateBucket`` request specifies ACL permissions and the ACL is public-read, public-read-write, authenticated-read, or if you specify access permissions explicitly through any other ACL, both ``s3:CreateBucket`` and ``s3:PutBucketAcl`` permissions are needed. If the ACL the ``CreateBucket`` request is private or doesn't specify any ACLs, only ``s3:CreateBucket`` permission is needed.  
+     
+    * **Object Lock** - If ``ObjectLockEnabledForBucket`` is set to true in your ``CreateBucket`` request, ``s3:PutBucketObjectLockConfiguration`` and ``s3:PutBucketVersioning`` permissions are required. 
+     
+    * **S3 Object Ownership** - If your CreateBucket request includes the the ``x-amz-object-ownership`` header, ``s3:PutBucketOwnershipControls`` permission is required. 
+     
 
      
 
@@ -1753,7 +1817,7 @@ Client
 
         - **Location** *(string) --* 
 
-          Specifies the Region where the bucket will be created. If you are creating a bucket on the US East (N. Virginia) Region (us-east-1), you do not need to specify the location.
+          A forward slash followed by the name of the bucket.
 
           
     
@@ -1889,11 +1953,11 @@ Client
     * Use encryption keys managed by Amazon S3 or customer managed key stored in Amazon Web Services Key Management Service (Amazon Web Services KMS) – If you want Amazon Web Services to manage the keys used to encrypt data, specify the following headers in the request. 
 
        
-      * x-amz-server-side-encryption 
+      * ``x-amz-server-side-encryption``   
        
-      * x-amz-server-side-encryption-aws-kms-key-id 
+      * ``x-amz-server-side-encryption-aws-kms-key-id``   
        
-      * x-amz-server-side-encryption-context 
+      * ``x-amz-server-side-encryption-context``   
        
 
      
@@ -1925,11 +1989,11 @@ Client
     * Use customer-provided encryption keys – If you want to manage your own encryption keys, provide all the following headers in the request. 
 
        
-      * x-amz-server-side-encryption-customer-algorithm 
+      * ``x-amz-server-side-encryption-customer-algorithm``   
        
-      * x-amz-server-side-encryption-customer-key 
+      * ``x-amz-server-side-encryption-customer-key``   
        
-      * x-amz-server-side-encryption-customer-key-MD5 
+      * ``x-amz-server-side-encryption-customer-key-MD5``   
        
 
      
@@ -1951,15 +2015,15 @@ Client
     * Specify access permissions explicitly — To explicitly grant access permissions to specific Amazon Web Services accounts or groups, use the following headers. Each header maps to specific permissions that Amazon S3 supports in an ACL. For more information, see `Access Control List (ACL) Overview <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html>`__ . In the header, you specify a list of grantees who get the specific permission. To grant permissions explicitly, use: 
 
        
-      * x-amz-grant-read 
+      * ``x-amz-grant-read``   
        
-      * x-amz-grant-write 
+      * ``x-amz-grant-write``   
        
-      * x-amz-grant-read-acp 
+      * ``x-amz-grant-read-acp``   
        
-      * x-amz-grant-write-acp 
+      * ``x-amz-grant-write-acp``   
        
-      * x-amz-grant-full-control 
+      * ``x-amz-grant-full-control``   
        
 
      
@@ -2061,7 +2125,7 @@ Client
               'string': 'string'
           },
           ServerSideEncryption='AES256',
-          StorageClass='ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS',
+          StorageClass='ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS'|'GLACIER_IR',
           WebsiteRedirectLocation='string',
           SSECustomerAlgorithm='string',
           SSECustomerKey='string',
@@ -2093,7 +2157,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -2348,7 +2412,7 @@ Client
 
            
 
-          When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+          When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
           
         
@@ -3252,7 +3316,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -3424,7 +3488,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -3598,7 +3662,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -5412,6 +5476,16 @@ Client
 
      
 
+    .. note::
+
+       
+
+      If your bucket uses the bucket owner enforced setting for S3 Object Ownership, requests to read ACLs are still supported and return the ``bucket-owner-full-control`` ACL with the owner being the account that created the bucket. For more information, see `Controlling object ownership and disabling ACLs <https://docs.aws.amazon.com/AmazonS3/latest/userguide/about-object-ownership.html>`__ in the *Amazon S3 User Guide* .
+
+       
+
+     
+
      **Related Resources**  
 
      
@@ -5942,15 +6016,15 @@ Client
 
     
 
-    Returns the cors configuration information set for the bucket.
+    Returns the Cross-Origin Resource Sharing (CORS) configuration information set for the bucket.
 
      
 
-    To use this operation, you must have permission to perform the s3:GetBucketCORS action. By default, the bucket owner has this permission and can grant it to others.
+    To use this operation, you must have permission to perform the ``s3:GetBucketCORS`` action. By default, the bucket owner has this permission and can grant it to others.
 
      
 
-    For more information about cors, see `Enabling Cross-Origin Resource Sharing <https://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html>`__ .
+    For more information about CORS, see `Enabling Cross-Origin Resource Sharing <https://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html>`__ .
 
      
 
@@ -6473,7 +6547,7 @@ Client
                         {
                             'Date': datetime(2015, 1, 1),
                             'Days': 123,
-                            'StorageClass': 'ACCELERATED'|'GLACIER'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'DEEP_ARCHIVE'
+                            'StorageClass': 'ACCELERATED'|'GLACIER'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'DEEP_ARCHIVE'|'GLACIER_IR'
                         },
                     ],
                     'NoncurrentVersionExpiration': {
@@ -7169,11 +7243,31 @@ Client
                 'Rules': [
                     {
                         'ID': 'string',
+                        'Priority': 123,
                         'Prefix': 'string',
+                        'Filter': {
+                            'Prefix': 'string',
+                            'Tag': {
+                                'Key': 'string',
+                                'Value': 'string'
+                            },
+                            'And': {
+                                'Prefix': 'string',
+                                'Tags': [
+                                    {
+                                        'Key': 'string',
+                                        'Value': 'string'
+                                    },
+                                ]
+                            }
+                        },
                         'Status': 'Enabled'|'Disabled',
                         'Destination': {
                             'Bucket': 'string',
-                            'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS'
+                            'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS'|'GLACIER_IR'
+                        },
+                        'DeleteMarkerReplication': {
+                            'Status': 'Enabled'|'Disabled'
                         }
                     },
                 ]
@@ -7193,11 +7287,7 @@ Client
           
           
 
-          - **Role** *(string) --* 
-
-            The Amazon Resource Name (ARN) of the Identity and Access Management (IAM) role that Amazon S3 assumes when replicating objects. For more information, see `How to Set Up Replication <https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-how-setup.html>`__ in the *Amazon S3 User Guide* .
-
-            
+          - **Role** *(string) --* Not supported by COS
           
 
           - **Rules** *(list) --* 
@@ -7221,6 +7311,17 @@ Client
                 
               
 
+              - **Priority** *(integer) --* 
+
+                The priority indicates which rule has precedence whenever two or more replication rules conflict. Amazon S3 will attempt to replicate objects according to all replication rules. However, if there are two or more rules with the same destination bucket, then objects will be replicated according to the rule with the highest priority. The higher the number, the higher the priority. 
+
+                 
+
+                For more information, see `Replication <https://docs.aws.amazon.com/AmazonS3/latest/dev/replication.html>`__ in the *Amazon Simple Storage Service Developer Guide* .
+
+                
+              
+
               - **Prefix** *(string) --* 
 
                 An object key name prefix that identifies the object or objects to which the rule applies. The maximum prefix length is 1,024 characters. To include all objects in a bucket, specify an empty string. 
@@ -7236,6 +7337,100 @@ Client
                    
 
                 
+              
+
+              - **Filter** *(dict) --* 
+
+                Specifies which Amazon S3 objects to replicate and where to store the replicas.
+
+                
+                
+
+                - **Prefix** *(string) --* 
+
+                  An object key name prefix that identifies the subset of objects to which the rule applies.
+
+                  
+                
+
+                - **Tag** *(dict) --* 
+
+                  A container for specifying a tag key and value. 
+
+                   
+
+                  The rule applies only to objects that have the tag in their tag set.
+
+                  
+                  
+
+                  - **Key** *(string) --* 
+
+                    Name of the object key.
+
+                    
+                  
+
+                  - **Value** *(string) --* 
+
+                    Value of the tag.
+
+                    
+              
+                
+
+                - **And** *(dict) --* 
+
+                  A container for specifying rule filters. The filters determine the subset of objects to which the rule applies. This element is required only if you specify more than one filter. For example: 
+
+                   
+
+                   
+                  * If you specify both a ``Prefix`` and a ``Tag`` filter, wrap these filters in an ``And`` tag. 
+                   
+                  * If you specify a filter based on multiple tags, wrap the ``Tag`` elements in an ``And`` tag. 
+                   
+
+                  
+                  
+
+                  - **Prefix** *(string) --* 
+
+                    An object key name prefix that identifies the subset of objects to which the rule applies.
+
+                    
+                  
+
+                  - **Tags** *(list) --* 
+
+                    An array of tags containing key and value pairs.
+
+                    
+                    
+
+                    - *(dict) --* 
+
+                      A container of a key value name pair.
+
+                      
+                      
+
+                      - **Key** *(string) --* 
+
+                        Name of the object key.
+
+                        
+                      
+
+                      - **Value** *(string) --* 
+
+                        Value of the tag.
+
+                        
+                  
+                
+              
+            
               
 
               - **Status** *(string) --* 
@@ -7266,6 +7461,45 @@ Client
                    
 
                   For valid values, see the ``StorageClass`` element of the `PUT Bucket replication <https://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTreplication.html>`__ action in the *Amazon Simple Storage Service API Reference* .
+
+                  
+            
+              
+
+              - **DeleteMarkerReplication** *(dict) --* 
+
+                Specifies whether Amazon S3 replicates delete markers. If you specify a ``Filter`` in your replication configuration, you must also include a ``DeleteMarkerReplication`` element. If your ``Filter`` includes a ``Tag`` element, the ``DeleteMarkerReplication``  ``Status`` must be set to Disabled, because Amazon S3 does not support replicating delete markers for tag-based rules. For an example configuration, see `Basic Rule Configuration <https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-add-config.html#replication-config-min-rule-config>`__ . 
+
+                 
+
+                For more information about delete marker replication, see `Basic Rule Configuration <https://docs.aws.amazon.com/AmazonS3/latest/dev/delete-marker-replication.html>`__ . 
+
+                 
+
+                .. note::
+
+                   
+
+                  If you are using an earlier version of the replication configuration, Amazon S3 handles replication of delete markers differently. For more information, see `Backward Compatibility <https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-add-config.html#replication-backward-compat-considerations>`__ .
+
+                   
+
+                
+                
+
+                - **Status** *(string) --* 
+
+                  Indicates whether to replicate delete markers.
+
+                   
+
+                  .. note::
+
+                     
+
+                    Indicates whether to replicate delete markers.
+
+                     
 
                   
             
@@ -7327,7 +7561,7 @@ Client
      
 
      
-    * Error code: ``NoSuchTagSetError``   
+    * Error code: ``NoSuchTagSet``   
 
        
       * Description: There is no tag set associated with the bucket. 
@@ -7892,7 +8126,7 @@ Client
 
      
 
-    To distribute large files to many people, you can save bandwidth costs by using BitTorrent. For more information, see `Amazon S3 Torrent <https://docs.aws.amazon.com/AmazonS3/latest/dev/S3Torrent.html>`__ . For more information about returning the ACL of an object, see `GetObjectAcl <https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectAcl.html>`__ .
+    For more information about returning the ACL of an object, see `GetObjectAcl <https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectAcl.html>`__ .
 
      
 
@@ -7955,7 +8189,7 @@ Client
        
 
        
-      * You need the ``s3:GetObjectVersion`` permission to access a specific version of an object.  
+      * If you supply a ``versionId`` , you need the ``s3:GetObjectVersion`` permission to access a specific version of an object. If you request a specific version, you do not need to have the ``s3:GetObject`` permission.  
        
       * If the current version of the object is a delete marker, Amazon S3 behaves as if the object was deleted and includes ``x-amz-delete-marker: true`` in the response. 
        
@@ -7972,7 +8206,7 @@ Client
 
      
 
-    There are times when you want to override certain response header values in a GET response. For example, you might override the Content-Disposition response header value in your GET request.
+    There are times when you want to override certain response header values in a GET response. For example, you might override the ``Content-Disposition`` response header value in your GET request.
 
      
 
@@ -8077,7 +8311,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -8085,7 +8319,7 @@ Client
     :type IfMatch: string
     :param IfMatch: 
 
-      Return the object only if its entity tag (ETag) is the same as the one specified, otherwise return a 412 (precondition failed).
+      Return the object only if its entity tag (ETag) is the same as the one specified; otherwise, return a 412 (precondition failed) error.
 
       
 
@@ -8093,7 +8327,7 @@ Client
     :type IfModifiedSince: datetime
     :param IfModifiedSince: 
 
-      Return the object only if it has been modified since the specified time, otherwise return a 304 (not modified).
+      Return the object only if it has been modified since the specified time; otherwise, return a 304 (not modified) error.
 
       
 
@@ -8101,7 +8335,7 @@ Client
     :type IfNoneMatch: string
     :param IfNoneMatch: 
 
-      Return the object only if its entity tag (ETag) is different from the one specified, otherwise return a 304 (not modified).
+      Return the object only if its entity tag (ETag) is different from the one specified; otherwise, return a 304 (not modified) error.
 
       
 
@@ -8109,7 +8343,7 @@ Client
     :type IfUnmodifiedSince: datetime
     :param IfUnmodifiedSince: 
 
-      Return the object only if it has not been modified since the specified time, otherwise return a 412 (precondition failed).
+      Return the object only if it has not been modified since the specified time; otherwise, return a 412 (precondition failed) error.
 
       
 
@@ -8280,12 +8514,12 @@ Client
             'SSECustomerAlgorithm': 'string',
             'SSECustomerKeyMD5': 'string',
             'SSEKMSKeyId': 'string',
-            'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS',
+            'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS'|'GLACIER_IR',
             'RequestCharged': 'requester',
             'ReplicationStatus': 'COMPLETE'|'PENDING'|'FAILED'|'REPLICA',
             'PartsCount': 123,
             'TagCount': 123,
-            'IbmRestoredCopyStorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS',
+            'IbmRestoredCopyStorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS'|'GLACIER_IR',
             'IbmTransition': 'string'
         }
       **Response Structure** 
@@ -8318,7 +8552,7 @@ Client
 
         - **Expiration** *(string) --* 
 
-          If the object expiration is configured (see PUT Bucket lifecycle), the response includes this header. It includes the expiry-date and rule-id key-value pairs providing object expiration information. The value of the rule-id is URL encoded.
+          If the object expiration is configured (see PUT Bucket lifecycle), the response includes this header. It includes the ``expiry-date`` and ``rule-id`` key-value pairs providing object expiration information. The value of the ``rule-id`` is URL-encoded.
 
           
         
@@ -8346,7 +8580,7 @@ Client
 
         - **ETag** *(string) --* 
 
-          An ETag is an opaque identifier assigned by a web server to a specific version of a resource found at a URL.
+          An entity tag (ETag) is an opaque identifier assigned by a web server to a specific version of a resource found at a URL.
 
           
         
@@ -8496,7 +8730,7 @@ Client
 
         - **PartsCount** *(integer) --* 
 
-          The count of parts this object has.
+          The count of parts this object has. This value is only returned if you specify ``partNumber`` in your request and the object was uploaded as a multipart upload.
 
           
         
@@ -8588,7 +8822,7 @@ Client
 
     
 
-    Returns the access control list (ACL) of an object. To use this operation, you must have ``READ_ACP`` access to the object.
+    Returns the access control list (ACL) of an object. To use this operation, you must have ``s3:GetObjectAcl`` permissions or ``READ_ACP`` access to the object. For more information, see `Mapping of ACL permissions and access policy permissions <https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#acl-access-policy-permission-mapping>`__ in the *Amazon S3 User Guide*  
 
      
 
@@ -8604,12 +8838,24 @@ Client
 
      
 
+    .. note::
+
+       
+
+      If your bucket uses the bucket owner enforced setting for S3 Object Ownership, requests to read ACLs are still supported and return the ``bucket-owner-full-control`` ACL with the owner being the account that created the bucket. For more information, see `Controlling object ownership and disabling ACLs <https://docs.aws.amazon.com/AmazonS3/latest/userguide/about-object-ownership.html>`__ in the *Amazon S3 User Guide* .
+
+       
+
+     
+
     The following operations are related to ``GetObjectAcl`` :
 
      
 
      
     * `GetObject <https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html>`__   
+     
+    * `GetObjectAttributes <https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectAttributes.html>`__   
      
     * `DeleteObject <https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObject.html>`__   
      
@@ -8923,14 +9169,16 @@ Client
 
      
 
-    The following action is related to ``GetObjectTagging`` :
+    The following actions are related to ``GetObjectTagging`` :
 
      
 
-     
-    * `PutObjectTagging <https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectTagging.html>`__   
      
     * `DeleteObjectTagging <https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObjectTagging.html>`__   
+     
+    * `GetObjectAttributes <https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectAttributes.html>`__   
+     
+    * `PutObjectTagging <https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectTagging.html>`__   
      
 
     
@@ -8959,7 +9207,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -9362,7 +9610,7 @@ Client
              
 
              
-            * PUT Bucket acl and PUT Object acl calls fail if the specified ACL is public. 
+            * PUT Bucket ACL and PUT Object ACL calls fail if the specified ACL is public. 
              
             * PUT Object calls fail if the request includes a public ACL. 
              
@@ -9442,7 +9690,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -9609,12 +9857,14 @@ Client
 
      
 
-    The following action is related to ``HeadObject`` :
+    The following actions are related to ``HeadObject`` :
 
      
 
      
     * `GetObject <https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html>`__   
+     
+    * `GetObjectAttributes <https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectAttributes.html>`__   
      
 
     
@@ -9652,7 +9902,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -9660,7 +9910,7 @@ Client
     :type IfMatch: string
     :param IfMatch: 
 
-      Return the object only if its entity tag (ETag) is the same as the one specified, otherwise return a 412 (precondition failed).
+      Return the object only if its entity tag (ETag) is the same as the one specified; otherwise, return a 412 (precondition failed) error.
 
       
 
@@ -9668,7 +9918,7 @@ Client
     :type IfModifiedSince: datetime
     :param IfModifiedSince: 
 
-      Return the object only if it has been modified since the specified time, otherwise return a 304 (not modified).
+      Return the object only if it has been modified since the specified time; otherwise, return a 304 (not modified) error.
 
       
 
@@ -9676,7 +9926,7 @@ Client
     :type IfNoneMatch: string
     :param IfNoneMatch: 
 
-      Return the object only if its entity tag (ETag) is different from the one specified, otherwise return a 304 (not modified).
+      Return the object only if its entity tag (ETag) is different from the one specified; otherwise, return a 304 (not modified) error.
 
       
 
@@ -9684,7 +9934,7 @@ Client
     :type IfUnmodifiedSince: datetime
     :param IfUnmodifiedSince: 
 
-      Return the object only if it has not been modified since the specified time, otherwise return a 412 (precondition failed).
+      Return the object only if it has not been modified since the specified time; otherwise, return a 412 (precondition failed) error.
 
       
 
@@ -9704,17 +9954,7 @@ Client
     :type Range: string
     :param Range: 
 
-      Downloads the specified range bytes of an object. For more information about the HTTP Range header, see `http\://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35 <http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35>`__ .
-
-       
-
-      .. note::
-
-         
-
-        Amazon S3 doesn't support retrieving multiple ranges of data per ``GET`` request.
-
-         
+      Because ``HeadObject`` returns only the metadata for an object, this parameter has no effect.
 
       
 
@@ -9805,11 +10045,11 @@ Client
             'SSECustomerAlgorithm': 'string',
             'SSECustomerKeyMD5': 'string',
             'SSEKMSKeyId': 'string',
-            'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS',
+            'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS'|'GLACIER_IR',
             'RequestCharged': 'requester',
             'ReplicationStatus': 'COMPLETE'|'PENDING'|'FAILED'|'REPLICA',
             'PartsCount': 123,
-            'IbmRestoredCopyStorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS',
+            'IbmRestoredCopyStorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS'|'GLACIER_IR',
             'IbmTransition': 'string'
         }
       **Response Structure** 
@@ -9835,7 +10075,7 @@ Client
 
         - **Expiration** *(string) --* 
 
-          If the object expiration is configured (see PUT Bucket lifecycle), the response includes this header. It includes the expiry-date and rule-id key-value pairs providing object expiration information. The value of the rule-id is URL encoded.
+          If the object expiration is configured (see PUT Bucket lifecycle), the response includes this header. It includes the ``expiry-date`` and ``rule-id`` key-value pairs providing object expiration information. The value of the ``rule-id`` is URL-encoded.
 
           
         
@@ -9879,7 +10119,7 @@ Client
 
         - **ETag** *(string) --* 
 
-          An ETag is an opaque identifier assigned by a web server to a specific version of a resource found at a URL.
+          An entity tag (ETag) is an opaque identifier assigned by a web server to a specific version of a resource found at a URL.
 
           
         
@@ -10028,11 +10268,11 @@ Client
            
 
            
-          * If requesting an object from the source bucket — Amazon S3 will return the ``x-amz-replication-status`` header if the object in your request is eligible for replication. For example, suppose that in your replication configuration, you specify object prefix ``TaxDocs`` requesting Amazon S3 to replicate objects with key prefix ``TaxDocs`` . Any objects you upload with this key name prefix, for example ``TaxDocs/document1.pdf`` , are eligible for replication. For any object request with this key name prefix, Amazon S3 will return the ``x-amz-replication-status`` header with value PENDING, COMPLETED or FAILED indicating object replication status. 
+          * **If requesting an object from the source bucket** , Amazon S3 will return the ``x-amz-replication-status`` header if the object in your request is eligible for replication. For example, suppose that in your replication configuration, you specify object prefix ``TaxDocs`` requesting Amazon S3 to replicate objects with key prefix ``TaxDocs`` . Any objects you upload with this key name prefix, for example ``TaxDocs/document1.pdf`` , are eligible for replication. For any object request with this key name prefix, Amazon S3 will return the ``x-amz-replication-status`` header with value PENDING, COMPLETED or FAILED indicating object replication status. 
            
-          * If requesting an object from a destination bucket — Amazon S3 will return the ``x-amz-replication-status`` header with value REPLICA if the object in your request is a replica that Amazon S3 created and there is no replica modification replication in progress. 
+          * **If requesting an object from a destination bucket** , Amazon S3 will return the ``x-amz-replication-status`` header with value REPLICA if the object in your request is a replica that Amazon S3 created and there is no replica modification replication in progress. 
            
-          * When replicating objects to multiple destination buckets the ``x-amz-replication-status`` header acts differently. The header of the source object will only return a value of COMPLETED when replication is successful to all destinations. The header will remain at value PENDING until replication has completed for all destinations. If one or more destinations fails replication the header will return FAILED.  
+          * **When replicating objects to multiple destination buckets** , the ``x-amz-replication-status`` header acts differently. The header of the source object will only return a value of COMPLETED when replication is successful to all destinations. The header will remain at value PENDING until replication has completed for all destinations. If one or more destinations fails replication the header will return FAILED.  
            
 
            
@@ -10044,7 +10284,7 @@ Client
 
         - **PartsCount** *(integer) --* 
 
-          The count of parts this object has.
+          The count of parts this object has. This value is only returned if you specify ``partNumber`` in your request and the object was uploaded as a multipart upload.
 
           
         
@@ -10964,7 +11204,7 @@ Client
 
         - **Buckets** *(list) --* 
 
-          The list of buckets owned by the requestor.
+          The list of buckets owned by the requester.
 
           
           
@@ -11291,7 +11531,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -11388,7 +11628,7 @@ Client
                     'UploadId': 'string',
                     'Key': 'string',
                     'Initiated': datetime(2015, 1, 1),
-                    'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS',
+                    'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS'|'GLACIER_IR',
                     'Owner': {
                         'DisplayName': 'string',
                         'ID': 'string'
@@ -12278,7 +12518,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -12354,7 +12594,7 @@ Client
                     'LastModified': datetime(2015, 1, 1),
                     'ETag': 'string',
                     'Size': 123,
-                    'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'GLACIER'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'DEEP_ARCHIVE'|'OUTPOSTS',
+                    'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'GLACIER'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'DEEP_ARCHIVE'|'OUTPOSTS'|'GLACIER_IR',
                     'Owner': {
                         'DisplayName': 'string',
                         'ID': 'string'
@@ -12691,7 +12931,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -12773,7 +13013,7 @@ Client
                     'LastModified': datetime(2015, 1, 1),
                     'ETag': 'string',
                     'Size': 123,
-                    'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'GLACIER'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'DEEP_ARCHIVE'|'OUTPOSTS',
+                    'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'GLACIER'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'DEEP_ARCHIVE'|'OUTPOSTS'|'GLACIER_IR',
                     'Owner': {
                         'DisplayName': 'string',
                         'ID': 'string'
@@ -12902,7 +13142,7 @@ Client
 
            
 
-          When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+          When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
           
         
@@ -13122,7 +13362,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -13206,7 +13446,7 @@ Client
                 'DisplayName': 'string',
                 'ID': 'string'
             },
-            'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS',
+            'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS'|'GLACIER_IR',
             'RequestCharged': 'requester'
         }
       **Response Structure** 
@@ -13441,7 +13681,7 @@ Client
 
      
 
-    To use this operation, you must have permission to perform the s3:PutAccelerateConfiguration action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__ .
+    To use this operation, you must have permission to perform the ``s3:PutAccelerateConfiguration`` action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__ .
 
      
 
@@ -13560,6 +13800,16 @@ Client
      
 
     Depending on your application needs, you may choose to set the ACL on a bucket using either the request body or the headers. For example, if you have an existing application that updates a bucket ACL using the request body, then you can continue to use that approach.
+
+     
+
+    .. warning::
+
+       
+
+      If your bucket uses the bucket owner enforced setting for S3 Object Ownership, ACLs are disabled and no longer affect permissions. You must use policies to grant access to your bucket and the objects in it. Requests to set ACLs or update ACLs fail and return the ``AccessControlListNotSupported`` error code. Requests to read ACLs are still supported. For more information, see `Controlling object ownership <https://docs.aws.amazon.com/AmazonS3/latest/userguide/about-object-ownership.html>`__ in the *Amazon S3 User Guide* .
+
+       
 
      
 
@@ -14779,7 +15029,7 @@ Client
 
     
 
-    Creates a new lifecycle configuration for the bucket or replaces an existing lifecycle configuration. For information about lifecycle configuration, see `Managing your storage lifecycle <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html>`__ .
+    Creates a new lifecycle configuration for the bucket or replaces an existing lifecycle configuration. Keep in mind that this will overwrite an existing lifecycle configuration, so if you want to retain any configuration details, they must be included in the new lifecycle configuration. For information about lifecycle configuration, see `Managing your storage lifecycle <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html>`__ .
 
      
 
@@ -14819,7 +15069,7 @@ Client
 
      
 
-    By default, all Amazon S3 resources are private, including buckets, objects, and related subresources (for example, lifecycle configuration and website configuration). Only the resource owner (that is, the Amazon Web Services account that created it) can access the resource. The resource owner can optionally grant access permissions to others by writing an access policy. For this operation, a user must get the s3:PutLifecycleConfiguration permission.
+    By default, all Amazon S3 resources are private, including buckets, objects, and related subresources (for example, lifecycle configuration and website configuration). Only the resource owner (that is, the Amazon Web Services account that created it) can access the resource. The resource owner can optionally grant access permissions to others by writing an access policy. For this operation, a user must get the ``s3:PutLifecycleConfiguration`` permission.
 
      
 
@@ -14828,11 +15078,11 @@ Client
      
 
      
-    * s3:DeleteObject 
+    * ``s3:DeleteObject``   
      
-    * s3:DeleteObjectVersion 
+    * ``s3:DeleteObjectVersion``   
      
-    * s3:PutLifecycleConfiguration 
+    * ``s3:PutLifecycleConfiguration``   
      
 
      
@@ -14884,7 +15134,7 @@ Client
                           {
                               'Date': datetime(2015, 1, 1),
                               'Days': 123,
-                              'StorageClass': 'ACCELERATED'|'GLACIER'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'DEEP_ARCHIVE'
+                              'StorageClass': 'ACCELERATED'|'GLACIER'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'DEEP_ARCHIVE'|'GLACIER_IR'
                           },
                       ],
                       'NoncurrentVersionExpiration': {
@@ -15499,11 +15749,31 @@ Client
               'Rules': [
                   {
                       'ID': 'string',
+                      'Priority': 123,
                       'Prefix': 'string',
+                      'Filter': {
+                          'Prefix': 'string',
+                          'Tag': {
+                              'Key': 'string',
+                              'Value': 'string'
+                          },
+                          'And': {
+                              'Prefix': 'string',
+                              'Tags': [
+                                  {
+                                      'Key': 'string',
+                                      'Value': 'string'
+                                  },
+                              ]
+                          }
+                      },
                       'Status': 'Enabled'|'Disabled',
                       'Destination': {
                           'Bucket': 'string',
-                          'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS'
+                          'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS'|'GLACIER_IR'
+                      },
+                      'DeleteMarkerReplication': {
+                          'Status': 'Enabled'|'Disabled'
                       }
                   },
               ]
@@ -15526,11 +15796,7 @@ Client
       
 
     
-      - **Role** *(string) --* **[REQUIRED]** 
-
-        The Amazon Resource Name (ARN) of the Identity and Access Management (IAM) role that Amazon S3 assumes when replicating objects. For more information, see `How to Set Up Replication <https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-how-setup.html>`__ in the *Amazon S3 User Guide* .
-
-        
+      - **Role** *(string) --* Not supported by COS
 
       
       - **Rules** *(list) --* **[REQUIRED]** 
@@ -15554,7 +15820,18 @@ Client
             
 
           
-          - **Prefix** *(string) --* **[REQUIRED]** 
+          - **Priority** *(integer) --* **[REQUIRED]** 
+
+            The priority indicates which rule has precedence whenever two or more replication rules conflict. Amazon S3 will attempt to replicate objects according to all replication rules. However, if there are two or more rules with the same destination bucket, then objects will be replicated according to the rule with the highest priority. The higher the number, the higher the priority. 
+
+             
+
+            For more information, see `Replication <https://docs.aws.amazon.com/AmazonS3/latest/dev/replication.html>`__ in the *Amazon Simple Storage Service Developer Guide* .
+
+            
+
+          
+          - **Prefix** *(string) --* 
 
             An object key name prefix that identifies the object or objects to which the rule applies. The maximum prefix length is 1,024 characters. To include all objects in a bucket, specify an empty string. 
 
@@ -15570,6 +15847,100 @@ Client
 
             
 
+          
+          - **Filter** *(dict) --* **[REQUIRED]** 
+
+            Specifies which Amazon S3 objects to replicate and where to store the replicas.
+
+            
+
+          
+            - **Prefix** *(string) --* 
+
+              An object key name prefix that identifies the subset of objects to which the rule applies.
+
+              
+
+            
+            - **Tag** *(dict) --* 
+
+              A container for specifying a tag key and value. 
+
+               
+
+              The rule applies only to objects that have the tag in their tag set.
+
+              
+
+            
+              - **Key** *(string) --* **[REQUIRED]** 
+
+                Name of the object key.
+
+                
+
+              
+              - **Value** *(string) --* **[REQUIRED]** 
+
+                Value of the tag.
+
+                
+
+              
+            
+            - **And** *(dict) --* 
+
+              A container for specifying rule filters. The filters determine the subset of objects to which the rule applies. This element is required only if you specify more than one filter. For example: 
+
+               
+
+               
+              * If you specify both a ``Prefix`` and a ``Tag`` filter, wrap these filters in an ``And`` tag. 
+               
+              * If you specify a filter based on multiple tags, wrap the ``Tag`` elements in an ``And`` tag. 
+               
+
+              
+
+            
+              - **Prefix** *(string) --* 
+
+                An object key name prefix that identifies the subset of objects to which the rule applies.
+
+                
+
+              
+              - **Tags** *(list) --* 
+
+                An array of tags containing key and value pairs.
+
+                
+
+              
+                - *(dict) --* 
+
+                  A container of a key value name pair.
+
+                  
+
+                
+                  - **Key** *(string) --* **[REQUIRED]** 
+
+                    Name of the object key.
+
+                    
+
+                  
+                  - **Value** *(string) --* **[REQUIRED]** 
+
+                    Value of the tag.
+
+                    
+
+                  
+                
+            
+            
           
           - **Status** *(string) --* **[REQUIRED]** 
 
@@ -15599,6 +15970,45 @@ Client
                
 
               For valid values, see the ``StorageClass`` element of the `PUT Bucket replication <https://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTreplication.html>`__ action in the *Amazon Simple Storage Service API Reference* .
+
+              
+
+            
+          
+          - **DeleteMarkerReplication** *(dict) --* **[REQUIRED]** 
+
+            Specifies whether Amazon S3 replicates delete markers. If you specify a ``Filter`` in your replication configuration, you must also include a ``DeleteMarkerReplication`` element. If your ``Filter`` includes a ``Tag`` element, the ``DeleteMarkerReplication``  ``Status`` must be set to Disabled, because Amazon S3 does not support replicating delete markers for tag-based rules. For an example configuration, see `Basic Rule Configuration <https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-add-config.html#replication-config-min-rule-config>`__ . 
+
+             
+
+            For more information about delete marker replication, see `Basic Rule Configuration <https://docs.aws.amazon.com/AmazonS3/latest/dev/delete-marker-replication.html>`__ . 
+
+             
+
+            .. note::
+
+               
+
+              If you are using an earlier version of the replication configuration, Amazon S3 handles replication of delete markers differently. For more information, see `Backward Compatibility <https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-add-config.html#replication-backward-compat-considerations>`__ .
+
+               
+
+            
+
+          
+            - **Status** *(string) --* **[REQUIRED]** 
+
+              Indicates whether to replicate delete markers.
+
+               
+
+              .. note::
+
+                 
+
+                Indicates whether to replicate delete markers.
+
+                 
 
               
 
@@ -15839,7 +16249,7 @@ Client
 
     
 
-    Sets the versioning state of an existing bucket. To set the versioning state, you must be the bucket owner.
+    Sets the versioning state of an existing bucket.
 
      
 
@@ -15859,7 +16269,7 @@ Client
 
      
 
-    If the bucket owner enables MFA Delete in the bucket versioning configuration, the bucket owner must include the ``x-amz-mfa request`` header and the ``Status`` and the ``MfaDelete`` request elements in a request to set the versioning state of the bucket.
+    In order to enable MFA Delete, you must be the bucket owner. If you are the bucket owner and want to enable MFA Delete in the bucket versioning configuration, you must include the ``x-amz-mfa request`` header and the ``Status`` and the ``MfaDelete`` request elements in a request to set the versioning state of the bucket.
 
      
 
@@ -16389,6 +16799,24 @@ Client
 
      
 
+    If the bucket that you're uploading objects to uses the bucket owner enforced setting for S3 Object Ownership, ACLs are disabled and no longer affect permissions. Buckets that use this setting only accept PUT requests that don't specify an ACL or PUT requests that specify bucket owner full control ACLs, such as the ``bucket-owner-full-control`` canned ACL or an equivalent form of this ACL expressed in the XML format. PUT requests that contain other ACLs (for example, custom grants to certain Amazon Web Services accounts) fail and return a ``400`` error with the error code ``AccessControlListNotSupported`` .
+
+     
+
+    For more information, see `Controlling ownership of objects and disabling ACLs <https://docs.aws.amazon.com/AmazonS3/latest/userguide/about-object-ownership.html>`__ in the *Amazon S3 User Guide* .
+
+     
+
+    .. note::
+
+       
+
+      If your bucket uses the bucket owner enforced setting for Object Ownership, all objects written to the bucket by any account will be owned by the bucket owner.
+
+       
+
+     
+
      **Storage Class Options**  
 
      
@@ -16451,7 +16879,7 @@ Client
           RetentionLegalHoldId='string',
           RetentionPeriod=123,
           ServerSideEncryption='AES256',
-          StorageClass='ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS',
+          StorageClass='ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS'|'GLACIER_IR',
           WebsiteRedirectLocation='string',
           SSECustomerAlgorithm='string',
           SSECustomerKey='string',
@@ -16491,7 +16919,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -16762,7 +17190,7 @@ Client
 
         - **Expiration** *(string) --* 
 
-          If the expiration is configured for the object (see `PutBucketLifecycleConfiguration <https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutBucketLifecycleConfiguration.html>`__ ), the response includes this header. It includes the expiry-date and rule-id key-value pairs that provide information about object expiration. The value of the rule-id is URL encoded.
+          If the expiration is configured for the object (see `PutBucketLifecycleConfiguration <https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutBucketLifecycleConfiguration.html>`__ ), the response includes this header. It includes the ``expiry-date`` and ``rule-id`` key-value pairs that provide information about object expiration. The value of the ``rule-id`` is URL-encoded.
 
           
         
@@ -17014,6 +17442,16 @@ Client
      
 
     Depending on your application needs, you can choose to set the ACL on an object using either the request body or the headers. For example, if you have an existing application that updates a bucket ACL using the request body, you can continue to use that approach. For more information, see `Access Control List (ACL) Overview <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html>`__ in the *Amazon S3 User Guide* .
+
+     
+
+    .. warning::
+
+       
+
+      If your bucket uses the bucket owner enforced setting for S3 Object Ownership, ACLs are disabled and no longer affect permissions. You must use policies to grant access to your bucket and the objects in it. Requests to set ACLs or update ACLs fail and return the ``AccessControlListNotSupported`` error code. Requests to read ACLs are still supported. For more information, see `Controlling object ownership <https://docs.aws.amazon.com/AmazonS3/latest/userguide/about-object-ownership.html>`__ in the *Amazon S3 User Guide* .
+
+       
 
      
 
@@ -17412,7 +17850,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -17613,7 +18051,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -17844,7 +18282,7 @@ Client
          
 
          
-        * PUT Bucket acl and PUT Object acl calls fail if the specified ACL is public. 
+        * PUT Bucket ACL and PUT Object ACL calls fail if the specified ACL is public. 
          
         * PUT Object calls fail if the request includes a public ACL. 
          
@@ -17992,11 +18430,11 @@ Client
      
 
      
-    * **``Expedited`` ** - Expedited retrievals allow you to quickly access your data stored in the S3 Glacier storage class or S3 Intelligent-Tiering Archive tier when occasional urgent requests for a subset of archives are required. For all but the largest archived objects (250 MB+), data accessed using Expedited retrievals is typically made available within 1–5 minutes. Provisioned capacity ensures that retrieval capacity for Expedited retrievals is available when you need it. Expedited retrievals and provisioned capacity are not available for objects stored in the S3 Glacier Deep Archive storage class or S3 Intelligent-Tiering Deep Archive tier. 
+    * ``Expedited`` - Expedited retrievals allow you to quickly access your data stored in the S3 Glacier storage class or S3 Intelligent-Tiering Archive tier when occasional urgent requests for a subset of archives are required. For all but the largest archived objects (250 MB+), data accessed using Expedited retrievals is typically made available within 1–5 minutes. Provisioned capacity ensures that retrieval capacity for Expedited retrievals is available when you need it. Expedited retrievals and provisioned capacity are not available for objects stored in the S3 Glacier Deep Archive storage class or S3 Intelligent-Tiering Deep Archive tier. 
      
-    * **``Standard`` ** - Standard retrievals allow you to access any of your archived objects within several hours. This is the default option for retrieval requests that do not specify the retrieval option. Standard retrievals typically finish within 3–5 hours for objects stored in the S3 Glacier storage class or S3 Intelligent-Tiering Archive tier. They typically finish within 12 hours for objects stored in the S3 Glacier Deep Archive storage class or S3 Intelligent-Tiering Deep Archive tier. Standard retrievals are free for objects stored in S3 Intelligent-Tiering. 
+    * ``Standard`` - Standard retrievals allow you to access any of your archived objects within several hours. This is the default option for retrieval requests that do not specify the retrieval option. Standard retrievals typically finish within 3–5 hours for objects stored in the S3 Glacier storage class or S3 Intelligent-Tiering Archive tier. They typically finish within 12 hours for objects stored in the S3 Glacier Deep Archive storage class or S3 Intelligent-Tiering Deep Archive tier. Standard retrievals are free for objects stored in S3 Intelligent-Tiering. 
      
-    * **``Bulk`` ** - Bulk retrievals are the lowest-cost retrieval option in S3 Glacier, enabling you to retrieve large amounts, even petabytes, of data inexpensively. Bulk retrievals typically finish within 5–12 hours for objects stored in the S3 Glacier storage class or S3 Intelligent-Tiering Archive tier. They typically finish within 48 hours for objects stored in the S3 Glacier Deep Archive storage class or S3 Intelligent-Tiering Deep Archive tier. Bulk retrievals are free for objects stored in S3 Intelligent-Tiering. 
+    * ``Bulk`` - Bulk retrievals are the lowest-cost retrieval option in S3 Glacier, enabling you to retrieve large amounts, even petabytes, of data inexpensively. Bulk retrievals typically finish within 5–12 hours for objects stored in the S3 Glacier storage class or S3 Intelligent-Tiering Archive tier. They typically finish within 48 hours for objects stored in the S3 Glacier Deep Archive storage class or S3 Intelligent-Tiering Deep Archive tier. Bulk retrievals are free for objects stored in S3 Intelligent-Tiering. 
      
 
      
@@ -18115,7 +18553,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -18555,9 +18993,9 @@ Client
      
     * For information about permissions required to use the multipart upload API, see `Multipart Upload and Permissions <https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuAndPermissions.html>`__ in the *Amazon S3 User Guide* . 
      
-    * For information about copying objects using a single atomic action vs. the multipart upload, see `Operations on Objects <https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectOperations.html>`__ in the *Amazon S3 User Guide* . 
+    * For information about copying objects using a single atomic action vs. a multipart upload, see `Operations on Objects <https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectOperations.html>`__ in the *Amazon S3 User Guide* . 
      
-    * For information about using server-side encryption with customer-provided encryption keys with the UploadPartCopy operation, see `CopyObject <https://docs.aws.amazon.com/AmazonS3/latest/API/API_CopyObject.html>`__ and `UploadPart <https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html>`__ . 
+    * For information about using server-side encryption with customer-provided encryption keys with the ``UploadPartCopy`` operation, see `CopyObject <https://docs.aws.amazon.com/AmazonS3/latest/API/API_CopyObject.html>`__ and `UploadPart <https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html>`__ . 
      
 
      
@@ -18682,7 +19120,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -19618,7 +20056,7 @@ The available paginators are:
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -19715,7 +20153,7 @@ The available paginators are:
                     'UploadId': 'string',
                     'Key': 'string',
                     'Initiated': datetime(2015, 1, 1),
-                    'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS',
+                    'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS'|'GLACIER_IR',
                     'Owner': {
                         'DisplayName': 'string',
                         'ID': 'string'
@@ -20380,7 +20818,7 @@ The available paginators are:
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -20474,7 +20912,7 @@ The available paginators are:
                     'LastModified': datetime(2015, 1, 1),
                     'ETag': 'string',
                     'Size': 123,
-                    'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'GLACIER'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'DEEP_ARCHIVE'|'OUTPOSTS',
+                    'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'GLACIER'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'DEEP_ARCHIVE'|'OUTPOSTS'|'GLACIER_IR',
                     'Owner': {
                         'DisplayName': 'string',
                         'ID': 'string'
@@ -20738,7 +21176,7 @@ The available paginators are:
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -20838,7 +21276,7 @@ The available paginators are:
                     'LastModified': datetime(2015, 1, 1),
                     'ETag': 'string',
                     'Size': 123,
-                    'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'GLACIER'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'DEEP_ARCHIVE'|'OUTPOSTS',
+                    'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'GLACIER'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'DEEP_ARCHIVE'|'OUTPOSTS'|'GLACIER_IR',
                     'Owner': {
                         'DisplayName': 'string',
                         'ID': 'string'
@@ -20967,7 +21405,7 @@ The available paginators are:
 
            
 
-          When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+          When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
           
         
@@ -21119,7 +21557,7 @@ The available paginators are:
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -21220,7 +21658,7 @@ The available paginators are:
                 'DisplayName': 'string',
                 'ID': 'string'
             },
-            'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS',
+            'StorageClass': 'ACCELERATED'|'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS'|'GLACIER_IR',
             'RequestCharged': 'requester',
             'NextToken': 'string'
         }
@@ -21459,7 +21897,7 @@ The available waiters are:
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -21533,7 +21971,7 @@ The available waiters are:
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -21619,7 +22057,7 @@ The available waiters are:
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -21627,7 +22065,7 @@ The available waiters are:
     :type IfMatch: string
     :param IfMatch: 
 
-      Return the object only if its entity tag (ETag) is the same as the one specified, otherwise return a 412 (precondition failed).
+      Return the object only if its entity tag (ETag) is the same as the one specified; otherwise, return a 412 (precondition failed) error.
 
       
 
@@ -21635,7 +22073,7 @@ The available waiters are:
     :type IfModifiedSince: datetime
     :param IfModifiedSince: 
 
-      Return the object only if it has been modified since the specified time, otherwise return a 304 (not modified).
+      Return the object only if it has been modified since the specified time; otherwise, return a 304 (not modified) error.
 
       
 
@@ -21643,7 +22081,7 @@ The available waiters are:
     :type IfNoneMatch: string
     :param IfNoneMatch: 
 
-      Return the object only if its entity tag (ETag) is different from the one specified, otherwise return a 304 (not modified).
+      Return the object only if its entity tag (ETag) is different from the one specified; otherwise, return a 304 (not modified) error.
 
       
 
@@ -21651,7 +22089,7 @@ The available waiters are:
     :type IfUnmodifiedSince: datetime
     :param IfUnmodifiedSince: 
 
-      Return the object only if it has not been modified since the specified time, otherwise return a 412 (precondition failed).
+      Return the object only if it has not been modified since the specified time; otherwise, return a 412 (precondition failed) error.
 
       
 
@@ -21671,17 +22109,7 @@ The available waiters are:
     :type Range: string
     :param Range: 
 
-      Downloads the specified range bytes of an object. For more information about the HTTP Range header, see `http\://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35 <http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35>`__ .
-
-       
-
-      .. note::
-
-         
-
-        Amazon S3 doesn't support retrieving multiple ranges of data per ``GET`` request.
-
-         
+      Because ``HeadObject`` returns only the metadata for an object, this parameter has no effect.
 
       
 
@@ -21813,7 +22241,7 @@ The available waiters are:
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -21821,7 +22249,7 @@ The available waiters are:
     :type IfMatch: string
     :param IfMatch: 
 
-      Return the object only if its entity tag (ETag) is the same as the one specified, otherwise return a 412 (precondition failed).
+      Return the object only if its entity tag (ETag) is the same as the one specified; otherwise, return a 412 (precondition failed) error.
 
       
 
@@ -21829,7 +22257,7 @@ The available waiters are:
     :type IfModifiedSince: datetime
     :param IfModifiedSince: 
 
-      Return the object only if it has been modified since the specified time, otherwise return a 304 (not modified).
+      Return the object only if it has been modified since the specified time; otherwise, return a 304 (not modified) error.
 
       
 
@@ -21837,7 +22265,7 @@ The available waiters are:
     :type IfNoneMatch: string
     :param IfNoneMatch: 
 
-      Return the object only if its entity tag (ETag) is different from the one specified, otherwise return a 304 (not modified).
+      Return the object only if its entity tag (ETag) is different from the one specified; otherwise, return a 304 (not modified) error.
 
       
 
@@ -21845,7 +22273,7 @@ The available waiters are:
     :type IfUnmodifiedSince: datetime
     :param IfUnmodifiedSince: 
 
-      Return the object only if it has not been modified since the specified time, otherwise return a 412 (precondition failed).
+      Return the object only if it has not been modified since the specified time; otherwise, return a 412 (precondition failed) error.
 
       
 
@@ -21865,17 +22293,7 @@ The available waiters are:
     :type Range: string
     :param Range: 
 
-      Downloads the specified range bytes of an object. For more information about the HTTP Range header, see `http\://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35 <http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35>`__ .
-
-       
-
-      .. note::
-
-         
-
-        Amazon S3 doesn't support retrieving multiple ranges of data per ``GET`` request.
-
-         
+      Because ``HeadObject`` returns only the metadata for an object, this parameter has no effect.
 
       
 
