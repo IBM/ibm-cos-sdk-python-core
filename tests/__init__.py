@@ -13,7 +13,6 @@
 
 import os
 import sys
-import mock
 import time
 import random
 import shutil
@@ -23,13 +22,13 @@ import binascii
 import platform
 import select
 import datetime
+import unittest
+from contextlib import ContextDecorator
+from unittest import mock
 from io import BytesIO
 from subprocess import Popen, PIPE
 
 from dateutil.tz import tzlocal
-import unittest
-
-from nose.tools import assert_equal
 
 import ibm_botocore.loaders
 import ibm_botocore.session
@@ -349,22 +348,23 @@ def _urlparse(url):
         url = url.decode('utf8')
     return urlparse(url)
 
+
 def assert_url_equal(url1, url2):
     parts1 = _urlparse(url1)
     parts2 = _urlparse(url2)
 
     # Because the query string ordering isn't relevant, we have to parse
     # every single part manually and then handle the query string.
-    assert_equal(parts1.scheme, parts2.scheme)
-    assert_equal(parts1.netloc, parts2.netloc)
-    assert_equal(parts1.path, parts2.path)
-    assert_equal(parts1.params, parts2.params)
-    assert_equal(parts1.fragment, parts2.fragment)
-    assert_equal(parts1.username, parts2.username)
-    assert_equal(parts1.password, parts2.password)
-    assert_equal(parts1.hostname, parts2.hostname)
-    assert_equal(parts1.port, parts2.port)
-    assert_equal(parse_qs(parts1.query), parse_qs(parts2.query))
+    assert parts1.scheme == parts2.scheme
+    assert parts1.netloc == parts2.netloc
+    assert parts1.path == parts2.path
+    assert parts1.params == parts2.params
+    assert parts1.fragment == parts2.fragment
+    assert parts1.username == parts2.username
+    assert parts1.password == parts2.password
+    assert parts1.hostname == parts2.hostname
+    assert parts1.port == parts2.port
+    assert parse_qs(parts1.query) == parse_qs(parts2.query)
 
 
 class HTTPStubberException(Exception):
@@ -535,3 +535,32 @@ class StubbedSession(ibm_botocore.session.Session):
     def verify_stubs(self):
         for stub in self._client_stubs.values():
             stub.assert_no_pending_responses()
+
+
+class FreezeTime(ContextDecorator):
+    """
+    Context manager for mocking out datetime in arbitrary modules when creating
+    performing actions like signing which require point in time specificity.
+
+    :type module: module
+    :param module: reference to imported module to patch (e.g. ibm_botocore.auth.datetime)
+
+    :type date: datetime.datetime
+    :param date: datetime object specifying the output for utcnow()
+    """
+
+    def __init__(self, module, date=None):
+        if date is None:
+            date = datetime.datetime.utcnow()
+        self.date = date
+        self.datetime_patcher = mock.patch.object(
+            module, 'datetime',
+            mock.Mock(wraps=datetime.datetime)
+        )
+
+    def __enter__(self, *args, **kwargs):
+        mock = self.datetime_patcher.start()
+        mock.utcnow.return_value = self.date
+
+    def __exit__(self, *args, **kwargs):
+        self.datetime_patcher.stop()

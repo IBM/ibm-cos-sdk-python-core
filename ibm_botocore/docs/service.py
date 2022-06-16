@@ -11,7 +11,6 @@
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 from ibm_botocore.exceptions import DataNotFoundError
-from ibm_botocore.docs.utils import get_official_service_name
 from ibm_botocore.docs.client import ClientDocumenter
 from ibm_botocore.docs.client import ClientExceptionsDocumenter
 from ibm_botocore.docs.waiter import WaiterDocumenter

@@ -28,6 +28,7 @@ DEFAULT_ROLE_POLICY = """\
 ]}
 """
 
+
 class TestElasticTranscoder(unittest.TestCase):
     def setUp(self):
         self.session = ibm_botocore.session.get_session()

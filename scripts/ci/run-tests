@@ -5,13 +5,24 @@
 
 import argparse
 import os
+from contextlib import contextmanager
 from subprocess import check_call
 
 _dname = os.path.dirname
 
 REPO_ROOT = _dname(_dname(_dname(os.path.abspath(__file__))))
 PACKAGE = "ibm_botocore"
-os.chdir(os.path.join(REPO_ROOT, "tests"))
+
+
+@contextmanager
+def cd(path):
+    """Change directory while inside context manager."""
+    cwd = os.getcwd()
+    try:
+        os.chdir(path)
+        yield
+    finally:
+        os.chdir(cwd)
 
 
 def run(command):
@@ -20,12 +31,11 @@ def run(command):
 
 def process_args(args):
     runner = args.test_runner
-    test_args = ''
+    test_args = ""
+    if args.with_xdist:
+        test_args += "-n auto --dist=loadfile --maxprocesses=4 "
     if args.with_cov:
-        test_args += (
-            f"--with-xunit --cover-erase --with-coverage "
-            f"--cover-package {PACKAGE} --cover-xml -v "
-        )
+        test_args += f"--cov={PACKAGE} --cov-report xml "
     dirs = " ".join(args.test_dirs)
 
     return runner, test_args, dirs
@@ -42,8 +52,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "-r",
         "--test-runner",
-        default="nosetests",
-        help="Test runner to execute tests. Defaults to nose.",
+        default="pytest",
+        help="Test runner to execute tests. Defaults to pytest.",
     )
     parser.add_argument(
         "-c",
@@ -52,9 +62,17 @@ if __name__ == "__main__":
         action="store_true",
         help="Run default test-runner with code coverage enabled.",
     )
+    parser.add_argument(
+        "-x",
+        "--with-xdist",
+        default=False,
+        action="store_true",
+        help="Run default test-runner with parallelization.",
+    )
     raw_args = parser.parse_args()
     test_runner, test_args, test_dirs = process_args(raw_args)
 
     cmd = f"{test_runner} {test_args}{test_dirs}"
     print(f"Running {cmd}...")
-    run(cmd)
+    with cd(os.path.join(REPO_ROOT, "tests")):
+        run(cmd)

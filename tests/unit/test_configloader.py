@@ -12,9 +12,8 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-from tests import unittest, BaseEnvVar
+from tests import mock, unittest, BaseEnvVar
 import os
-import mock
 import tempfile
 import shutil
 
@@ -60,7 +59,7 @@ class TestConfigLoader(BaseEnvVar):
 
     def test_config_not_found(self):
         with self.assertRaises(ibm_botocore.exceptions.ConfigNotFound):
-            loaded_config = raw_config_parse(path('aws_config_notfound'))
+            raw_config_parse(path('aws_config_notfound'))
 
     def test_config_parse_error(self):
         filename = path('aws_config_bad')
@@ -128,14 +127,14 @@ class TestConfigLoader(BaseEnvVar):
     def test_nested_bad_config(self):
         filename = path('aws_config_nested_bad')
         with self.assertRaises(ibm_botocore.exceptions.ConfigParseError):
-            loaded_config = load_config(filename)
+            load_config(filename)
 
     def test_nested_bad_config_filesystem_encoding_none(self):
         filename = path('aws_config_nested_bad')
         with mock.patch('sys.getfilesystemencoding') as encoding:
             encoding.return_value = None
             with self.assertRaises(ibm_botocore.exceptions.ConfigParseError):
-                loaded_config = load_config(filename)
+                load_config(filename)
 
     def test_multi_file_load(self):
         filenames = [path('aws_config_other'),

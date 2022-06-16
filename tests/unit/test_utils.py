@@ -12,20 +12,21 @@
 # language governing permissions and limitations under the License.
 import io
 
+import pytest
+
 from tests import create_session
+from tests import mock
 from tests import unittest
 from tests import RawResponse
 from dateutil.tz import tzutc, tzoffset
 import datetime
 import copy
-import mock
 
 import ibm_botocore
 from ibm_botocore import xform_name
-from ibm_botocore.compat import OrderedDict, json
+from ibm_botocore.compat import json
 from ibm_botocore.compat import six
-from ibm_botocore.awsrequest import AWSRequest
-from ibm_botocore.awsrequest import AWSResponse
+from ibm_botocore.awsrequest import AWSRequest, HeadersDict
 from ibm_botocore.exceptions import InvalidExpressionError, ConfigNotFound
 from ibm_botocore.exceptions import ClientError, ConnectionClosedError
 from ibm_botocore.exceptions import InvalidDNSNameError, MetadataRetrievalError
@@ -38,7 +39,6 @@ from ibm_botocore.exceptions import UnsupportedS3AccesspointConfigurationError
 from ibm_botocore.exceptions import UnsupportedOutpostResourceError
 from ibm_botocore.model import ServiceModel
 from ibm_botocore.model import OperationModel
-from ibm_botocore.regions import EndpointResolver
 from ibm_botocore.utils import ensure_boolean
 from ibm_botocore.utils import resolve_imds_endpoint_mode
 from ibm_botocore.utils import is_json_value_header
@@ -73,14 +73,18 @@ from ibm_botocore.utils import S3ArnParamHandler
 from ibm_botocore.utils import S3EndpointSetter
 from ibm_botocore.utils import ContainerMetadataFetcher
 from ibm_botocore.utils import InstanceMetadataFetcher
+# IBM Unsupported
+# from ibm_botocore.utils import InstanceMetadataRegionFetcher
+# from ibm_botocore.utils import IMDSRegionProvider
 from ibm_botocore.utils import SSOTokenLoader
 from ibm_botocore.utils import is_valid_uri, is_valid_ipv6_endpoint_url
+from ibm_botocore.utils import has_header
+from ibm_botocore.utils import determine_content_length
 from ibm_botocore.exceptions import SSOTokenLoadError
-from ibm_botocore.utils import IMDSFetcher
-from ibm_botocore.utils import BadIMDSRequestError
 from ibm_botocore.model import DenormalizedStructureBuilder
 from ibm_botocore.model import ShapeResolver
 from ibm_botocore.config import Config
+from ibm_botocore.session import Session
 
 
 class TestEnsureBoolean(unittest.TestCase):
@@ -98,6 +102,9 @@ class TestEnsureBoolean(unittest.TestCase):
 
     def test_string_lowercase_true(self):
         self.assertEqual(ensure_boolean('true'), True)
+
+    def test_invalid_type_false(self):
+        self.assertEqual(ensure_boolean({'foo': 'bar'}), False)
 
 
 class TestResolveIMDSEndpointMode(unittest.TestCase):
@@ -117,7 +124,7 @@ class TestResolveIMDSEndpointMode(unittest.TestCase):
         session = self.create_session_with_config('IPv6', None)
         self.assertEqual(resolve_imds_endpoint_mode(session), 'ipv6')
 
-    def test_resolve_endpoint_mode_IPv6(self):
+    def test_resolve_endpoint_mode_IPv4(self):
         session = self.create_session_with_config('IPv4', None)
         self.assertEqual(resolve_imds_endpoint_mode(session), 'ipv4')
 
@@ -192,7 +199,6 @@ class TestIsJSONValueHeader(unittest.TestCase):
         self.assertTrue(is_json_value_header(shape))
 
 
-
 class TestURINormalization(unittest.TestCase):
     def test_remove_dot_segments(self):
         self.assertEqual(remove_dot_segments('../foo'), 'foo')
@@ -200,8 +206,7 @@ class TestURINormalization(unittest.TestCase):
         self.assertEqual(remove_dot_segments('./foo'), 'foo')
         self.assertEqual(remove_dot_segments('/./'), '/')
         self.assertEqual(remove_dot_segments('/../'), '/')
-        self.assertEqual(remove_dot_segments('/foo/bar/baz/../qux'),
-                         '/foo/bar/qux')
+        self.assertEqual(remove_dot_segments('/foo/bar/baz/../qux'), '/foo/bar/qux')
         self.assertEqual(remove_dot_segments('/foo/..'), '/')
         self.assertEqual(remove_dot_segments('foo/bar/baz'), 'foo/bar/baz')
         self.assertEqual(remove_dot_segments('..'), '')
@@ -637,7 +642,7 @@ class TestArgumentGenerator(unittest.TestCase):
                 'A': {
                     'type': 'map',
                     'key': {'type': 'string'},
-                    'value':  {'type': 'string'},
+                    'value': {'type': 'string'},
                 }
             },
             generated_skeleton={
@@ -1201,27 +1206,34 @@ class TestPercentEncodeSequence(unittest.TestCase):
             'k1=with%20spaces%2B%2B%2F')
 
     def test_percent_encode_string_string_tuples(self):
-        self.assertEqual(percent_encode_sequence([('k1', 'v1'), ('k2', 'v2')]),
-                         'k1=v1&k2=v2')
+        self.assertEqual(
+            percent_encode_sequence([('k1', 'v1'), ('k2', 'v2')]),
+            'k1=v1&k2=v2'
+        )
 
     def test_percent_encode_dict_single_pair(self):
         self.assertEqual(percent_encode_sequence({'k1': 'v1'}), 'k1=v1')
 
     def test_percent_encode_dict_string_string(self):
         self.assertEqual(
-            percent_encode_sequence(OrderedDict([('k1', 'v1'), ('k2', 'v2')])),
-                                    'k1=v1&k2=v2')
+            percent_encode_sequence({'k1': 'v1', 'k2': 'v2'}),
+            'k1=v1&k2=v2'
+        )
 
     def test_percent_encode_single_list_of_values(self):
-        self.assertEqual(percent_encode_sequence({'k1': ['a', 'b', 'c']}),
-                         'k1=a&k1=b&k1=c')
+        self.assertEqual(
+            percent_encode_sequence({'k1': ['a', 'b', 'c']}),
+            'k1=a&k1=b&k1=c'
+        )
 
     def test_percent_encode_list_values_of_string(self):
         self.assertEqual(
             percent_encode_sequence(
-                OrderedDict([('k1', ['a', 'list']),
-                             ('k2', ['another', 'list'])])),
-            'k1=a&k1=list&k2=another&k2=list')
+                {'k1': ['a', 'list'], 'k2': ['another', 'list']}
+            ),
+            'k1=a&k1=list&k2=another&k2=list'
+        )
+
 
 class TestPercentEncode(unittest.TestCase):
     def test_percent_encode_obj(self):
@@ -1244,6 +1256,7 @@ class TestPercentEncode(unittest.TestCase):
         self.assertEqual(percent_encode(b'\xe2\x98\x83'), '%E2%98%83')
         # Arbitrary bytes (not valid UTF-8).
         self.assertEqual(percent_encode(b'\x80\x00'), '%80%00')
+
 
 class TestSwitchHostS3Accelerate(unittest.TestCase):
     def setUp(self):
@@ -2196,12 +2209,11 @@ class TestContainerMetadataFetcher(unittest.TestCase):
         }
         self.set_http_responses_to({'foo': 'bar'})
         fetcher = self.create_fetcher()
-        response = fetcher.retrieve_full_uri(
-            'http://localhost', headers)
+        fetcher.retrieve_full_uri('http://localhost', headers)
         self.assert_request('GET', 'http://localhost', headers)
 
     def test_can_retrieve_uri(self):
-        json_body =  {
+        json_body = {
             "AccessKeyId" : "a",
             "SecretAccessKey" : "b",
             "Token" : "c",
@@ -2422,17 +2434,19 @@ class TestInstanceMetadataFetcher(unittest.TestCase):
         self.assertEqual(result, self._expected_creds)
 
     def test_ec2_metadata_endpoint_service_mode(self):
-        configs = [({'ec2_metadata_service_endpoint_mode': 'ipv6'},
-                    'http://[fd00:ec2::254]/'),
-                ({'ec2_metadata_service_endpoint_mode': 'ipv6'},
-                 'http://[fd00:ec2::254]/'),
-                ({'ec2_metadata_service_endpoint_mode': 'ipv4'},
-                 'http://169.254.169.254/'),
-                ({'ec2_metadata_service_endpoint_mode': 'foo'},
-                 'http://169.254.169.254/'),
-                ({'ec2_metadata_service_endpoint_mode': 'ipv6',
-                'ec2_metadata_service_endpoint': 'http://[fd00:ec2::010]/'},
-                'http://[fd00:ec2::010]/')]
+        configs = [
+            ({'ec2_metadata_service_endpoint_mode': 'ipv6'},
+             'http://[fd00:ec2::254]/'),
+            ({'ec2_metadata_service_endpoint_mode': 'ipv6'},
+             'http://[fd00:ec2::254]/'),
+            ({'ec2_metadata_service_endpoint_mode': 'ipv4'},
+             'http://169.254.169.254/'),
+            ({'ec2_metadata_service_endpoint_mode': 'foo'},
+             'http://169.254.169.254/'),
+            ({'ec2_metadata_service_endpoint_mode': 'ipv6',
+             'ec2_metadata_service_endpoint': 'http://[fd00:ec2::010]/'},
+             'http://[fd00:ec2::010]/')
+        ]
 
         for config, expected_url in configs:
             self._test_imds_base_url(config, expected_url)
@@ -2445,7 +2459,6 @@ class TestInstanceMetadataFetcher(unittest.TestCase):
 
     def test_ipv6_endpoint_no_brackets_env_var_set(self):
         url = 'http://fd00:ec2::010/'
-        config = {'ec2_metadata_service_endpoint': url}
         self.assertFalse(is_valid_ipv6_endpoint_url(url))
 
     def test_ipv6_invalid_endpoint(self):
@@ -2479,10 +2492,12 @@ class TestInstanceMetadataFetcher(unittest.TestCase):
         self.assertEqual(result, {})
 
     def test_ipv6_imds_empty_config(self):
-        configs = [({'ec2_metadata_service_endpoint': ''},'http://169.254.169.254/'),
-                ({'ec2_metadata_service_endpoint_mode': ''}, 'http://169.254.169.254/'),
-                ({}, 'http://169.254.169.254/'),
-                (None, 'http://169.254.169.254/')]
+        configs = [
+            ({'ec2_metadata_service_endpoint': ''}, 'http://169.254.169.254/'),
+            ({'ec2_metadata_service_endpoint_mode': ''}, 'http://169.254.169.254/'),
+            ({}, 'http://169.254.169.254/'),
+            (None, 'http://169.254.169.254/')
+        ]
 
         for config, expected_url in configs:
             self._test_imds_base_url(config, expected_url)
@@ -2685,6 +2700,116 @@ class TestInstanceMetadataFetcher(unittest.TestCase):
             user_agent=user_agent).retrieve_iam_role_credentials()
         self.assertEqual(result, {})
 
+# IBM Unsupported
+# class TestIMDSRegionProvider(unittest.TestCase):
+#     def setUp(self):
+#         self.environ = {}
+#         self.environ_patch = mock.patch('os.environ', self.environ)
+#         self.environ_patch.start()
+
+#     def tearDown(self):
+#         self.environ_patch.stop()
+
+#     def assert_does_provide_expected_value(self, fetcher_region=None,
+#                                            expected_result=None,):
+#         fake_session = mock.Mock(spec=Session)
+#         fake_fetcher = mock.Mock(spec=InstanceMetadataRegionFetcher)
+#         fake_fetcher.retrieve_region.return_value = fetcher_region
+#         provider = IMDSRegionProvider(fake_session, fetcher=fake_fetcher)
+#         value = provider.provide()
+#         self.assertEqual(value, expected_result)
+
+#     def test_does_provide_region_when_present(self):
+#         self.assert_does_provide_expected_value(
+#             fetcher_region='us-mars-2',
+#             expected_result='us-mars-2',
+#         )
+
+#     def test_does_provide_none(self):
+#         self.assert_does_provide_expected_value(
+#             fetcher_region=None,
+#             expected_result=None,
+#         )
+
+#     @mock.patch('ibm_botocore.httpsession.URLLib3Session.send')
+#     def test_use_truncated_user_agent(self, send):
+#         session = Session()
+#         session = Session()
+#         session.user_agent_version = '3.0'
+#         provider = IMDSRegionProvider(session)
+#         provider.provide()
+#         args, _ = send.call_args
+#         self.assertIn('Botocore/3.0', args[0].headers['User-Agent'])
+
+#     @mock.patch('ibm_botocore.httpsession.URLLib3Session.send')
+#     def test_can_use_ipv6(self, send):
+#         session = Session()
+#         session.set_config_variable('imds_use_ipv6', True)
+#         provider = IMDSRegionProvider(session)
+#         provider.provide()
+#         args, _ = send.call_args
+#         self.assertIn('[fd00:ec2::254]', args[0].url)
+
+#     @mock.patch('ibm_botocore.httpsession.URLLib3Session.send')
+#     def test_use_ipv4_by_default(self, send):
+#         session = Session()
+#         provider = IMDSRegionProvider(session)
+#         provider.provide()
+#         args, _ = send.call_args
+#         self.assertIn('169.254.169.254', args[0].url)
+
+#     @mock.patch('ibm_botocore.httpsession.URLLib3Session.send')
+#     def test_can_set_imds_endpoint_mode_to_ipv4(self, send):
+#         session = Session()
+#         session.set_config_variable(
+#             'ec2_metadata_service_endpoint_mode', 'ipv4')
+#         provider = IMDSRegionProvider(session)
+#         provider.provide()
+#         args, _ = send.call_args
+#         self.assertIn('169.254.169.254', args[0].url)
+
+#     @mock.patch('ibm_botocore.httpsession.URLLib3Session.send')
+#     def test_can_set_imds_endpoint_mode_to_ipv6(self, send):
+#         session = Session()
+#         session.set_config_variable(
+#             'ec2_metadata_service_endpoint_mode', 'ipv6')
+#         provider = IMDSRegionProvider(session)
+#         provider.provide()
+#         args, _ = send.call_args
+#         self.assertIn('[fd00:ec2::254]', args[0].url)
+
+#     @mock.patch('ibm_botocore.httpsession.URLLib3Session.send')
+#     def test_can_set_imds_service_endpoint(self, send):
+#         session = Session()
+#         session.set_config_variable(
+#             'ec2_metadata_service_endpoint', 'http://myendpoint/')
+#         provider = IMDSRegionProvider(session)
+#         provider.provide()
+#         args, _ = send.call_args
+#         self.assertIn('http://myendpoint/', args[0].url)
+
+#     @mock.patch('ibm_botocore.httpsession.URLLib3Session.send')
+#     def test_can_set_imds_service_endpoint_custom(self, send):
+#         session = Session()
+#         session.set_config_variable(
+#             'ec2_metadata_service_endpoint', 'http://myendpoint')
+#         provider = IMDSRegionProvider(session)
+#         provider.provide()
+#         args, _ = send.call_args
+#         self.assertIn('http://myendpoint/latest/meta-data', args[0].url)
+
+#     @mock.patch('ibm_botocore.httpsession.URLLib3Session.send')
+#     def test_imds_service_endpoint_overrides_ipv6_endpoint(self, send):
+#         session = Session()
+#         session.set_config_variable(
+#             'ec2_metadata_service_endpoint_mode', 'ipv6')
+#         session.set_config_variable(
+#             'ec2_metadata_service_endpoint', 'http://myendpoint/')
+#         provider = IMDSRegionProvider(session)
+#         provider.provide()
+#         args, _ = send.call_args
+#         self.assertIn('http://myendpoint/', args[0].url)
+
 
 class TestSSOTokenLoader(unittest.TestCase):
     def setUp(self):
@@ -2706,9 +2831,78 @@ class TestSSOTokenLoader(unittest.TestCase):
 
     def test_can_handle_does_not_exist(self):
         with self.assertRaises(SSOTokenLoadError):
-            access_token = self.loader(self.start_url)
+            self.loader(self.start_url)
 
     def test_can_handle_invalid_cache(self):
         self.cache[self.cache_key] = {}
         with self.assertRaises(SSOTokenLoadError):
-            access_token = self.loader(self.start_url)
+            self.loader(self.start_url)
+
+
+@pytest.mark.parametrize(
+    'header_name, headers, expected',
+    (
+        ('test_header', {'test_header': 'foo'}, True),
+        ('Test_Header', {'test_header': 'foo'}, True),
+        ('test_header', {'Test_Header': 'foo'}, True),
+        ('missing_header', {'Test_Header': 'foo'}, False),
+        (None, {'Test_Header': 'foo'}, False),
+        ('test_header', HeadersDict({'test_header': 'foo'}), True),
+        ('Test_Header', HeadersDict({'test_header': 'foo'}), True),
+        ('test_header', HeadersDict({'Test_Header': 'foo'}), True),
+        ('missing_header', HeadersDict({'Test_Header': 'foo'}), False),
+        (None, HeadersDict({'Test_Header': 'foo'}), False),
+    )
+)
+def test_has_header(header_name, headers, expected):
+    assert has_header(header_name, headers) is expected
+
+
+class TestDetermineContentLength(unittest.TestCase):
+    def test_basic_bytes(self):
+        length = determine_content_length(b'hello')
+        self.assertEqual(length, 5)
+
+    def test_empty_bytes(self):
+        length = determine_content_length(b'')
+        self.assertEqual(length, 0)
+
+    def test_buffered_io_base(self):
+        length = determine_content_length(io.BufferedIOBase())
+        self.assertIsNone(length)
+
+    def test_none(self):
+        length = determine_content_length(None)
+        self.assertEqual(length, 0)
+
+    def test_basic_len_obj(self):
+        class HasLen(object):
+            def __len__(self):
+                return 12
+
+        length = determine_content_length(HasLen())
+        self.assertEqual(length, 12)
+
+    def test_non_seekable_fileobj(self):
+        class Readable(object):
+            def read(self, *args, **kwargs):
+                pass
+
+        length = determine_content_length(Readable())
+        self.assertIsNone(length)
+
+    def test_seekable_fileobj(self):
+        class Seekable(object):
+            _pos = 0
+
+            def read(self, *args, **kwargs):
+                pass
+
+            def tell(self, *args, **kwargs):
+                return self._pos
+
+            def seek(self, *args, **kwargs):
+                self._pos = 50
+
+        length = determine_content_length(Seekable())
+        self.assertEqual(length, 50)

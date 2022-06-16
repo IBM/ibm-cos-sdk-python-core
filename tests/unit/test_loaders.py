@@ -22,13 +22,13 @@
 import os
 import contextlib
 import copy
-import mock
 
 from ibm_botocore.exceptions import DataNotFoundError, UnknownServiceError
 from ibm_botocore.loaders import JSONFileLoader
 from ibm_botocore.loaders import Loader, create_loader
 from ibm_botocore.loaders import ExtrasProcessor
 
+from tests import mock
 from tests import BaseEnvVar
 
 
@@ -351,7 +351,6 @@ class TestLoadersWithDirectorySearching(BaseEnvVar):
             with mock.patch('os.path.isdir', mock.Mock(return_value=True)):
                 yield loader
 
-
     def fake_listdir(self, dirname):
         parts = dirname.split(os.path.sep)
         result = self.fake_directories
@@ -426,7 +425,7 @@ class TestLoadersWithDirectorySearching(BaseEnvVar):
             },
         }
         with self.loader_with_fake_dirs() as loader:
-            latest = loader.determine_latest_version('ec2', 'service-2')
+            loader.determine_latest_version('ec2', 'service-2')
             self.assertEqual(loader.determine_latest_version('ec2', 'service-2'),
                              '2014-10-01')
             self.assertEqual(loader.determine_latest_version('ec2', 'service-1'),

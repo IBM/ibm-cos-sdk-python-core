@@ -12,10 +12,8 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-
+from tests import mock
 from tests import unittest
-
-import mock
 
 from ibm_botocore import retryhandler
 from ibm_botocore.exceptions import (
@@ -32,19 +30,38 @@ HTTP_400_RESPONSE.status_code = 400
 HTTP_200_RESPONSE = mock.Mock()
 HTTP_200_RESPONSE.status_code = 200
 
+REQUEST_DICT = {
+    'context': {
+    }
+}
+
 
 class TestRetryCheckers(unittest.TestCase):
+    def construct_checker_kwargs(self, response, attempt_number,
+                                 caught_exception):
+        checker_kwargs = {
+            'attempt_number': attempt_number,
+            'response': response,
+            'caught_exception': caught_exception
+        }
+        if isinstance(self.checker, retryhandler.MaxAttemptsDecorator):
+            checker_kwargs.update({'retries_context': REQUEST_DICT['context']})
+
+        return checker_kwargs
+
     def assert_should_be_retried(self, response, attempt_number=1,
                                  caught_exception=None):
-        self.assertTrue(self.checker(
-            response=response, attempt_number=attempt_number,
-            caught_exception=caught_exception))
+        checker_kwargs = self.construct_checker_kwargs(
+            response, attempt_number, caught_exception)
+
+        self.assertTrue(self.checker(**checker_kwargs))
 
     def assert_should_not_be_retried(self, response, attempt_number=1,
                                      caught_exception=None):
-        self.assertFalse(self.checker(
-            response=response, attempt_number=attempt_number,
-            caught_exception=caught_exception))
+        checker_kwargs = self.construct_checker_kwargs(
+            response, attempt_number, caught_exception)
+
+        self.assertFalse(self.checker(**checker_kwargs))
 
     def test_status_code_checker(self):
         self.checker = retryhandler.HTTPStatusCodeChecker(500)
@@ -205,24 +222,28 @@ class TestCreateRetryConfiguration(unittest.TestCase):
         exception = EndpointConnectionError(endpoint_url='')
         with self.assertRaises(EndpointConnectionError):
             handler(response=None, attempts=10,
-                    caught_exception=exception)
+                    caught_exception=exception, request_dict=REQUEST_DICT)
         # No connection error raised because attempts < max_attempts.
         sleep_time = handler(response=None, attempts=1,
-                             caught_exception=exception)
+                             caught_exception=exception, request_dict=REQUEST_DICT)
         self.assertEqual(sleep_time, 1)
         # But any other exception should be raised even if
         # attempts < max_attempts.
         with self.assertRaises(ValueError):
-            sleep_time = handler(response=None, attempts=1,
-                                caught_exception=ValueError())
+            sleep_time = handler(
+                response=None, attempts=1, caught_exception=ValueError(),
+                request_dict=REQUEST_DICT
+            )
 
     def test_connection_timeouts_are_retried(self):
         # If a connection times out, we get a Timout exception
         # from requests.  We should be retrying those.
         handler = retryhandler.create_retry_handler(
             self.retry_config, operation_name='OperationBar')
-        sleep_time = handler(response=None, attempts=1,
-                             caught_exception=ReadTimeoutError(endpoint_url=''))
+        sleep_time = handler(
+            response=None, attempts=1,
+            caught_exception=ReadTimeoutError(endpoint_url=''),
+            request_dict=REQUEST_DICT)
         self.assertEqual(sleep_time, 1)
 
     def test_create_retry_handler_with_no_operation(self):
@@ -245,17 +266,18 @@ class TestCreateRetryConfiguration(unittest.TestCase):
         http_response.content = b'foo'
         # The first 10 attempts we get a retry.
         self.assertEqual(handler(response=(http_response, {}), attempts=1,
-                                 caught_exception=None), 1)
+                                 caught_exception=None,
+                                 request_dict=REQUEST_DICT), 1)
         with self.assertRaises(ChecksumError):
             handler(response=(http_response, {}), attempts=10,
-                    caught_exception=None)
+                    caught_exception=None, request_dict=REQUEST_DICT)
 
 
 class TestRetryHandler(unittest.TestCase):
     def test_action_tied_to_policy(self):
         # When a retry rule matches we should return the
         # amount of time to sleep, otherwise we should return None.
-        delay_function = retryhandler.create_exponential_delay_function( 1, 2)
+        delay_function = retryhandler.create_exponential_delay_function(1, 2)
         checker = retryhandler.HTTPStatusCodeChecker(500)
         handler = retryhandler.RetryHandler(checker, delay_function)
         response = (HTTP_500_RESPONSE, {})
@@ -270,7 +292,7 @@ class TestRetryHandler(unittest.TestCase):
             handler(response=response, attempts=4, caught_exception=None), 8)
 
     def test_none_response_when_no_matches(self):
-        delay_function = retryhandler.create_exponential_delay_function( 1, 2)
+        delay_function = retryhandler.create_exponential_delay_function(1, 2)
         checker = retryhandler.HTTPStatusCodeChecker(500)
         handler = retryhandler.RetryHandler(checker, delay_function)
         response = (HTTP_200_RESPONSE, {})

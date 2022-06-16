@@ -11,6 +11,7 @@
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
+from tests import mock
 from tests import unittest
 from ibm_botocore import model
 from ibm_botocore.paginate import Paginator
@@ -19,8 +20,6 @@ from ibm_botocore.paginate import TokenDecoder
 from ibm_botocore.paginate import TokenEncoder
 from ibm_botocore.exceptions import PaginationError
 from ibm_botocore.compat import six
-
-import mock
 
 
 def encode_token(token):
@@ -90,7 +89,7 @@ class TestPaginatorModel(unittest.TestCase):
 
     def test_get_paginator_no_exists(self):
         with self.assertRaises(ValueError):
-            paginator_config = self.paginator_model.get_paginator('ListBars')
+            self.paginator_model.get_paginator('ListBars')
 
 
 class TestPagination(unittest.TestCase):
@@ -1408,11 +1407,11 @@ class TestStringPageSize(unittest.TestCase):
         self.paginator = Paginator(self.method, self.paginate_config, self.model)
 
     def test_int_page_size(self):
-        res = list(self.paginator.paginate(PaginationConfig={'PageSize': 1}))
+        list(self.paginator.paginate(PaginationConfig={'PageSize': 1}))
         self.method.assert_called_with(MaxItems='1')
 
     def test_str_page_size(self):
-        res = list(self.paginator.paginate(PaginationConfig={'PageSize': '1'}))
+        list(self.paginator.paginate(PaginationConfig={'PageSize': '1'}))
         self.method.assert_called_with(MaxItems='1')
 
 

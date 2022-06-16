@@ -57,7 +57,7 @@ TEMPLATE = """\
 # feature: A larger feature or change in behavior, usually resulting in a
 #          minor version bump.
 # bugfix: Fixing a bug in an existing code path.
-# enhancment: Small change to an underlying implementation detail.
+# enhancement: Small change to an underlying implementation detail.
 # api-change: Changes to a modeled API.
 type: {change_type}
 
@@ -135,7 +135,7 @@ def replace_issue_references(parsed, repo_name):
             '`%s <https://github.com/%s/issues/%s>`__' % (
                 match.group(), repo_name, number))
 
-    new_description = re.sub('#\d+', linkify, description)
+    new_description = re.sub(r'#\d+', linkify, description)
     parsed['description'] = new_description
 
 

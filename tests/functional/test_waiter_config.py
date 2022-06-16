@@ -13,6 +13,8 @@
 import jmespath
 from jsonschema import Draft4Validator
 
+import pytest
+
 import ibm_botocore.session
 from ibm_botocore.exceptions import UnknownServiceError
 from ibm_botocore.utils import ArgumentGenerator
@@ -82,12 +84,11 @@ WAITER_SCHEMA = {
 }
 
 
-def test_lint_waiter_configs():
+def _waiter_configs():
     session = ibm_botocore.session.get_session()
     validator = Draft4Validator(WAITER_SCHEMA)
     for service_name in session.get_available_services():
         client = session.create_client(service_name, 'us-east-1')
-        service_model = client.meta.service_model
         try:
             # We use the loader directly here because we need the entire
             # json document, not just the portions exposed (either
@@ -98,9 +99,14 @@ def test_lint_waiter_configs():
         except UnknownServiceError:
             # The service doesn't have waiters
             continue
-        yield _validate_schema, validator, waiter_model
-        for waiter_name in client.waiter_names:
-            yield _lint_single_waiter, client, waiter_name, service_model
+        yield validator, waiter_model, client
+
+
+@pytest.mark.parametrize("validator, waiter_model, client", _waiter_configs())
+def test_lint_waiter_configs(validator, waiter_model, client):
+    _validate_schema(validator, waiter_model)
+    for waiter_name in client.waiter_names:
+        _lint_single_waiter(client, waiter_name, client.meta.service_model)
 
 
 def _lint_single_waiter(client, waiter_name, service_model):
@@ -157,14 +163,16 @@ def _validate_acceptor(acceptor, op_model, waiter_name):
         # check a few things about this returned search result.
         search_result = _search_jmespath_expression(expression, op_model)
         if search_result is None:
-            raise AssertionError("JMESPath expression did not match "
-                                 "anything for waiter '%s': %s"
-                                 % (waiter_name, expression))
+            raise AssertionError(
+                f"JMESPath expression did not match anything for waiter "
+                f"'{waiter_name}': {expression}"
+            )
         if acceptor.matcher in ['pathAll', 'pathAny']:
-            assert isinstance(search_result, list), \
-                    ("Attempted to use '%s' matcher in waiter '%s' "
-                     "with non list result in JMESPath expression: %s"
-                     % (acceptor.matcher, waiter_name, expression))
+            assert isinstance(search_result, list), (
+                f"Attempted to use '{acceptor.matcher}' matcher in waiter "
+                f"'{waiter_name}' with non list result in JMESPath expression: "
+                f"{expression}"
+            )
 
 
 def _search_jmespath_expression(expression, op_model):

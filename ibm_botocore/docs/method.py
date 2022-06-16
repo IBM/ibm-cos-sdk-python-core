@@ -96,10 +96,13 @@ def document_custom_signature(section, name, method,
     :param exclude: The names of the parameters to exclude from
         documentation.
     """
-    args, varargs, keywords, defaults = inspect.getargspec(method)
-    args = args[1:]
+    argspec = inspect.getfullargspec(method)
     signature_params = inspect.formatargspec(
-        args, varargs, keywords, defaults)
+        args=argspec.args[1:],
+        varargs=argspec.varargs,
+        varkw=argspec.varkw,
+        defaults=argspec.defaults
+    )
     signature_params = signature_params.lstrip('(')
     signature_params = signature_params.rstrip(')')
     section.style.start_sphinx_py_method(name, signature_params)
@@ -177,9 +180,9 @@ def document_model_driven_method(section, method_name, operation_model,
     if operation_model.deprecated:
         method_intro_section.style.start_danger()
         method_intro_section.writeln(
-                'This operation is deprecated and may not function as '
-                'expected. This operation should not be used going forward '
-                'and is only kept for the purpose of backwards compatiblity.')
+            'This operation is deprecated and may not function as '
+            'expected. This operation should not be used going forward '
+            'and is only kept for the purpose of backwards compatiblity.')
         method_intro_section.style.end_danger()
     service_uid = operation_model.service_model.metadata.get('uid')
     if service_uid is not None:

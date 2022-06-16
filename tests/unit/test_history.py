@@ -1,6 +1,5 @@
+from tests import mock
 from tests import unittest
-
-import mock
 
 from ibm_botocore.history import HistoryRecorder
 from ibm_botocore.history import BaseHistoryHandler

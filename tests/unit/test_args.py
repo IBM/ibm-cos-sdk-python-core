@@ -14,8 +14,8 @@
 import socket
 
 import ibm_botocore.config
+from tests import mock
 from tests import unittest
-import mock
 
 from ibm_botocore import args
 from ibm_botocore import exceptions
@@ -211,6 +211,53 @@ class TestCreateClientArgs(unittest.TestCase):
                 ]
             )
 
+    def test_client_config_has_use_dualstack_endpoint_flag(self):
+        self._set_endpoint_bridge_resolve(
+            metadata={
+                'tags': ['dualstack']
+            }
+        )
+        client_args = self.call_get_client_args(
+            service_model=self._get_service_model('ec2'),
+        )
+        self.assertTrue(client_args['client_config'].use_dualstack_endpoint)
+
+    # IBM Unsupported
+    # def test_client_config_has_use_fips_endpoint_flag(self):
+    #     self._set_endpoint_bridge_resolve(
+    #         metadata={
+    #             'tags': ['fips']
+    #         }
+    #     )
+    #     client_args = self.call_get_client_args(
+    #         service_model=self._get_service_model('ec2'),
+    #     )
+    #     self.assertTrue(client_args['client_config'].use_fips_endpoint)
+
+    # IBM Unsupported
+    # def test_client_config_has_both_use_fips_and_use_dualstack__endpoint_flags(self):
+    #     self._set_endpoint_bridge_resolve(
+    #         metadata={
+    #             'tags': ['fips', 'dualstack']
+    #         }
+    #     )
+    #     client_args = self.call_get_client_args(
+    #         service_model=self._get_service_model('ec2'),
+    #     )
+    #     self.assertTrue(client_args['client_config'].use_fips_endpoint)
+    #     self.assertTrue(client_args['client_config'].use_dualstack_endpoint)
+
+    def test_s3_override_use_dualstack_endpoint_flag(self):
+        self._set_endpoint_bridge_resolve(
+            metadata={
+                'tags': ['dualstack']
+            }
+        )
+        client_args = self.call_get_client_args(
+            service_model=self._get_service_model('s3'),
+        )
+        self.assertTrue(client_args['client_config'].s3['use_dualstack_endpoint'])
+
     def test_sts_override_resolved_endpoint_for_legacy_region(self):
         self.config_store.set_config_variable(
             'sts_regional_endpoints', 'legacy')
@@ -329,27 +376,27 @@ class TestCreateClientArgs(unittest.TestCase):
 
     def test_uses_config_value_if_present_for_max_attempts(self):
         config = self.call_get_client_args(
-                client_config=Config(retries={'max_attempts': 2})
+            client_config=Config(retries={'max_attempts': 2})
         )['client_config']
         self.assertEqual(config.retries['total_max_attempts'], 3)
 
     def test_uses_client_config_over_config_store_max_attempts(self):
         self.config_store.set_config_variable('max_attempts', 4)
         config = self.call_get_client_args(
-                client_config=Config(retries={'max_attempts': 2})
+            client_config=Config(retries={'max_attempts': 2})
         )['client_config']
         self.assertEqual(config.retries['total_max_attempts'], 3)
 
     def test_uses_client_config_total_over_config_store_max_attempts(self):
         self.config_store.set_config_variable('max_attempts', 4)
         config = self.call_get_client_args(
-                client_config=Config(retries={'total_max_attempts': 2})
+            client_config=Config(retries={'total_max_attempts': 2})
         )['client_config']
         self.assertEqual(config.retries['total_max_attempts'], 2)
 
     def test_max_attempts_unset_if_retries_is_none(self):
         config = self.call_get_client_args(
-                client_config=Config(retries=None)
+            client_config=Config(retries=None)
         )['client_config']
         self.assertEqual(config.retries, {'mode': 'legacy'})
 
@@ -360,13 +407,30 @@ class TestCreateClientArgs(unittest.TestCase):
 
     def test_retry_mode_set_on_client_config(self):
         config = self.call_get_client_args(
-                client_config=Config(retries={'mode': 'standard'})
+            client_config=Config(retries={'mode': 'standard'})
         )['client_config']
         self.assertEqual(config.retries['mode'], 'standard')
+
+    def test_connect_timeout_set_on_config_store(self):
+        self.config_store.set_config_variable('connect_timeout', 10)
+        config = self.call_get_client_args(
+            client_config=Config(defaults_mode='standard')
+        )['client_config']
+        self.assertEqual(config.connect_timeout, 10)
+
+    def test_connnect_timeout_set_on_client_config(self):
+        config = self.call_get_client_args(
+            client_config=Config(connect_timeout=10)
+        )['client_config']
+        self.assertEqual(config.connect_timeout, 10)
+
+    def test_connnect_timeout_set_to_client_config_default(self):
+        config = self.call_get_client_args()['client_config']
+        self.assertEqual(config.connect_timeout, 60)
 
     def test_client_config_beats_config_store(self):
         self.config_store.set_config_variable('retry_mode', 'adaptive')
         config = self.call_get_client_args(
-                client_config=Config(retries={'mode': 'standard'})
+            client_config=Config(retries={'mode': 'standard'})
         )['client_config']
         self.assertEqual(config.retries['mode'], 'standard')

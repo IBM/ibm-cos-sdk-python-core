@@ -10,7 +10,8 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-from nose.tools import assert_equal
+import pytest
+
 from ibm_botocore.session import get_session
 
 
@@ -99,16 +100,30 @@ NOT_SUPPORTED_IN_SDK = [
 ]
 
 
-def test_endpoint_matches_service():
+SESSION = get_session()
+LOADER = SESSION.get_component('data_loader')
+AVAILABLE_SERVICES = LOADER.list_available_services('service-2')
+
+
+def _known_endpoint_prefixes():
+    # The entries in endpoints.json are keyed off of the endpoint
+    # prefix.  We don't directly have that data, so we have to load
+    # every service model and look up its endpoint prefix in its
+    # ``metadata`` section.
+    return set([
+        SESSION.get_service_model(service_name).endpoint_prefix
+        for service_name in AVAILABLE_SERVICES
+    ])
+
+
+def _computed_endpoint_prefixes():
     # This verifies client names match up with data from the endpoints.json
     # file.  We want to verify that every entry in the endpoints.json
     # file corresponds to a client we can construct via
     # session.create_client(...).
     # So first we get a list of all the service names in the endpoints
     # file.
-    session = get_session()
-    loader = session.get_component('data_loader')
-    endpoints = loader.load_data('endpoints')
+    endpoints = LOADER.load_data('endpoints')
     # A service can be in multiple partitions so we're using
     # a set here to remove dupes.
     services_in_endpoints_file = set([])
@@ -120,101 +135,93 @@ def test_endpoint_matches_service():
             if service not in NOT_SUPPORTED_IN_SDK:
                 services_in_endpoints_file.add(service)
 
-    # Now we need to cross check them against services we know about.
-    # The entries in endpoints.json are keyed off of the endpoint
-    # prefix.  We don't directly have that data, so we have to load
-    # every service model and look up its endpoint prefix in its
-    # ``metadata`` section.
-    known_services = loader.list_available_services('service-2')
-    known_endpoint_prefixes = [
-        session.get_service_model(service_name).endpoint_prefix
-        for service_name in known_services
-    ]
-
     # Now we go through every known endpoint prefix in the endpoints.json
     # file and ensure it maps to an endpoint prefix we've seen
     # in a service model.
+    endpoint_prefixes = []
     for endpoint_prefix in services_in_endpoints_file:
         # Check for an override where we know that an entry
         # in the endpoints.json actually maps to a different endpoint
         # prefix.
         endpoint_prefix = ENDPOINT_PREFIX_OVERRIDE.get(endpoint_prefix,
                                                        endpoint_prefix)
-        yield (_assert_known_endpoint_prefix,
-               endpoint_prefix,
-               known_endpoint_prefixes)
+        endpoint_prefixes.append(endpoint_prefix)
+    return sorted(endpoint_prefixes)
 
 
-def _assert_known_endpoint_prefix(endpoint_prefix, known_endpoint_prefixes):
-    assert endpoint_prefix in known_endpoint_prefixes
+KNOWN_ENDPOINT_PREFIXES = _known_endpoint_prefixes()
+COMPUTED_ENDPOINT_PREFIXES = _computed_endpoint_prefixes()
 
 
-def test_service_name_matches_endpoint_prefix():
-    # Generates tests for each service to verify that the computed service
-    # named based on the service id matches the service name used to
-    # create a client (i.e the directory name in ibm_botocore/data)
-    # unless there is an explicit exception.
-    session = get_session()
-    loader = session.get_component('data_loader')
-
-    # Load the list of available services. The names here represent what
-    # will become the client names.
-    services = loader.list_available_services('service-2')
-
-    for service in services:
-        yield _assert_service_name_matches_endpoint_prefix, session, service
+@pytest.mark.parametrize("endpoint_prefix", COMPUTED_ENDPOINT_PREFIXES)
+def test_endpoint_matches_service(endpoint_prefix):
+    # We need to cross check all computed endpoints against our
+    # known values in endpoints.json, to ensure everything lines
+    # up correctly.
+    assert endpoint_prefix in KNOWN_ENDPOINT_PREFIXES
 
 
-def _assert_service_name_matches_endpoint_prefix(session, service_name):
-    service_model = session.get_service_model(service_name)
+@pytest.mark.parametrize("service_name", AVAILABLE_SERVICES)
+def test_service_name_matches_endpoint_prefix(service_name):
+    """Generates tests for each service to verify that the computed service
+    named based on the service id matches the service name used to
+    create a client (i.e the directory name in ibm_botocore/data)
+    unless there is an explicit exception.
+    """
+    service_model = SESSION.get_service_model(service_name)
     computed_name = service_model.service_id.replace(' ', '-').lower()
 
     # Handle known exceptions where we have renamed the service directory
     # for one reason or another.
     actual_service_name = SERVICE_RENAMES.get(service_name, service_name)
-    assert_equal(
-        computed_name, actual_service_name,
-        "Actual service name `%s` does not match expected service name "
-        "we computed: `%s`" % (
-            actual_service_name, computed_name))
 
-
-_S3_ALLOWED_PSEUDO_FIPS_REGIONS = [
-    'fips-accesspoint-ca-central-1',
-    'fips-accesspoint-us-east-1',
-    'fips-accesspoint-us-east-2',
-    'fips-accesspoint-us-west-1',
-    'fips-accesspoint-us-west-2',
-    'fips-accesspoint-us-gov-east-1',
-    'fips-accesspoint-us-gov-west-1',
-    'fips-us-gov-west-1',
-]
-
-
-def _assert_is_not_psuedo_fips_region(region_name):
-    if region_name in _S3_ALLOWED_PSEUDO_FIPS_REGIONS:
-        return
-
-    msg = (
-        'New S3 FIPS pseudo-region added: "%s". '
-        'FIPS has compliancy requirements that may not be met in all cases '
-        'for S3 clients due to the custom endpoint resolution and '
-        'construction logic.'
+    err_msg = (
+        f"Actual service name `{actual_service_name}` does not match "
+        f"expected service name we computed: `{computed_name}`"
     )
-
-    if 'fips' in region_name:
-        raise RuntimeError(msg % region_name)
+    assert computed_name == actual_service_name, err_msg
 
 
-def test_no_s3_fips_regions():
-    # Fail if additional FIPS pseudo-regions are added to S3.
-    # This may be removed once proper support is implemented for FIPS in S3.
-    session = get_session()
-    loader = session.get_component('data_loader')
-    endpoints = loader.load_data('endpoints')
+# IBM Unsupported
+# _S3_ALLOWED_PSEUDO_FIPS_REGIONS = [
+#     'fips-accesspoint-ca-central-1',
+#     'fips-accesspoint-us-east-1',
+#     'fips-accesspoint-us-east-2',
+#     'fips-accesspoint-us-west-1',
+#     'fips-accesspoint-us-west-2',
+#     'fips-accesspoint-us-gov-east-1',
+#     'fips-accesspoint-us-gov-west-1',
+#     'fips-us-gov-west-1',
+#     'fips-us-gov-east-1',
+#     'fips-ca-central-1',
+#     'fips-us-east-1',
+#     'fips-us-east-2',
+#     'fips-us-west-1',
+#     'fips-us-west-2',
+# ]
 
-    for partition in endpoints['partitions']:
-        s3_service = partition['services'].get('s3', {})
-        for region_name in s3_service['endpoints']:
-            region_name = region_name.lower()
-            yield _assert_is_not_psuedo_fips_region, region_name
+
+# def _s3_region_names():
+#     endpoints = LOADER.load_data('endpoints')
+
+#     for partition in endpoints['partitions']:
+#         s3_service = partition['services'].get('s3', {})
+#         for region_name in s3_service['endpoints']:
+#             yield region_name.lower()
+
+
+# @pytest.mark.parametrize("region_name", _s3_region_names())
+# def test_no_s3_fips_regions(region_name):
+#     # Fail if additional FIPS pseudo-regions are added to S3.
+#     # This may be removed once proper support is implemented for FIPS in S3.
+#     if region_name in _S3_ALLOWED_PSEUDO_FIPS_REGIONS:
+#         return
+
+#     err_msg = (
+#         'New S3 FIPS pseudo-region added: "{region_name}". '
+#         'FIPS has compliancy requirements that may not be met in all cases '
+#         'for S3 clients due to the custom endpoint resolution and '
+#         'construction logic.'
+#     )
+
+#     assert 'fips' not in region_name, err_msg

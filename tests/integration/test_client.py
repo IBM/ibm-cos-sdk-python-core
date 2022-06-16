@@ -12,7 +12,7 @@
 # language governing permissions and limitations under the License.
 import logging
 import datetime
-from tests import unittest, random_chars
+from tests import unittest
 
 import ibm_botocore.session
 from ibm_botocore.client import ClientError

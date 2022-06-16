@@ -1,6 +1,7 @@
 include README.md
 include LICENSE.txt
 include requirements.txt
+include requirements-dev.txt
 include ibm_botocore/cacert.pem
 recursive-include ibm_botocore/data *.json
 graft docs

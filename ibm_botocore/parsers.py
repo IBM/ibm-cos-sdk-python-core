@@ -259,7 +259,14 @@ class ResponseParser(object):
             headers = response['headers']
             response_metadata['HTTPHeaders'] = lowercase_dict(headers)
             parsed['ResponseMetadata'] = response_metadata
+            self._add_checksum_response_metadata(response, response_metadata)
         return parsed
+
+    def _add_checksum_response_metadata(self, response, response_metadata):
+        checksum_context = response.get('context', {}).get('checksum', {})
+        algorithm = checksum_context.get('response_algorithm')
+        if algorithm:
+            response_metadata['ChecksumAlgorithm'] = algorithm
 
     def _is_modeled_error_shape(self, shape):
         return shape is not None and shape.metadata.get('exception', False)
@@ -335,8 +342,8 @@ class ResponseParser(object):
         if shape.is_tagged_union:
             if len(value) != 1:
                 error_msg = (
-                    "Invalid service response: %s must only have one member "
-                    "set."
+                    "Invalid service response: %s must have one and only "
+                    "one member set."
                 )
                 raise ResponseParserError(error_msg % shape.name)
             tag = self._get_first_key(value)
@@ -701,7 +708,7 @@ class BaseJSONParser(ResponseParser):
         except ValueError:
             # if the body cannot be parsed, include
             # the literal string as the message
-            return { 'message': body }
+            return {'message': body}
 
 
 class BaseEventStreamParser(ResponseParser):
@@ -941,6 +948,13 @@ class BaseRestParser(ResponseParser):
             parsed = json.loads(decoded)
         return parsed
 
+    def _handle_list(self, shape, node):
+        location = shape.serialization.get('location')
+        if location == 'header' and not isinstance(node, list):
+            # List in headers may be a comma separated string as per RFC7230
+            node = [e.strip() for e in node.split(',')]
+        return super(BaseRestParser, self)._handle_list(shape, node)
+
 
 class RestJSONParser(BaseRestParser, BaseJSONParser):
 
@@ -967,6 +981,11 @@ class RestJSONParser(BaseRestParser, BaseJSONParser):
         elif 'code' in body or 'Code' in body:
             error['Error']['Code'] = body.get(
                 'code', body.get('Code', ''))
+
+    def _handle_integer(self, shape, value):
+        return int(value)
+
+    _handle_long = _handle_integer
 
 
 class RestXMLParser(BaseRestParser, BaseXMLResponseParser):
@@ -998,7 +1017,7 @@ class RestXMLParser(BaseRestParser, BaseXMLResponseParser):
             # the error response from other sources like the HTTP status code.
             try:
                 return self._parse_error_from_body(response)
-            except ResponseParserError as e:
+            except ResponseParserError:
                 LOG.debug(
                     'Exception caught when parsing error response body:',
                     exc_info=True)

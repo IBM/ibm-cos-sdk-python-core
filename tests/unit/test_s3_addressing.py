@@ -16,7 +16,6 @@
 import os
 
 from tests import BaseSessionTest, ClientHTTPStubber
-from mock import patch, Mock
 
 from ibm_botocore.compat import OrderedDict
 from ibm_botocore.handlers import set_list_objects_encoding_type_url
@@ -86,14 +85,15 @@ class TestS3Addressing(BaseSessionTest):
         self.assertEqual(prepared_request.url,
                          'https://safename.s3.us-gov-west-1.amazonaws.com/')
 
-    def test_list_objects_in_fips(self):
-        self.region_name = 'fips-us-gov-west-1'
-        params = {'Bucket': 'safename'}
-        prepared_request = self.get_prepared_request('list_objects', params)
-        # Note how we keep the region specific endpoint here.
-        self.assertEqual(
-            prepared_request.url,
-            'https://safename.s3-fips.us-gov-west-1.amazonaws.com/')
+    # IBM Unsupported
+    # def test_list_objects_in_fips(self):
+    #     self.region_name = 'fips-us-gov-west-1'
+    #     params = {'Bucket': 'safename'}
+    #     prepared_request = self.get_prepared_request('list_objects', params)
+    #     # Note how we keep the region specific endpoint here.
+    #     self.assertEqual(
+    #         prepared_request.url,
+    #         'https://safename.s3-fips.us-gov-west-1.amazonaws.com/')
 
     def test_list_objects_non_dns_name_non_classic(self):
         self.region_name = 'us-west-2'

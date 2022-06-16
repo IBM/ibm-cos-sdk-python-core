@@ -2,7 +2,7 @@ import select
 import socket
 import contextlib
 import threading
-import mock
+from tests import mock
 from tests import unittest
 from contextlib import contextmanager
 
@@ -94,7 +94,6 @@ class TestClientHTTPBehavior(unittest.TestCase):
             assert e.response['Error']['Code'] == 'AuthFailure'
         finally:
             self.environ_patch.stop()
-
 
     def _read_timeout_server(self):
         config = Config(

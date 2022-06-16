@@ -2,11 +2,13 @@ import os
 import ibm_botocore
 import ast
 
+import pytest
+
 
 ROOTDIR = os.path.dirname(ibm_botocore.__file__)
 
 
-def test_no_bare_six_imports():
+def _all_files():
     for rootdir, dirnames, filenames in os.walk(ROOTDIR):
         if 'vendored' in dirnames:
             # We don't need to lint our vendored packages.
@@ -14,15 +16,15 @@ def test_no_bare_six_imports():
         for filename in filenames:
             if not filename.endswith('.py'):
                 continue
-            fullname = os.path.join(rootdir, filename)
-            yield _assert_no_bare_six_imports, fullname
+            yield os.path.join(rootdir, filename)
 
 
-def _assert_no_bare_six_imports(filename):
+@pytest.mark.parametrize("filename", _all_files())
+def test_no_bare_six_imports(filename):
     with open(filename) as f:
         contents = f.read()
         parsed = ast.parse(contents, filename)
-        checker = SixImportChecker(filename).visit(parsed)
+        SixImportChecker(filename).visit(parsed)
 
 
 class SixImportChecker(ast.NodeVisitor):

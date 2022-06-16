@@ -10,12 +10,11 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-
+from tests import mock
 from tests import unittest
-import mock
 
 from ibm_botocore.stub import Stubber
-from ibm_botocore.exceptions import ParamValidationError, StubResponseError, UnStubbedResponseError
+from ibm_botocore.exceptions import ParamValidationError, UnStubbedResponseError
 from ibm_botocore.model import ServiceModel
 from ibm_botocore import hooks
 
@@ -190,7 +189,6 @@ class TestStubber(unittest.TestCase):
         actual_response_meta = response[1]['ResponseMetadata']
         self.assertIn('RequestId', actual_response_meta)
         self.assertEqual(actual_response_meta['RequestId'], "79104EXAMPLEB723")
-
 
     def test_get_response_errors_with_no_stubs(self):
         self.stubber.activate()

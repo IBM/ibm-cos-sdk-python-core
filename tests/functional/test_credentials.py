@@ -15,7 +15,6 @@ import threading
 import os
 import math
 import time
-import mock
 import tempfile
 import shutil
 from datetime import datetime, timedelta
@@ -24,7 +23,7 @@ import sys
 from dateutil.tz import tzlocal
 from ibm_botocore.exceptions import CredentialRetrievalError
 
-from tests import unittest, IntegerRefresher, BaseEnvVar, random_chars
+from tests import mock, unittest, IntegerRefresher, BaseEnvVar, random_chars
 from tests import temporary_file, StubbedSession, SessionHTTPStubber
 from ibm_botocore import UNSIGNED
 from ibm_botocore.credentials import EnvProvider, ContainerProvider
@@ -35,7 +34,6 @@ from ibm_botocore.credentials import CanonicalNameCredentialSourcer
 from ibm_botocore.credentials import DeferredRefreshableCredentials
 from ibm_botocore.credentials import create_credential_resolver
 from ibm_botocore.credentials import JSONFileCache
-from ibm_botocore.credentials import SSOProvider
 from ibm_botocore.config import Config
 from ibm_botocore.session import Session
 from ibm_botocore.exceptions import InvalidConfigError, InfiniteLoopConfigError
@@ -92,6 +90,7 @@ class TestCredentialRefreshRaces(unittest.TestCase):
             advisory_refresh=1,
             mandatory_refresh=0
         )
+
         def _run_in_thread(collected):
             for _ in range(4000):
                 frozen = creds.get_frozen_credentials()
@@ -117,6 +116,7 @@ class TestCredentialRefreshRaces(unittest.TestCase):
             advisory_refresh=1,
             mandatory_refresh=0
         )
+
         def _run_in_thread(collected):
             for _ in range(100):
                 frozen = creds.get_frozen_credentials()

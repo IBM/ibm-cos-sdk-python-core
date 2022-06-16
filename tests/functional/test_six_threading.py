@@ -1,10 +1,11 @@
 """
 Regression test for six issue #98 (https://github.com/benjaminp/six/issues/98)
 """
-from mock import patch
 import sys
 import threading
 import time
+
+from tests import mock
 
 from ibm_botocore.vendored import six
 
@@ -23,11 +24,8 @@ def _reload_six():
     # Issue #98 is caused by a race condition in six._LazyDescr.__get__
     # which is only called once per moved module. Reload six so all the
     # moved modules are reset.
-    if sys.version_info < (3, 0):
-        reload(six)
-    else:
-        import importlib
-        importlib.reload(six)
+    import importlib
+    importlib.reload(six)
 
 
 class _ExampleThread(threading.Thread):
@@ -48,8 +46,10 @@ class _ExampleThread(threading.Thread):
 
 def test_six_thread_safety():
     _reload_six()
-    with patch('ibm_botocore.vendored.six.moves.__class__.__setattr__',
-               wraps=_wrapped_setattr):
+    with mock.patch(
+        'ibm_botocore.vendored.six.moves.__class__.__setattr__',
+        wraps=_wrapped_setattr
+    ):
         threads = []
         for i in range(2):
             t = _ExampleThread()

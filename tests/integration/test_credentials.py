@@ -11,7 +11,6 @@
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 import os
-import mock
 import tempfile
 import shutil
 import json
@@ -20,7 +19,7 @@ from uuid import uuid4
 
 from ibm_botocore.session import Session
 from ibm_botocore.exceptions import ClientError
-from tests import BaseEnvVar, temporary_file, random_chars
+from tests import BaseEnvVar, mock, temporary_file, random_chars
 
 
 S3_READ_POLICY_ARN = 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess'
@@ -68,9 +67,9 @@ class TestCredentialPrecedence(BaseEnvVar):
         # If all three are given, then the access/secret keys should
         # take precedence.
         s = self.create_session(profile='test')
-
-        client = s.create_client('s3', aws_access_key_id='code',
-                                 aws_secret_access_key='code-secret')
+        s.create_client(
+            's3', aws_access_key_id='code', aws_secret_access_key='code-secret'
+        )
 
         credentials_cls.assert_called_with(
             access_key='code', secret_key='code-secret', token=mock.ANY)
@@ -80,7 +79,6 @@ class TestCredentialPrecedence(BaseEnvVar):
         # then the one set by code should take precedence.
         os.environ['AWS_DEFAULT_PROFILE'] = 'test'
         s = self.create_session(profile='default')
-
         credentials = s.get_credentials()
 
         self.assertEqual(credentials.access_key, 'default')
@@ -93,9 +91,9 @@ class TestCredentialPrecedence(BaseEnvVar):
         os.environ['AWS_ACCESS_KEY_ID'] = 'env'
         os.environ['AWS_SECRET_ACCESS_KEY'] = 'secret'
         s = self.create_session()
-
-        client = s.create_client('s3', aws_access_key_id='code',
-                                 aws_secret_access_key='code-secret')
+        s.create_client(
+            's3', aws_access_key_id='code', aws_secret_access_key='code-secret'
+        )
 
         credentials_cls.assert_called_with(
             access_key='code', secret_key='code-secret', token=mock.ANY)

@@ -17,12 +17,13 @@ import re
 import logging
 
 __author__ = 'IBM'
-__version__ = '2.11.0'
+__version__ = '2.12.0'
 
 
 class NullHandler(logging.Handler):
     def emit(self, record):
         pass
+
 
 # Configure default logger to do nothing
 log = logging.getLogger('ibm_botocore')

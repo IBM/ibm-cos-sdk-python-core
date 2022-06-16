@@ -11,7 +11,6 @@
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 import logging
-import functools
 
 from ibm_botocore import waiter, xform_name
 from ibm_botocore.args import ClientArgsCreator
@@ -20,9 +19,8 @@ from ibm_botocore.awsrequest import prepare_request_dict
 from ibm_botocore.docs.docstring import ClientMethodDocstring
 from ibm_botocore.docs.docstring import PaginatorDocstring
 from ibm_botocore.exceptions import (
-    ClientError, DataNotFoundError, OperationNotPageableError,
-    UnknownSignatureVersionError, InvalidEndpointDiscoveryConfigurationError,
-    UnknownFIPSEndpointError,
+    DataNotFoundError, OperationNotPageableError, UnknownSignatureVersionError,
+    InvalidEndpointDiscoveryConfigurationError
 )
 from ibm_botocore.hooks import first_non_none_response
 from ibm_botocore.model import ServiceModel
@@ -32,11 +30,6 @@ from ibm_botocore.utils import (
     S3ArnParamHandler, S3EndpointSetter, ensure_boolean,
     S3ControlArnParamHandler, S3ControlEndpointSetter,
 )
-from ibm_botocore.args import ClientArgsCreator
-from ibm_botocore import UNSIGNED
-# Keep this imported.  There's pre-existing code that uses
-# "from ibm_botocore.client import Config".
-from ibm_botocore.config import Config
 from ibm_botocore.history import get_global_history_recorder
 from ibm_botocore.discovery import (
     EndpointDiscoveryHandler, EndpointDiscoveryManager,
@@ -44,6 +37,19 @@ from ibm_botocore.discovery import (
 )
 from ibm_botocore.retries import standard
 from ibm_botocore.retries import adaptive
+from ibm_botocore.httpchecksum import (
+    apply_request_checksum,
+    resolve_checksum_context,
+)
+
+# Keep these imported.  There's pre-existing code that uses:
+# "from ibm_botocore.client import Config"
+# "from ibm_botocore.client import ClientError"
+# etc.
+from ibm_botocore.config import Config # noqa
+from ibm_botocore.exceptions import ClientError # noqa
+from ibm_botocore.args import ClientArgsCreator # noqa
+from ibm_botocore import UNSIGNED # noqa
 
 
 logger = logging.getLogger(__name__)
@@ -80,9 +86,13 @@ class ClientCreator(object):
         service_name = first_non_none_response(responses, default=service_name)
         service_model = self._load_service_model(service_name, api_version)
         cls = self._create_client_class(service_name, service_model)
+        # IBM Unsupported
+        # region_name, client_config = self._normalize_fips_region(
+        #     region_name, client_config)
         endpoint_bridge = ClientEndpointBridge(
             self._endpoint_resolver, scoped_config, client_config,
-            service_signing_name=service_model.metadata.get('signingName'))
+            service_signing_name=service_model.metadata.get('signingName'),
+            config_store=self._config_store)
         client_args = self._get_client_args(
             service_model, region_name, is_secure, endpoint_url,
             verify, credentials, scoped_config, client_config, endpoint_bridge)
@@ -97,7 +107,6 @@ class ClientCreator(object):
         self._register_endpoint_discovery(
             service_client, endpoint_url, client_config
         )
-        self._register_lazy_block_unknown_fips_pseudo_regions(service_client)
         return service_client
 
     def create_client_class(self, service_name, api_version=None):
@@ -117,6 +126,31 @@ class ClientCreator(object):
         class_name = get_service_module_name(service_model)
         cls = type(str(class_name), tuple(bases), class_attributes)
         return cls
+
+    # IBM Unsupported
+    # def _normalize_fips_region(self, region_name,
+    #                            client_config):
+    #     if region_name is not None:
+    #         normalized_region_name = region_name.replace(
+    #             'fips-', '').replace('-fips', '')
+    #         # If region has been transformed then set flag
+    #         if normalized_region_name != region_name:
+    #             config_use_fips_endpoint = Config(use_fips_endpoint=True)
+    #             if client_config:
+    #                 # Keeping endpoint setting client specific
+    #                 client_config = client_config.merge(
+    #                     config_use_fips_endpoint)
+    #             else:
+    #                 client_config = config_use_fips_endpoint
+    #             logger.warning(
+    #                 'transforming region from %s to %s and setting '
+    #                 'use_fips_endpoint to true. client should not '
+    #                 'be configured with a fips psuedo region.' % (
+    #                     region_name, normalized_region_name
+    #                 )
+    #             )
+    #             region_name = normalized_region_name
+    #     return region_name, client_config
 
     def _load_service_model(self, service_name, api_version=None):
         json_model = self._loader.load_service_model(service_name, 'service-2',
@@ -233,45 +267,22 @@ class ClientCreator(object):
             return client.meta.service_model.endpoint_discovery_required
         return enabled
 
-    def _register_lazy_block_unknown_fips_pseudo_regions(self, client):
-        # This function blocks usage of FIPS pseudo-regions when the endpoint
-        # is not explicitly known to exist to the client to prevent accidental
-        # usage of incorrect or non-FIPS endpoints. This is done lazily by
-        # registering an exception on the before-sign event to allow for
-        # general client usage such as can_paginate, exceptions, etc.
-        region_name = client.meta.region_name
-        if not region_name or 'fips' not in region_name.lower():
-            return
-
-        partition = client.meta.partition
-        endpoint_prefix = client.meta.service_model.endpoint_prefix
-        known_regions = self._endpoint_resolver.get_available_endpoints(
-            endpoint_prefix,
-            partition,
-            allow_non_regional=True,
-        )
-
-        if region_name not in known_regions:
-            def _lazy_fips_exception(**kwargs):
-                service_name = client.meta.service_model.service_name
-                raise UnknownFIPSEndpointError(
-                    region_name=region_name,
-                    service_name=service_name,
-                )
-            client.meta.events.register('before-sign', _lazy_fips_exception)
-
     def _register_s3_events(self, client, endpoint_bridge, endpoint_url,
                             client_config, scoped_config):
         if client.meta.service_model.service_name != 's3':
             return
         S3RegionRedirector(endpoint_bridge, client).register()
         S3ArnParamHandler().register(client.meta.events)
+        # IBM Unsupported
+        # use_fips_endpoint = client.meta.config.use_fips_endpoint
         S3EndpointSetter(
             endpoint_resolver=self._endpoint_resolver,
             region=client.meta.region_name,
             s3_config=client.meta.config.s3,
             endpoint_url=endpoint_url,
-            partition=client.meta.partition
+            partition=client.meta.partition,
+            # IBM Unsupported
+            # use_fips_endpoint=use_fips_endpoint
         ).register(client.meta.events)
         self._set_s3_presign_signature_version(
             client.meta, client_config, scoped_config)
@@ -282,13 +293,17 @@ class ClientCreator(object):
     ):
         if client.meta.service_model.service_name != 's3control':
             return
+        # IBM Unsupported
+        # use_fips_endpoint = client.meta.config.use_fips_endpoint
         S3ControlArnParamHandler().register(client.meta.events)
         S3ControlEndpointSetter(
             endpoint_resolver=self._endpoint_resolver,
             region=client.meta.region_name,
             s3_config=client.meta.config.s3,
             endpoint_url=endpoint_url,
-            partition=client.meta.partition
+            partition=client.meta.partition,
+            # IBM Unsupported
+            # use_fips_endpoint=use_fips_endpoint
         ).register(client.meta.events)
 
     def _set_s3_presign_signature_version(self, client_meta,
@@ -413,22 +428,33 @@ class ClientEndpointBridge(object):
     utilize "us-east-1" by default if no region can be resolved."""
 
     DEFAULT_ENDPOINT = '{service}.{region}.amazonaws.com'
-    _DUALSTACK_ENABLED_SERVICES = ['s3', 's3-control']
+    _DUALSTACK_CUSTOMIZED_SERVICES = ['s3', 's3-control']
 
     def __init__(self, endpoint_resolver, scoped_config=None,
                  client_config=None, default_endpoint=None,
-                 service_signing_name=None):
+                 service_signing_name=None, config_store=None):
         self.service_signing_name = service_signing_name
         self.endpoint_resolver = endpoint_resolver
         self.scoped_config = scoped_config
         self.client_config = client_config
         self.default_endpoint = default_endpoint or self.DEFAULT_ENDPOINT
+        self.config_store = config_store
 
     def resolve(self, service_name, region_name=None, endpoint_url=None,
                 is_secure=True):
         region_name = self._check_default_region(service_name, region_name)
+        use_dualstack_endpoint = self._resolve_use_dualstack_endpoint(
+            service_name)
+        # IBM Unsupported
+        # use_fips_endpoint = self._resolve_endpoint_variant_config_var(
+        #     'use_fips_endpoint'
+        # )
         resolved = self.endpoint_resolver.construct_endpoint(
-            service_name, region_name)
+            service_name, region_name,
+            use_dualstack_endpoint=use_dualstack_endpoint,
+            # IBM Unsupported
+            # use_fips_endpoint=use_fips_endpoint,
+        )
 
         # If we can't resolve the region, we'll attempt to get a global
         # endpoint for non-regionalized services (iam, route53, etc)
@@ -436,7 +462,11 @@ class ClientEndpointBridge(object):
             # TODO: fallback partition_name should be configurable in the
             # future for users to define as needed.
             resolved = self.endpoint_resolver.construct_endpoint(
-                service_name, region_name, partition_name='aws')
+                service_name, region_name, partition_name='aws',
+                use_dualstack_endpoint=use_dualstack_endpoint,
+                # IBM Unsupported
+                # use_fips_endpoint=use_fips_endpoint,
+            )
 
         if resolved:
             return self._create_endpoint(
@@ -454,19 +484,13 @@ class ClientEndpointBridge(object):
 
     def _create_endpoint(self, resolved, service_name, region_name,
                          endpoint_url, is_secure):
-        explicit_region = region_name is not None
         region_name, signing_region = self._pick_region_values(
             resolved, region_name, endpoint_url)
         if endpoint_url is None:
-            if self._is_s3_dualstack_mode(service_name):
-                endpoint_url = self._create_dualstack_endpoint(
-                    service_name, region_name,
-                    resolved['dnsSuffix'], is_secure, explicit_region)
-            else:
-                # Use the sslCommonName over the hostname for Python 2.6 compat.
-                hostname = resolved.get('sslCommonName', resolved.get('hostname'))
-                endpoint_url = self._make_url(hostname, is_secure,
-                                            resolved.get('protocols', []))
+            # Use the sslCommonName over the hostname for Python 2.6 compat.
+            hostname = resolved.get('sslCommonName', resolved.get('hostname'))
+            endpoint_url = self._make_url(hostname, is_secure,
+                                          resolved.get('protocols', []))
         signature_version = self._resolve_signature_version(
             service_name, resolved)
         signing_name = self._resolve_signing_name(service_name, resolved)
@@ -476,9 +500,28 @@ class ClientEndpointBridge(object):
             endpoint_url=endpoint_url, metadata=resolved,
             signature_version=signature_version)
 
+    def _resolve_endpoint_variant_config_var(self, config_var):
+        client_config = self.client_config
+        config_val = False
+
+        # Client configuration arg has precedence
+        if client_config and getattr(client_config, config_var) is not None:
+            return getattr(client_config, config_var)
+        elif self.config_store is not None:
+            # Check config store
+            config_val = self.config_store.get_config_variable(config_var)
+        return config_val
+
+    def _resolve_use_dualstack_endpoint(self, service_name):
+        s3_dualstack_mode = self._is_s3_dualstack_mode(service_name)
+        if s3_dualstack_mode is not None:
+            return s3_dualstack_mode
+        return self._resolve_endpoint_variant_config_var(
+            'use_dualstack_endpoint')
+
     def _is_s3_dualstack_mode(self, service_name):
-        if service_name not in self._DUALSTACK_ENABLED_SERVICES:
-            return False
+        if service_name not in self._DUALSTACK_CUSTOMIZED_SERVICES:
+            return None
         # TODO: This normalization logic is duplicated from the
         # ClientArgsCreator class.  Consolidate everything to
         # ClientArgsCreator.  _resolve_signature_version also has similarly
@@ -488,27 +531,11 @@ class ClientEndpointBridge(object):
                 'use_dualstack_endpoint' in client_config.s3:
             # Client config trumps scoped config.
             return client_config.s3['use_dualstack_endpoint']
-        if self.scoped_config is None:
-            return False
-        enabled = self.scoped_config.get('s3', {}).get(
-            'use_dualstack_endpoint', False)
-        if enabled in [True, 'True', 'true']:
-            return True
-        return False
-
-    def _create_dualstack_endpoint(self, service_name, region_name,
-                                   dns_suffix, is_secure, explicit_region):
-        if not explicit_region and region_name == 'aws-global':
-            # If the region_name passed was not explicitly set, default to
-            # us-east-1 instead of the modeled default aws-global. Dualstack
-            # does not support aws-global
-            region_name = 'us-east-1'
-        hostname = '{service}.dualstack.{region}.{dns_suffix}'.format(
-            service=service_name, region=region_name,
-            dns_suffix=dns_suffix)
-        # Dualstack supports http and https so were hardcoding this value for
-        # now.  This can potentially move into the endpoints.json file.
-        return self._make_url(hostname, is_secure, ['http', 'https'])
+        if self.scoped_config is not None:
+            enabled = self.scoped_config.get('s3', {}).get(
+                'use_dualstack_endpoint')
+            if enabled in [True, 'True', 'true']:
+                return True
 
     def _assume_endpoint(self, service_name, region_name, endpoint_url,
                          is_secure):
@@ -676,6 +703,7 @@ class BaseClient(object):
         }
         request_dict = self._convert_to_request_dict(
             api_params, operation_model, context=request_context)
+        resolve_checksum_context(request_dict, operation_model, api_params)
 
         service_id = self._service_model.service_id.hyphenize()
         handler, event_response = self.meta.events.emit_until_response(
@@ -688,6 +716,7 @@ class BaseClient(object):
         if event_response is not None:
             http, parsed_response = event_response
         else:
+            apply_request_checksum(request_dict)
             http, parsed_response = self._make_request(
                 operation_model, request_dict, request_context)
 

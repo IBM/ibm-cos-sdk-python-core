@@ -22,6 +22,7 @@ import subprocess
 from collections import namedtuple
 from copy import deepcopy
 from hashlib import sha1
+from pathlib import Path
 
 from dateutil.parser import parse
 from dateutil.tz import tzlocal, tzutc
@@ -315,6 +316,14 @@ class JSONFileCache(object):
         except (OSError, ValueError, IOError):
             raise KeyError(cache_key)
 
+    def __delitem__(self, cache_key):
+        actual_key = self._convert_cache_key(cache_key)
+        try:
+            key_path = Path(actual_key)
+            key_path.unlink()
+        except FileNotFoundError:
+            raise KeyError(cache_key)
+
     def __setitem__(self, cache_key, value):
         full_key = self._convert_cache_key(cache_key)
         try:
@@ -537,7 +546,7 @@ class RefreshableCredentials(Credentials):
         # the self._refresh_lock.
         try:
             metadata = self._refresh_using()
-        except Exception as e:
+        except Exception:
             period_name = 'mandatory' if is_mandatory else 'advisory'
             logger.warning("Refreshing temporary credentials failed "
                            "during %s refresh period.",
@@ -1577,10 +1586,10 @@ class AssumeRoleProvider(CredentialProvider):
         }
 
         if duration_seconds is not None:
-          try:
-            role_config['duration_seconds'] = int(duration_seconds)
-          except ValueError:
-            pass
+            try:
+                role_config['duration_seconds'] = int(duration_seconds)
+            except ValueError:
+                pass
 
         # Either the credential source or the source profile must be
         # specified, but not both.
@@ -1948,7 +1957,6 @@ class ContainerProvider(CredentialProvider):
         )
 
     def _build_headers(self):
-        headers = {}
         auth_token = self._environ.get(self.ENV_VAR_AUTH_TOKEN)
         if auth_token is not None:
             return {

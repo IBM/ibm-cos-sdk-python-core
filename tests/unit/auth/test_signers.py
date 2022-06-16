@@ -12,13 +12,12 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
+from tests import mock
 from tests import unittest
 import datetime
 import time
 import base64
 import json
-
-import mock
 
 import ibm_botocore.auth
 import ibm_botocore.credentials
@@ -98,7 +97,8 @@ class TestHMACV1(unittest.TestCase):
         # specified as query strings end up in the canonical resource.
         operations = ('acl', 'cors', 'lifecycle', 'policy',
                       'notification', 'logging', 'tagging',
-                      'requestPayment', 'versioning', 'website')
+                      'requestPayment', 'versioning', 'website',
+                      'object-lock')
         for operation in operations:
             url = '/quotes?%s' % operation
             split = urlsplit(url)
@@ -405,6 +405,21 @@ class TestS3SigV4Auth(BaseTestWithFixedDate):
         self.auth.add_auth(self.request)
         sha_header = self.request.headers['X-Amz-Content-SHA256']
         self.assertEqual(sha_header, 'UNSIGNED-PAYLOAD')
+
+    # IBM Unsupported
+    # def test_does_not_use_sha256_if_checksum_set(self):
+    #     self.request.context['has_streaming_input'] = True
+    #     self.request.context['checksum'] = {
+    #         'request_algorithm': {
+    #             'in': 'header',
+    #             'name': 'x-amz-checksum-sha256',
+    #             'algorithm': 'sha256',
+    #         }
+    #     }
+    #     self.request.headers.add_header('X-Amz-Checksum-sha256', 'foo')
+    #     self.auth.add_auth(self.request)
+    #     sha_header = self.request.headers['X-Amz-Content-SHA256']
+    #     self.assertEqual(sha_header, 'UNSIGNED-PAYLOAD')
 
     def test_does_not_use_sha256_if_context_config_set(self):
         self.request.context['payload_signing_enabled'] = False
@@ -759,8 +774,7 @@ class TestSigV4Presign(BasePresignTest):
         request.url = 'https://ec2.us-east-1.amazonaws.com/?Action=MyOperation'
         self.auth.add_auth(request)
         # Verify auth params come after the existing params.
-        self.assertIn(
-            '?Action=MyOperation&X-Amz', request.url)
+        self.assertIn('?Action=MyOperation&X-Amz', request.url)
 
     def test_operation_params_before_auth_params_in_body(self):
         request = AWSRequest()
@@ -770,8 +784,32 @@ class TestSigV4Presign(BasePresignTest):
         self.auth.add_auth(request)
         # Same situation, the params from request.data come before the auth
         # params in the query string.
-        self.assertIn(
-            '?Action=MyOperation&X-Amz', request.url)
+        self.assertIn('?Action=MyOperation&X-Amz', request.url)
+
+    def test_operation_params_before_auth_params_in_params(self):
+        request = AWSRequest()
+        request.method = 'GET'
+        request.url = 'https://ec2.us-east-1.amazonaws.com/'
+        request.params = {'Action': 'MyOperation'}
+        self.auth.add_auth(request)
+        # Same situation, the params from request.param come before the
+        # auth params in the query string.
+        self.assertIn('?Action=MyOperation&X-Amz', request.url)
+
+    def test_request_params_not_duplicated_in_prepare(self):
+        """
+        params should be moved to query string in add_auth
+        and not rewritten at the end with request.prepare()
+        """
+        request = AWSRequest(
+            method='GET',
+            url='https://ec2.us-east-1.amazonaws.com/',
+            params={'Action': 'MyOperation'}
+        )
+        self.auth.add_auth(request)
+        self.assertIn('?Action=MyOperation&X-Amz', request.url)
+        prep = request.prepare()
+        assert not prep.url.endswith('Action=MyOperation')
 
     def test_presign_with_spaces_in_param(self):
         request = AWSRequest()

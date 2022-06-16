@@ -10,7 +10,6 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-import mock
 import datetime
 import json
 
@@ -31,6 +30,7 @@ from ibm_botocore.exceptions import UnsupportedSignatureVersionError
 from ibm_botocore.signers import RequestSigner, S3PostPresigner, CloudFrontSigner
 from ibm_botocore.signers import generate_db_auth_token
 
+from tests import mock
 from tests import unittest
 from tests import assert_url_equal
 
@@ -322,10 +322,8 @@ class TestSigner(BaseSignerTest):
             ServiceId('service_name'), 'region_name', 'signing_name',
             'v4', self.credentials, self.emitter)
         auth_cls = mock.Mock()
-        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS,
-                             {'v4': auth_cls}):
-            auth = self.signer.get_auth_instance(
-                'service_name', 'region_name', 'v4')
+        with mock.patch.dict(ibm_botocore.auth.AUTH_TYPE_MAPS, {'v4': auth_cls}):
+            self.signer.get_auth_instance('service_name', 'region_name', 'v4')
             auth_cls.assert_called_with(
                 service_name='service_name',
                 region_name='region_name',

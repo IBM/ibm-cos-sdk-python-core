@@ -10,9 +10,7 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-from tests import unittest, temporary_file
-
-import mock
+from tests import mock, unittest, temporary_file
 
 import ibm_botocore.session
 from ibm_botocore.exceptions import ProfileNotFound
@@ -35,9 +33,9 @@ class TestSession(unittest.TestCase):
 
     def test_credentials_with_profile_precedence(self):
         self.environ['AWS_PROFILE'] = 'from_env_var'
-        self.session.set_config_variable('profile',  'from_session_instance')
+        self.session.set_config_variable('profile', 'from_session_instance')
         try:
-            creds = self.session.get_credentials()
+            self.session.get_credentials()
         except ProfileNotFound as e:
             self.assertNotIn('from_env_var', str(e))
             self.assertIn('from_session_instance', str(e))

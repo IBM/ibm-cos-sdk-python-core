@@ -16,6 +16,7 @@
 This module contains builtin handlers for events emitted by ibm_botocore.
 """
 
+import os
 import base64
 import logging
 import copy
@@ -25,8 +26,8 @@ import uuid
 
 from ibm_botocore.compat import (
     unquote, json, six, unquote_str, ensure_bytes, get_md5,
-    MD5_AVAILABLE, OrderedDict, urlsplit, urlunsplit, XMLParseError,
-    ETree,
+    OrderedDict, urlsplit, urlunsplit, XMLParseError,
+    ETree, quote,
 )
 from ibm_botocore.docs.utils import AutoPopulatedParam
 from ibm_botocore.docs.utils import HideParamFromOperations
@@ -37,18 +38,21 @@ from ibm_botocore.signers import add_generate_db_auth_token
 from ibm_botocore.exceptions import ParamValidationError
 from ibm_botocore.exceptions import AliasConflictParameterError
 from ibm_botocore.exceptions import UnsupportedTLSVersionWarning
-from ibm_botocore.exceptions import MissingServiceIdError
 from ibm_botocore.utils import percent_encode, SAFE_CHARS
 from ibm_botocore.utils import switch_host_with_param
-from ibm_botocore.utils import hyphenize_service_id
 from ibm_botocore.utils import conditionally_calculate_md5
 from ibm_botocore.utils import is_global_accesspoint
 
-from ibm_botocore import retryhandler
 from ibm_botocore import utils
-from ibm_botocore import translate
 import ibm_botocore
 import ibm_botocore.auth
+
+# Keep these imported.  There's pre-existing code that uses them.
+from ibm_botocore import retryhandler # noqa
+from ibm_botocore import translate # noqa
+from ibm_botocore.compat import MD5_AVAILABLE # noqa
+from ibm_botocore.exceptions import MissingServiceIdError # noqa
+from ibm_botocore.utils import hyphenize_service_id # noqa
 
 
 logger = logging.getLogger(__name__)
@@ -81,6 +85,15 @@ def handle_service_name_alias(service_name, **kwargs):
     return SERVICE_NAME_ALIASES.get(service_name, service_name)
 
 
+def add_recursion_detection_header(params, **kwargs):
+    has_lambda_name = 'AWS_LAMBDA_FUNCTION_NAME' in os.environ
+    trace_id = os.environ.get('_X_AMZ_TRACE_ID')
+    if has_lambda_name and trace_id:
+        headers = params['headers']
+        if 'X-Amzn-Trace-Id' not in headers:
+            headers['X-Amzn-Trace-Id'] = quote(trace_id)
+
+
 def escape_xml_payload(params, **kwargs):
     # Replace \r and \n with the escaped sequence over the whole XML document
     # to avoid linebreak normalization modifying customer input when the
@@ -89,22 +102,12 @@ def escape_xml_payload(params, **kwargs):
     # this operation \r and \n can only appear in the XML document if they were
     # passed as part of the customer input.
     body = params['body']
-    replaced = False
     if b'\r' in body:
-        replaced = True
         body = body.replace(b'\r', b'&#xD;')
     if b'\n' in body:
-        replaced = True
         body = body.replace(b'\n', b'&#xA;')
 
-    if not replaced:
-        return
-
     params['body'] = body
-    if 'Content-MD5' in params['headers']:
-        # The Content-MD5 is now wrong, so we'll need to recalculate it
-        del params['headers']['Content-MD5']
-        conditionally_calculate_md5(params, **kwargs)
 
 
 def check_for_200_error(response, **kwargs):
@@ -277,8 +280,10 @@ def _sse_md5(params, sse_member_prefix='SSECustomer'):
 
 
 def _needs_s3_sse_customization(params, sse_member_prefix):
-    return (params.get(sse_member_prefix + 'Key') is not None and
-            sse_member_prefix + 'KeyMD5' not in params)
+    return (
+        params.get(sse_member_prefix + 'Key') is not None
+        and sse_member_prefix + 'KeyMD5' not in params
+    )
 
 
 def disable_signing(**kwargs):
@@ -557,7 +562,7 @@ def validate_ascii_metadata(params, **kwargs):
         try:
             key.encode('ascii')
             value.encode('ascii')
-        except UnicodeEncodeError as e:
+        except UnicodeEncodeError:
             error_msg = (
                 'Non ascii characters found in S3 metadata '
                 'for key "%s", value: "%s".  \nS3 metadata can only '
@@ -764,8 +769,7 @@ def decode_list_object_versions(parsed, context, **kwargs):
 
 
 def _decode_list_object(top_level_keys, nested_keys, parsed, context):
-    if parsed.get('EncodingType') == 'url' and \
-                    context.get('encoding_type_auto_set'):
+    if parsed.get('EncodingType') == 'url' and context.get('encoding_type_auto_set'):
         # URL decode top-level keys in the response if present.
         for key in top_level_keys:
             if key in parsed:
@@ -939,6 +943,21 @@ def remove_lex_v2_start_conversation(class_attributes, **kwargs):
         del class_attributes['start_conversation']
 
 
+def add_retry_headers(request, **kwargs):
+    retries_context = request.context.get('retries')
+    if not retries_context:
+        return
+    headers = request.headers
+    headers['amz-sdk-invocation-id'] = retries_context['invocation-id']
+    sdk_retry_keys = ('ttl', 'attempt', 'max')
+    sdk_request_headers = [
+        f'{key}={retries_context[key]}'
+        for key in sdk_retry_keys
+        if key in retries_context
+    ]
+    headers['amz-sdk-request'] = '; '.join(sdk_request_headers)
+
+
 # This is a list of (event_name, handler).
 # When a Session is created, everything in this list will be
 # automatically registered with that Session.
@@ -982,6 +1001,7 @@ BUILTIN_HANDLERS = [
     ('docs.*.s3.CopyObject.complete-section', document_copy_source_form),
     ('docs.*.s3.UploadPartCopy.complete-section', document_copy_source_form),
 
+    ('before-call', add_recursion_detection_header),
     ('before-call.s3', add_expect_header),
     ('before-call.s3.PutObject', conditionally_calculate_md5),
     ('before-call.s3.UploadPart', conditionally_calculate_md5),
@@ -991,6 +1011,7 @@ BUILTIN_HANDLERS = [
     # IBM COS requires MD5 for UploadPart and CompleteMultipartUpload when
     #   PutBucketProtectionConfiguration has been set on the bucket
 
+    ('request-created', add_retry_headers),
     ('needs-retry.s3.UploadPartCopy', check_for_200_error, REGISTER_FIRST),
     ('needs-retry.s3.CopyObject', check_for_200_error, REGISTER_FIRST),
     ('needs-retry.s3.CompleteMultipartUpload', check_for_200_error,
@@ -1015,8 +1036,7 @@ BUILTIN_HANDLERS = [
      AutoPopulatedParam('SSECustomerKeyMD5').document_auto_populated_param),
     # S3 SSE Copy Source documentation modifications
     ('docs.*.s3.*.complete-section',
-     AutoPopulatedParam(
-        'CopySourceSSECustomerKeyMD5').document_auto_populated_param),
+     AutoPopulatedParam('CopySourceSSECustomerKeyMD5').document_auto_populated_param),
     # The following S3 operations cannot actually accept a ContentMD5
     ('docs.*.s3.*.complete-section',
      HideParamFromOperations(
