@@ -1,11 +1,10 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -15,24 +14,24 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Config Reference &mdash; ibm_botocore 2.12.2 documentation</title>
-    
+    <title>Config Reference &#8212; ibm_botocore 2.13.0 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '2.12.2',
+        VERSION:     '2.13.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="ibm_botocore 2.12.2 documentation" href="../index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Available Services" href="index.html" />
     <link rel="prev" title="Welcome to IBM COS Core Library for Python" href="../index.html" />
   
@@ -40,7 +39,7 @@
 
   </head>
   <body>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -52,7 +51,7 @@
         <li class="right" >
           <a href="../index.html" title="Welcome to IBM COS Core Library for Python"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">ibm_botocore 2.12.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">ibm_botocore 2.13.0 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -62,7 +61,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">ibm_botocore 2.12.2 documentation</a>
+    ../index.html" class="text-logo">ibm_botocore 2.13.0 documentation</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -71,7 +70,7 @@
     
     
       <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="">Config Reference</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Config Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#ibm-botocore-config">ibm_botocore.config</a></li>
 </ul>
 </li>
@@ -131,80 +130,83 @@
 <h2>ibm_botocore.config<a class="headerlink" href="#ibm-botocore-config" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="ibm_botocore.config.Config">
-<em class="property">class </em><tt class="descclassname">ibm_botocore.config.</tt><tt class="descname">Config</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#ibm_botocore.config.Config" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ibm_botocore.config.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#ibm_botocore.config.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Advanced configuration for Botocore clients.</p>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><ul class="first last simple">
-<li><strong>region_name</strong> (<em>str</em>) -- The region to use in instantiating the client</li>
-<li><strong>signature_version</strong> (<em>str</em>) -- The signature version when signing requests.</li>
-<li><strong>user_agent</strong> (<em>str</em>) -- The value to use in the User-Agent header.</li>
-<li><strong>user_agent_extra</strong> (<em>str</em>) -- The value to append to the current User-Agent
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>region_name</strong> (<em>str</em>) – The region to use in instantiating the client</li>
+<li><strong>signature_version</strong> (<em>str</em>) – The signature version when signing requests.</li>
+<li><strong>user_agent</strong> (<em>str</em>) – The value to use in the User-Agent header.</li>
+<li><strong>user_agent_extra</strong> (<em>str</em>) – The value to append to the current User-Agent
 header value.</li>
-<li><strong>connect_timeout</strong> (<em>float or int</em>) -- The time in seconds till a timeout exception is
+<li><strong>connect_timeout</strong> (<em>float</em><em> or </em><em>int</em>) – The time in seconds till a timeout exception is
 thrown when attempting to make a connection. The default is 60
 seconds.</li>
-<li><strong>read_timeout</strong> (<em>float or int</em>) -- The time in seconds till a timeout exception is
+<li><strong>read_timeout</strong> (<em>float</em><em> or </em><em>int</em>) – The time in seconds till a timeout exception is
 thrown when attempting to read from a connection. The default is
 60 seconds.</li>
-<li><strong>parameter_validation</strong> (<em>bool</em>) -- Whether parameter validation should occur
+<li><strong>parameter_validation</strong> (<em>bool</em>) – Whether parameter validation should occur
 when serializing requests. The default is True.  You can disable
-parameter validation for performance reasons.  Otherwise, it's
+parameter validation for performance reasons.  Otherwise, it’s
 recommended to leave parameter validation enabled.</li>
-<li><strong>max_pool_connections</strong> (<em>int</em>) -- The maximum number of connections to
+<li><strong>max_pool_connections</strong> (<em>int</em>) – The maximum number of connections to
 keep in a connection pool.  If this value is not set, the default
 value of 10 is used.</li>
-<li><strong>proxies</strong> (<em>dict</em>) -- A dictionary of proxy servers to use by protocol or
+<li><strong>proxies</strong> (<em>dict</em>) – A dictionary of proxy servers to use by protocol or
 endpoint, e.g.:
-{'http': 'foo.bar:3128', 'http://hostname': 'foo.bar:4012'}.
+{‘http’: ‘foo.bar:3128’, ‘http://hostname’: ‘foo.bar:4012’}.
 The proxies are used on each request.</li>
-<li><strong>proxies_config</strong> (<em>dict</em>) -- <p>A dictionary of additional proxy configurations.
+<li><strong>proxies_config</strong> (<em>dict</em>) – <p>A dictionary of additional proxy configurations.
 Valid keys are:</p>
 <ul>
-<li>'proxy_ca_bundle' -- The path to a custom certificate bundle to use
+<li>’proxy_ca_bundle’ – The path to a custom certificate bundle to use
 when establishing SSL/TLS connections with proxy.</li>
-<li>'proxy_client_cert' -- The path to a certificate for proxy
+<li>’proxy_client_cert’ – The path to a certificate for proxy
 TLS client authentication.<p>When a str is provided it is treated as a path to a proxy client
 certificate. When a two element tuple is provided, it will be
 interpreted as the path to the client certificate, and the path
 to the certificate key.</p>
 </li>
-<li>'proxy_use_forwarding_for_https' -- For HTTPS proxies,
+<li>’proxy_use_forwarding_for_https’ – For HTTPS proxies,
 forward your requests to HTTPS destinations with an absolute
 URI. We strongly recommend you only use this option with
 trusted or corporate proxies. Value must be boolean.</li>
 </ul>
 </li>
-<li><strong>s3</strong> (<em>dict</em>) -- <p>A dictionary of s3 specific configurations.
+<li><strong>s3</strong> (<em>dict</em>) – <p>A dictionary of s3 specific configurations.
 Valid keys are:</p>
 <ul>
-<li>'use_accelerate_endpoint' -- Refers to whether to use the S3
+<li>’use_accelerate_endpoint’ – Refers to whether to use the S3
 Accelerate endpoint. The value must be a boolean. If True, the
 client will use the S3 Accelerate endpoint. If the S3 Accelerate
 endpoint is being used then the addressing style will always
 be virtual.</li>
-<li>'payload_signing_enabled' -- Refers to whether or not to SHA256
+<li>’payload_signing_enabled’ – Refers to whether or not to SHA256
 sign sigv4 payloads. By default, this is disabled for streaming
 uploads (UploadPart and PutObject).</li>
-<li>'addressing_style' -- Refers to the style in which to address
+<li>’addressing_style’ – Refers to the style in which to address
 s3 endpoints. Values must be a string that equals:<ul>
-<li>auto -- Addressing style is chosen for user. Depending
+<li>auto – Addressing style is chosen for user. Depending
 on the configuration of client, the endpoint may be addressed in
 the virtual or the path style. Note that this is the default
 behavior if no style is specified.</li>
-<li>virtual -- Addressing style is always virtual. The name of the
+<li>virtual – Addressing style is always virtual. The name of the
 bucket must be DNS compatible or an exception will be thrown.
 Endpoints will be addressed as such: mybucket.s3.amazonaws.com</li>
-<li>path -- Addressing style is always by path. Endpoints will be
+<li>path – Addressing style is always by path. Endpoints will be
 addressed as such: s3.amazonaws.com/mybucket</li>
 </ul>
 </li>
-<li>'us_east_1_regional_endpoint' - Refers to what S3 endpoint to use
+<li>’us_east_1_regional_endpoint’ - Refers to what S3 endpoint to use
 when the region is configured to be us-east-1. Values must be a
 string that equals:<blockquote>
 <div><ul>
-<li>regional -- Use the us-east-1.amazonaws.com endpoint if the
+<li>regional – Use the us-east-1.amazonaws.com endpoint if the
 client is configured to use the us-east-1 region.</li>
-<li>legacy -- Use the s3.amazonaws.com endpoint if the client is
+<li>legacy – Use the s3.amazonaws.com endpoint if the client is
 configured to use the us-east-1 region. This is the default if
 the configuration option is not specified.</li>
 </ul>
@@ -212,37 +214,37 @@ the configuration option is not specified.</li>
 </li>
 </ul>
 </li>
-<li><strong>retries</strong> (<em>dict</em>) -- <p>A dictionary for retry specific configurations.
+<li><strong>retries</strong> (<em>dict</em>) – <p>A dictionary for retry specific configurations.
 Valid keys are:</p>
 <ul>
-<li>'total_max_attempts' -- An integer representing the maximum number of
+<li>’total_max_attempts’ – An integer representing the maximum number of
 total attempts that will be made on a single request.  This includes
 the initial request, so a value of 1 indicates that no requests
-will be retried.  If <tt class="docutils literal"><span class="pre">total_max_attempts</span></tt> and <tt class="docutils literal"><span class="pre">max_attempts</span></tt>
-are both provided, <tt class="docutils literal"><span class="pre">total_max_attempts</span></tt> takes precedence.
-<tt class="docutils literal"><span class="pre">total_max_attempts</span></tt> is preferred over <tt class="docutils literal"><span class="pre">max_attempts</span></tt> because
-it maps to the <tt class="docutils literal"><span class="pre">AWS_MAX_ATTEMPTS</span></tt> environment variable and
-the <tt class="docutils literal"><span class="pre">max_attempts</span></tt> config file value.</li>
-<li>'max_attempts' -- An integer representing the maximum number of
+will be retried.  If <code class="docutils literal"><span class="pre">total_max_attempts</span></code> and <code class="docutils literal"><span class="pre">max_attempts</span></code>
+are both provided, <code class="docutils literal"><span class="pre">total_max_attempts</span></code> takes precedence.
+<code class="docutils literal"><span class="pre">total_max_attempts</span></code> is preferred over <code class="docutils literal"><span class="pre">max_attempts</span></code> because
+it maps to the <code class="docutils literal"><span class="pre">AWS_MAX_ATTEMPTS</span></code> environment variable and
+the <code class="docutils literal"><span class="pre">max_attempts</span></code> config file value.</li>
+<li>’max_attempts’ – An integer representing the maximum number of
 retry attempts that will be made on a single request. For
 example, setting this value to 2 will result in the request
 being retried at most two times after the initial request. Setting
 this value to 0 will result in no retries ever being attempted on
 the initial request. If not provided, the number of retries will
 default to whatever is modeled, which is typically four retries.</li>
-<li>'mode' -- A string representing the type of retry mode ibm_botocore
+<li>’mode’ – A string representing the type of retry mode ibm_botocore
 should use.  Valid values are:<blockquote>
 <div><ul>
-<li><tt class="docutils literal"><span class="pre">legacy</span></tt> - The pre-existing retry behavior.</li>
-<li><tt class="docutils literal"><span class="pre">standard</span></tt> - The standardized set of retry rules.  This
+<li><code class="docutils literal"><span class="pre">legacy</span></code> - The pre-existing retry behavior.</li>
+<li><code class="docutils literal"><span class="pre">standard</span></code> - The standardized set of retry rules.  This
 will also default to 3 max attempts unless overridden.</li>
-<li><tt class="docutils literal"><span class="pre">adaptive</span></tt> - Retries with additional client side throttling.</li>
+<li><code class="docutils literal"><span class="pre">adaptive</span></code> - Retries with additional client side throttling.</li>
 </ul>
 </div></blockquote>
 </li>
 </ul>
 </li>
-<li><strong>client_cert</strong> (<em>str, (str, str)</em>) -- <p>The path to a certificate for TLS client authentication.</p>
+<li><strong>client_cert</strong> (<em>str</em><em>, </em><em>(</em><em>str</em><em>, </em><em>str</em><em>)</em>) – <p>The path to a certificate for TLS client authentication.</p>
 <p>When a str is provided it is treated as a path to a client certificate
 to be used when creating a TLS connection.</p>
 <p>If a client key is to be provided alongside the client certificate the
@@ -250,19 +252,21 @@ client_cert should be set to a tuple of length two where the first
 element is the path to the client certificate and the second element is
 the path to the certificate key.</p>
 </li>
-<li><strong>inject_host_prefix</strong> (<em>bool</em>) -- <p>Whether host prefix injection should occur.</p>
+<li><strong>inject_host_prefix</strong> (<em>bool</em>) – <p>Whether host prefix injection should occur.</p>
 <p>Defaults to True.</p>
 <p>Setting this to False disables the injection of operation parameters
 into the prefix of the hostname. This is useful for clients providing
 custom endpoints that should not have their host prefix modified.</p>
 </li>
-<li><strong>use_dualstack_endpoint</strong> (<em>bool</em>) -- <p>Setting to True enables dualstack
+<li><strong>use_dualstack_endpoint</strong> (<em>bool</em>) – <p>Setting to True enables dualstack
 endpoint resolution.</p>
 <p>Defaults to None.</p>
 </li>
 </ul>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 <p># IBM Unsupported
 # :type use_fips_endpoint: bool
 # :param use_fips_endpoint: Setting to True enables fips</p>
@@ -272,16 +276,22 @@ endpoint resolution.</p>
 </div></blockquote>
 <dl class="method">
 <dt id="ibm_botocore.config.Config.merge">
-<tt class="descname">merge</tt><big>(</big><em>other_config</em><big>)</big><a class="headerlink" href="#ibm_botocore.config.Config.merge" title="Permalink to this definition">¶</a></dt>
+<code class="descname">merge</code><span class="sig-paren">(</span><em>other_config</em><span class="sig-paren">)</span><a class="headerlink" href="#ibm_botocore.config.Config.merge" title="Permalink to this definition">¶</a></dt>
 <dd><p>Merges the config object with another config object</p>
 <p>This will merge in all non-default values from the provided config
 and return a new config object</p>
-<dl class="docutils field-list" frame="void" rules="none">
-<dt class="field-name">Parameters</dt><dd class="field-body"><strong>config</strong> (<em>other</em>) -- Another config object to merge with. The values
-in the provided config object will take precedence in the merging</dd>
-<dt class="field-name">Returns</dt><dd class="field-body">A config object built from the merged values of both
-config objects.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> (<em>other</em>) – Another config object to merge with. The values
+in the provided config object will take precedence in the merging</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A config object built from the merged values of both
+config objects.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -307,7 +317,7 @@ config objects.</dd>
         </div>
         <div class="clearfix"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -319,7 +329,7 @@ config objects.</dd>
         <li class="right" >
           <a href="../index.html" title="Welcome to IBM COS Core Library for Python"
              >previous</a> |</li>
-        <li><a href="../index.html">ibm_botocore 2.12.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">ibm_botocore 2.13.0 documentation</a> &#187;</li> 
       </ul>
     </div>
 

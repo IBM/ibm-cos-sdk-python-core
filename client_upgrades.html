@@ -1,11 +1,10 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="_static/fonts/open-sans/stylesheet.css" />
@@ -15,36 +14,36 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Upgrading to Clients &mdash; ibm_botocore 2.12.2 documentation</title>
-    
+    <title>Upgrading to Clients &#8212; ibm_botocore 2.13.0 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '2.12.2',
+        VERSION:     '2.13.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="ibm_botocore 2.12.2 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
   
    
 
   </head>
   <body>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li><a href="index.html">ibm_botocore 2.12.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">ibm_botocore 2.13.0 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -54,7 +53,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">ibm_botocore 2.12.2 documentation</a>
+    index.html" class="text-logo">ibm_botocore 2.13.0 documentation</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -146,7 +145,7 @@ so that users could opt in to trying the new clients.</p>
         <span class="n">http</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">http</span><span class="o">.</span><span class="n">content</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>Here's an example of the newer (preferred) client interface:</p>
+<p>Here’s an example of the newer (preferred) client interface:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">botocore.session</span>
 <span class="n">session</span> <span class="o">=</span> <span class="n">botocore</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span>
 <span class="n">s3</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">create_client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">,</span> <span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
@@ -154,17 +153,17 @@ so that users could opt in to trying the new clients.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Contents: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;Contents&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>While there are many improvements with the new interface, here's
+<p>While there are many improvements with the new interface, here’s
 a few notable improvements:</p>
 <ul class="simple">
-<li>Less boilerplate.  With clients, the <tt class="docutils literal"><span class="pre">Endpoints</span></tt> are abstracted
-from the user.  The <tt class="docutils literal"><span class="pre">Operations</span></tt> are also abstracted.  The user
+<li>Less boilerplate.  With clients, the <code class="docutils literal"><span class="pre">Endpoints</span></code> are abstracted
+from the user.  The <code class="docutils literal"><span class="pre">Operations</span></code> are also abstracted.  The user
 only needs to deal with a single class, the client class.</li>
 <li>Exceptions.  With clients, exceptions are raised on failed requests.
 You do not have to check the error code of the http response object</li>
 <li>Return values.  The http response is abstracted from the user.  The
 client method makes an API call and returns a simple python dict.</li>
-<li>More granular context.  Clients allow you to have a context that's
+<li>More granular context.  Clients allow you to have a context that’s
 smaller than on a Service/Operation.  For example, you can now
 create a client and add specific customizations and event handlers
 that apply to only that specific client, instead of any S3 client.</li>
@@ -178,21 +177,21 @@ up to 1.0, we will be deprecating the old interface according
 to this schedule:</p>
 <ul class="simple">
 <li>(<strong>done</strong>) Version 0.66.0 introduced client</li>
-<li>(<strong>done</strong>) Version 0.96.0 emitted a <tt class="docutils literal"><span class="pre">PendingDeprecationWarning</span></tt> when using
+<li>(<strong>done</strong>) Version 0.96.0 emitted a <code class="docutils literal"><span class="pre">PendingDeprecationWarning</span></code> when using
 the old interface.  By default, these warnings are not printed to
 stderr.  A developer will need to opt in to these warnings to
 see any emitted warnings.</li>
-<li>(<strong>done</strong>) Version 0.99.0 emitted a <tt class="docutils literal"><span class="pre">DeprecationWarning</span></tt> when using
+<li>(<strong>done</strong>) Version 0.99.0 emitted a <code class="docutils literal"><span class="pre">DeprecationWarning</span></code> when using
 the old interface.  This has the same behavior as
-<tt class="docutils literal"><span class="pre">PendingDeprecationWarning</span></tt>, in which by default nothing is
+<code class="docutils literal"><span class="pre">PendingDeprecationWarning</span></code>, in which by default nothing is
 printed to stderr.</li>
-<li>Version 0.104.0 emitted an <tt class="docutils literal"><span class="pre">ImminentRemovalWarning</span></tt> when using
+<li>Version 0.104.0 emitted an <code class="docutils literal"><span class="pre">ImminentRemovalWarning</span></code> when using
 the old interface.  This warning is now printed to stderr by default.
-A user can still turn off these warnings via the <tt class="docutils literal"><span class="pre">warnings</span></tt> module.</li>
-<li>The <tt class="docutils literal"><span class="pre">develop</span></tt> branch on github will be updated to completely remove
+A user can still turn off these warnings via the <code class="docutils literal"><span class="pre">warnings</span></code> module.</li>
+<li>The <code class="docutils literal"><span class="pre">develop</span></code> branch on github will be updated to completely remove
 the old interface.  At this point the client interface will be the
-only interface available when using the <tt class="docutils literal"><span class="pre">develop</span></tt> branch on github.</li>
-<li>A 1.0 alpha version will be released.  By default, <tt class="docutils literal"><span class="pre">pip</span></tt> will not
+only interface available when using the <code class="docutils literal"><span class="pre">develop</span></code> branch on github.</li>
+<li>A 1.0 alpha version will be released.  By default, <code class="docutils literal"><span class="pre">pip</span></code> will not
 pick up any alpha/beta releases.</li>
 <li>A 1.0 beta version will be released.</li>
 <li>A GA (1.0) version of botocore will be released.</li>
@@ -205,10 +204,10 @@ pick up any alpha/beta releases.</li>
 to upgrade and some common scenarios and how to upgrade.</p>
 <div class="section" id="keyword-arg-casing">
 <h2>Keyword Arg Casing<a class="headerlink" href="#keyword-arg-casing" title="Permalink to this headline">¶</a></h2>
-<p>In botocore's old interface, kwargs could either be snake_cased or
+<p>In botocore’s old interface, kwargs could either be snake_cased or
 CamelCased and botocore would map them to the correct version needed
 by the service which is CamelCase.</p>
-<p>Botocore's client interface accepts <strong>only</strong> CamelCased args.  More
+<p>Botocore’s client interface accepts <strong>only</strong> CamelCased args.  More
 specifically, botocore uses the same casing used by the respective
 AWS service.  Most AWS services uses CamelCasing.  Some AWS services
 use lowerCamelCase.</p>
@@ -253,8 +252,8 @@ Use a single client to make multiple API calls.</p>
 <h2>Operation and Method Names<a class="headerlink" href="#operation-and-method-names" title="Permalink to this headline">¶</a></h2>
 <p>In the old interface, you would retrieve an API operation using the
 casing defined by the service, which is typically CamelCase.  For example,
-you'd use <tt class="docutils literal"><span class="pre">service.get_operation('ListObjects')</span></tt>, not
-<tt class="docutils literal"><span class="pre">service.get_operation('list_objects')</span></tt>.  With clients, method names,
+you’d use <code class="docutils literal"><span class="pre">service.get_operation('ListObjects')</span></code>, not
+<code class="docutils literal"><span class="pre">service.get_operation('list_objects')</span></code>.  With clients, method names,
 which map 1 - 1 to operation names are snake_cased, as is common in python
 code.</p>
 <p><strong>Old</strong></p>
@@ -274,7 +273,7 @@ code.</p>
 </div>
 <div class="section" id="return-values">
 <h2>Return Values<a class="headerlink" href="#return-values" title="Permalink to this headline">¶</a></h2>
-<p>In the old interface, the return value for an <tt class="docutils literal"><span class="pre">operation.call</span></tt> invocation is
+<p>In the old interface, the return value for an <code class="docutils literal"><span class="pre">operation.call</span></code> invocation is
 a tuple of the HTTP response object, and the parsed dict that results from
 parsing the HTTP object.  In the client interface, only the parsed
 response is returned.  The HTTP response object is not returned.</p>
@@ -294,7 +293,7 @@ response is returned.  The HTTP response object is not returned.</p>
 error occurred via the HTTP response status code.  This is now no longer
 required (discussed below).  Exception are automatically raised.</p>
 <p>Note that if for some reason you do need to see the response status code,
-it is available via the <tt class="docutils literal"><span class="pre">ResponseMetadata</span></tt> in the parsed dict that's
+it is available via the <code class="docutils literal"><span class="pre">ResponseMetadata</span></code> in the parsed dict that’s
 returned.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">ec2</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="s1">&#39;ec2&#39;</span><span class="p">,</span> <span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
 <span class="n">parsed</span> <span class="o">=</span> <span class="n">ec2</span><span class="o">.</span><span class="n">describe_instances</span><span class="p">()</span>
@@ -306,8 +305,8 @@ returned.</p>
 <div class="section" id="error-handling">
 <h2>Error Handling<a class="headerlink" href="#error-handling" title="Permalink to this headline">¶</a></h2>
 <p>With clients, exceptions are now raised on any non 2xx response.
-A <tt class="docutils literal"><span class="pre">ClientError</span></tt> exception has both a <tt class="docutils literal"><span class="pre">.msg</span></tt> attribute as well
-as the parsed error response (which is a dictionary).  There isn't
+A <code class="docutils literal"><span class="pre">ClientError</span></code> exception has both a <code class="docutils literal"><span class="pre">.msg</span></code> attribute as well
+as the parsed error response (which is a dictionary).  There isn’t
 really equivalent functionality in the old interface, but below is
 an example of how you can handle an error:</p>
 <p><strong>New</strong></p>
@@ -324,7 +323,7 @@ an example of how you can handle an error:</p>
 </pre></div>
 </div>
 <p>If you run into any issues migrating from the old interface to the newer
-client interface, please file an issue on github and let us know.  We'd
+client interface, please file an issue on github and let us know.  We’d
 be happy to help.</p>
 </div>
 </div>
@@ -335,13 +334,13 @@ be happy to help.</p>
         </div>
         <div class="clearfix"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li><a href="index.html">ibm_botocore 2.12.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">ibm_botocore 2.13.0 documentation</a> &#187;</li> 
       </ul>
     </div>
 
