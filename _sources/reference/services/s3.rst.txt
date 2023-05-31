@@ -38,6 +38,9 @@ Client
   *   :py:meth:`~S3.Client.can_paginate`
 
   
+  *   :py:meth:`~S3.Client.close`
+
+  
   *   :py:meth:`~S3.Client.complete_multipart_upload`
 
   
@@ -294,7 +297,7 @@ Client
 
      
 
-    For information about permissions required to use the multipart upload, see `Multipart Upload and Permissions <https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuAndPermissions.html>`__ .
+    For information about permissions required to use the multipart upload, see `Multipart Upload and Permissions <https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuAndPermissions.html>`__.
 
      
 
@@ -340,7 +343,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -472,6 +475,12 @@ Client
         ``False`` otherwise.
 
 
+  .. py:method:: close()
+
+        
+    Closes underlying endpoint connections.
+
+
   .. py:method:: complete_multipart_upload(**kwargs)
 
     
@@ -488,7 +497,7 @@ Client
 
      
 
-    Note that if ``CompleteMultipartUpload`` fails, applications should be prepared to retry the failed requests. For more information, see `Amazon S3 Error Best Practices <https://docs.aws.amazon.com/AmazonS3/latest/dev/ErrorBestPractices.html>`__ .
+    Note that if ``CompleteMultipartUpload`` fails, applications should be prepared to retry the failed requests. For more information, see `Amazon S3 Error Best Practices <https://docs.aws.amazon.com/AmazonS3/latest/dev/ErrorBestPractices.html>`__.
 
      
 
@@ -502,11 +511,11 @@ Client
 
      
 
-    For more information about multipart uploads, see `Uploading Objects Using Multipart Upload <https://docs.aws.amazon.com/AmazonS3/latest/dev/uploadobjusingmpu.html>`__ .
+    For more information about multipart uploads, see `Uploading Objects Using Multipart Upload <https://docs.aws.amazon.com/AmazonS3/latest/dev/uploadobjusingmpu.html>`__.
 
      
 
-    For information about permissions required to use the multipart upload API, see `Multipart Upload and Permissions <https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuAndPermissions.html>`__ .
+    For information about permissions required to use the multipart upload API, see `Multipart Upload and Permissions <https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuAndPermissions.html>`__.
 
      
 
@@ -611,7 +620,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -740,7 +749,7 @@ Client
 
            
 
-          When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+          When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
           
         
@@ -754,7 +763,7 @@ Client
 
         - **Expiration** *(string) --* 
 
-          If the object expiration is configured, this will contain the expiration date (``expiry-date`` ) and rule ID (``rule-id`` ). The value of ``rule-id`` is URL-encoded.
+          If the object expiration is configured, this will contain the expiration date ( ``expiry-date`` ) and rule ID ( ``rule-id`` ). The value of ``rule-id`` is URL-encoded.
 
           
         
@@ -854,13 +863,13 @@ Client
 
        
 
-      You can store individual objects of up to 5 TB in Amazon S3. You create a copy of your object up to 5 GB in size in a single atomic action using this API. However, to copy an object greater than 5 GB, you must use the multipart upload Upload Part - Copy (UploadPartCopy) API. For more information, see `Copy Object Using the REST Multipart Upload API <https://docs.aws.amazon.com/AmazonS3/latest/dev/CopyingObjctsUsingRESTMPUapi.html>`__ .
+      You can store individual objects of up to 5 TB in Amazon S3. You create a copy of your object up to 5 GB in size in a single atomic action using this API. However, to copy an object greater than 5 GB, you must use the multipart upload Upload Part - Copy (UploadPartCopy) API. For more information, see `Copy Object Using the REST Multipart Upload API <https://docs.aws.amazon.com/AmazonS3/latest/dev/CopyingObjctsUsingRESTMPUapi.html>`__.
 
        
 
      
 
-    All copy requests must be authenticated. Additionally, you must have *read* access to the source object and *write* access to the destination bucket. For more information, see `REST Authentication <https://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html>`__ . Both the Region that you want to copy the object from and the Region that you want to copy the object to must be enabled for your account.
+    All copy requests must be authenticated. Additionally, you must have *read* access to the source object and *write* access to the destination bucket. For more information, see `REST Authentication <https://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html>`__. Both the Region that you want to copy the object from and the Region that you want to copy the object to must be enabled for your account.
 
      
 
@@ -882,7 +891,7 @@ Client
 
      
 
-    The copy request charge is based on the storage class and Region that you specify for the destination object. For pricing information, see `Amazon S3 pricing <http://aws.amazon.com/s3/pricing/>`__ .
+    The copy request charge is based on the storage class and Region that you specify for the destination object. For pricing information, see `Amazon S3 pricing <http://aws.amazon.com/s3/pricing/>`__.
 
      
 
@@ -890,7 +899,7 @@ Client
 
        
 
-      Amazon S3 transfer acceleration does not support cross-Region copies. If you request a cross-Region copy using a transfer acceleration endpoint, you get a 400 ``Bad Request`` error. For more information, see `Transfer Acceleration <https://docs.aws.amazon.com/AmazonS3/latest/dev/transfer-acceleration.html>`__ .
+      Amazon S3 transfer acceleration does not support cross-Region copies. If you request a cross-Region copy using a transfer acceleration endpoint, you get a 400 ``Bad Request`` error. For more information, see `Transfer Acceleration <https://docs.aws.amazon.com/AmazonS3/latest/dev/transfer-acceleration.html>`__.
 
        
 
@@ -900,11 +909,11 @@ Client
 
      
 
-    When copying an object, you can preserve all metadata (default) or specify new metadata. However, the ACL is not preserved and is set to private for the user making the request. To override the default ACL setting, specify a new ACL when generating a copy request. For more information, see `Using ACLs <https://docs.aws.amazon.com/AmazonS3/latest/dev/S3_ACLs_UsingACLs.html>`__ . 
+    When copying an object, you can preserve all metadata (default) or specify new metadata. However, the ACL is not preserved and is set to private for the user making the request. To override the default ACL setting, specify a new ACL when generating a copy request. For more information, see `Using ACLs <https://docs.aws.amazon.com/AmazonS3/latest/dev/S3_ACLs_UsingACLs.html>`__. 
 
      
 
-    To specify whether you want the object metadata copied from the source object or replaced with metadata provided in the request, you can optionally add the ``x-amz-metadata-directive`` header. When you grant permissions, you can use the ``s3:x-amz-metadata-directive`` condition key to enforce certain metadata behavior when objects are uploaded. For more information, see `Specifying Conditions in a Policy <https://docs.aws.amazon.com/AmazonS3/latest/dev/amazon-s3-policy-keys.html>`__ in the *Amazon S3 User Guide* . For a complete list of Amazon S3-specific condition keys, see `Actions, Resources, and Condition Keys for Amazon S3 <https://docs.aws.amazon.com/AmazonS3/latest/dev/list_amazons3.html>`__ .
+    To specify whether you want the object metadata copied from the source object or replaced with metadata provided in the request, you can optionally add the ``x-amz-metadata-directive`` header. When you grant permissions, you can use the ``s3:x-amz-metadata-directive`` condition key to enforce certain metadata behavior when objects are uploaded. For more information, see `Specifying Conditions in a Policy <https://docs.aws.amazon.com/AmazonS3/latest/dev/amazon-s3-policy-keys.html>`__ in the *Amazon S3 User Guide* . For a complete list of Amazon S3-specific condition keys, see `Actions, Resources, and Condition Keys for Amazon S3 <https://docs.aws.amazon.com/AmazonS3/latest/dev/list_amazons3.html>`__.
 
      
 
@@ -966,7 +975,7 @@ Client
 
      
 
-    When you perform a CopyObject operation, you can optionally use the appropriate encryption-related headers to encrypt the object using server-side encryption with Amazon Web Services managed encryption keys (SSE-S3 or SSE-KMS) or a customer-provided encryption key. With server-side encryption, Amazon S3 encrypts your data as it writes it to disks in its data centers and decrypts the data when you access it. For more information about server-side encryption, see `Using Server-Side Encryption <https://docs.aws.amazon.com/AmazonS3/latest/dev/serv-side-encryption.html>`__ .
+    When you perform a CopyObject operation, you can optionally use the appropriate encryption-related headers to encrypt the object using server-side encryption with Amazon Web Services managed encryption keys (SSE-S3 or SSE-KMS) or a customer-provided encryption key. With server-side encryption, Amazon S3 encrypts your data as it writes it to disks in its data centers and decrypts the data when you access it. For more information about server-side encryption, see `Using Server-Side Encryption <https://docs.aws.amazon.com/AmazonS3/latest/dev/serv-side-encryption.html>`__.
 
      
 
@@ -978,7 +987,7 @@ Client
 
      
 
-    When copying an object, you can optionally use headers to grant ACL-based permissions. By default, all objects are private. Only the owner has full access control. When adding a new object, you can grant permissions to individual Amazon Web Services accounts or to predefined groups defined by Amazon S3. These permissions are then added to the ACL on the object. For more information, see `Access Control List (ACL) Overview <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html>`__ and `Managing ACLs Using the REST API <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-using-rest-api.html>`__ . 
+    When copying an object, you can optionally use headers to grant ACL-based permissions. By default, all objects are private. Only the owner has full access control. When adding a new object, you can grant permissions to individual Amazon Web Services accounts or to predefined groups defined by Amazon S3. These permissions are then added to the ACL on the object. For more information, see `Access Control List (ACL) Overview <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html>`__ and `Managing ACLs Using the REST API <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-using-rest-api.html>`__. 
 
      
 
@@ -1032,7 +1041,7 @@ Client
 
      
 
-    If the source object's storage class is GLACIER, you must restore a copy of this object before you can use it as a source object for the copy operation. For more information, see `RestoreObject <https://docs.aws.amazon.com/AmazonS3/latest/API/API_RestoreObject.html>`__ .
+    If the source object's storage class is GLACIER, you must restore a copy of this object before you can use it as a source object for the copy operation. For more information, see `RestoreObject <https://docs.aws.amazon.com/AmazonS3/latest/API/API_RestoreObject.html>`__.
 
      
 
@@ -1048,7 +1057,7 @@ Client
 
      
 
-    For more information, see `Copying Objects <https://docs.aws.amazon.com/AmazonS3/latest/dev/CopyingObjectsExamples.html>`__ .
+    For more information, see `Copying Objects <https://docs.aws.amazon.com/AmazonS3/latest/dev/CopyingObjectsExamples.html>`__.
 
     
 
@@ -1125,7 +1134,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -1592,15 +1601,15 @@ Client
 
      
 
-    Not every string is an acceptable bucket name. For information about bucket naming restrictions, see `Bucket naming rules <https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html>`__ .
+    Not every string is an acceptable bucket name. For information about bucket naming restrictions, see `Bucket naming rules <https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html>`__.
 
      
 
-    If you want to create an Amazon S3 on Outposts bucket, see `Create Bucket <https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_CreateBucket.html>`__ . 
+    If you want to create an Amazon S3 on Outposts bucket, see `Create Bucket <https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_CreateBucket.html>`__. 
 
      
 
-    By default, the bucket is created in the US East (N. Virginia) Region. You can optionally specify a Region in the request body. You might choose a Region to optimize latency, minimize costs, or address regulatory requirements. For example, if you reside in Europe, you will probably find it advantageous to create buckets in the Europe (Ireland) Region. For more information, see `Accessing a bucket <https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro>`__ .
+    By default, the bucket is created in the US East (N. Virginia) Region. You can optionally specify a Region in the request body. You might choose a Region to optimize latency, minimize costs, or address regulatory requirements. For example, if you reside in Europe, you will probably find it advantageous to create buckets in the Europe (Ireland) Region. For more information, see `Accessing a bucket <https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro>`__.
 
      
 
@@ -1608,7 +1617,7 @@ Client
 
        
 
-      If you send your create bucket request to the ``s3.amazonaws.com`` endpoint, the request goes to the us-east-1 Region. Accordingly, the signature calculations in Signature Version 4 must use us-east-1 as the Region, even if the location constraint in the request specifies another Region where the bucket is to be created. If you create a bucket in a Region other than US East (N. Virginia), your application must be able to handle 307 redirect. For more information, see `Virtual hosting of buckets <https://docs.aws.amazon.com/AmazonS3/latest/dev/VirtualHosting.html>`__ .
+      If you send your create bucket request to the ``s3.amazonaws.com`` endpoint, the request goes to the us-east-1 Region. Accordingly, the signature calculations in Signature Version 4 must use us-east-1 as the Region, even if the location constraint in the request specifies another Region where the bucket is to be created. If you create a bucket in a Region other than US East (N. Virginia), your application must be able to handle 307 redirect. For more information, see `Virtual hosting of buckets <https://docs.aws.amazon.com/AmazonS3/latest/dev/VirtualHosting.html>`__.
 
        
 
@@ -1637,9 +1646,9 @@ Client
      
 
      
-    * Specify a canned ACL using the ``x-amz-acl`` request header. Amazon S3 supports a set of predefined ACLs, known as *canned ACLs* . Each canned ACL has a predefined set of grantees and permissions. For more information, see `Canned ACL <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL>`__ . 
+    * Specify a canned ACL using the ``x-amz-acl`` request header. Amazon S3 supports a set of predefined ACLs, known as *canned ACLs* . Each canned ACL has a predefined set of grantees and permissions. For more information, see `Canned ACL <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL>`__. 
      
-    * Specify access permissions explicitly using the ``x-amz-grant-read`` , ``x-amz-grant-write`` , ``x-amz-grant-read-acp`` , ``x-amz-grant-write-acp`` , and ``x-amz-grant-full-control`` headers. These headers map to the set of permissions Amazon S3 supports in an ACL. For more information, see `Access control list (ACL) overview <https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html>`__ . You specify each grantee as a type=value pair, where the type is one of the following: 
+    * Specify access permissions explicitly using the ``x-amz-grant-read`` , ``x-amz-grant-write`` , ``x-amz-grant-read-acp`` , ``x-amz-grant-write-acp`` , and ``x-amz-grant-full-control`` headers. These headers map to the set of permissions Amazon S3 supports in an ACL. For more information, see `Access control list (ACL) overview <https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html>`__. You specify each grantee as a type=value pair, where the type is one of the following: 
 
        
       * ``id`` – if the value specified is the canonical user ID of an Amazon Web Services account 
@@ -1941,19 +1950,19 @@ Client
 
      
 
-    For more information about multipart uploads, see `Multipart Upload Overview <https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuoverview.html>`__ .
+    For more information about multipart uploads, see `Multipart Upload Overview <https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuoverview.html>`__.
 
      
 
-    If you have configured a lifecycle rule to abort incomplete multipart uploads, the upload must complete within the number of days specified in the bucket lifecycle configuration. Otherwise, the incomplete multipart upload becomes eligible for an abort action and Amazon S3 aborts the multipart upload. For more information, see `Aborting Incomplete Multipart Uploads Using a Bucket Lifecycle Policy <https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuoverview.html#mpu-abort-incomplete-mpu-lifecycle-config>`__ .
+    If you have configured a lifecycle rule to abort incomplete multipart uploads, the upload must complete within the number of days specified in the bucket lifecycle configuration. Otherwise, the incomplete multipart upload becomes eligible for an abort action and Amazon S3 aborts the multipart upload. For more information, see `Aborting Incomplete Multipart Uploads Using a Bucket Lifecycle Policy <https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuoverview.html#mpu-abort-incomplete-mpu-lifecycle-config>`__.
 
      
 
-    For information about the permissions required to use the multipart upload API, see `Multipart Upload and Permissions <https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuAndPermissions.html>`__ .
+    For information about the permissions required to use the multipart upload API, see `Multipart Upload and Permissions <https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuAndPermissions.html>`__.
 
      
 
-    For request signing, multipart upload is just a series of regular requests. You initiate a multipart upload, send one or more requests to upload parts, and then complete the multipart upload process. You sign each request individually. There is nothing special about signing multipart upload requests. For more information about signing, see `Authenticating Requests (Amazon Web Services Signature Version 4) <https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-authenticating-requests.html>`__ .
+    For request signing, multipart upload is just a series of regular requests. You initiate a multipart upload, send one or more requests to upload parts, and then complete the multipart upload process. You sign each request individually. There is nothing special about signing multipart upload requests. For more information about signing, see `Authenticating Requests (Amazon Web Services Signature Version 4) <https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-authenticating-requests.html>`__.
 
      
 
@@ -1979,7 +1988,7 @@ Client
 
      
 
-    For more information, see `Protecting Data Using Server-Side Encryption <https://docs.aws.amazon.com/AmazonS3/latest/dev/serv-side-encryption.html>`__ .
+    For more information, see `Protecting Data Using Server-Side Encryption <https://docs.aws.amazon.com/AmazonS3/latest/dev/serv-side-encryption.html>`__.
 
       Access Permissions  
 
@@ -1988,9 +1997,9 @@ Client
      
 
      
-    * Specify a canned ACL with the ``x-amz-acl`` request header. For more information, see `Canned ACL <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL>`__ . 
+    * Specify a canned ACL with the ``x-amz-acl`` request header. For more information, see `Canned ACL <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL>`__. 
      
-    * Specify access permissions explicitly with the ``x-amz-grant-read`` , ``x-amz-grant-read-acp`` , ``x-amz-grant-write-acp`` , and ``x-amz-grant-full-control`` headers. These parameters map to the set of permissions that Amazon S3 supports in an ACL. For more information, see `Access Control List (ACL) Overview <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html>`__ . 
+    * Specify access permissions explicitly with the ``x-amz-grant-read`` , ``x-amz-grant-read-acp`` , ``x-amz-grant-write-acp`` , and ``x-amz-grant-full-control`` headers. These parameters map to the set of permissions that Amazon S3 supports in an ACL. For more information, see `Access Control List (ACL) Overview <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html>`__. 
      
 
      
@@ -2036,7 +2045,7 @@ Client
 
      
 
-    For more information about server-side encryption with KMS key (SSE-KMS), see `Protecting Data Using Server-Side Encryption with KMS keys <https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html>`__ .
+    For more information about server-side encryption with KMS key (SSE-KMS), see `Protecting Data Using Server-Side Encryption with KMS keys <https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html>`__.
 
      
      
@@ -2052,21 +2061,21 @@ Client
 
      
 
-    For more information about server-side encryption with KMS keys (SSE-KMS), see `Protecting Data Using Server-Side Encryption with KMS keys <https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html>`__ .
+    For more information about server-side encryption with KMS keys (SSE-KMS), see `Protecting Data Using Server-Side Encryption with KMS keys <https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html>`__.
 
      
      
 
       Access-Control-List (ACL)-Specific Request Headers  
 
-    You also can use the following access control–related headers with this operation. By default, all objects are private. Only the owner has full access control. When adding a new object, you can grant permissions to individual Amazon Web Services accounts or to predefined groups defined by Amazon S3. These permissions are then added to the access control list (ACL) on the object. For more information, see `Using ACLs <https://docs.aws.amazon.com/AmazonS3/latest/dev/S3_ACLs_UsingACLs.html>`__ . With this operation, you can grant access permissions using one of the following two methods:
+    You also can use the following access control–related headers with this operation. By default, all objects are private. Only the owner has full access control. When adding a new object, you can grant permissions to individual Amazon Web Services accounts or to predefined groups defined by Amazon S3. These permissions are then added to the access control list (ACL) on the object. For more information, see `Using ACLs <https://docs.aws.amazon.com/AmazonS3/latest/dev/S3_ACLs_UsingACLs.html>`__. With this operation, you can grant access permissions using one of the following two methods:
 
      
 
      
-    * Specify a canned ACL (``x-amz-acl`` ) — Amazon S3 supports a set of predefined ACLs, known as *canned ACLs* . Each canned ACL has a predefined set of grantees and permissions. For more information, see `Canned ACL <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL>`__ . 
+    * Specify a canned ACL ( ``x-amz-acl`` ) — Amazon S3 supports a set of predefined ACLs, known as *canned ACLs* . Each canned ACL has a predefined set of grantees and permissions. For more information, see `Canned ACL <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL>`__. 
      
-    * Specify access permissions explicitly — To explicitly grant access permissions to specific Amazon Web Services accounts or groups, use the following headers. Each header maps to specific permissions that Amazon S3 supports in an ACL. For more information, see `Access Control List (ACL) Overview <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html>`__ . In the header, you specify a list of grantees who get the specific permission. To grant permissions explicitly, use: 
+    * Specify access permissions explicitly — To explicitly grant access permissions to specific Amazon Web Services accounts or groups, use the following headers. Each header maps to specific permissions that Amazon S3 supports in an ACL. For more information, see `Access Control List (ACL) Overview <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html>`__. In the header, you specify a list of grantees who get the specific permission. To grant permissions explicitly, use: 
 
        
       * ``x-amz-grant-read``   
@@ -2214,7 +2223,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -2467,7 +2476,7 @@ Client
 
         - **AbortDate** *(datetime) --* 
 
-          If the bucket has a lifecycle rule configured with an action to abort incomplete multipart uploads and the prefix in the lifecycle rule matches the object name in the request, the response includes this header. The header indicates when the initiated multipart upload becomes eligible for an abort operation. For more information, see `Aborting Incomplete Multipart Uploads Using a Bucket Lifecycle Policy <https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuoverview.html#mpu-abort-incomplete-mpu-lifecycle-config>`__ .
+          If the bucket has a lifecycle rule configured with an action to abort incomplete multipart uploads and the prefix in the lifecycle rule matches the object name in the request, the response includes this header. The header indicates when the initiated multipart upload becomes eligible for an abort operation. For more information, see `Aborting Incomplete Multipart Uploads Using a Bucket Lifecycle Policy <https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuoverview.html#mpu-abort-incomplete-mpu-lifecycle-config>`__.
 
            
 
@@ -2493,7 +2502,7 @@ Client
 
            
 
-          When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+          When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
           
         
@@ -2646,11 +2655,11 @@ Client
 
      
 
-    To use this operation, you must have permissions to perform the ``s3:PutAnalyticsConfiguration`` action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__ .
+    To use this operation, you must have permissions to perform the ``s3:PutAnalyticsConfiguration`` action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__.
 
      
 
-    For information about the Amazon S3 analytics feature, see `Amazon S3 Analytics – Storage Class Analysis <https://docs.aws.amazon.com/AmazonS3/latest/dev/analytics-storage-class.html>`__ . 
+    For information about the Amazon S3 analytics feature, see `Amazon S3 Analytics – Storage Class Analysis <https://docs.aws.amazon.com/AmazonS3/latest/dev/analytics-storage-class.html>`__. 
 
      
 
@@ -2786,11 +2795,11 @@ Client
 
      
 
-    To use this operation, you must have permissions to perform the ``s3:PutInventoryConfiguration`` action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__ .
+    To use this operation, you must have permissions to perform the ``s3:PutInventoryConfiguration`` action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__.
 
      
 
-    For information about the Amazon S3 inventory feature, see `Amazon S3 Inventory <https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-inventory.html>`__ .
+    For information about the Amazon S3 inventory feature, see `Amazon S3 Inventory <https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-inventory.html>`__.
 
      
 
@@ -2858,7 +2867,7 @@ Client
 
      
 
-    For more information about the object expiration, see `Elements to Describe Lifecycle Actions <https://docs.aws.amazon.com/AmazonS3/latest/dev/intro-lifecycle-rules.html#intro-lifecycle-rules-actions>`__ .
+    For more information about the object expiration, see `Elements to Describe Lifecycle Actions <https://docs.aws.amazon.com/AmazonS3/latest/dev/intro-lifecycle-rules.html#intro-lifecycle-rules-actions>`__.
 
      
 
@@ -2930,11 +2939,11 @@ Client
 
      
 
-    To use this operation, you must have permissions to perform the ``s3:PutMetricsConfiguration`` action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__ .
+    To use this operation, you must have permissions to perform the ``s3:PutMetricsConfiguration`` action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__.
 
      
 
-    For information about CloudWatch request metrics for Amazon S3, see `Monitoring Metrics with Amazon CloudWatch <https://docs.aws.amazon.com/AmazonS3/latest/dev/cloudwatch-monitoring.html>`__ . 
+    For information about CloudWatch request metrics for Amazon S3, see `Monitoring Metrics with Amazon CloudWatch <https://docs.aws.amazon.com/AmazonS3/latest/dev/cloudwatch-monitoring.html>`__. 
 
      
 
@@ -3010,7 +3019,7 @@ Client
 
      
 
-    For more information about bucket policies, see `Using Bucket Policies and UserPolicies <https://docs.aws.amazon.com/AmazonS3/latest/dev/using-iam-policies.html>`__ . 
+    For more information about bucket policies, see `Using Bucket Policies and UserPolicies <https://docs.aws.amazon.com/AmazonS3/latest/dev/using-iam-policies.html>`__. 
 
      
 
@@ -3082,7 +3091,7 @@ Client
 
      
 
-    To use this operation, you must have permissions to perform the ``s3:PutReplicationConfiguration`` action. The bucket owner has these permissions by default and can grant it to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__ . 
+    To use this operation, you must have permissions to perform the ``s3:PutReplicationConfiguration`` action. The bucket owner has these permissions by default and can grant it to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__. 
 
      
 
@@ -3244,7 +3253,7 @@ Client
 
      
 
-    For more information about hosting websites, see `Hosting Websites on Amazon S3 <https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html>`__ . 
+    For more information about hosting websites, see `Hosting Websites on Amazon S3 <https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html>`__. 
 
      
 
@@ -3354,11 +3363,11 @@ Client
 
      
 
-    For more information about MFA Delete, see `Using MFA Delete <https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMFADelete.html>`__ . To see sample requests that use versioning, see `Sample Request <https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectDELETE.html#ExampleVersionObjectDelete>`__ . 
+    For more information about MFA Delete, see `Using MFA Delete <https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMFADelete.html>`__. To see sample requests that use versioning, see `Sample Request <https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectDELETE.html#ExampleVersionObjectDelete>`__. 
 
      
 
-    You can delete objects by explicitly calling DELETE Object or configure its lifecycle (`PutBucketLifecycle <https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutBucketLifecycle.html>`__ ) to enable Amazon S3 to remove them for you. If you want to block users or accounts from removing or deleting objects from your bucket, you must deny them the ``s3:DeleteObject`` , ``s3:DeleteObjectVersion`` , and ``s3:PutLifeCycleConfiguration`` actions. 
+    You can delete objects by explicitly calling DELETE Object or configure its lifecycle ( `PutBucketLifecycle <https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutBucketLifecycle.html>`__ ) to enable Amazon S3 to remove them for you. If you want to block users or accounts from removing or deleting objects from your bucket, you must deny them the ``s3:DeleteObject`` , ``s3:DeleteObjectVersion`` , and ``s3:PutLifeCycleConfiguration`` actions. 
 
      
 
@@ -3398,7 +3407,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -3527,7 +3536,7 @@ Client
 
     
 
-    Removes the entire tag set from the specified object. For more information about managing object tags, see `Object Tagging <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-tagging.html>`__ .
+    Removes the entire tag set from the specified object. For more information about managing object tags, see `Object Tagging <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-tagging.html>`__.
 
      
 
@@ -3574,7 +3583,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -3690,7 +3699,7 @@ Client
 
      
 
-    When performing this action on an MFA Delete enabled bucket, that attempts to delete any versioned objects, you must include an MFA token. If you do not provide one, the entire request will fail, even if there are non-versioned objects you are trying to delete. If you provide an invalid token, whether there are versioned keys in the request or not, the entire Multi-Object Delete request will fail. For information about MFA Delete, see `MFA Delete <https://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html#MultiFactorAuthenticationDelete>`__ .
+    When performing this action on an MFA Delete enabled bucket, that attempts to delete any versioned objects, you must include an MFA token. If you do not provide one, the entire request will fail, even if there are non-versioned objects you are trying to delete. If you provide an invalid token, whether there are versioned keys in the request or not, the entire Multi-Object Delete request will fail. For information about MFA Delete, see `MFA Delete <https://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html#MultiFactorAuthenticationDelete>`__.
 
      
 
@@ -3748,7 +3757,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -3785,7 +3794,7 @@ Client
 
                
 
-              Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__ .
+              Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__.
 
                
 
@@ -4319,7 +4328,7 @@ Client
                 
                 * *Code:* InvalidLocationConstraint 
                  
-                * *Description:* The specified location constraint is not valid. For more information about Regions, see `How to Select a Region for Your Buckets <https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro>`__ .  
+                * *Description:* The specified location constraint is not valid. For more information about Regions, see `How to Select a Region for Your Buckets <https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro>`__.  
                  
                 * *HTTP Status Code:* 400 Bad Request 
                  
@@ -5293,7 +5302,7 @@ Client
 
     
 
-    Removes the ``PublicAccessBlock`` configuration for an Amazon S3 bucket. To use this operation, you must have the ``s3:PutBucketPublicAccessBlock`` permission. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__ .
+    Removes the ``PublicAccessBlock`` configuration for an Amazon S3 bucket. To use this operation, you must have the ``s3:PutBucketPublicAccessBlock`` permission. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__.
 
      
 
@@ -6110,7 +6119,7 @@ Client
 
      
 
-    For more information about CORS, see `Enabling Cross-Origin Resource Sharing <https://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html>`__ .
+    For more information about CORS, see `Enabling Cross-Origin Resource Sharing <https://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html>`__.
 
      
 
@@ -6308,11 +6317,11 @@ Client
 
      
 
-    To use this operation, you must have permissions to perform the ``s3:GetInventoryConfiguration`` action. The bucket owner has this permission by default and can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__ .
+    To use this operation, you must have permissions to perform the ``s3:GetInventoryConfiguration`` action. The bucket owner has this permission by default and can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__.
 
      
 
-    For information about the Amazon S3 inventory feature, see `Amazon S3 Inventory <https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-inventory.html>`__ .
+    For information about the Amazon S3 inventory feature, see `Amazon S3 Inventory <https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-inventory.html>`__.
 
      
 
@@ -6533,17 +6542,17 @@ Client
 
        
 
-      Bucket lifecycle configuration now supports specifying a lifecycle rule using an object key name prefix, one or more object tags, or a combination of both. Accordingly, this section describes the latest API. The response describes the new filter element that you can use to specify a filter to select a subset of objects to which the rule applies. If you are using a previous version of the lifecycle configuration, it still works. For the earlier action, see `GetBucketLifecycle <https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketLifecycle.html>`__ .
+      Bucket lifecycle configuration now supports specifying a lifecycle rule using an object key name prefix, one or more object tags, or a combination of both. Accordingly, this section describes the latest API. The response describes the new filter element that you can use to specify a filter to select a subset of objects to which the rule applies. If you are using a previous version of the lifecycle configuration, it still works. For the earlier action, see `GetBucketLifecycle <https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketLifecycle.html>`__.
 
        
 
      
 
-    Returns the lifecycle configuration information set on the bucket. For information about lifecycle configuration, see `Object Lifecycle Management <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lifecycle-mgmt.html>`__ .
+    Returns the lifecycle configuration information set on the bucket. For information about lifecycle configuration, see `Object Lifecycle Management <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lifecycle-mgmt.html>`__.
 
      
 
-    To use this operation, you must have permission to perform the ``s3:GetLifecycleConfiguration`` action. The bucket owner has this permission, by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__ .
+    To use this operation, you must have permission to perform the ``s3:GetLifecycleConfiguration`` action. The bucket owner has this permission, by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__.
 
      
 
@@ -6719,7 +6728,7 @@ Client
 
                    
 
-                  Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__ .
+                  Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__.
 
                    
 
@@ -6865,7 +6874,7 @@ Client
 
     
 
-    Returns the Region the bucket resides in. You set the bucket's Region using the ``LocationConstraint`` request parameter in a ``CreateBucket`` request. For more information, see `CreateBucket <https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateBucket.html>`__ .
+    Returns the Region the bucket resides in. You set the bucket's Region using the ``LocationConstraint`` request parameter in a ``CreateBucket`` request. For more information, see `CreateBucket <https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateBucket.html>`__.
 
      
 
@@ -6932,7 +6941,7 @@ Client
 
         - **LocationConstraint** *(string) --* 
 
-          Specifies the Region where the bucket resides. For a list of all the Amazon S3 supported location constraints by Region, see `Regions and Endpoints <https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region>`__ . Buckets in Region ``us-east-1`` have a LocationConstraint of ``null`` .
+          Specifies the Region where the bucket resides. For a list of all the Amazon S3 supported location constraints by Region, see `Regions and Endpoints <https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region>`__. Buckets in Region ``us-east-1`` have a LocationConstraint of ``null`` .
 
           
     
@@ -6969,11 +6978,11 @@ Client
 
      
 
-    To use this operation, you must have permissions to perform the ``s3:GetMetricsConfiguration`` action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__ .
+    To use this operation, you must have permissions to perform the ``s3:GetMetricsConfiguration`` action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__.
 
      
 
-    For information about CloudWatch request metrics for Amazon S3, see `Monitoring Metrics with Amazon CloudWatch <https://docs.aws.amazon.com/AmazonS3/latest/dev/cloudwatch-monitoring.html>`__ .
+    For information about CloudWatch request metrics for Amazon S3, see `Monitoring Metrics with Amazon CloudWatch <https://docs.aws.amazon.com/AmazonS3/latest/dev/cloudwatch-monitoring.html>`__.
 
      
 
@@ -7268,7 +7277,7 @@ Client
 
      
 
-    This action requires permissions for the ``s3:GetReplicationConfiguration`` action. For more information about permissions, see `Using Bucket Policies and User Policies <https://docs.aws.amazon.com/AmazonS3/latest/dev/using-iam-policies.html>`__ .
+    This action requires permissions for the ``s3:GetReplicationConfiguration`` action. For more information about permissions, see `Using Bucket Policies and User Policies <https://docs.aws.amazon.com/AmazonS3/latest/dev/using-iam-policies.html>`__.
 
      
 
@@ -7418,7 +7427,7 @@ Client
 
                    
 
-                  Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__ .
+                  Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__.
 
                    
 
@@ -7554,11 +7563,11 @@ Client
 
               - **DeleteMarkerReplication** *(dict) --* 
 
-                Specifies whether Amazon S3 replicates delete markers. If you specify a ``Filter`` in your replication configuration, you must also include a ``DeleteMarkerReplication`` element. If your ``Filter`` includes a ``Tag`` element, the ``DeleteMarkerReplication``  ``Status`` must be set to Disabled, because Amazon S3 does not support replicating delete markers for tag-based rules. For an example configuration, see `Basic Rule Configuration <https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-add-config.html#replication-config-min-rule-config>`__ . 
+                Specifies whether Amazon S3 replicates delete markers. If you specify a ``Filter`` in your replication configuration, you must also include a ``DeleteMarkerReplication`` element. If your ``Filter`` includes a ``Tag`` element, the ``DeleteMarkerReplication``  ``Status`` must be set to Disabled, because Amazon S3 does not support replicating delete markers for tag-based rules. For an example configuration, see `Basic Rule Configuration <https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-add-config.html#replication-config-min-rule-config>`__. 
 
                  
 
-                For more information about delete marker replication, see `Basic Rule Configuration <https://docs.aws.amazon.com/AmazonS3/latest/dev/delete-marker-replication.html>`__ . 
+                For more information about delete marker replication, see `Basic Rule Configuration <https://docs.aws.amazon.com/AmazonS3/latest/dev/delete-marker-replication.html>`__. 
 
                  
 
@@ -7566,7 +7575,7 @@ Client
 
                    
 
-                  If you are using an earlier version of the replication configuration, Amazon S3 handles replication of delete markers differently. For more information, see `Backward Compatibility <https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-add-config.html#replication-backward-compat-considerations>`__ .
+                  If you are using an earlier version of the replication configuration, Amazon S3 handles replication of delete markers differently. For more information, see `Backward Compatibility <https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-add-config.html#replication-backward-compat-considerations>`__.
 
                    
 
@@ -7899,7 +7908,7 @@ Client
 
     
 
-    Returns the website configuration for a bucket. To host website on Amazon S3, you can configure a bucket as website by adding a website configuration. For more information about hosting websites, see `Hosting Websites on Amazon S3 <https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html>`__ . 
+    Returns the website configuration for a bucket. To host website on Amazon S3, you can configure a bucket as website by adding a website configuration. For more information about hosting websites, see `Hosting Websites on Amazon S3 <https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html>`__. 
 
      
 
@@ -8023,7 +8032,7 @@ Client
 
                
 
-              Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__ .
+              Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__.
 
                
 
@@ -8048,7 +8057,7 @@ Client
 
                
 
-              Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__ .
+              Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__.
 
                
 
@@ -8094,7 +8103,7 @@ Client
 
                    
 
-                  Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__ .
+                  Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__.
 
                    
 
@@ -8140,7 +8149,7 @@ Client
 
                    
 
-                  Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__ .
+                  Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__.
 
                    
 
@@ -8157,7 +8166,7 @@ Client
 
                    
 
-                  Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__ .
+                  Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__.
 
                    
 
@@ -8208,15 +8217,15 @@ Client
 
      
 
-    To get an object from such a logical hierarchy, specify the full key name for the object in the ``GET`` operation. For a virtual hosted-style request example, if you have the object ``photos/2006/February/sample.jpg`` , specify the resource as ``/photos/2006/February/sample.jpg`` . For a path-style request example, if you have the object ``photos/2006/February/sample.jpg`` in the bucket named ``examplebucket`` , specify the resource as ``/examplebucket/photos/2006/February/sample.jpg`` . For more information about request types, see `HTTP Host Header Bucket Specification <https://docs.aws.amazon.com/AmazonS3/latest/dev/VirtualHosting.html#VirtualHostingSpecifyBucket>`__ .
+    To get an object from such a logical hierarchy, specify the full key name for the object in the ``GET`` operation. For a virtual hosted-style request example, if you have the object ``photos/2006/February/sample.jpg`` , specify the resource as ``/photos/2006/February/sample.jpg`` . For a path-style request example, if you have the object ``photos/2006/February/sample.jpg`` in the bucket named ``examplebucket`` , specify the resource as ``/examplebucket/photos/2006/February/sample.jpg`` . For more information about request types, see `HTTP Host Header Bucket Specification <https://docs.aws.amazon.com/AmazonS3/latest/dev/VirtualHosting.html#VirtualHostingSpecifyBucket>`__.
 
      
 
-    For more information about returning the ACL of an object, see `GetObjectAcl <https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectAcl.html>`__ .
+    For more information about returning the ACL of an object, see `GetObjectAcl <https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectAcl.html>`__.
 
      
 
-    If the object you are retrieving is stored in the S3 Glacier or S3 Glacier Deep Archive storage class, or S3 Intelligent-Tiering Archive or S3 Intelligent-Tiering Deep Archive tiers, before you can retrieve the object you must first restore a copy using `RestoreObject <https://docs.aws.amazon.com/AmazonS3/latest/API/API_RestoreObject.html>`__ . Otherwise, this action returns an ``InvalidObjectStateError`` error. For information about restoring archived objects, see `Restoring Archived Objects <https://docs.aws.amazon.com/AmazonS3/latest/dev/restoring-objects.html>`__ .
+    If the object you are retrieving is stored in the S3 Glacier or S3 Glacier Deep Archive storage class, or S3 Intelligent-Tiering Archive or S3 Intelligent-Tiering Deep Archive tiers, before you can retrieve the object you must first restore a copy using `RestoreObject <https://docs.aws.amazon.com/AmazonS3/latest/API/API_RestoreObject.html>`__. Otherwise, this action returns an ``InvalidObjectStateError`` error. For information about restoring archived objects, see `Restoring Archived Objects <https://docs.aws.amazon.com/AmazonS3/latest/dev/restoring-objects.html>`__.
 
      
 
@@ -8238,7 +8247,7 @@ Client
 
      
 
-    For more information about SSE-C, see `Server-Side Encryption (Using Customer-Provided Encryption Keys) <https://docs.aws.amazon.com/AmazonS3/latest/dev/ServerSideEncryptionCustomerKeys.html>`__ .
+    For more information about SSE-C, see `Server-Side Encryption (Using Customer-Provided Encryption Keys) <https://docs.aws.amazon.com/AmazonS3/latest/dev/ServerSideEncryptionCustomerKeys.html>`__.
 
      
 
@@ -8250,7 +8259,7 @@ Client
 
      
 
-    You need the relevant read object (or version) permission for this operation. For more information, see `Specifying Permissions in a Policy <https://docs.aws.amazon.com/AmazonS3/latest/dev/using-with-s3-actions.html>`__ . If the object you request does not exist, the error Amazon S3 returns depends on whether you also have the ``s3:ListBucket`` permission.
+    You need the relevant read object (or version) permission for this operation. For more information, see `Specifying Permissions in a Policy <https://docs.aws.amazon.com/AmazonS3/latest/dev/using-with-s3-actions.html>`__. If the object you request does not exist, the error Amazon S3 returns depends on whether you also have the ``s3:ListBucket`` permission.
 
      
 
@@ -8284,7 +8293,7 @@ Client
 
      
 
-    For more information about versioning, see `PutBucketVersioning <https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutBucketVersioning.html>`__ . 
+    For more information about versioning, see `PutBucketVersioning <https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutBucketVersioning.html>`__. 
 
      
 
@@ -8334,11 +8343,11 @@ Client
 
      
 
-    If both of the ``If-None-Match`` and ``If-Modified-Since`` headers are present in the request as follows:``If-None-Match`` condition evaluates to ``false`` , and; ``If-Modified-Since`` condition evaluates to ``true`` ; then, S3 returns 304 Not Modified response code.
+    If both of the ``If-None-Match`` and ``If-Modified-Since`` headers are present in the request as follows: ``If-None-Match`` condition evaluates to ``false`` , and; ``If-Modified-Since`` condition evaluates to ``true`` ; then, S3 returns 304 Not Modified response code.
 
      
 
-    For more information about conditional requests, see `RFC 7232 <https://tools.ietf.org/html/rfc7232>`__ .
+    For more information about conditional requests, see `RFC 7232 <https://tools.ietf.org/html/rfc7232>`__.
 
      
 
@@ -8397,7 +8406,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -8449,7 +8458,7 @@ Client
     :type Range: string
     :param Range: 
 
-      Downloads the specified range bytes of an object. For more information about the HTTP Range header, see `https\://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35 <https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35>`__ .
+      Downloads the specified range bytes of an object. For more information about the HTTP Range header, see `https\://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35 <https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35>`__.
 
        
 
@@ -9263,7 +9272,7 @@ Client
 
     
 
-    Gets an object's current legal hold status. For more information, see `Locking Objects <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock.html>`__ .
+    Gets an object's current legal hold status. For more information, see `Locking Objects <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock.html>`__.
 
      
 
@@ -9383,7 +9392,7 @@ Client
 
     
 
-    Gets the Object Lock configuration for a bucket. The rule specified in the Object Lock configuration will be applied by default to every new object placed in the specified bucket. For more information, see `Locking Objects <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock.html>`__ .
+    Gets the Object Lock configuration for a bucket. The rule specified in the Object Lock configuration will be applied by default to every new object placed in the specified bucket. For more information, see `Locking Objects <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock.html>`__.
 
      
 
@@ -9507,7 +9516,7 @@ Client
 
     
 
-    Retrieves an object's retention settings. For more information, see `Locking Objects <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock.html>`__ .
+    Retrieves an object's retention settings. For more information, see `Locking Objects <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock.html>`__.
 
      
 
@@ -9634,7 +9643,7 @@ Client
 
      
 
-    For information about the Amazon S3 object tagging feature, see `Object Tagging <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-tagging.html>`__ .
+    For information about the Amazon S3 object tagging feature, see `Object Tagging <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-tagging.html>`__.
 
      
 
@@ -9676,7 +9685,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -9836,7 +9845,7 @@ Client
 
     
 
-    Returns torrent files from a bucket. BitTorrent can save you bandwidth when you're distributing large files. For more information about BitTorrent, see `Using BitTorrent with Amazon S3 <https://docs.aws.amazon.com/AmazonS3/latest/dev/S3Torrent.html>`__ .
+    Returns torrent files from a bucket. BitTorrent can save you bandwidth when you're distributing large files. For more information about BitTorrent, see `Using BitTorrent with Amazon S3 <https://docs.aws.amazon.com/AmazonS3/latest/dev/S3Torrent.html>`__.
 
      
 
@@ -9987,7 +9996,7 @@ Client
 
     
 
-    Retrieves the ``PublicAccessBlock`` configuration for an Amazon S3 bucket. To use this operation, you must have the ``s3:GetBucketPublicAccessBlock`` permission. For more information about Amazon S3 permissions, see `Specifying Permissions in a Policy <https://docs.aws.amazon.com/AmazonS3/latest/dev/using-with-s3-actions.html>`__ .
+    Retrieves the ``PublicAccessBlock`` configuration for an Amazon S3 bucket. To use this operation, you must have the ``s3:GetBucketPublicAccessBlock`` permission. For more information about Amazon S3 permissions, see `Specifying Permissions in a Policy <https://docs.aws.amazon.com/AmazonS3/latest/dev/using-with-s3-actions.html>`__.
 
      
 
@@ -10001,7 +10010,7 @@ Client
 
      
 
-    For more information about when Amazon S3 considers a bucket or an object public, see `The Meaning of "Public" <https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html#access-control-block-public-access-policy-status>`__ .
+    For more information about when Amazon S3 considers a bucket or an object public, see `The Meaning of "Public" <https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html#access-control-block-public-access-policy-status>`__.
 
      
 
@@ -10130,11 +10139,11 @@ Client
 
      
 
-    To use this operation, you must have permissions to perform the ``s3:ListBucket`` action. The bucket owner has this permission by default and can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__ .
+    To use this operation, you must have permissions to perform the ``s3:ListBucket`` action. The bucket owner has this permission by default and can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__.
 
      
 
-    To use this API against an access point, you must provide the alias of the access point in place of the bucket name or specify the access point ARN. When using the access point ARN, you must direct requests to the access point hostname. The access point hostname takes the form AccessPointName-AccountId.s3-accesspoint.Region.amazonaws.com. When using the Amazon Web Services SDKs, you provide the ARN in place of the bucket name. For more information see, `Using access points <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-access-points.html>`__ .
+    To use this API against an access point, you must provide the alias of the access point in place of the bucket name or specify the access point ARN. When using the access point ARN, you must direct requests to the access point hostname. The access point hostname takes the form AccessPointName-AccountId.s3-accesspoint.Region.amazonaws.com. When using the Amazon Web Services SDKs, you provide the ARN in place of the bucket name. For more information see, `Using access points <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-access-points.html>`__.
 
     
 
@@ -10159,7 +10168,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -10248,7 +10257,7 @@ Client
 
      
 
-    For more information about SSE-C, see `Server-Side Encryption (Using Customer-Provided Encryption Keys) <https://docs.aws.amazon.com/AmazonS3/latest/dev/ServerSideEncryptionCustomerKeys.html>`__ .
+    For more information about SSE-C, see `Server-Side Encryption (Using Customer-Provided Encryption Keys) <https://docs.aws.amazon.com/AmazonS3/latest/dev/ServerSideEncryptionCustomerKeys.html>`__.
 
      
 
@@ -10266,7 +10275,7 @@ Client
 
      
 
-    Request headers are limited to 8 KB in size. For more information, see `Common Request Headers <https://docs.aws.amazon.com/AmazonS3/latest/API/RESTCommonRequestHeaders.html>`__ .
+    Request headers are limited to 8 KB in size. For more information, see `Common Request Headers <https://docs.aws.amazon.com/AmazonS3/latest/API/RESTCommonRequestHeaders.html>`__.
 
      
 
@@ -10306,7 +10315,7 @@ Client
 
      
 
-    For more information about conditional requests, see `RFC 7232 <https://tools.ietf.org/html/rfc7232>`__ .
+    For more information about conditional requests, see `RFC 7232 <https://tools.ietf.org/html/rfc7232>`__.
 
      
 
@@ -10314,7 +10323,7 @@ Client
 
      
 
-    You need the relevant read object (or version) permission for this operation. For more information, see `Specifying Permissions in a Policy <https://docs.aws.amazon.com/AmazonS3/latest/dev/using-with-s3-actions.html>`__ . If the object you request does not exist, the error Amazon S3 returns depends on whether you also have the s3:ListBucket permission.
+    You need the relevant read object (or version) permission for this operation. For more information, see `Specifying Permissions in a Policy <https://docs.aws.amazon.com/AmazonS3/latest/dev/using-with-s3-actions.html>`__. If the object you request does not exist, the error Amazon S3 returns depends on whether you also have the s3:ListBucket permission.
 
      
 
@@ -10371,7 +10380,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -10570,7 +10579,7 @@ Client
 
            
 
-          For more information about archiving objects, see `Transitioning Objects\: General Considerations <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lifecycle-mgmt.html#lifecycle-transition-general-considerations>`__ .
+          For more information about archiving objects, see `Transitioning Objects\: General Considerations <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lifecycle-mgmt.html#lifecycle-transition-general-considerations>`__.
 
           
         
@@ -10717,7 +10726,7 @@ Client
 
            
 
-          For more information, see `Storage Classes <https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro.html>`__ .
+          For more information, see `Storage Classes <https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro.html>`__.
 
           
         
@@ -10735,7 +10744,7 @@ Client
 
            
 
-          In replication, you have a source bucket on which you configure replication and destination bucket or buckets where Amazon S3 stores object replicas. When you request an object (``GetObject`` ) or object metadata (``HeadObject`` ) from these buckets, Amazon S3 will return the ``x-amz-replication-status`` header in the response as follows:
+          In replication, you have a source bucket on which you configure replication and destination bucket or buckets where Amazon S3 stores object replicas. When you request an object ( ``GetObject`` ) or object metadata ( ``HeadObject`` ) from these buckets, Amazon S3 will return the ``x-amz-replication-status`` header in the response as follows:
 
            
 
@@ -10749,7 +10758,7 @@ Client
 
            
 
-          For more information, see `Replication <https://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html>`__ .
+          For more information, see `Replication <https://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html>`__.
 
           
         
@@ -10763,7 +10772,7 @@ Client
 
         - **ObjectLockMode** *(string) --* 
 
-          The Object Lock mode, if any, that's in effect for this object. This header is only returned if the requester has the ``s3:GetObjectRetention`` permission. For more information about S3 Object Lock, see `Object Lock <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock.html>`__ . 
+          The Object Lock mode, if any, that's in effect for this object. This header is only returned if the requester has the ``s3:GetObjectRetention`` permission. For more information about S3 Object Lock, see `Object Lock <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock.html>`__. 
 
           
         
@@ -10777,7 +10786,7 @@ Client
 
         - **ObjectLockLegalHoldStatus** *(string) --* 
 
-          Specifies whether a legal hold is in effect for this object. This header is only returned if the requester has the ``s3:GetObjectLegalHold`` permission. This header is not returned if the specified version of this object has never had a legal hold applied. For more information about S3 Object Lock, see `Object Lock <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock.html>`__ .
+          Specifies whether a legal hold is in effect for this object. This header is only returned if the requester has the ``s3:GetObjectLegalHold`` permission. This header is not returned if the specified version of this object has never had a legal hold applied. For more information about S3 Object Lock, see `Object Lock <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock.html>`__.
 
           
         
@@ -10837,11 +10846,11 @@ Client
 
      
 
-    To use this operation, you must have permissions to perform the ``s3:GetAnalyticsConfiguration`` action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__ .
+    To use this operation, you must have permissions to perform the ``s3:GetAnalyticsConfiguration`` action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__.
 
      
 
-    For information about Amazon S3 analytics feature, see `Amazon S3 Analytics – Storage Class Analysis <https://docs.aws.amazon.com/AmazonS3/latest/dev/analytics-storage-class.html>`__ . 
+    For information about Amazon S3 analytics feature, see `Amazon S3 Analytics – Storage Class Analysis <https://docs.aws.amazon.com/AmazonS3/latest/dev/analytics-storage-class.html>`__. 
 
      
 
@@ -11160,7 +11169,7 @@ Client
 
      
 
-    To use this operation, you must have permissions to perform the ``s3:GetInventoryConfiguration`` action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__ .
+    To use this operation, you must have permissions to perform the ``s3:GetInventoryConfiguration`` action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__.
 
      
 
@@ -11423,11 +11432,11 @@ Client
 
      
 
-    To use this operation, you must have permissions to perform the ``s3:GetMetricsConfiguration`` action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__ .
+    To use this operation, you must have permissions to perform the ``s3:GetMetricsConfiguration`` action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__.
 
      
 
-    For more information about metrics configurations and CloudWatch request metrics, see `Monitoring Metrics with Amazon CloudWatch <https://docs.aws.amazon.com/AmazonS3/latest/dev/cloudwatch-monitoring.html>`__ .
+    For more information about metrics configurations and CloudWatch request metrics, see `Monitoring Metrics with Amazon CloudWatch <https://docs.aws.amazon.com/AmazonS3/latest/dev/cloudwatch-monitoring.html>`__.
 
      
 
@@ -11548,7 +11557,7 @@ Client
 
           - *(dict) --* 
 
-            Specifies a metrics configuration for the CloudWatch request metrics (specified by the metrics configuration ID) from an Amazon S3 bucket. If you're updating an existing metrics configuration, note that this is a full replacement of the existing metrics configuration. If you don't include the elements you want to keep, they are erased. For more information, see `PutBucketMetricsConfiguration <https://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTMetricConfiguration.html>`__ .
+            Specifies a metrics configuration for the CloudWatch request metrics (specified by the metrics configuration ID) from an Amazon S3 bucket. If you're updating an existing metrics configuration, note that this is a full replacement of the existing metrics configuration. If you don't include the elements you want to keep, they are erased. For more information, see `PutBucketMetricsConfiguration <https://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTMetricConfiguration.html>`__.
 
             
             
@@ -11970,11 +11979,11 @@ Client
 
      
 
-    For more information on multipart uploads, see `Uploading Objects Using Multipart Upload <https://docs.aws.amazon.com/AmazonS3/latest/dev/uploadobjusingmpu.html>`__ .
+    For more information on multipart uploads, see `Uploading Objects Using Multipart Upload <https://docs.aws.amazon.com/AmazonS3/latest/dev/uploadobjusingmpu.html>`__.
 
      
 
-    For information on permissions required to use the multipart upload API, see `Multipart Upload and Permissions <https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuAndPermissions.html>`__ .
+    For information on permissions required to use the multipart upload API, see `Multipart Upload and Permissions <https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuAndPermissions.html>`__.
 
      
 
@@ -12024,7 +12033,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -12959,7 +12968,7 @@ Client
 
        
 
-      This action has been revised. We recommend that you use the newer version, `ListObjectsV2 <https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectsV2.html>`__ , when developing applications. For backward compatibility, Amazon S3 continues to support ``ListObjects`` .
+      This action has been revised. We recommend that you use the newer version, `ListObjectsV2 <https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectsV2.html>`__, when developing applications. For backward compatibility, Amazon S3 continues to support ``ListObjects`` .
 
        
 
@@ -13011,7 +13020,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -13364,7 +13373,7 @@ Client
 
      
 
-    To use this action in an Identity and Access Management (IAM) policy, you must have permissions to perform the ``s3:ListBucket`` action. The bucket owner has this permission by default and can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__ .
+    To use this action in an Identity and Access Management (IAM) policy, you must have permissions to perform the ``s3:ListBucket`` action. The bucket owner has this permission by default and can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__.
 
      
 
@@ -13372,13 +13381,13 @@ Client
 
        
 
-      This section describes the latest revision of this action. We recommend that you use this revised API for application development. For backward compatibility, Amazon S3 continues to support the prior version of this API, `ListObjects <https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjects.html>`__ .
+      This section describes the latest revision of this action. We recommend that you use this revised API for application development. For backward compatibility, Amazon S3 continues to support the prior version of this API, `ListObjects <https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjects.html>`__.
 
        
 
      
 
-    To get a list of your buckets, see `ListBuckets <https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListBuckets.html>`__ .
+    To get a list of your buckets, see `ListBuckets <https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListBuckets.html>`__.
 
      
 
@@ -13424,7 +13433,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -13635,7 +13644,7 @@ Client
 
            
 
-          When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+          When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
           
         
@@ -13679,7 +13688,7 @@ Client
 
            
 
-          For example, if the prefix is ``notes/`` and the delimiter is a slash (``/`` ) as in ``notes/summer/july`` , the common prefix is ``notes/summer/`` . All of the keys that roll up into a common prefix count as a single return when calculating the number of returns. 
+          For example, if the prefix is ``notes/`` and the delimiter is a slash ( ``/`` ) as in ``notes/summer/july`` , the common prefix is ``notes/summer/`` . All of the keys that roll up into a common prefix count as a single return when calculating the number of returns. 
 
           
           
@@ -13802,11 +13811,11 @@ Client
 
      
 
-    For more information on multipart uploads, see `Uploading Objects Using Multipart Upload <https://docs.aws.amazon.com/AmazonS3/latest/dev/uploadobjusingmpu.html>`__ .
+    For more information on multipart uploads, see `Uploading Objects Using Multipart Upload <https://docs.aws.amazon.com/AmazonS3/latest/dev/uploadobjusingmpu.html>`__.
 
      
 
-    For information on permissions required to use the multipart upload API, see `Multipart Upload and Permissions <https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuAndPermissions.html>`__ .
+    For information on permissions required to use the multipart upload API, see `Multipart Upload and Permissions <https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuAndPermissions.html>`__.
 
      
 
@@ -13855,7 +13864,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -13951,7 +13960,7 @@ Client
 
         - **AbortDate** *(datetime) --* 
 
-          If the bucket has a lifecycle rule configured with an action to abort incomplete multipart uploads and the prefix in the lifecycle rule matches the object name in the request, then the response includes this header indicating when the initiated multipart upload will become eligible for abort operation. For more information, see `Aborting Incomplete Multipart Uploads Using a Bucket Lifecycle Policy <https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuoverview.html#mpu-abort-incomplete-mpu-lifecycle-config>`__ .
+          If the bucket has a lifecycle rule configured with an action to abort incomplete multipart uploads and the prefix in the lifecycle rule matches the object name in the request, then the response includes this header indicating when the initiated multipart upload will become eligible for abort operation. For more information, see `Aborting Incomplete Multipart Uploads Using a Bucket Lifecycle Policy <https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuoverview.html#mpu-abort-incomplete-mpu-lifecycle-config>`__.
 
            
 
@@ -14174,7 +14183,7 @@ Client
 
      
 
-    To use this operation, you must have permission to perform the ``s3:PutAccelerateConfiguration`` action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__ .
+    To use this operation, you must have permission to perform the ``s3:PutAccelerateConfiguration`` action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__.
 
      
 
@@ -14202,7 +14211,7 @@ Client
 
      
 
-    For more information about transfer acceleration, see `Transfer Acceleration <https://docs.aws.amazon.com/AmazonS3/latest/dev/transfer-acceleration.html>`__ .
+    For more information about transfer acceleration, see `Transfer Acceleration <https://docs.aws.amazon.com/AmazonS3/latest/dev/transfer-acceleration.html>`__.
 
      
 
@@ -14266,7 +14275,7 @@ Client
 
     
 
-    Sets the permissions on an existing bucket using access control lists (ACL). For more information, see `Using ACLs <https://docs.aws.amazon.com/AmazonS3/latest/dev/S3_ACLs_UsingACLs.html>`__ . To set the ACL of a bucket, you must have ``WRITE_ACP`` permission.
+    Sets the permissions on an existing bucket using access control lists (ACL). For more information, see `Using ACLs <https://docs.aws.amazon.com/AmazonS3/latest/dev/S3_ACLs_UsingACLs.html>`__. To set the ACL of a bucket, you must have ``WRITE_ACP`` permission.
 
      
 
@@ -14315,9 +14324,9 @@ Client
      
 
      
-    * Specify a canned ACL with the ``x-amz-acl`` request header. Amazon S3 supports a set of predefined ACLs, known as *canned ACLs* . Each canned ACL has a predefined set of grantees and permissions. Specify the canned ACL name as the value of ``x-amz-acl`` . If you use this header, you cannot use other access control-specific headers in your request. For more information, see `Canned ACL <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL>`__ . 
+    * Specify a canned ACL with the ``x-amz-acl`` request header. Amazon S3 supports a set of predefined ACLs, known as *canned ACLs* . Each canned ACL has a predefined set of grantees and permissions. Specify the canned ACL name as the value of ``x-amz-acl`` . If you use this header, you cannot use other access control-specific headers in your request. For more information, see `Canned ACL <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL>`__. 
      
-    * Specify access permissions explicitly with the ``x-amz-grant-read`` , ``x-amz-grant-read-acp`` , ``x-amz-grant-write-acp`` , and ``x-amz-grant-full-control`` headers. When using these headers, you specify explicit access permissions and grantees (Amazon Web Services accounts or Amazon S3 groups) who will receive the permission. If you use these ACL-specific headers, you cannot use the ``x-amz-acl`` header to set a canned ACL. These parameters map to the set of permissions that Amazon S3 supports in an ACL. For more information, see `Access Control List (ACL) Overview <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html>`__ . You specify each grantee as a type=value pair, where the type is one of the following: 
+    * Specify access permissions explicitly with the ``x-amz-grant-read`` , ``x-amz-grant-read-acp`` , ``x-amz-grant-write-acp`` , and ``x-amz-grant-full-control`` headers. When using these headers, you specify explicit access permissions and grantees (Amazon Web Services accounts or Amazon S3 groups) who will receive the permission. If you use these ACL-specific headers, you cannot use the ``x-amz-acl`` header to set a canned ACL. These parameters map to the set of permissions that Amazon S3 supports in an ACL. For more information, see `Access Control List (ACL) Overview <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html>`__. You specify each grantee as a type=value pair, where the type is one of the following: 
 
        
       * ``id`` – if the value specified is the canonical user ID of an Amazon Web Services account 
@@ -14701,7 +14710,7 @@ Client
 
      
 
-    You can choose to have storage class analysis export analysis reports sent to a comma-separated values (CSV) flat file. See the ``DataExport`` request element. Reports are updated daily and are based on the object filters that you configure. When selecting data export, you specify a destination bucket and an optional destination prefix where the file is written. You can export the data to a destination bucket in a different account. However, the destination bucket must be in the same Region as the bucket that you are making the PUT analytics configuration to. For more information, see `Amazon S3 Analytics – Storage Class Analysis <https://docs.aws.amazon.com/AmazonS3/latest/dev/analytics-storage-class.html>`__ . 
+    You can choose to have storage class analysis export analysis reports sent to a comma-separated values (CSV) flat file. See the ``DataExport`` request element. Reports are updated daily and are based on the object filters that you configure. When selecting data export, you specify a destination bucket and an optional destination prefix where the file is written. You can export the data to a destination bucket in a different account. However, the destination bucket must be in the same Region as the bucket that you are making the PUT analytics configuration to. For more information, see `Amazon S3 Analytics – Storage Class Analysis <https://docs.aws.amazon.com/AmazonS3/latest/dev/analytics-storage-class.html>`__. 
 
      
 
@@ -14709,13 +14718,13 @@ Client
 
        
 
-      You must create a bucket policy on the destination bucket where the exported file is written to grant permissions to Amazon S3 to write objects to the bucket. For an example policy, see `Granting Permissions for Amazon S3 Inventory and Storage Class Analysis <https://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket-policies.html#example-bucket-policies-use-case-9>`__ .
+      You must create a bucket policy on the destination bucket where the exported file is written to grant permissions to Amazon S3 to write objects to the bucket. For an example policy, see `Granting Permissions for Amazon S3 Inventory and Storage Class Analysis <https://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket-policies.html#example-bucket-policies-use-case-9>`__.
 
        
 
      
 
-    To use this operation, you must have permissions to perform the ``s3:PutAnalyticsConfiguration`` action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__ .
+    To use this operation, you must have permissions to perform the ``s3:PutAnalyticsConfiguration`` action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__.
 
      
 
@@ -15275,7 +15284,7 @@ Client
 
        
 
-      You must create a bucket policy on the *destination* bucket to grant permissions to Amazon S3 to write objects to the bucket in the defined location. For an example policy, see `Granting Permissions for Amazon S3 Inventory and Storage Class Analysis <https://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket-policies.html#example-bucket-policies-use-case-9>`__ .
+      You must create a bucket policy on the *destination* bucket to grant permissions to Amazon S3 to write objects to the bucket in the defined location. For an example policy, see `Granting Permissions for Amazon S3 Inventory and Storage Class Analysis <https://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket-policies.html#example-bucket-policies-use-case-9>`__.
 
        
 
@@ -15522,7 +15531,7 @@ Client
 
     
 
-    Creates a new lifecycle configuration for the bucket or replaces an existing lifecycle configuration. Keep in mind that this will overwrite an existing lifecycle configuration, so if you want to retain any configuration details, they must be included in the new lifecycle configuration. For information about lifecycle configuration, see `Managing your storage lifecycle <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html>`__ .
+    Creates a new lifecycle configuration for the bucket or replaces an existing lifecycle configuration. Keep in mind that this will overwrite an existing lifecycle configuration, so if you want to retain any configuration details, they must be included in the new lifecycle configuration. For information about lifecycle configuration, see `Managing your storage lifecycle <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html>`__.
 
      
 
@@ -15530,7 +15539,7 @@ Client
 
        
 
-      Bucket lifecycle configuration now supports specifying a lifecycle rule using an object key name prefix, one or more object tags, or a combination of both. Accordingly, this section describes the latest API. The previous version of the API supported filtering based only on an object key name prefix, which is supported for backward compatibility. For the related API description, see `PutBucketLifecycle <https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutBucketLifecycle.html>`__ .
+      Bucket lifecycle configuration now supports specifying a lifecycle rule using an object key name prefix, one or more object tags, or a combination of both. Accordingly, this section describes the latest API. The previous version of the API supported filtering based only on an object key name prefix, which is supported for backward compatibility. For the related API description, see `PutBucketLifecycle <https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutBucketLifecycle.html>`__.
 
        
 
@@ -15554,7 +15563,7 @@ Client
 
      
 
-    For more information, see `Object Lifecycle Management <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lifecycle-mgmt.html>`__ and `Lifecycle Configuration Elements <https://docs.aws.amazon.com/AmazonS3/latest/dev/intro-lifecycle-rules.html>`__ .
+    For more information, see `Object Lifecycle Management <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lifecycle-mgmt.html>`__ and `Lifecycle Configuration Elements <https://docs.aws.amazon.com/AmazonS3/latest/dev/intro-lifecycle-rules.html>`__.
 
      
 
@@ -15580,7 +15589,7 @@ Client
 
      
 
-    For more information about permissions, see `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__ .
+    For more information about permissions, see `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__.
 
      
 
@@ -15724,7 +15733,7 @@ Client
 
                  
 
-                Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__ .
+                Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__.
 
                  
 
@@ -15889,11 +15898,11 @@ Client
 
      
 
-    To use this operation, you must have permissions to perform the ``s3:PutMetricsConfiguration`` action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__ .
+    To use this operation, you must have permissions to perform the ``s3:PutMetricsConfiguration`` action. The bucket owner has this permission by default. The bucket owner can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__.
 
      
 
-    For information about CloudWatch request metrics for Amazon S3, see `Monitoring Metrics with Amazon CloudWatch <https://docs.aws.amazon.com/AmazonS3/latest/dev/cloudwatch-monitoring.html>`__ .
+    For information about CloudWatch request metrics for Amazon S3, see `Monitoring Metrics with Amazon CloudWatch <https://docs.aws.amazon.com/AmazonS3/latest/dev/cloudwatch-monitoring.html>`__.
 
      
 
@@ -16173,13 +16182,13 @@ Client
 
        
 
-      If you are using an earlier version of the replication configuration, Amazon S3 handles replication of delete markers differently. For more information, see `Backward Compatibility <https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-add-config.html#replication-backward-compat-considerations>`__ .
+      If you are using an earlier version of the replication configuration, Amazon S3 handles replication of delete markers differently. For more information, see `Backward Compatibility <https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-add-config.html#replication-backward-compat-considerations>`__.
 
        
 
      
 
-    For information about enabling versioning on a bucket, see `Using Versioning <https://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html>`__ .
+    For information about enabling versioning on a bucket, see `Using Versioning <https://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html>`__.
 
      
 
@@ -16187,7 +16196,7 @@ Client
 
      
 
-    By default, Amazon S3 doesn't replicate objects that are stored at rest using server-side encryption with KMS keys. To replicate Amazon Web Services KMS-encrypted objects, add the following: ``SourceSelectionCriteria`` , ``SseKmsEncryptedObjects`` , ``Status`` , ``EncryptionConfiguration`` , and ``ReplicaKmsKeyID`` . For information about replication configuration, see `Replicating Objects Created with SSE Using KMS keys <https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-config-for-kms-objects.html>`__ .
+    By default, Amazon S3 doesn't replicate objects that are stored at rest using server-side encryption with KMS keys. To replicate Amazon Web Services KMS-encrypted objects, add the following: ``SourceSelectionCriteria`` , ``SseKmsEncryptedObjects`` , ``Status`` , ``EncryptionConfiguration`` , and ``ReplicaKmsKeyID`` . For information about replication configuration, see `Replicating Objects Created with SSE Using KMS keys <https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-config-for-kms-objects.html>`__.
 
      
 
@@ -16203,7 +16212,7 @@ Client
 
      
 
-    By default, a resource owner, in this case the Amazon Web Services account that created the bucket, can perform this operation. The resource owner can also grant others permissions to perform the operation. For more information about permissions, see `Specifying Permissions in a Policy <https://docs.aws.amazon.com/AmazonS3/latest/dev/using-with-s3-actions.html>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__ .
+    By default, a resource owner, in this case the Amazon Web Services account that created the bucket, can perform this operation. The resource owner can also grant others permissions to perform the operation. For more information about permissions, see `Specifying Permissions in a Policy <https://docs.aws.amazon.com/AmazonS3/latest/dev/using-with-s3-actions.html>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__.
 
      
 
@@ -16335,7 +16344,7 @@ Client
 
                
 
-              Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__ .
+              Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__.
 
                
 
@@ -16471,11 +16480,11 @@ Client
           
           - **DeleteMarkerReplication** *(dict) --* **[REQUIRED]** 
 
-            Specifies whether Amazon S3 replicates delete markers. If you specify a ``Filter`` in your replication configuration, you must also include a ``DeleteMarkerReplication`` element. If your ``Filter`` includes a ``Tag`` element, the ``DeleteMarkerReplication``  ``Status`` must be set to Disabled, because Amazon S3 does not support replicating delete markers for tag-based rules. For an example configuration, see `Basic Rule Configuration <https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-add-config.html#replication-config-min-rule-config>`__ . 
+            Specifies whether Amazon S3 replicates delete markers. If you specify a ``Filter`` in your replication configuration, you must also include a ``DeleteMarkerReplication`` element. If your ``Filter`` includes a ``Tag`` element, the ``DeleteMarkerReplication``  ``Status`` must be set to Disabled, because Amazon S3 does not support replicating delete markers for tag-based rules. For an example configuration, see `Basic Rule Configuration <https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-add-config.html#replication-config-min-rule-config>`__. 
 
              
 
-            For more information about delete marker replication, see `Basic Rule Configuration <https://docs.aws.amazon.com/AmazonS3/latest/dev/delete-marker-replication.html>`__ . 
+            For more information about delete marker replication, see `Basic Rule Configuration <https://docs.aws.amazon.com/AmazonS3/latest/dev/delete-marker-replication.html>`__. 
 
              
 
@@ -16483,7 +16492,7 @@ Client
 
                
 
-              If you are using an earlier version of the replication configuration, Amazon S3 handles replication of delete markers differently. For more information, see `Backward Compatibility <https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-add-config.html#replication-backward-compat-considerations>`__ .
+              If you are using an earlier version of the replication configuration, Amazon S3 handles replication of delete markers differently. For more information, see `Backward Compatibility <https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-add-config.html#replication-backward-compat-considerations>`__.
 
                
 
@@ -16566,7 +16575,7 @@ Client
 
      
 
-    Use tags to organize your Amazon Web Services bill to reflect your own cost structure. To do this, sign up to get your Amazon Web Services account bill with tag key values included. Then, to see the cost of combined resources, organize your billing information according to resources with the same tag key values. For example, you can tag several resources with a specific application name, and then organize your billing information to see the total cost of that application across several services. For more information, see `Cost Allocation and Tagging <https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html>`__ and `Using Cost Allocation in Amazon S3 Bucket Tags <https://docs.aws.amazon.com/AmazonS3/latest/dev/CostAllocTagging.html>`__ .
+    Use tags to organize your Amazon Web Services bill to reflect your own cost structure. To do this, sign up to get your Amazon Web Services account bill with tag key values included. Then, to see the cost of combined resources, organize your billing information according to resources with the same tag key values. For example, you can tag several resources with a specific application name, and then organize your billing information to see the total cost of that application across several services. For more information, see `Cost Allocation and Tagging <https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html>`__ and `Using Cost Allocation in Amazon S3 Bucket Tags <https://docs.aws.amazon.com/AmazonS3/latest/dev/CostAllocTagging.html>`__.
 
      
 
@@ -16580,7 +16589,7 @@ Client
 
      
 
-    To use this operation, you must have permissions to perform the ``s3:PutBucketTagging`` action. The bucket owner has this permission by default and can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__ .
+    To use this operation, you must have permissions to perform the ``s3:PutBucketTagging`` action. The bucket owner has this permission by default and can grant this permission to others. For more information about permissions, see `Permissions Related to Bucket Subresource Operations <https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources>`__ and `Managing Access Permissions to Your Amazon S3 Resources <https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html>`__.
 
      
 
@@ -16592,7 +16601,7 @@ Client
     * Error code: ``InvalidTagError``   
 
        
-      * Description: The tag provided was not a valid tag. This error can occur if the tag did not pass input validation. For information about tag restrictions, see `User-Defined Tag Restrictions <https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/allocation-tag-restrictions.html>`__ and `Amazon Web Services-Generated Cost Allocation Tag Restrictions <https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/aws-tag-restrictions.html>`__ . 
+      * Description: The tag provided was not a valid tag. This error can occur if the tag did not pass input validation. For information about tag restrictions, see `User-Defined Tag Restrictions <https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/allocation-tag-restrictions.html>`__ and `Amazon Web Services-Generated Cost Allocation Tag Restrictions <https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/aws-tag-restrictions.html>`__. 
        
 
      
@@ -16775,7 +16784,7 @@ Client
 
        
 
-      If you have an object expiration lifecycle policy in your non-versioned bucket and you want to maintain the same permanent delete behavior when you enable versioning, you must add a noncurrent expiration policy. The noncurrent expiration lifecycle policy will manage the deletes of the noncurrent object versions in the version-enabled bucket. (A version-enabled bucket maintains one current and zero or more noncurrent object versions.) For more information, see `Lifecycle and Versioning <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lifecycle-mgmt.html#lifecycle-and-other-bucket-config>`__ .
+      If you have an object expiration lifecycle policy in your non-versioned bucket and you want to maintain the same permanent delete behavior when you enable versioning, you must add a noncurrent expiration policy. The noncurrent expiration lifecycle policy will manage the deletes of the noncurrent object versions in the version-enabled bucket. (A version-enabled bucket maintains one current and zero or more noncurrent object versions.) For more information, see `Lifecycle and Versioning <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lifecycle-mgmt.html#lifecycle-and-other-bucket-config>`__.
 
        
 
@@ -16887,7 +16896,7 @@ Client
 
     
 
-    Sets the configuration of the website that is specified in the ``website`` subresource. To configure a bucket as a website, you can add this subresource on the bucket with website configuration information such as the file name of the index document and any redirect rules. For more information, see `Hosting Websites on Amazon S3 <https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html>`__ .
+    Sets the configuration of the website that is specified in the ``website`` subresource. To configure a bucket as a website, you can add this subresource on the bucket with website configuration information such as the file name of the index document and any redirect rules. For more information, see `Hosting Websites on Amazon S3 <https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html>`__.
 
      
 
@@ -17025,7 +17034,7 @@ Client
 
              
 
-            Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__ .
+            Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__.
 
              
 
@@ -17050,7 +17059,7 @@ Client
 
              
 
-            Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__ .
+            Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__.
 
              
 
@@ -17128,7 +17137,7 @@ Client
 
                  
 
-                Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__ .
+                Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__.
 
                  
 
@@ -17174,7 +17183,7 @@ Client
 
                  
 
-                Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__ .
+                Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__.
 
                  
 
@@ -17191,7 +17200,7 @@ Client
 
                  
 
-                Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__ .
+                Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see `XML related object key constraints <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints>`__.
 
                  
 
@@ -17281,7 +17290,7 @@ Client
 
      
 
-    You can optionally request server-side encryption. With server-side encryption, Amazon S3 encrypts your data as it writes it to disks in its data centers and decrypts the data when you access it. You have the option to provide your own encryption key or use Amazon Web Services managed encryption keys (SSE-S3 or SSE-KMS). For more information, see `Using Server-Side Encryption <https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingServerSideEncryption.html>`__ .
+    You can optionally request server-side encryption. With server-side encryption, Amazon S3 encrypts your data as it writes it to disks in its data centers and decrypts the data when you access it. You have the option to provide your own encryption key or use Amazon Web Services managed encryption keys (SSE-S3 or SSE-KMS). For more information, see `Using Server-Side Encryption <https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingServerSideEncryption.html>`__.
 
      
 
@@ -17293,7 +17302,7 @@ Client
 
      
 
-    You can use headers to grant ACL- based permissions. By default, all objects are private. Only the owner has full access control. When adding a new object, you can grant permissions to individual Amazon Web Services accounts or to predefined groups defined by Amazon S3. These permissions are then added to the ACL on the object. For more information, see `Access Control List (ACL) Overview <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html>`__ and `Managing ACLs Using the REST API <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-using-rest-api.html>`__ . 
+    You can use headers to grant ACL- based permissions. By default, all objects are private. Only the owner has full access control. When adding a new object, you can grant permissions to individual Amazon Web Services accounts or to predefined groups defined by Amazon S3. These permissions are then added to the ACL on the object. For more information, see `Access Control List (ACL) Overview <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html>`__ and `Managing ACLs Using the REST API <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-using-rest-api.html>`__. 
 
      
 
@@ -17331,7 +17340,7 @@ Client
 
      
 
-    For more information about versioning, see `Adding Objects to Versioning Enabled Buckets <https://docs.aws.amazon.com/AmazonS3/latest/dev/AddingObjectstoVersioningEnabledBuckets.html>`__ . For information about returning the versioning state of a bucket, see `GetBucketVersioning <https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketVersioning.html>`__ . 
+    For more information about versioning, see `Adding Objects to Versioning Enabled Buckets <https://docs.aws.amazon.com/AmazonS3/latest/dev/AddingObjectstoVersioningEnabledBuckets.html>`__. For information about returning the versioning state of a bucket, see `GetBucketVersioning <https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketVersioning.html>`__. 
 
      
 
@@ -17392,7 +17401,7 @@ Client
     :type ACL: string
     :param ACL: 
 
-      The canned ACL to apply to the object. For more information, see `Canned ACL <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL>`__ .
+      The canned ACL to apply to the object. For more information, see `Canned ACL <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL>`__.
 
        
 
@@ -17420,7 +17429,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -17428,7 +17437,7 @@ Client
     :type CacheControl: string
     :param CacheControl: 
 
-      Can be used to specify caching behavior along the request/reply chain. For more information, see `http\://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9 <http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9>`__ .
+      Can be used to specify caching behavior along the request/reply chain. For more information, see `http\://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9 <http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9>`__.
 
       
 
@@ -17436,7 +17445,7 @@ Client
     :type ContentDisposition: string
     :param ContentDisposition: 
 
-      Specifies presentational information for the object. For more information, see `http\://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html#sec19.5.1 <http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html#sec19.5.1>`__ .
+      Specifies presentational information for the object. For more information, see `http\://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html#sec19.5.1 <http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html#sec19.5.1>`__.
 
       
 
@@ -17444,7 +17453,7 @@ Client
     :type ContentEncoding: string
     :param ContentEncoding: 
 
-      Specifies what content encodings have been applied to the object and thus what decoding mechanisms must be applied to obtain the media-type referenced by the Content-Type header field. For more information, see `http\://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.11 <http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.11>`__ .
+      Specifies what content encodings have been applied to the object and thus what decoding mechanisms must be applied to obtain the media-type referenced by the Content-Type header field. For more information, see `http\://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.11 <http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.11>`__.
 
       
 
@@ -17460,7 +17469,7 @@ Client
     :type ContentLength: integer
     :param ContentLength: 
 
-      Size of the body in bytes. This parameter is useful when the size of the body cannot be determined automatically. For more information, see `http\://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.13 <http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.13>`__ .
+      Size of the body in bytes. This parameter is useful when the size of the body cannot be determined automatically. For more information, see `http\://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.13 <http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.13>`__.
 
       
 
@@ -17468,7 +17477,7 @@ Client
     :type ContentMD5: string
     :param ContentMD5: 
 
-      The base64-encoded 128-bit MD5 digest of the message (without the headers) according to RFC 1864. This header can be used as a message integrity check to verify that the data is the same data that was originally sent. Although it is optional, we recommend using the Content-MD5 mechanism as an end-to-end integrity check. For more information about REST request authentication, see `REST Authentication <https://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html>`__ .
+      The base64-encoded 128-bit MD5 digest of the message (without the headers) according to RFC 1864. This header can be used as a message integrity check to verify that the data is the same data that was originally sent. Although it is optional, we recommend using the Content-MD5 mechanism as an end-to-end integrity check. For more information about REST request authentication, see `REST Authentication <https://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html>`__.
 
       
 
@@ -17476,7 +17485,7 @@ Client
     :type ContentType: string
     :param ContentType: 
 
-      A standard MIME type describing the format of the contents. For more information, see `http\://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17 <http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17>`__ .
+      A standard MIME type describing the format of the contents. For more information, see `http\://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17 <http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17>`__.
 
       
 
@@ -17484,7 +17493,7 @@ Client
     :type Expires: datetime
     :param Expires: 
 
-      The date and time at which the object is no longer cacheable. For more information, see `http\://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21 <http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21>`__ .
+      The date and time at which the object is no longer cacheable. For more information, see `http\://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21 <http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21>`__.
 
       
 
@@ -17592,7 +17601,7 @@ Client
     :type WebsiteRedirectLocation: string
     :param WebsiteRedirectLocation: 
 
-      If the bucket is configured as a website, redirects requests for this object to another object in the same bucket or to an external URL. Amazon S3 stores the value of this header in the object metadata. For information about object metadata, see `Object Key and Metadata <https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html>`__ .
+      If the bucket is configured as a website, redirects requests for this object to another object in the same bucket or to an external URL. Amazon S3 stores the value of this header in the object metadata. For information about object metadata, see `Object Key and Metadata <https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html>`__.
 
        
 
@@ -17612,7 +17621,7 @@ Client
 
        
 
-      For more information about website hosting in Amazon S3, see `Hosting Websites on Amazon S3 <https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html>`__ and `How to Configure Website Page Redirects <https://docs.aws.amazon.com/AmazonS3/latest/dev/how-to-page-redirect.html>`__ . 
+      For more information about website hosting in Amazon S3, see `Hosting Websites on Amazon S3 <https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html>`__ and `How to Configure Website Page Redirects <https://docs.aws.amazon.com/AmazonS3/latest/dev/how-to-page-redirect.html>`__. 
 
       
 
@@ -17678,7 +17687,7 @@ Client
     :type ObjectLockLegalHoldStatus: string
     :param ObjectLockLegalHoldStatus: 
 
-      Specifies whether a legal hold will be applied to this object. For more information about S3 Object Lock, see `Object Lock <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock.html>`__ .
+      Specifies whether a legal hold will be applied to this object. For more information about S3 Object Lock, see `Object Lock <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock.html>`__.
 
       
 
@@ -17989,9 +17998,9 @@ Client
      
 
      
-    * Specify a canned ACL with the ``x-amz-acl`` request header. Amazon S3 supports a set of predefined ACLs, known as canned ACLs. Each canned ACL has a predefined set of grantees and permissions. Specify the canned ACL name as the value of ``x-amz-ac`` l. If you use this header, you cannot use other access control-specific headers in your request. For more information, see `Canned ACL <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL>`__ . 
+    * Specify a canned ACL with the ``x-amz-acl`` request header. Amazon S3 supports a set of predefined ACLs, known as canned ACLs. Each canned ACL has a predefined set of grantees and permissions. Specify the canned ACL name as the value of ``x-amz-ac`` l. If you use this header, you cannot use other access control-specific headers in your request. For more information, see `Canned ACL <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL>`__. 
      
-    * Specify access permissions explicitly with the ``x-amz-grant-read`` , ``x-amz-grant-read-acp`` , ``x-amz-grant-write-acp`` , and ``x-amz-grant-full-control`` headers. When using these headers, you specify explicit access permissions and grantees (Amazon Web Services accounts or Amazon S3 groups) who will receive the permission. If you use these ACL-specific headers, you cannot use ``x-amz-acl`` header to set a canned ACL. These parameters map to the set of permissions that Amazon S3 supports in an ACL. For more information, see `Access Control List (ACL) Overview <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html>`__ . You specify each grantee as a type=value pair, where the type is one of the following: 
+    * Specify access permissions explicitly with the ``x-amz-grant-read`` , ``x-amz-grant-read-acp`` , ``x-amz-grant-write-acp`` , and ``x-amz-grant-full-control`` headers. When using these headers, you specify explicit access permissions and grantees (Amazon Web Services accounts or Amazon S3 groups) who will receive the permission. If you use these ACL-specific headers, you cannot use ``x-amz-acl`` header to set a canned ACL. These parameters map to the set of permissions that Amazon S3 supports in an ACL. For more information, see `Access Control List (ACL) Overview <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html>`__. You specify each grantee as a type=value pair, where the type is one of the following: 
 
        
       * ``id`` – if the value specified is the canonical user ID of an Amazon Web Services account 
@@ -18156,7 +18165,7 @@ Client
     :type ACL: string
     :param ACL: 
 
-      The canned ACL to apply to the object. For more information, see `Canned ACL <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL>`__ .
+      The canned ACL to apply to the object. For more information, see `Canned ACL <https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL>`__.
 
       
 
@@ -18375,7 +18384,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -18459,7 +18468,7 @@ Client
 
     
 
-    Applies a legal hold configuration to the specified object. For more information, see `Locking Objects <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock.html>`__ .
+    Applies a legal hold configuration to the specified object. For more information, see `Locking Objects <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock.html>`__.
 
      
 
@@ -18578,7 +18587,7 @@ Client
 
     
 
-    Places an Object Lock configuration on the specified bucket. The rule specified in the Object Lock configuration will be applied by default to every new object placed in the specified bucket. For more information, see `Locking Objects <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock.html>`__ . 
+    Places an Object Lock configuration on the specified bucket. The rule specified in the Object Lock configuration will be applied by default to every new object placed in the specified bucket. For more information, see `Locking Objects <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock.html>`__. 
 
      
 
@@ -18734,7 +18743,7 @@ Client
 
     
 
-    Places an Object Retention configuration on an object. For more information, see `Locking Objects <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock.html>`__ . Users or accounts require the ``s3:PutObjectRetention`` permission in order to place an Object Retention configuration on objects. 
+    Places an Object Retention configuration on an object. For more information, see `Locking Objects <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock.html>`__. Users or accounts require the ``s3:PutObjectRetention`` permission in order to place an Object Retention configuration on objects. 
 
      
 
@@ -18870,11 +18879,11 @@ Client
 
      
 
-    A tag is a key-value pair. You can associate tags with an object by sending a PUT request against the tagging subresource that is associated with the object. You can retrieve tags by sending a GET request. For more information, see `GetObjectTagging <https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectTagging.html>`__ .
+    A tag is a key-value pair. You can associate tags with an object by sending a PUT request against the tagging subresource that is associated with the object. You can retrieve tags by sending a GET request. For more information, see `GetObjectTagging <https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectTagging.html>`__.
 
      
 
-    For tagging-related restrictions related to characters and encodings, see `Tag Restrictions <https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/allocation-tag-restrictions.html>`__ . Note that Amazon S3 limits the maximum number of tags to 10 tags per object.
+    For tagging-related restrictions related to characters and encodings, see `Tag Restrictions <https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/allocation-tag-restrictions.html>`__. Note that Amazon S3 limits the maximum number of tags to 10 tags per object.
 
      
 
@@ -18886,7 +18895,7 @@ Client
 
      
 
-    For information about the Amazon S3 object tagging feature, see `Object Tagging <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-tagging.html>`__ .
+    For information about the Amazon S3 object tagging feature, see `Object Tagging <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-tagging.html>`__.
 
      
 
@@ -18900,7 +18909,7 @@ Client
       
       * *Code: InvalidTagError*   
        
-      * *Cause: The tag provided was not a valid tag. This error can occur if the tag did not pass input validation. For more information, see `Object Tagging <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-tagging.html>`__ .*   
+      * Cause: The tag provided was not a valid tag. This error can occur if the tag did not pass input validation. For more information, see `Object Tagging <https://docs.aws.amazon.com/AmazonS3/latest/dev/object-tagging.html>`__.  
        
 
      
@@ -18983,7 +18992,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -19130,7 +19139,7 @@ Client
 
     
 
-    Creates or modifies the ``PublicAccessBlock`` configuration for an Amazon S3 bucket. To use this operation, you must have the ``s3:PutBucketPublicAccessBlock`` permission. For more information about Amazon S3 permissions, see `Specifying Permissions in a Policy <https://docs.aws.amazon.com/AmazonS3/latest/dev/using-with-s3-actions.html>`__ .
+    Creates or modifies the ``PublicAccessBlock`` configuration for an Amazon S3 bucket. To use this operation, you must have the ``s3:PutBucketPublicAccessBlock`` permission. For more information about Amazon S3 permissions, see `Specifying Permissions in a Policy <https://docs.aws.amazon.com/AmazonS3/latest/dev/using-with-s3-actions.html>`__.
 
      
 
@@ -19144,7 +19153,7 @@ Client
 
      
 
-    For more information about when Amazon S3 considers a bucket or an object public, see `The Meaning of "Public" <https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html#access-control-block-public-access-policy-status>`__ .
+    For more information about when Amazon S3 considers a bucket or an object public, see `The Meaning of "Public" <https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html#access-control-block-public-access-policy-status>`__.
 
      
 
@@ -19485,7 +19494,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -19605,7 +19614,7 @@ Client
 
      
 
-    If the upload request is signed with Signature Version 4, then Amazon Web Services S3 uses the ``x-amz-content-sha256`` header as a checksum instead of ``Content-MD5`` . For more information see `Authenticating Requests\: Using the Authorization Header (Amazon Web Services Signature Version 4) <https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-auth-using-authorization-header.html>`__ . 
+    If the upload request is signed with Signature Version 4, then Amazon Web Services S3 uses the ``x-amz-content-sha256`` header as a checksum instead of ``Content-MD5`` . For more information see `Authenticating Requests\: Using the Authorization Header (Amazon Web Services Signature Version 4) <https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-auth-using-authorization-header.html>`__. 
 
      
 
@@ -19621,11 +19630,11 @@ Client
 
      
 
-    You can optionally request server-side encryption where Amazon S3 encrypts your data as it writes it to disks in its data centers and decrypts it for you when you access it. You have the option of providing your own encryption key, or you can use the Amazon Web Services managed encryption keys. If you choose to provide your own encryption key, the request headers you provide in the request must match the headers you used in the request to initiate the upload by using `CreateMultipartUpload <https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateMultipartUpload.html>`__ . For more information, go to `Using Server-Side Encryption <https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingServerSideEncryption.html>`__ in the *Amazon S3 User Guide* .
+    You can optionally request server-side encryption where Amazon S3 encrypts your data as it writes it to disks in its data centers and decrypts it for you when you access it. You have the option of providing your own encryption key, or you can use the Amazon Web Services managed encryption keys. If you choose to provide your own encryption key, the request headers you provide in the request must match the headers you used in the request to initiate the upload by using `CreateMultipartUpload <https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateMultipartUpload.html>`__. For more information, go to `Using Server-Side Encryption <https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingServerSideEncryption.html>`__ in the *Amazon S3 User Guide* .
 
      
 
-    Server-side encryption is supported by the S3 Multipart Upload actions. Unless you are using a customer-provided encryption key, you don't need to specify the encryption parameters in each UploadPart request. Instead, you only need to specify the server-side encryption parameters in the initial Initiate Multipart request. For more information, see `CreateMultipartUpload <https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateMultipartUpload.html>`__ .
+    Server-side encryption is supported by the S3 Multipart Upload actions. Unless you are using a customer-provided encryption key, you don't need to specify the encryption parameters in each UploadPart request. Instead, you only need to specify the server-side encryption parameters in the initial Initiate Multipart request. For more information, see `CreateMultipartUpload <https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateMultipartUpload.html>`__.
 
      
 
@@ -19927,7 +19936,7 @@ Client
      
     * For information about copying objects using a single atomic action vs. a multipart upload, see `Operations on Objects <https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectOperations.html>`__ in the *Amazon S3 User Guide* . 
      
-    * For information about using server-side encryption with customer-provided encryption keys with the ``UploadPartCopy`` operation, see `CopyObject <https://docs.aws.amazon.com/AmazonS3/latest/API/API_CopyObject.html>`__ and `UploadPart <https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html>`__ . 
+    * For information about using server-side encryption with customer-provided encryption keys with the ``UploadPartCopy`` operation, see `CopyObject <https://docs.aws.amazon.com/AmazonS3/latest/API/API_CopyObject.html>`__ and `UploadPart <https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html>`__. 
      
 
      
@@ -20052,7 +20061,7 @@ Client
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -20988,7 +20997,7 @@ The available paginators are:
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -21750,7 +21759,7 @@ The available paginators are:
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -22108,7 +22117,7 @@ The available paginators are:
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -22337,7 +22346,7 @@ The available paginators are:
 
            
 
-          When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+          When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
           
         
@@ -22381,7 +22390,7 @@ The available paginators are:
 
            
 
-          For example, if the prefix is ``notes/`` and the delimiter is a slash (``/`` ) as in ``notes/summer/july`` , the common prefix is ``notes/summer/`` . All of the keys that roll up into a common prefix count as a single return when calculating the number of returns. 
+          For example, if the prefix is ``notes/`` and the delimiter is a slash ( ``/`` ) as in ``notes/summer/july`` , the common prefix is ``notes/summer/`` . All of the keys that roll up into a common prefix count as a single return when calculating the number of returns. 
 
           
           
@@ -22489,7 +22498,7 @@ The available paginators are:
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -22603,7 +22612,7 @@ The available paginators are:
 
         - **AbortDate** *(datetime) --* 
 
-          If the bucket has a lifecycle rule configured with an action to abort incomplete multipart uploads and the prefix in the lifecycle rule matches the object name in the request, then the response includes this header indicating when the initiated multipart upload will become eligible for abort operation. For more information, see `Aborting Incomplete Multipart Uploads Using a Bucket Lifecycle Policy <https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuoverview.html#mpu-abort-incomplete-mpu-lifecycle-config>`__ .
+          If the bucket has a lifecycle rule configured with an action to abort incomplete multipart uploads and the prefix in the lifecycle rule matches the object name in the request, then the response includes this header indicating when the initiated multipart upload will become eligible for abort operation. For more information, see `Aborting Incomplete Multipart Uploads Using a Bucket Lifecycle Policy <https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuoverview.html#mpu-abort-incomplete-mpu-lifecycle-config>`__.
 
            
 
@@ -22829,7 +22838,7 @@ The available waiters are:
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -22903,7 +22912,7 @@ The available waiters are:
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -22989,7 +22998,7 @@ The available waiters are:
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
@@ -23173,7 +23182,7 @@ The available waiters are:
 
        
 
-      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form `` *AccessPointName* -*AccountId* .*outpostID* .s3-outposts.*Region* .amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
+      When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form ``AccessPointName-AccountId.outpostID.s3-outposts.Region.amazonaws.com`` . When using this action with S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see `Using Amazon S3 on Outposts <https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html>`__ in the *Amazon S3 User Guide* .
 
       
 
