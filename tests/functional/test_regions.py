@@ -14,9 +14,7 @@ import pytest
 
 from ibm_botocore.client import ClientEndpointBridge
 from ibm_botocore.exceptions import NoRegionError
-
-from tests import create_session, mock, BaseSessionTest, ClientHTTPStubber
-
+from tests import BaseSessionTest, ClientHTTPStubber, mock
 
 # NOTE: sqs endpoint updated to be the CN in the SSL cert because
 # a bug in python2.6 prevents subjectAltNames from being parsed
@@ -44,7 +42,7 @@ KNOWN_REGIONS = {
         'elasticache': 'elasticache.ap-northeast-1.amazonaws.com',
         'elasticbeanstalk': 'elasticbeanstalk.ap-northeast-1.amazonaws.com',
         'elasticloadbalancing': 'elasticloadbalancing.ap-northeast-1.amazonaws.com',
-        'elasticmapreduce': 'ap-northeast-1.elasticmapreduce.amazonaws.com',
+        'elasticmapreduce': 'elasticmapreduce.ap-northeast-1.amazonaws.com',
         'elastictranscoder': 'elastictranscoder.ap-northeast-1.amazonaws.com',
         'glacier': 'glacier.ap-northeast-1.amazonaws.com',
         'iot': 'iot.ap-northeast-1.amazonaws.com',
@@ -58,12 +56,12 @@ KNOWN_REGIONS = {
         's3': 's3.ap-northeast-1.amazonaws.com',
         'sdb': 'sdb.ap-northeast-1.amazonaws.com',
         'sns': 'sns.ap-northeast-1.amazonaws.com',
-        'sqs': 'ap-northeast-1.queue.amazonaws.com',
+        'sqs': 'sqs.ap-northeast-1.amazonaws.com',
         'storagegateway': 'storagegateway.ap-northeast-1.amazonaws.com',
         'streams.dynamodb': 'streams.dynamodb.ap-northeast-1.amazonaws.com',
         'sts': 'sts.ap-northeast-1.amazonaws.com',
         'swf': 'swf.ap-northeast-1.amazonaws.com',
-        'workspaces': 'workspaces.ap-northeast-1.amazonaws.com'
+        'workspaces': 'workspaces.ap-northeast-1.amazonaws.com',
     },
     'ap-southeast-1': {
         'autoscaling': 'autoscaling.ap-southeast-1.amazonaws.com',
@@ -79,7 +77,7 @@ KNOWN_REGIONS = {
         'elasticache': 'elasticache.ap-southeast-1.amazonaws.com',
         'elasticbeanstalk': 'elasticbeanstalk.ap-southeast-1.amazonaws.com',
         'elasticloadbalancing': 'elasticloadbalancing.ap-southeast-1.amazonaws.com',
-        'elasticmapreduce': 'ap-southeast-1.elasticmapreduce.amazonaws.com',
+        'elasticmapreduce': 'elasticmapreduce.ap-southeast-1.amazonaws.com',
         'elastictranscoder': 'elastictranscoder.ap-southeast-1.amazonaws.com',
         'kinesis': 'kinesis.ap-southeast-1.amazonaws.com',
         'kms': 'kms.ap-southeast-1.amazonaws.com',
@@ -90,12 +88,12 @@ KNOWN_REGIONS = {
         's3': 's3.ap-southeast-1.amazonaws.com',
         'sdb': 'sdb.ap-southeast-1.amazonaws.com',
         'sns': 'sns.ap-southeast-1.amazonaws.com',
-        'sqs': 'ap-southeast-1.queue.amazonaws.com',
+        'sqs': 'sqs.ap-southeast-1.amazonaws.com',
         'storagegateway': 'storagegateway.ap-southeast-1.amazonaws.com',
         'streams.dynamodb': 'streams.dynamodb.ap-southeast-1.amazonaws.com',
         'sts': 'sts.ap-southeast-1.amazonaws.com',
         'swf': 'swf.ap-southeast-1.amazonaws.com',
-        'workspaces': 'workspaces.ap-southeast-1.amazonaws.com'
+        'workspaces': 'workspaces.ap-southeast-1.amazonaws.com',
     },
     'ap-southeast-2': {
         'autoscaling': 'autoscaling.ap-southeast-2.amazonaws.com',
@@ -114,7 +112,7 @@ KNOWN_REGIONS = {
         'elasticache': 'elasticache.ap-southeast-2.amazonaws.com',
         'elasticbeanstalk': 'elasticbeanstalk.ap-southeast-2.amazonaws.com',
         'elasticloadbalancing': 'elasticloadbalancing.ap-southeast-2.amazonaws.com',
-        'elasticmapreduce': 'ap-southeast-2.elasticmapreduce.amazonaws.com',
+        'elasticmapreduce': 'elasticmapreduce.ap-southeast-2.amazonaws.com',
         'glacier': 'glacier.ap-southeast-2.amazonaws.com',
         'kinesis': 'kinesis.ap-southeast-2.amazonaws.com',
         'kms': 'kms.ap-southeast-2.amazonaws.com',
@@ -125,16 +123,14 @@ KNOWN_REGIONS = {
         's3': 's3.ap-southeast-2.amazonaws.com',
         'sdb': 'sdb.ap-southeast-2.amazonaws.com',
         'sns': 'sns.ap-southeast-2.amazonaws.com',
-        'sqs': 'ap-southeast-2.queue.amazonaws.com',
+        'sqs': 'sqs.ap-southeast-2.amazonaws.com',
         'storagegateway': 'storagegateway.ap-southeast-2.amazonaws.com',
         'streams.dynamodb': 'streams.dynamodb.ap-southeast-2.amazonaws.com',
         'sts': 'sts.ap-southeast-2.amazonaws.com',
         'swf': 'swf.ap-southeast-2.amazonaws.com',
-        'workspaces': 'workspaces.ap-southeast-2.amazonaws.com'
+        'workspaces': 'workspaces.ap-southeast-2.amazonaws.com',
     },
-    'aws-us-gov-global': {
-        'iam': 'iam.us-gov.amazonaws.com'
-    },
+    'aws-us-gov-global': {'iam': 'iam.us-gov.amazonaws.com'},
     'cn-north-1': {
         'autoscaling': 'autoscaling.cn-north-1.amazonaws.com.cn',
         'cloudformation': 'cloudformation.cn-north-1.amazonaws.com.cn',
@@ -153,11 +149,11 @@ KNOWN_REGIONS = {
         'rds': 'rds.cn-north-1.amazonaws.com.cn',
         's3': 's3.cn-north-1.amazonaws.com.cn',
         'sns': 'sns.cn-north-1.amazonaws.com.cn',
-        'sqs': 'cn-north-1.queue.amazonaws.com.cn',
+        'sqs': 'sqs.cn-north-1.amazonaws.com.cn',
         'storagegateway': 'storagegateway.cn-north-1.amazonaws.com.cn',
         'streams.dynamodb': 'streams.dynamodb.cn-north-1.amazonaws.com.cn',
         'sts': 'sts.cn-north-1.amazonaws.com.cn',
-        'swf': 'swf.cn-north-1.amazonaws.com.cn'
+        'swf': 'swf.cn-north-1.amazonaws.com.cn',
     },
     'eu-central-1': {
         'autoscaling': 'autoscaling.eu-central-1.amazonaws.com',
@@ -183,11 +179,11 @@ KNOWN_REGIONS = {
         'redshift': 'redshift.eu-central-1.amazonaws.com',
         's3': 's3.eu-central-1.amazonaws.com',
         'sns': 'sns.eu-central-1.amazonaws.com',
-        'sqs': 'eu-central-1.queue.amazonaws.com',
+        'sqs': 'sqs.eu-central-1.amazonaws.com',
         'storagegateway': 'storagegateway.eu-central-1.amazonaws.com',
         'streams.dynamodb': 'streams.dynamodb.eu-central-1.amazonaws.com',
         'sts': 'sts.eu-central-1.amazonaws.com',
-        'swf': 'swf.eu-central-1.amazonaws.com'
+        'swf': 'swf.eu-central-1.amazonaws.com',
     },
     'eu-west-1': {
         'apigateway': 'apigateway.eu-west-1.amazonaws.com',
@@ -209,7 +205,7 @@ KNOWN_REGIONS = {
         'elasticache': 'elasticache.eu-west-1.amazonaws.com',
         'elasticbeanstalk': 'elasticbeanstalk.eu-west-1.amazonaws.com',
         'elasticloadbalancing': 'elasticloadbalancing.eu-west-1.amazonaws.com',
-        'elasticmapreduce': 'eu-west-1.elasticmapreduce.amazonaws.com',
+        'elasticmapreduce': 'elasticmapreduce.eu-west-1.amazonaws.com',
         'elastictranscoder': 'elastictranscoder.eu-west-1.amazonaws.com',
         'email': 'email.eu-west-1.amazonaws.com',
         'glacier': 'glacier.eu-west-1.amazonaws.com',
@@ -225,21 +221,17 @@ KNOWN_REGIONS = {
         's3': 's3.eu-west-1.amazonaws.com',
         'sdb': 'sdb.eu-west-1.amazonaws.com',
         'sns': 'sns.eu-west-1.amazonaws.com',
-        'sqs': 'eu-west-1.queue.amazonaws.com',
+        'sqs': 'sqs.eu-west-1.amazonaws.com',
         'ssm': 'ssm.eu-west-1.amazonaws.com',
         'storagegateway': 'storagegateway.eu-west-1.amazonaws.com',
         'streams.dynamodb': 'streams.dynamodb.eu-west-1.amazonaws.com',
         'sts': 'sts.eu-west-1.amazonaws.com',
         'swf': 'swf.eu-west-1.amazonaws.com',
-        'workspaces': 'workspaces.eu-west-1.amazonaws.com'
+        'workspaces': 'workspaces.eu-west-1.amazonaws.com',
     },
-    # IBM Unsupported
-    # 'fips-us-gov-west-1': {
-    #     's3': 's3-fips.us-gov-west-1.amazonaws.com'
-    # },
-    's3-external-1': {
-        's3': 's3-external-1.amazonaws.com'
-    },
+	# IBM Unsupported
+    #'fips-us-gov-west-1': {'s3': 's3-fips.us-gov-west-1.amazonaws.com'},
+    's3-external-1': {'s3': 's3-external-1.amazonaws.com'},
     'sa-east-1': {
         'autoscaling': 'autoscaling.sa-east-1.amazonaws.com',
         'cloudformation': 'cloudformation.sa-east-1.amazonaws.com',
@@ -252,18 +244,18 @@ KNOWN_REGIONS = {
         'elasticache': 'elasticache.sa-east-1.amazonaws.com',
         'elasticbeanstalk': 'elasticbeanstalk.sa-east-1.amazonaws.com',
         'elasticloadbalancing': 'elasticloadbalancing.sa-east-1.amazonaws.com',
-        'elasticmapreduce': 'sa-east-1.elasticmapreduce.amazonaws.com',
+        'elasticmapreduce': 'elasticmapreduce.sa-east-1.amazonaws.com',
         'kms': 'kms.sa-east-1.amazonaws.com',
         'monitoring': 'monitoring.sa-east-1.amazonaws.com',
         'rds': 'rds.sa-east-1.amazonaws.com',
         's3': 's3.sa-east-1.amazonaws.com',
         'sdb': 'sdb.sa-east-1.amazonaws.com',
         'sns': 'sns.sa-east-1.amazonaws.com',
-        'sqs': 'sa-east-1.queue.amazonaws.com',
+        'sqs': 'sqs.sa-east-1.amazonaws.com',
         'storagegateway': 'storagegateway.sa-east-1.amazonaws.com',
         'streams.dynamodb': 'streams.dynamodb.sa-east-1.amazonaws.com',
         'sts': 'sts.sa-east-1.amazonaws.com',
-        'swf': 'swf.sa-east-1.amazonaws.com'
+        'swf': 'swf.sa-east-1.amazonaws.com',
     },
     'us-east-1': {
         'apigateway': 'apigateway.us-east-1.amazonaws.com',
@@ -304,14 +296,14 @@ KNOWN_REGIONS = {
         'mobileanalytics': 'mobileanalytics.us-east-1.amazonaws.com',
         'monitoring': 'monitoring.us-east-1.amazonaws.com',
         'opsworks': 'opsworks.us-east-1.amazonaws.com',
-        'rds': 'rds.amazonaws.com',
+        'rds': 'rds.us-east-1.amazonaws.com',
         'redshift': 'redshift.us-east-1.amazonaws.com',
         'route53': 'route53.amazonaws.com',
         'route53domains': 'route53domains.us-east-1.amazonaws.com',
         's3': 's3.us-east-1.amazonaws.com',
         'sdb': 'sdb.amazonaws.com',
         'sns': 'sns.us-east-1.amazonaws.com',
-        'sqs': 'queue.amazonaws.com',
+        'sqs': 'sqs.us-east-1.amazonaws.com',
         'ssm': 'ssm.us-east-1.amazonaws.com',
         'storagegateway': 'storagegateway.us-east-1.amazonaws.com',
         'streams.dynamodb': 'streams.dynamodb.us-east-1.amazonaws.com',
@@ -319,7 +311,7 @@ KNOWN_REGIONS = {
         'support': 'support.us-east-1.amazonaws.com',
         'swf': 'swf.us-east-1.amazonaws.com',
         'workspaces': 'workspaces.us-east-1.amazonaws.com',
-        'waf': 'waf.amazonaws.com'
+        'waf': 'waf.amazonaws.com',
     },
     'us-gov-west-1': {
         'autoscaling': 'autoscaling.us-gov-west-1.amazonaws.com',
@@ -339,9 +331,9 @@ KNOWN_REGIONS = {
         'redshift': 'redshift.us-gov-west-1.amazonaws.com',
         's3': 's3.us-gov-west-1.amazonaws.com',
         'sns': 'sns.us-gov-west-1.amazonaws.com',
-        'sqs': 'us-gov-west-1.queue.amazonaws.com',
+        'sqs': 'sqs.us-gov-west-1.amazonaws.com',
         'sts': 'sts.us-gov-west-1.amazonaws.com',
-        'swf': 'swf.us-gov-west-1.amazonaws.com'
+        'swf': 'swf.us-gov-west-1.amazonaws.com',
     },
     'us-west-1': {
         'autoscaling': 'autoscaling.us-west-1.amazonaws.com',
@@ -356,7 +348,7 @@ KNOWN_REGIONS = {
         'elasticache': 'elasticache.us-west-1.amazonaws.com',
         'elasticbeanstalk': 'elasticbeanstalk.us-west-1.amazonaws.com',
         'elasticloadbalancing': 'elasticloadbalancing.us-west-1.amazonaws.com',
-        'elasticmapreduce': 'us-west-1.elasticmapreduce.amazonaws.com',
+        'elasticmapreduce': 'elasticmapreduce.us-west-1.amazonaws.com',
         'elastictranscoder': 'elastictranscoder.us-west-1.amazonaws.com',
         'glacier': 'glacier.us-west-1.amazonaws.com',
         'kinesis': 'kinesis.us-west-1.amazonaws.com',
@@ -367,11 +359,11 @@ KNOWN_REGIONS = {
         's3': 's3.us-west-1.amazonaws.com',
         'sdb': 'sdb.us-west-1.amazonaws.com',
         'sns': 'sns.us-west-1.amazonaws.com',
-        'sqs': 'us-west-1.queue.amazonaws.com',
+        'sqs': 'sqs.us-west-1.amazonaws.com',
         'storagegateway': 'storagegateway.us-west-1.amazonaws.com',
         'streams.dynamodb': 'streams.dynamodb.us-west-1.amazonaws.com',
         'sts': 'sts.us-west-1.amazonaws.com',
-        'swf': 'swf.us-west-1.amazonaws.com'
+        'swf': 'swf.us-west-1.amazonaws.com',
     },
     'us-west-2': {
         'apigateway': 'apigateway.us-west-2.amazonaws.com',
@@ -394,7 +386,7 @@ KNOWN_REGIONS = {
         'elasticbeanstalk': 'elasticbeanstalk.us-west-2.amazonaws.com',
         'elasticfilesystem': 'elasticfilesystem.us-west-2.amazonaws.com',
         'elasticloadbalancing': 'elasticloadbalancing.us-west-2.amazonaws.com',
-        'elasticmapreduce': 'us-west-2.elasticmapreduce.amazonaws.com',
+        'elasticmapreduce': 'elasticmapreduce.us-west-2.amazonaws.com',
         'elastictranscoder': 'elastictranscoder.us-west-2.amazonaws.com',
         'email': 'email.us-west-2.amazonaws.com',
         'glacier': 'glacier.us-west-2.amazonaws.com',
@@ -409,14 +401,14 @@ KNOWN_REGIONS = {
         's3': 's3.us-west-2.amazonaws.com',
         'sdb': 'sdb.us-west-2.amazonaws.com',
         'sns': 'sns.us-west-2.amazonaws.com',
-        'sqs': 'us-west-2.queue.amazonaws.com',
+        'sqs': 'sqs.us-west-2.amazonaws.com',
         'ssm': 'ssm.us-west-2.amazonaws.com',
         'storagegateway': 'storagegateway.us-west-2.amazonaws.com',
         'streams.dynamodb': 'streams.dynamodb.us-west-2.amazonaws.com',
         'sts': 'sts.us-west-2.amazonaws.com',
         'swf': 'swf.us-west-2.amazonaws.com',
-        'workspaces': 'workspaces.us-west-2.amazonaws.com'
-    }
+        'workspaces': 'workspaces.us-west-2.amazonaws.com',
+    },
 }
 
 
@@ -430,17 +422,8 @@ KNOWN_AWS_PARTITION_WIDE = {
     'route53': 'https://route53.amazonaws.com',
     's3': 'https://s3.amazonaws.com',
     'sts': 'https://sts.amazonaws.com',
-    'iam': 'https://iam.amazonaws.com'
+    'iam': 'https://iam.amazonaws.com',
 }
-
-
-def _get_patched_session():
-    with mock.patch('os.environ') as environ:
-        environ['AWS_ACCESS_KEY_ID'] = 'access_key'
-        environ['AWS_SECRET_ACCESS_KEY'] = 'secret_key'
-        environ['AWS_CONFIG_FILE'] = 'no-exist-foo'
-        session = create_session()
-    return session
 
 
 def _known_endpoints_by_region():
@@ -451,17 +434,18 @@ def _known_endpoints_by_region():
 
 @pytest.mark.parametrize(
     "service_name, region_name, expected_endpoint",
-    _known_endpoints_by_region()
+    _known_endpoints_by_region(),
 )
-def test_single_service_region_endpoint(service_name, region_name, expected_endpoint):
+def test_single_service_region_endpoint(
+    patched_session, service_name, region_name, expected_endpoint
+):
     # Verify the actual values from the partition files.  While
     # TestEndpointHeuristics verified the generic functionality given any
     # endpoints file, this test actually verifies the partition data against a
     # fixed list of known endpoints.  This list doesn't need to be kept 100% up
     # to date, but serves as a basis for regressions as the endpoint data
     # logic evolves.
-    resolver = _get_patched_session()._get_internal_component(
-        'endpoint_resolver')
+    resolver = patched_session._get_internal_component('endpoint_resolver')
     bridge = ClientEndpointBridge(resolver, None, None)
     result = bridge.resolve(service_name, region_name)
     expected = 'https://%s' % expected_endpoint
@@ -469,8 +453,8 @@ def test_single_service_region_endpoint(service_name, region_name, expected_endp
 
 
 # Ensure that all S3 regions use s3v4 instead of v4
-def test_all_s3_endpoints_have_s3v4():
-    session = _get_patched_session()
+def test_all_s3_endpoints_have_s3v4(patched_session):
+    session = patched_session
     partitions = session.get_available_partitions()
     resolver = session._get_internal_component('endpoint_resolver')
     for partition_name in partitions:
@@ -481,28 +465,26 @@ def test_all_s3_endpoints_have_s3v4():
 
 
 @pytest.mark.parametrize(
-    "service_name, expected_endpoint",
-    KNOWN_AWS_PARTITION_WIDE.items()
+    "service_name, expected_endpoint", KNOWN_AWS_PARTITION_WIDE.items()
 )
-def test_single_service_partition_endpoint(service_name, expected_endpoint):
-    resolver = _get_patched_session()._get_internal_component(
-        'endpoint_resolver')
+def test_single_service_partition_endpoint(
+    patched_session, service_name, expected_endpoint
+):
+    resolver = patched_session._get_internal_component('endpoint_resolver')
     bridge = ClientEndpointBridge(resolver)
     result = bridge.resolve(service_name)
     assert result['endpoint_url'] == expected_endpoint
 
 
-def test_non_partition_endpoint_requires_region():
-    resolver = _get_patched_session()._get_internal_component(
-        'endpoint_resolver')
+def test_non_partition_endpoint_requires_region(patched_session):
+    resolver = patched_session._get_internal_component('endpoint_resolver')
     with pytest.raises(NoRegionError):
         resolver.construct_endpoint('ec2')
 
 
 class TestEndpointResolution(BaseSessionTest):
-
     def setUp(self):
-        super(TestEndpointResolution, self).setUp()
+        super().setUp()
         self.xml_response = (
             b'<?xml version="1.0" encoding="UTF-8"?>\n\n'
             b'<ListRolesResponse '
@@ -512,7 +494,9 @@ class TestEndpointResolution(BaseSessionTest):
         )
 
     def create_stubbed_client(self, service_name, region_name, **kwargs):
-        client = self.session.create_client(service_name, region_name, **kwargs)
+        client = self.session.create_client(
+            service_name, region_name, **kwargs
+        )
         http_stubber = ClientHTTPStubber(client)
         http_stubber.start()
         return client, http_stubber
@@ -522,8 +506,7 @@ class TestEndpointResolution(BaseSessionTest):
         stubber.add_response()
         client.list_buckets()
         self.assertEqual(
-            stubber.requests[0].url,
-            'https://s3.us-east-2.amazonaws.com/'
+            stubber.requests[0].url, 'https://s3.us-east-2.amazonaws.com/'
         )
 
     def test_regionalized_client_with_unknown_region(self):
@@ -533,8 +516,7 @@ class TestEndpointResolution(BaseSessionTest):
         # Validate we don't fall back to partition endpoint for
         # regionalized services.
         self.assertEqual(
-            stubber.requests[0].url,
-            'https://s3.not-real.amazonaws.com/'
+            stubber.requests[0].url, 'https://s3.not-real.amazonaws.com/'
         )
 
     def test_unregionalized_client_endpoint_resolution(self):
@@ -552,3 +534,15 @@ class TestEndpointResolution(BaseSessionTest):
         self.assertTrue(
             stubber.requests[0].url.startswith('https://iam.amazonaws.com/')
         )
+
+
+@pytest.mark.parametrize("is_builtin", [True, False])
+def test_endpoint_resolver_knows_its_datasource(patched_session, is_builtin):
+    # The information whether or not the endpoints.json file was loaded from
+    # the builtin data directory or not should be passed from Loader to
+    # EndpointResolver.
+    session = patched_session
+    loader = session.get_component('data_loader')
+    with mock.patch.object(loader, 'is_builtin_path', return_value=is_builtin):
+        resolver = session._get_internal_component('endpoint_resolver')
+        assert resolver.uses_builtin_data == is_builtin

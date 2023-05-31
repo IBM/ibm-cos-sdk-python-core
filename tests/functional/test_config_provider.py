@@ -12,12 +12,15 @@
 # language governing permissions and limitations under the License.
 import pytest
 
-from ibm_botocore.session import get_session
 from ibm_botocore.config import Config
+from ibm_botocore.session import get_session
 
 _SDK_DEFAULT_CONFIGURATION_VALUES_ALLOWLIST = (
-    'retryMode', 'stsRegionalEndpoints', 's3UsEast1RegionalEndpoints',
-    'connectTimeoutInMillis', 'tlsNegotiationTimeoutInMillis'
+    'retryMode',
+    'stsRegionalEndpoints',
+    's3UsEast1RegionalEndpoints',
+    'connectTimeoutInMillis',
+    'tlsNegotiationTimeoutInMillis',
 )
 
 session = get_session()
@@ -40,7 +43,8 @@ def test_default_configurations_resolve_correctly():
     session = get_session()
     config = Config(defaults_mode='standard')
     client = session.create_client(
-        'sts', config=config, region_name='us-west-2')
+        'sts', config=config, region_name='us-west-2'
+    )
     assert client.meta.config.s3['us_east_1_regional_endpoint'] == 'regional'
     assert client.meta.config.connect_timeout == 3.1
     assert client.meta.endpoint_url == 'https://sts.us-west-2.amazonaws.com'

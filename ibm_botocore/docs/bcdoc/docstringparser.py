@@ -10,10 +10,14 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-from ibm_botocore.compat import six
+from html.parser import HTMLParser
+
+PRIORITY_PARENT_TAGS = ('code', 'a')
+OMIT_NESTED_TAGS = ('span', 'i', 'code', 'a')
+OMIT_SELF_TAGS = ('i', 'b')
 
 
-class DocStringParser(six.moves.html_parser.HTMLParser):
+class DocStringParser(HTMLParser):
     """
     A simple HTML parser.  Focused on converting the subset of HTML
     that appears in the documentation strings of the JSON models into
@@ -23,20 +27,20 @@ class DocStringParser(six.moves.html_parser.HTMLParser):
     def __init__(self, doc):
         self.tree = None
         self.doc = doc
-        six.moves.html_parser.HTMLParser.__init__(self)
+        HTMLParser.__init__(self)
 
     def reset(self):
-        six.moves.html_parser.HTMLParser.reset(self)
+        HTMLParser.reset(self)
         self.tree = HTMLTree(self.doc)
 
     def feed(self, data):
         # HTMLParser is an old style class, so the super() method will not work.
-        six.moves.html_parser.HTMLParser.feed(self, data)
+        HTMLParser.feed(self, data)
         self.tree.write()
         self.tree = HTMLTree(self.doc)
 
     def close(self):
-        six.moves.html_parser.HTMLParser.close(self)
+        HTMLParser.close(self)
         # Write if there is anything remaining.
         self.tree.write()
         self.tree = HTMLTree(self.doc)
@@ -51,12 +55,13 @@ class DocStringParser(six.moves.html_parser.HTMLParser):
         self.tree.add_data(data)
 
 
-class HTMLTree(object):
+class HTMLTree:
     """
     A tree which handles HTML nodes. Designed to work with a python HTML parser,
     meaning that the current_node will be the most recently opened tag. When
     a tag is closed, the current_node moves up to the parent node.
     """
+
     def __init__(self, doc):
         self.doc = doc
         self.head = StemNode()
@@ -93,7 +98,7 @@ class HTMLTree(object):
         self.head.write(self.doc)
 
 
-class Node(object):
+class Node:
     def __init__(self, parent=None):
         self.parent = parent
 
@@ -103,7 +108,7 @@ class Node(object):
 
 class StemNode(Node):
     def __init__(self, parent=None):
-        super(StemNode, self).__init__(parent)
+        super().__init__(parent)
         self.children = []
 
     def add_child(self, child):
@@ -114,42 +119,68 @@ class StemNode(Node):
         self._write_children(doc)
 
     def _write_children(self, doc):
-        for child in self.children:
-            child.write(doc)
+        for index, child in enumerate(self.children):
+            if isinstance(child, TagNode) and index + 1 < len(self.children):
+                # Provide a look ahead for TagNodes when one exists
+                next_child = self.children[index + 1]
+                child.write(doc, next_child)
+            else:
+                child.write(doc)
 
 
 class TagNode(StemNode):
     """
     A generic Tag node. It will verify that handlers exist before writing.
     """
+
     def __init__(self, tag, attrs=None, parent=None):
-        super(TagNode, self).__init__(parent)
+        super().__init__(parent)
         self.attrs = attrs
         self.tag = tag
 
-    def write(self, doc):
+    def _has_nested_tags(self):
+        # Returns True if any children are TagNodes and False otherwise.
+        return any(isinstance(child, TagNode) for child in self.children)
+
+    def write(self, doc, next_child=None):
+        prioritize_nested_tags = (
+            self.tag in OMIT_SELF_TAGS and self._has_nested_tags()
+        )
+        prioritize_parent_tag = (
+            isinstance(self.parent, TagNode)
+            and self.parent.tag in PRIORITY_PARENT_TAGS
+            and self.tag in OMIT_NESTED_TAGS
+        )
+        if prioritize_nested_tags or prioritize_parent_tag:
+            self._write_children(doc)
+            return
+
         self._write_start(doc)
         self._write_children(doc)
-        self._write_end(doc)
+        self._write_end(doc, next_child)
 
     def _write_start(self, doc):
         handler_name = 'start_%s' % self.tag
         if hasattr(doc.style, handler_name):
             getattr(doc.style, handler_name)(self.attrs)
 
-    def _write_end(self, doc):
+    def _write_end(self, doc, next_child):
         handler_name = 'end_%s' % self.tag
         if hasattr(doc.style, handler_name):
-            getattr(doc.style, handler_name)()
+            if handler_name == 'end_a':
+                # We use lookahead to determine if a space is needed after a link node
+                getattr(doc.style, handler_name)(next_child)
+            else:
+                getattr(doc.style, handler_name)()
 
 
 class LineItemNode(TagNode):
     def __init__(self, attrs=None, parent=None):
-        super(LineItemNode, self).__init__('li', attrs, parent)
+        super().__init__('li', attrs, parent)
 
-    def write(self, doc):
+    def write(self, doc, next_child=None):
         self._lstrip(self)
-        super(LineItemNode, self).write(doc)
+        super().write(doc, next_child)
 
     def _lstrip(self, node):
         """
@@ -174,9 +205,10 @@ class DataNode(Node):
     """
     A Node that contains only string data.
     """
+
     def __init__(self, data, parent=None):
-        super(DataNode, self).__init__(parent)
-        if not isinstance(data, six.string_types):
+        super().__init__(parent)
+        if not isinstance(data, str):
             raise ValueError("Expecting string type, %s given." % type(data))
         self.data = data
 
@@ -189,6 +221,11 @@ class DataNode(Node):
 
         if self.data.isspace():
             str_data = ' '
+            if isinstance(self.parent, TagNode) and self.parent.tag == 'code':
+                # Inline markup content may not start or end with whitespace.
+                # When provided <code> Test </code>, we want to
+                # generate ``Test`` instead of `` Test ``.
+                str_data = ''
         else:
             end_space = self.data[-1].isspace()
             words = self.data.split()

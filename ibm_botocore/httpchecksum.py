@@ -18,18 +18,19 @@ the context of ibm_botocore. This involves both resolving the checksum to be use
 based on client configuration and environment, as well as application of the
 checksum to the request.
 """
-import io
 import base64
+import io
 import logging
 from binascii import crc32
 from hashlib import sha1, sha256
 
 from ibm_botocore.compat import HAS_CRT
-from ibm_botocore.exceptions import AwsChunkedWrapperError
-from ibm_botocore.exceptions import FlexibleChecksumError
+from ibm_botocore.exceptions import AwsChunkedWrapperError, FlexibleChecksumError
 from ibm_botocore.response import StreamingBody
-from ibm_botocore.utils import determine_content_length
-from ibm_botocore.utils import conditionally_calculate_md5
+from ibm_botocore.utils import (
+    conditionally_calculate_md5,
+    determine_content_length,
+)
 
 # IBM Unsupported
 # if HAS_CRT:
@@ -219,7 +220,7 @@ class StreamingChecksumBody(StreamingBody):
         self._expected = expected
 
     def read(self, amt=None):
-        chunk = super(StreamingChecksumBody, self).read(amt=amt)
+        chunk = super().read(amt=amt)
         self._checksum.update(chunk)
         if amt is None or (not chunk and amt > 0):
             self._validate_checksum()
@@ -228,8 +229,8 @@ class StreamingChecksumBody(StreamingBody):
     def _validate_checksum(self):
         if self._checksum.digest() != base64.b64decode(self._expected):
             error_msg = (
-                "Expected checksum %s did not match calculated checksum: %s"
-                % (self._expected, self._checksum.b64digest(),)
+                f"Expected checksum {self._expected} did not match calculated "
+                f"checksum: {self._checksum.b64digest()}"
             )
             raise FlexibleChecksumError(error_msg=error_msg)
 
@@ -240,7 +241,10 @@ def resolve_checksum_context(request, operation_model, params):
 
 
 def resolve_request_checksum_algorithm(
-    request, operation_model, params, supported_algorithms=None,
+    request,
+    operation_model,
+    params,
+    supported_algorithms=None,
 ):
     http_checksum = operation_model.http_checksum
     algorithm_member = http_checksum.get("requestAlgorithmMember")
@@ -337,7 +341,12 @@ def _apply_request_trailer_checksum(request):
         return
 
     headers["Transfer-Encoding"] = "chunked"
-    headers["Content-Encoding"] = "aws-chunked"
+    if "Content-Encoding" in headers:
+        # We need to preserve the existing content encoding and add
+        # aws-chunked as a new content encoding.
+        headers["Content-Encoding"] += ",aws-chunked"
+    else:
+        headers["Content-Encoding"] = "aws-chunked"
     headers["X-Amz-Trailer"] = location_name
 
     content_length = determine_content_length(body)
@@ -350,9 +359,10 @@ def _apply_request_trailer_checksum(request):
         body = io.BytesIO(body)
 
     request["body"] = AwsChunkedWrapper(
-        body, checksum_name=location_name,
-        # IBM Unsupported
+        body,
+		# IBM Unsupported
         # checksum_cls=checksum_cls,
+        checksum_name=location_name,
     )
 
 
@@ -367,9 +377,9 @@ def resolve_response_checksum_algorithms(
         # IBM Unsupported
         # if supported_algorithms is None:
         #     supported_algorithms = _SUPPORTED_CHECKSUM_ALGORITHMS
-        response_algorithms = set(
+        response_algorithms = {
             a.lower() for a in http_checksum.get("responseAlgorithms", [])
-        )
+        }
 
         usable_algorithms = []
         # IBM Unsupported

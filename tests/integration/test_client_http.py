@@ -1,19 +1,23 @@
+import contextlib
 import select
 import socket
-import contextlib
+import socketserver
 import threading
-from tests import mock
-from tests import unittest
 from contextlib import contextmanager
+from http.server import BaseHTTPRequestHandler
 
 import ibm_botocore.session
 from ibm_botocore.config import Config
-from ibm_botocore.vendored.six.moves import BaseHTTPServer, socketserver
 from ibm_botocore.exceptions import (
-    ConnectTimeoutError, ReadTimeoutError, EndpointConnectionError,
-    ConnectionClosedError, ClientError, ProxyConnectionError
+    ClientError,
+    ConnectionClosedError,
+    ConnectTimeoutError,
+    EndpointConnectionError,
+    ProxyConnectionError,
+    ReadTimeoutError,
 )
 from ibm_botocore.vendored.requests import exceptions as requests_exceptions
+from tests import mock, unittest
 
 
 class TestClientHTTPBehavior(unittest.TestCase):
@@ -51,7 +55,7 @@ class TestClientHTTPBehavior(unittest.TestCase):
         config = Config(
             proxies={'https': proxy_url},
             proxies_config={'proxy_use_forwarding_for_https': True},
-            region_name='us-west-1'
+            region_name='us-west-1',
         )
         environ = {'BOTO_EXPERIMENTAL__ADD_PROXY_HOST_HEADER': "True"}
         self.environ_patch = mock.patch('os.environ', environ)
@@ -74,7 +78,9 @@ class TestClientHTTPBehavior(unittest.TestCase):
                 self.end_headers()
 
                 remote_host, remote_port = self.path.split(':')
-                remote_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                remote_socket = socket.socket(
+                    socket.AF_INET, socket.SOCK_STREAM
+                )
                 remote_socket.connect((remote_host, int(remote_port)))
 
                 self._tunnel(self.request, remote_socket)
@@ -101,8 +107,9 @@ class TestClientHTTPBehavior(unittest.TestCase):
             retries={'max_attempts': 0},
             region_name='us-weast-2',
         )
-        client = self.session.create_client('ec2', endpoint_url=self.localhost,
-                                            config=config)
+        client = self.session.create_client(
+            'ec2', endpoint_url=self.localhost, config=config
+        )
         client_call_ended_event = threading.Event()
 
         class FakeEC2(SimpleHandler):
@@ -141,8 +148,9 @@ class TestClientHTTPBehavior(unittest.TestCase):
             retries={'max_attempts': 0},
             region_name='us-weast-2',
         )
-        client = self.session.create_client('ec2', endpoint_url=self.localhost,
-                                            config=config)
+        client = self.session.create_client(
+            'ec2', endpoint_url=self.localhost, config=config
+        )
         server_bound_event = threading.Event()
         client_call_ended_event = threading.Event()
 
@@ -163,17 +171,19 @@ class TestClientHTTPBehavior(unittest.TestCase):
     def test_invalid_host_gaierror(self):
         config = Config(retries={'max_attempts': 0}, region_name='us-weast-1')
         endpoint = 'https://ec2.us-weast-1.amazonaws.com/'
-        client = self.session.create_client('ec2', endpoint_url=endpoint,
-                                            config=config)
+        client = self.session.create_client(
+            'ec2', endpoint_url=endpoint, config=config
+        )
         with self.assertRaises(EndpointConnectionError):
             client.describe_regions()
 
     def test_bad_status_line(self):
         config = Config(retries={'max_attempts': 0}, region_name='us-weast-2')
-        client = self.session.create_client('ec2', endpoint_url=self.localhost,
-                                            config=config)
+        client = self.session.create_client(
+            'ec2', endpoint_url=self.localhost, config=config
+        )
 
-        class BadStatusHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+        class BadStatusHandler(BaseHTTPRequestHandler):
             event = threading.Event()
 
             def do_POST(self):
@@ -191,7 +201,7 @@ def unused_port():
         return sock.getsockname()[1]
 
 
-class SimpleHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+class SimpleHandler(BaseHTTPRequestHandler):
     status = 200
 
     def get_length(self):
@@ -210,7 +220,7 @@ class SimpleHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     do_POST = do_PUT = do_GET
 
 
-class ProxyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+class ProxyHandler(BaseHTTPRequestHandler):
     tunnel_chunk_size = 1024
     poll_limit = 10**4
 

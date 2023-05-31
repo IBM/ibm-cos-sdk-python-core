@@ -11,16 +11,18 @@
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 import copy
+
 from ibm_botocore.compat import OrderedDict
-
 from ibm_botocore.endpoint import DEFAULT_TIMEOUT, MAX_POOL_CONNECTIONS
-from ibm_botocore.exceptions import InvalidS3AddressingStyleError
-from ibm_botocore.exceptions import InvalidRetryConfigurationError
-from ibm_botocore.exceptions import InvalidMaxRetryAttemptsError
-from ibm_botocore.exceptions import InvalidRetryModeError
+from ibm_botocore.exceptions import (
+    InvalidMaxRetryAttemptsError,
+    InvalidRetryConfigurationError,
+    InvalidRetryModeError,
+    InvalidS3AddressingStyleError,
+)
 
 
-class Config(object):
+class Config:
     """Advanced configuration for Botocore clients.
 
     :type region_name: str
@@ -182,28 +184,38 @@ class Config(object):
         # endpoint resolution.
 
         Defaults to None.
+
+    :type tcp_keepalive: bool
+    :param tcp_keepalive: Enables the TCP Keep-Alive socket option used when
+        creating new connections if set to True.
+
+        Defaults to False.
     """
-    OPTION_DEFAULTS = OrderedDict([
-        ('region_name', None),
-        ('signature_version', None),
-        ('user_agent', None),
-        ('user_agent_extra', None),
-        ('connect_timeout', DEFAULT_TIMEOUT),
-        ('read_timeout', DEFAULT_TIMEOUT),
-        ('parameter_validation', True),
-        ('max_pool_connections', MAX_POOL_CONNECTIONS),
-        ('proxies', None),
-        ('proxies_config', None),
-        ('s3', None),
-        ('retries', None),
-        ('client_cert', None),
-        ('inject_host_prefix', True),
-        ('endpoint_discovery_enabled', None),
-        ('use_dualstack_endpoint', None),
-        # IBM Unsupported
-        # ('use_fips_endpoint', None),
-        ('defaults_mode', None)
-    ])
+
+    OPTION_DEFAULTS = OrderedDict(
+        [
+            ('region_name', None),
+            ('signature_version', None),
+            ('user_agent', None),
+            ('user_agent_extra', None),
+            ('connect_timeout', DEFAULT_TIMEOUT),
+            ('read_timeout', DEFAULT_TIMEOUT),
+            ('parameter_validation', True),
+            ('max_pool_connections', MAX_POOL_CONNECTIONS),
+            ('proxies', None),
+            ('proxies_config', None),
+            ('s3', None),
+            ('retries', None),
+            ('client_cert', None),
+            ('inject_host_prefix', True),
+            ('endpoint_discovery_enabled', None),
+            ('use_dualstack_endpoint', None),
+            # IBM Unsupported
+            # ('use_fips_endpoint', None),
+            ('defaults_mode', None),
+            ('tcp_keepalive', None),
+        ]
+    )
 
     NON_LEGACY_OPTION_DEFAULTS = {
         'connect_timeout': None,
@@ -211,12 +223,14 @@ class Config(object):
 
     def __init__(self, *args, **kwargs):
         self._user_provided_options = self._record_user_provided_options(
-            args, kwargs)
+            args, kwargs
+        )
 
         # Merge the user_provided options onto the default options
         config_vars = copy.copy(self.OPTION_DEFAULTS)
         defaults_mode = self._user_provided_options.get(
-            'defaults_mode', 'legacy')
+            'defaults_mode', 'legacy'
+        )
         if defaults_mode != 'legacy':
             config_vars.update(self.NON_LEGACY_OPTION_DEFAULTS)
         config_vars.update(self._user_provided_options)
@@ -241,15 +255,14 @@ class Config(object):
                 user_provided_options[key] = value
             # The key must exist in the available options
             else:
-                raise TypeError(
-                    'Got unexpected keyword argument \'%s\'' % key)
+                raise TypeError(f"Got unexpected keyword argument '{key}'")
 
         # The number of args should not be longer than the allowed
         # options
         if len(args) > len(option_order):
             raise TypeError(
-                'Takes at most %s arguments (%s given)' % (
-                    len(option_order), len(args)))
+                f"Takes at most {len(option_order)} arguments ({len(args)} given)"
+            )
 
         # Iterate through the args passed through to the constructor and map
         # them to appropriate keys.
@@ -257,8 +270,8 @@ class Config(object):
             # If it a kwarg was specified for the arg, then error out
             if option_order[i] in user_provided_options:
                 raise TypeError(
-                    'Got multiple values for keyword argument \'%s\'' % (
-                        option_order[i]))
+                    f"Got multiple values for keyword argument '{option_order[i]}'"
+                )
             user_provided_options[option_order[i]] = arg
 
         return user_provided_options
@@ -268,14 +281,19 @@ class Config(object):
             addressing_style = s3.get('addressing_style')
             if addressing_style not in ['virtual', 'auto', 'path', None]:
                 raise InvalidS3AddressingStyleError(
-                    s3_addressing_style=addressing_style)
+                    s3_addressing_style=addressing_style
+                )
 
     def _validate_retry_configuration(self, retries):
+        valid_options = ('max_attempts', 'mode', 'total_max_attempts')
+        valid_modes = ('legacy', 'standard', 'adaptive')
         if retries is not None:
             for key, value in retries.items():
-                if key not in ['max_attempts', 'mode', 'total_max_attempts']:
+                if key not in valid_options:
                     raise InvalidRetryConfigurationError(
-                        retry_config_option=key)
+                        retry_config_option=key,
+                        valid_options=valid_options,
+                    )
                 if key == 'max_attempts' and value < 0:
                     raise InvalidMaxRetryAttemptsError(
                         provided_max_attempts=value,
@@ -286,10 +304,10 @@ class Config(object):
                         provided_max_attempts=value,
                         min_value=1,
                     )
-                if key == 'mode' and value not in ['legacy', 'standard',
-                                                   'adaptive']:
+                if key == 'mode' and value not in valid_modes:
                     raise InvalidRetryModeError(
-                        provided_retry_mode=value
+                        provided_retry_mode=value,
+                        valid_modes=valid_modes,
                     )
 
     def merge(self, other_config):

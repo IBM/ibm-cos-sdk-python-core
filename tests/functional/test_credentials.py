@@ -10,35 +10,57 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-import uuid
-import threading
-import os
+import json
 import math
-import time
-import tempfile
+import os
 import shutil
-from datetime import datetime, timedelta
 import sys
+import tempfile
+import threading
+import time
+import uuid
+from datetime import datetime, timedelta
 
+import pytest
 from dateutil.tz import tzlocal
-from ibm_botocore.exceptions import CredentialRetrievalError
 
-from tests import mock, unittest, IntegerRefresher, BaseEnvVar, random_chars
-from tests import temporary_file, StubbedSession, SessionHTTPStubber
 from ibm_botocore import UNSIGNED
-from ibm_botocore.credentials import EnvProvider, ContainerProvider
-from ibm_botocore.credentials import InstanceMetadataProvider
-from ibm_botocore.credentials import Credentials, ReadOnlyCredentials
-from ibm_botocore.credentials import AssumeRoleProvider, ProfileProviderBuilder
-from ibm_botocore.credentials import CanonicalNameCredentialSourcer
-from ibm_botocore.credentials import DeferredRefreshableCredentials
-from ibm_botocore.credentials import create_credential_resolver
-from ibm_botocore.credentials import JSONFileCache
 from ibm_botocore.config import Config
+from ibm_botocore.credentials import (
+    AssumeRoleProvider,
+    CanonicalNameCredentialSourcer,
+    ContainerProvider,
+    Credentials,
+    DeferredRefreshableCredentials,
+    EnvProvider,
+    InstanceMetadataProvider,
+    JSONFileCache,
+    ProfileProviderBuilder,
+    ReadOnlyCredentials,
+    create_credential_resolver,
+)
+from ibm_botocore.exceptions import (
+    CredentialRetrievalError,
+    InfiniteLoopConfigError,
+    InvalidConfigError,
+)
 from ibm_botocore.session import Session
-from ibm_botocore.exceptions import InvalidConfigError, InfiniteLoopConfigError
 from ibm_botocore.stub import Stubber
+from ibm_botocore.tokens import SSOTokenProvider
 from ibm_botocore.utils import datetime2timestamp
+from tests import (
+    BaseEnvVar,
+    IntegerRefresher,
+    SessionHTTPStubber,
+    StubbedSession,
+    mock,
+    random_chars,
+    temporary_file,
+    unittest,
+)
+
+TIME_IN_ONE_HOUR = datetime.utcnow() + timedelta(hours=1)
+TIME_IN_SIX_MONTHS = datetime.utcnow() + timedelta(hours=4320)
 
 
 class TestCredentialRefreshRaces(unittest.TestCase):
@@ -86,17 +108,16 @@ class TestCredentialRefreshRaces(unittest.TestCase):
 
     def test_has_no_race_conditions(self):
         creds = IntegerRefresher(
-            creds_last_for=2,
-            advisory_refresh=1,
-            mandatory_refresh=0
+            creds_last_for=2, advisory_refresh=1, mandatory_refresh=0
         )
 
         def _run_in_thread(collected):
             for _ in range(4000):
                 frozen = creds.get_frozen_credentials()
-                collected.append((frozen.access_key,
-                                  frozen.secret_key,
-                                  frozen.token))
+                collected.append(
+                    (frozen.access_key, frozen.secret_key, frozen.token)
+                )
+
         start = time.time()
         self.assert_consistent_credentials_seen(creds, _run_in_thread)
         end = time.time()
@@ -104,40 +125,42 @@ class TestCredentialRefreshRaces(unittest.TestCase):
         # So, for example, if execution time took 6.1 seconds, then
         # we should see a maximum number of refreshes being (6 / 2.0) + 1 = 4
         max_calls_allowed = math.ceil((end - start) / 2.0) + 1
-        self.assertTrue(creds.refresh_counter <= max_calls_allowed,
-                        "Too many cred refreshes, max: %s, actual: %s, "
-                        "time_delta: %.4f" % (max_calls_allowed,
-                                              creds.refresh_counter,
-                                              (end - start)))
+        self.assertTrue(
+            creds.refresh_counter <= max_calls_allowed,
+            "Too many cred refreshes, max: %s, actual: %s, "
+            "time_delta: %.4f"
+            % (max_calls_allowed, creds.refresh_counter, (end - start)),
+        )
 
     def test_no_race_for_immediate_advisory_expiration(self):
         creds = IntegerRefresher(
-            creds_last_for=1,
-            advisory_refresh=1,
-            mandatory_refresh=0
+            creds_last_for=1, advisory_refresh=1, mandatory_refresh=0
         )
 
         def _run_in_thread(collected):
             for _ in range(100):
                 frozen = creds.get_frozen_credentials()
-                collected.append((frozen.access_key,
-                                  frozen.secret_key,
-                                  frozen.token))
+                collected.append(
+                    (frozen.access_key, frozen.secret_key, frozen.token)
+                )
+
         self.assert_consistent_credentials_seen(creds, _run_in_thread)
 
     def test_no_race_for_initial_refresh_of_deferred_refreshable(self):
         def get_credentials():
             expiry_time = (
-                datetime.now(tzlocal()) + timedelta(hours=24)).isoformat()
+                datetime.now(tzlocal()) + timedelta(hours=24)
+            ).isoformat()
             return {
                 'access_key': 'my-access-key',
                 'secret_key': 'my-secret-key',
                 'token': 'my-token',
-                'expiry_time': expiry_time
+                'expiry_time': expiry_time,
             }
 
         deferred_creds = DeferredRefreshableCredentials(
-            get_credentials, 'fixed')
+            get_credentials, 'fixed'
+        )
 
         def _run_in_thread(collected):
             frozen = deferred_creds.get_frozen_credentials()
@@ -148,7 +171,7 @@ class TestCredentialRefreshRaces(unittest.TestCase):
 
 class BaseAssumeRoleTest(BaseEnvVar):
     def setUp(self):
-        super(BaseAssumeRoleTest, self).setUp()
+        super().setUp()
         self.tempdir = tempfile.mkdtemp()
         self.config_file = os.path.join(self.tempdir, 'config')
         self.environ['AWS_CONFIG_FILE'] = self.config_file
@@ -156,7 +179,7 @@ class BaseAssumeRoleTest(BaseEnvVar):
 
     def tearDown(self):
         shutil.rmtree(self.tempdir)
-        super(BaseAssumeRoleTest, self).tearDown()
+        super().tearDown()
 
     def some_future_time(self):
         timeobj = datetime.now(tzlocal())
@@ -171,12 +194,12 @@ class BaseAssumeRoleTest(BaseEnvVar):
                 'AccessKeyId': credentials.access_key,
                 'SecretAccessKey': credentials.secret_key,
                 'SessionToken': credentials.token,
-                'Expiration': expiration
+                'Expiration': expiration,
             },
             'AssumedRoleUser': {
                 'AssumedRoleId': 'myroleid',
-                'Arn': 'arn:aws:iam::1234567890:user/myuser'
-            }
+                'Arn': 'arn:aws:iam::1234567890:user/myuser',
+            },
         }
 
         return response
@@ -185,7 +208,7 @@ class BaseAssumeRoleTest(BaseEnvVar):
         return Credentials(
             'fake-%s' % random_chars(15),
             'fake-%s' % random_chars(35),
-            'fake-%s' % random_chars(45)
+            'fake-%s' % random_chars(45),
         )
 
     def assert_creds_equal(self, c1, c2):
@@ -204,7 +227,7 @@ class BaseAssumeRoleTest(BaseEnvVar):
 
 class TestAssumeRole(BaseAssumeRoleTest):
     def setUp(self):
-        super(TestAssumeRole, self).setUp()
+        super().setUp()
         self.environ['AWS_ACCESS_KEY_ID'] = 'access_key'
         self.environ['AWS_SECRET_ACCESS_KEY'] = 'secret_key'
 
@@ -218,7 +241,7 @@ class TestAssumeRole(BaseAssumeRoleTest):
         credential_process = os.path.join(
             current_dir, 'utils', 'credentialprocess.py'
         )
-        self.credential_process = '%s %s' % (
+        self.credential_process = '{} {}'.format(
             sys.executable, credential_process
         )
 
@@ -245,10 +268,13 @@ class TestAssumeRole(BaseAssumeRoleTest):
             client_creator=self.mock_client_creator,
             cache={},
             profile_name=profile,
-            credential_sourcer=CanonicalNameCredentialSourcer([
-                self.env_provider, self.container_provider,
-                self.metadata_provider
-            ]),
+            credential_sourcer=CanonicalNameCredentialSourcer(
+                [
+                    self.env_provider,
+                    self.container_provider,
+                    self.metadata_provider,
+                ]
+            ),
             profile_provider_builder=ProfileProviderBuilder(
                 session,
                 sso_token_cache=JSONFileCache(self.tempdir),
@@ -264,7 +290,7 @@ class TestAssumeRole(BaseAssumeRoleTest):
             'env': self.env_provider,
             'iam-role': self.metadata_provider,
             'container-role': self.container_provider,
-            'assume-role': assume_role_provider
+            'assume-role': assume_role_provider,
         }
         for name, provider in replacements.items():
             try:
@@ -275,9 +301,7 @@ class TestAssumeRole(BaseAssumeRoleTest):
 
             resolver.providers[index] = provider
 
-        session.register_component(
-            'credential_provider', resolver
-        )
+        session.register_component('credential_provider', resolver)
         return session, stubber
 
     def test_assume_role(self):
@@ -688,7 +712,7 @@ class TestAssumeRole(BaseAssumeRoleTest):
 
 class TestAssumeRoleWithWebIdentity(BaseAssumeRoleTest):
     def setUp(self):
-        super(TestAssumeRoleWithWebIdentity, self).setUp()
+        super().setUp()
         self.token_file = os.path.join(self.tempdir, 'token.jwt')
         self.write_token('totally.a.token')
 
@@ -704,9 +728,7 @@ class TestAssumeRoleWithWebIdentity(BaseAssumeRoleTest):
         session = StubbedSession(**kwargs)
         stubber = session.stub('sts')
         stubber.add_response(
-            'assume_role_with_web_identity',
-            response,
-            expected_params
+            'assume_role_with_web_identity', response, expected_params
         )
         stubber.activate()
         actual_creds = session.get_credentials()
@@ -729,10 +751,7 @@ class TestAssumeRoleWithWebIdentity(BaseAssumeRoleTest):
         self.assert_session_credentials(expected_params, profile='A')
 
     def test_assume_role_env_vars(self):
-        config = (
-            '[profile B]\n'
-            'region = us-west-2\n'
-        )
+        config = '[profile B]\n' 'region = us-west-2\n'
         self.write_config(config)
         self.environ['AWS_ROLE_ARN'] = 'arn:aws:iam::123456789:role/RoleB'
         self.environ['AWS_WEB_IDENTITY_TOKEN_FILE'] = self.token_file
@@ -774,7 +793,7 @@ class TestProcessProvider(unittest.TestCase):
         credential_process = os.path.join(
             current_dir, 'utils', 'credentialprocess.py'
         )
-        self.credential_process = '%s %s' % (
+        self.credential_process = '{} {}'.format(
             sys.executable, credential_process
         )
         self.environ = os.environ.copy()
@@ -785,10 +804,7 @@ class TestProcessProvider(unittest.TestCase):
         self.environ_patch.stop()
 
     def test_credential_process(self):
-        config = (
-            '[profile processcreds]\n'
-            'credential_process = %s\n'
-        )
+        config = '[profile processcreds]\n' 'credential_process = %s\n'
         config = config % self.credential_process
         with temporary_file('w') as f:
             f.write(config)
@@ -832,12 +848,12 @@ class TestProcessProvider(unittest.TestCase):
 
 class TestSTSRegional(BaseAssumeRoleTest):
     def add_assume_role_http_response(self, stubber):
-        stubber.add_response(
-            body=self._get_assume_role_body('AssumeRole'))
+        stubber.add_response(body=self._get_assume_role_body('AssumeRole'))
 
     def add_assume_role_with_web_identity_http_response(self, stubber):
         stubber.add_response(
-            body=self._get_assume_role_body('AssumeRoleWithWebIdentity'))
+            body=self._get_assume_role_body('AssumeRoleWithWebIdentity')
+        )
 
     def _get_assume_role_body(self, method_name):
         expiration = self.some_future_time()
@@ -883,10 +899,10 @@ class TestSTSRegional(BaseAssumeRoleTest):
             # looking to make sure the STS assume role call uses the correct
             # endpoint.
             self.make_stubbed_client_call_to_region(
-                session, stubber, 'us-west-2')
+                session, stubber, 'us-west-2'
+            )
             self.assertEqual(
-                stubber.requests[0].url,
-                'https://sts.us-west-2.amazonaws.com/'
+                stubber.requests[0].url, 'https://sts.us-west-2.amazonaws.com/'
             )
 
     def test_assume_role_web_identity_uses_same_region_as_client(self):
@@ -914,8 +930,153 @@ class TestSTSRegional(BaseAssumeRoleTest):
             # looking to make sure the STS assume role call uses the correct
             # endpoint.
             self.make_stubbed_client_call_to_region(
-                session, stubber, 'us-west-2')
-            self.assertEqual(
-                stubber.requests[0].url,
-                'https://sts.us-west-2.amazonaws.com/'
+                session, stubber, 'us-west-2'
             )
+            self.assertEqual(
+                stubber.requests[0].url, 'https://sts.us-west-2.amazonaws.com/'
+            )
+
+
+class MockCache:
+    """Mock for JSONFileCache to avoid touching files on disk"""
+
+    def __init__(self, working_dir=None, dumps_func=None):
+        self.working_dir = working_dir
+        self.dumps_func = dumps_func
+
+    def __contains__(self, cache_key):
+        return True
+
+    def __getitem__(self, cache_key):
+        return {
+            "startUrl": "https://test.awsapps.com/start",
+            "region": "us-east-1",
+            "accessToken": "access-token",
+            "expiresAt": TIME_IN_ONE_HOUR.strftime('%Y-%m-%dT%H:%M:%SZ'),
+            "expiresIn": 3600,
+            "clientId": "client-12345",
+            "clientSecret": "client-secret",
+            "registrationExpiresAt": TIME_IN_SIX_MONTHS.strftime(
+                '%Y-%m-%dT%H:%M:%SZ'
+            ),
+            "refreshToken": "refresh-here",
+        }
+
+    def __delitem__(self, cache_key):
+        pass
+
+
+class SSOSessionTest(BaseEnvVar):
+    def setUp(self):
+        super().setUp()
+        self.tempdir = tempfile.mkdtemp()
+        self.config_file = os.path.join(self.tempdir, 'config')
+        self.environ['AWS_CONFIG_FILE'] = self.config_file
+        self.access_key_id = 'ASIA123456ABCDEFG'
+        self.secret_access_key = 'secret-key'
+        self.session_token = 'session-token'
+
+    def tearDown(self):
+        shutil.rmtree(self.tempdir)
+        super().tearDown()
+
+    def write_config(self, config):
+        with open(self.config_file, 'w') as f:
+            f.write(config)
+
+    def test_token_chosen_from_provider(self):
+        profile = (
+            '[profile sso-test]\n'
+            'region = us-east-1\n'
+            'sso_session = sso-test-session\n'
+            'sso_account_id = 12345678901234\n'
+            'sso_role_name = ViewOnlyAccess\n'
+            '\n'
+            '[sso-session sso-test-session]\n'
+            'sso_region = us-east-1\n'
+            'sso_start_url = https://test.awsapps.com/start\n'
+            'sso_registration_scopes = sso:account:access\n'
+        )
+        self.write_config(profile)
+
+        session = Session(profile='sso-test')
+        with SessionHTTPStubber(session) as stubber:
+            self.add_credential_response(stubber)
+            stubber.add_response()
+            with mock.patch.object(
+                SSOTokenProvider, 'DEFAULT_CACHE_CLS', MockCache
+            ):
+                c = session.create_client('s3')
+                c.list_buckets()
+
+        self.assert_valid_sso_call(
+            stubber.requests[0],
+            (
+                'https://portal.sso.us-east-1.amazonaws.com/federation/credentials'
+                '?role_name=ViewOnlyAccess&account_id=12345678901234'
+            ),
+            b'access-token',
+        )
+        self.assert_credentials_used(
+            stubber.requests[1],
+            self.access_key_id.encode('utf-8'),
+            self.session_token.encode('utf-8'),
+        )
+
+    def test_mismatched_session_values(self):
+        profile = (
+            '[profile sso-test]\n'
+            'region = us-east-1\n'
+            'sso_session = sso-test-session\n'
+            'sso_start_url = https://test2.awsapps.com/start\n'
+            'sso_account_id = 12345678901234\n'
+            'sso_role_name = ViewOnlyAccess\n'
+            '\n'
+            '[sso-session sso-test-session]\n'
+            'sso_region = us-east-1\n'
+            'sso_start_url = https://test.awsapps.com/start\n'
+            'sso_registration_scopes = sso:account:access\n'
+        )
+        self.write_config(profile)
+
+        session = Session(profile='sso-test')
+        with pytest.raises(InvalidConfigError):
+            c = session.create_client('s3')
+            c.list_buckets()
+
+    def test_missing_sso_session(self):
+        profile = (
+            '[profile sso-test]\n'
+            'region = us-east-1\n'
+            'sso_session = sso-test-session\n'
+            'sso_start_url = https://test2.awsapps.com/start\n'
+            'sso_account_id = 12345678901234\n'
+            'sso_role_name = ViewOnlyAccess\n'
+            '\n'
+        )
+        self.write_config(profile)
+
+        session = Session(profile='sso-test')
+        with pytest.raises(InvalidConfigError):
+            c = session.create_client('s3')
+            c.list_buckets()
+
+    def assert_valid_sso_call(self, request, url, access_token):
+        assert request.url == url
+        assert 'x-amz-sso_bearer_token' in request.headers
+        assert request.headers['x-amz-sso_bearer_token'] == access_token
+
+    def assert_credentials_used(self, request, access_key, session_token):
+        assert access_key in request.headers.get('Authorization')
+        assert request.headers.get('X-Amz-Security-Token') == session_token
+
+    def add_credential_response(self, stubber):
+        response = {
+            'roleCredentials': {
+                'accessKeyId': self.access_key_id,
+                'secretAccessKey': self.secret_access_key,
+                'sessionToken': self.session_token,
+                'expiration': TIME_IN_ONE_HOUR.timestamp() * 1000,
+            }
+        }
+        stubber.add_response(body=json.dumps(response).encode('utf-8'))

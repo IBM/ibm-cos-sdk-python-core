@@ -10,19 +10,18 @@ Otherwise, the ``REGION`` variable specifies the default region
 to use and all the services in SMOKE_TESTS/ERROR_TESTS will be tested.
 
 """
-import os
-from pprint import pformat
-import warnings
 import logging
+import os
+import warnings
+from pprint import pformat
 
 import pytest
 
-from tests import ClientHTTPStubber
-from ibm_botocore import xform_name
 import ibm_botocore.session
+from ibm_botocore import xform_name
 from ibm_botocore.client import ClientError
 from ibm_botocore.exceptions import ConnectionClosedError
-
+from tests import ClientHTTPStubber
 
 # Mapping of service -> api calls to try.
 # Each api call is a dict of OperationName->params.
@@ -31,8 +30,13 @@ from ibm_botocore.exceptions import ConnectionClosedError
 SMOKE_TESTS = {
     'acm': {'ListCertificates': {}},
     'apigateway': {'GetRestApis': {}},
-    'application-autoscaling': {'DescribeScalableTargets': {'ServiceNamespace': 'ecs'}},
-    'autoscaling': {'DescribeAccountLimits': {}, 'DescribeAdjustmentTypes': {}},
+    'application-autoscaling': {
+        'DescribeScalableTargets': {'ServiceNamespace': 'ecs'}
+    },
+    'autoscaling': {
+        'DescribeAccountLimits': {},
+        'DescribeAdjustmentTypes': {},
+    },
     'cloudformation': {'DescribeStacks': {}, 'ListStacks': {}},
     'cloudfront': {'ListDistributions': {}, 'ListStreamingDistributions': {}},
     'cloudhsmv2': {'DescribeBackups': {}},
@@ -146,11 +150,13 @@ ERROR_TESTS = {
         'GetResourceConfigHistory': {'resourceType': '', 'resourceId': 'fake'},
     },
     'datapipeline': {'GetPipelineDefinition': {'pipelineId': 'fake'}},
-    'devicefarm': {'GetDevice': {'arn': 'arn:aws:devicefarm:REGION::device:f'}},
+    'devicefarm': {
+        'GetDevice': {'arn': 'arn:aws:devicefarm:REGION::device:f'}
+    },
     'directconnect': {'DescribeConnections': {'connectionId': 'fake'}},
     'ds': {'CreateDirectory': {'Name': 'n', 'Password': 'p', 'Size': '1'}},
     'dynamodb': {'DescribeTable': {'TableName': 'fake'}},
-    'dynamodbstreams': {'DescribeStream': {'StreamArn': 'x'*37}},
+    'dynamodbstreams': {'DescribeStream': {'StreamArn': 'x' * 37}},
     'ec2': {'DescribeInstances': {'InstanceIds': ['i-12345678']}},
     'ecs': {'StopTask': {'task': 'fake'}},
     'efs': {'DeleteFileSystem': {'FileSystemId': 'fake'}},
@@ -182,7 +188,7 @@ ERROR_TESTS = {
     },
     'sqs': {'GetQueueUrl': {'QueueName': 'fake'}},
     'ssm': {'GetDocument': {'Name': 'fake'}},
-    'storagegateway': {'ListVolumes': {'GatewayARN': 'x'*50}},
+    'storagegateway': {'ListVolumes': {'GatewayARN': 'x' * 50}},
     'sts': {'GetFederationToken': {'Name': 'fake', 'Policy': 'fake'}},
     'support': {
         'CreateCase': {
@@ -241,8 +247,9 @@ def _list_services(dict_entries):
     if 'AWS_SMOKE_TEST_SERVICES' not in os.environ:
         return dict_entries.keys()
     else:
-        wanted_services = os.environ.get(
-            'AWS_SMOKE_TEST_SERVICES', '').split(',')
+        wanted_services = os.environ.get('AWS_SMOKE_TEST_SERVICES', '').split(
+            ','
+        )
         return [key for key in dict_entries if key in wanted_services]
 
 
@@ -265,7 +272,9 @@ def _error_tests():
             yield service_name, operation_name, kwargs
 
 
-@pytest.mark.parametrize("service_name, operation_name, kwargs", _smoke_tests())
+@pytest.mark.parametrize(
+    "service_name, operation_name, kwargs", _smoke_tests()
+)
 def test_can_make_request_with_client(
     ibm_botocore_session, service_name, operation_name, kwargs
 ):
@@ -280,7 +289,9 @@ def test_can_make_request_with_client(
         assert 'Errors' not in response
 
 
-@pytest.mark.parametrize("service_name, operation_name, kwargs", _error_tests())
+@pytest.mark.parametrize(
+    "service_name, operation_name, kwargs", _error_tests()
+)
 def test_can_make_request_and_understand_errors_with_client(
     ibm_botocore_session, service_name, operation_name, kwargs
 ):
@@ -290,7 +301,9 @@ def test_can_make_request_and_understand_errors_with_client(
         method(**kwargs)
 
 
-@pytest.mark.parametrize("service_name, operation_name, kwargs", _smoke_tests())
+@pytest.mark.parametrize(
+    "service_name, operation_name, kwargs", _smoke_tests()
+)
 def test_client_can_retry_request_properly(
     ibm_botocore_session, service_name, operation_name, kwargs
 ):
@@ -302,7 +315,9 @@ def test_client_can_retry_request_properly(
         try:
             operation(**kwargs)
         except ClientError as e:
-            assert False, ('Request was not retried properly, '
-                           'received error:\n%s' % pformat(e))
+            assert False, (
+                'Request was not retried properly, '
+                'received error:\n%s' % pformat(e)
+            )
         # Ensure we used the stubber as we're not using it in strict mode
         assert len(http_stubber.responses) == 0, 'Stubber was not used!'
