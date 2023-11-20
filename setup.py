@@ -7,7 +7,7 @@ requires = [
     'jmespath>=0.10.0,<=1.0.1',
     'python-dateutil>=2.8.2,<3.0.0',
     'requests>=2.31.0,<3.0',
-    'urllib3>=1.26.16,<1.27',
+    'urllib3>=1.26.18,<1.27',
 ]
 
 setup(
