@@ -3361,7 +3361,13 @@
     "GetBucketProtectionConfigurationOutput":{
       "type":"structure",
       "members":{
-        "ProtectionConfiguration":{"shape":"ProtectionConfiguration"}
+        "ProtectionConfiguration":{"shape":"ProtectionConfiguration"},
+        "IbmProtectionManagementState":{
+          "shape":"IbmProtectionManagementState",
+          "documentation":"<p>Indicates whether this bucket has an active protection management state. This header is only included if protection management is activated on a bucket</p>",
+          "location":"header",
+          "locationName":"x-ibm-protection-management-state"
+        }
       },
       "payload":"ProtectionConfiguration"
     },
@@ -3636,6 +3642,12 @@
         "ObjectLockConfiguration":{
           "shape":"ObjectLockConfiguration",
           "documentation":"<p>The specified bucket's Object Lock configuration.</p>"
+        },
+        "IbmProtectionManagementState":{
+          "shape":"IbmProtectionManagementState",
+          "documentation":"<p>Indicates whether this bucket has an active protection management state. This header is only included if protection management is activated on a bucket</p>",
+          "location":"header",
+          "locationName":"x-ibm-protection-management-state"
         }
       },
       "payload":"ObjectLockConfiguration"
@@ -8327,7 +8339,13 @@
     },
     "WebsiteRedirectLocation":{"type":"string"},
     "Years":{"type":"integer"},
-    "IbmTransition":{"type":"string"}
+    "IbmTransition":{"type":"string"},
+    "IbmProtectionManagementState":{
+      "type":"string",
+      "enum":[
+        "active"
+      ]
+    }
   },
   "documentation":"<p/>"
 }
