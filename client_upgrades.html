@@ -1,10 +1,11 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="_static/fonts/open-sans/stylesheet.css" />
@@ -14,36 +15,29 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Upgrading to Clients &#8212; ibm_botocore 2.13.3 documentation</title>
-    <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '2.13.3',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
+    <title>Upgrading to Clients &#8212; ibm_botocore 2.13.4 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/guzzle.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
   
    
 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="nav-item nav-item-0"><a href="index.html">ibm_botocore 2.13.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">ibm_botocore 2.13.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Upgrading to Clients</a></li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -53,7 +47,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">ibm_botocore 2.13.3 documentation</a>
+    index.html" class="text-logo">ibm_botocore 2.13.4 documentation</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -122,17 +116,17 @@
 <!--REGION_DISCLAIMER_DO_NOT_REMOVE-->
           <div class="document clearer body">
             
-  <div class="section" id="upgrading-to-clients">
-<span id="client-upgrades"></span><h1>Upgrading to Clients<a class="headerlink" href="#upgrading-to-clients" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="background">
-<h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
+  <section id="upgrading-to-clients">
+<span id="client-upgrades"></span><h1>Upgrading to Clients<a class="headerlink" href="#upgrading-to-clients" title="Permalink to this heading">¶</a></h1>
+<section id="background">
+<h2>Background<a class="headerlink" href="#background" title="Permalink to this heading">¶</a></h2>
 <p>Version 0.66.0 of botocore added support for clients (10/16/2014)
 added initial support for clients.  This provided an alternate
 interface to making AWS calls that provided a number of benefits over
 the existing interface.  At the time, both interfaces were added
 so that users could opt in to trying the new clients.</p>
 <p>Below is an example of the old interface:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">botocore.session</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">botocore.session</span>
 <span class="n">session</span> <span class="o">=</span> <span class="n">botocore</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span>
 <span class="n">s3</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_service</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
 <span class="n">endpoint</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">get_endpoint</span><span class="p">(</span><span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
@@ -146,7 +140,7 @@ so that users could opt in to trying the new clients.</p>
 </pre></div>
 </div>
 <p>Here’s an example of the newer (preferred) client interface:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">botocore.session</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">botocore.session</span>
 <span class="n">session</span> <span class="o">=</span> <span class="n">botocore</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span>
 <span class="n">s3</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">create_client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">,</span> <span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
 <span class="n">response</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">list_objects</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;mybucket&#39;</span><span class="p">)</span>
@@ -156,54 +150,54 @@ so that users could opt in to trying the new clients.</p>
 <p>While there are many improvements with the new interface, here’s
 a few notable improvements:</p>
 <ul class="simple">
-<li>Less boilerplate.  With clients, the <code class="docutils literal"><span class="pre">Endpoints</span></code> are abstracted
-from the user.  The <code class="docutils literal"><span class="pre">Operations</span></code> are also abstracted.  The user
-only needs to deal with a single class, the client class.</li>
-<li>Exceptions.  With clients, exceptions are raised on failed requests.
-You do not have to check the error code of the http response object</li>
-<li>Return values.  The http response is abstracted from the user.  The
-client method makes an API call and returns a simple python dict.</li>
-<li>More granular context.  Clients allow you to have a context that’s
+<li><p>Less boilerplate.  With clients, the <code class="docutils literal notranslate"><span class="pre">Endpoints</span></code> are abstracted
+from the user.  The <code class="docutils literal notranslate"><span class="pre">Operations</span></code> are also abstracted.  The user
+only needs to deal with a single class, the client class.</p></li>
+<li><p>Exceptions.  With clients, exceptions are raised on failed requests.
+You do not have to check the error code of the http response object</p></li>
+<li><p>Return values.  The http response is abstracted from the user.  The
+client method makes an API call and returns a simple python dict.</p></li>
+<li><p>More granular context.  Clients allow you to have a context that’s
 smaller than on a Service/Operation.  For example, you can now
 create a client and add specific customizations and event handlers
-that apply to only that specific client, instead of any S3 client.</li>
+that apply to only that specific client, instead of any S3 client.</p></li>
 </ul>
-</div>
-<div class="section" id="deprecation-timeline">
-<h2>Deprecation Timeline<a class="headerlink" href="#deprecation-timeline" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="deprecation-timeline">
+<h2>Deprecation Timeline<a class="headerlink" href="#deprecation-timeline" title="Permalink to this heading">¶</a></h2>
 <p>Botocore has not had a GA (1.0) release yet.  In version 1.0,
 the Service/Operation object <strong>will be removed</strong>.  Leading
 up to 1.0, we will be deprecating the old interface according
 to this schedule:</p>
 <ul class="simple">
-<li>(<strong>done</strong>) Version 0.66.0 introduced client</li>
-<li>(<strong>done</strong>) Version 0.96.0 emitted a <code class="docutils literal"><span class="pre">PendingDeprecationWarning</span></code> when using
+<li><p>(<strong>done</strong>) Version 0.66.0 introduced client</p></li>
+<li><p>(<strong>done</strong>) Version 0.96.0 emitted a <code class="docutils literal notranslate"><span class="pre">PendingDeprecationWarning</span></code> when using
 the old interface.  By default, these warnings are not printed to
 stderr.  A developer will need to opt in to these warnings to
-see any emitted warnings.</li>
-<li>(<strong>done</strong>) Version 0.99.0 emitted a <code class="docutils literal"><span class="pre">DeprecationWarning</span></code> when using
+see any emitted warnings.</p></li>
+<li><p>(<strong>done</strong>) Version 0.99.0 emitted a <code class="docutils literal notranslate"><span class="pre">DeprecationWarning</span></code> when using
 the old interface.  This has the same behavior as
-<code class="docutils literal"><span class="pre">PendingDeprecationWarning</span></code>, in which by default nothing is
-printed to stderr.</li>
-<li>Version 0.104.0 emitted an <code class="docutils literal"><span class="pre">ImminentRemovalWarning</span></code> when using
+<code class="docutils literal notranslate"><span class="pre">PendingDeprecationWarning</span></code>, in which by default nothing is
+printed to stderr.</p></li>
+<li><p>Version 0.104.0 emitted an <code class="docutils literal notranslate"><span class="pre">ImminentRemovalWarning</span></code> when using
 the old interface.  This warning is now printed to stderr by default.
-A user can still turn off these warnings via the <code class="docutils literal"><span class="pre">warnings</span></code> module.</li>
-<li>The <code class="docutils literal"><span class="pre">develop</span></code> branch on github will be updated to completely remove
+A user can still turn off these warnings via the <code class="docutils literal notranslate"><span class="pre">warnings</span></code> module.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">develop</span></code> branch on github will be updated to completely remove
 the old interface.  At this point the client interface will be the
-only interface available when using the <code class="docutils literal"><span class="pre">develop</span></code> branch on github.</li>
-<li>A 1.0 alpha version will be released.  By default, <code class="docutils literal"><span class="pre">pip</span></code> will not
-pick up any alpha/beta releases.</li>
-<li>A 1.0 beta version will be released.</li>
-<li>A GA (1.0) version of botocore will be released.</li>
+only interface available when using the <code class="docutils literal notranslate"><span class="pre">develop</span></code> branch on github.</p></li>
+<li><p>A 1.0 alpha version will be released.  By default, <code class="docutils literal notranslate"><span class="pre">pip</span></code> will not
+pick up any alpha/beta releases.</p></li>
+<li><p>A 1.0 beta version will be released.</p></li>
+<li><p>A GA (1.0) version of botocore will be released.</p></li>
 </ul>
-</div>
-</div>
-<div class="section" id="how-to-upgrade">
-<h1>How To Upgrade<a class="headerlink" href="#how-to-upgrade" title="Permalink to this headline">¶</a></h1>
+</section>
+</section>
+<section id="how-to-upgrade">
+<h1>How To Upgrade<a class="headerlink" href="#how-to-upgrade" title="Permalink to this heading">¶</a></h1>
 <p>Migrating to clients is straightforward.  This section outlines how
 to upgrade and some common scenarios and how to upgrade.</p>
-<div class="section" id="keyword-arg-casing">
-<h2>Keyword Arg Casing<a class="headerlink" href="#keyword-arg-casing" title="Permalink to this headline">¶</a></h2>
+<section id="keyword-arg-casing">
+<h2>Keyword Arg Casing<a class="headerlink" href="#keyword-arg-casing" title="Permalink to this heading">¶</a></h2>
 <p>In botocore’s old interface, kwargs could either be snake_cased or
 CamelCased and botocore would map them to the correct version needed
 by the service which is CamelCase.</p>
@@ -212,22 +206,22 @@ specifically, botocore uses the same casing used by the respective
 AWS service.  Most AWS services uses CamelCasing.  Some AWS services
 use lowerCamelCase.</p>
 <p><strong>Old</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">list_objects</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">bucket</span><span class="o">=</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">list_objects</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">bucket</span><span class="o">=</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>New</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">list_objects</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">list_objects</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="connection-pooling">
-<h2>Connection Pooling<a class="headerlink" href="#connection-pooling" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="connection-pooling">
+<h2>Connection Pooling<a class="headerlink" href="#connection-pooling" title="Permalink to this heading">¶</a></h2>
 <p>In the old interface, the connection pooling was tied to an endpoint
 object.  To reuse existing HTTP connection, you needed to keep a reference
 to the endpoint objects.  With clients, connection pooling is tied to a client.
 Use a single client to make multiple API calls.</p>
 <p><strong>Old</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">service</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_service</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">service</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_service</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
 <span class="n">endpoint</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">get_endpoint</span><span class="p">(</span><span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
 <span class="n">operation</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="s1">&#39;ListObjects&#39;</span><span class="p">)</span>
 <span class="n">head_object</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="s1">&#39;HeadObject&#39;</span><span class="p">)</span>
@@ -239,7 +233,7 @@ Use a single client to make multiple API calls.</p>
 </pre></div>
 </div>
 <p><strong>New</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">s3</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">,</span> <span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">s3</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">,</span> <span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">s3</span><span class="o">.</span><span class="n">list_objects</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;mybucket&#39;</span><span class="p">)[</span><span class="s1">&#39;Contents&#39;</span><span class="p">]:</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s1">&#39;Key&#39;</span><span class="p">]</span>
     <span class="c1"># Using the same client will reuse any existing HTTP</span>
@@ -247,45 +241,45 @@ Use a single client to make multiple API calls.</p>
     <span class="nb">print</span><span class="p">(</span><span class="n">s3</span><span class="o">.</span><span class="n">head_object</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;mybucket&#39;</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="n">name</span><span class="p">))</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="operation-and-method-names">
-<h2>Operation and Method Names<a class="headerlink" href="#operation-and-method-names" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="operation-and-method-names">
+<h2>Operation and Method Names<a class="headerlink" href="#operation-and-method-names" title="Permalink to this heading">¶</a></h2>
 <p>In the old interface, you would retrieve an API operation using the
 casing defined by the service, which is typically CamelCase.  For example,
-you’d use <code class="docutils literal"><span class="pre">service.get_operation('ListObjects')</span></code>, not
-<code class="docutils literal"><span class="pre">service.get_operation('list_objects')</span></code>.  With clients, method names,
+you’d use <code class="docutils literal notranslate"><span class="pre">service.get_operation('ListObjects')</span></code>, not
+<code class="docutils literal notranslate"><span class="pre">service.get_operation('list_objects')</span></code>.  With clients, method names,
 which map 1 - 1 to operation names are snake_cased, as is common in python
 code.</p>
 <p><strong>Old</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">service</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_service</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">service</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_service</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
 <span class="n">list_objects</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="s1">&#39;ListObjects&#39;</span><span class="p">)</span>
 <span class="n">head_object</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="s1">&#39;HeadObject&#39;</span><span class="p">)</span>
 <span class="n">get_object</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="s1">&#39;GetObject&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>New</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">s3</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">,</span> <span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">s3</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">,</span> <span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
 <span class="n">list_objects</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">list_objects</span>
 <span class="n">head_object</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">head_object</span>
 <span class="n">get_object</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">get_object</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="return-values">
-<h2>Return Values<a class="headerlink" href="#return-values" title="Permalink to this headline">¶</a></h2>
-<p>In the old interface, the return value for an <code class="docutils literal"><span class="pre">operation.call</span></code> invocation is
+</section>
+<section id="return-values">
+<h2>Return Values<a class="headerlink" href="#return-values" title="Permalink to this heading">¶</a></h2>
+<p>In the old interface, the return value for an <code class="docutils literal notranslate"><span class="pre">operation.call</span></code> invocation is
 a tuple of the HTTP response object, and the parsed dict that results from
 parsing the HTTP object.  In the client interface, only the parsed
 response is returned.  The HTTP response object is not returned.</p>
 <p><strong>Old</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">ec2</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_service</span><span class="p">(</span><span class="s1">&#39;ec2&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ec2</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_service</span><span class="p">(</span><span class="s1">&#39;ec2&#39;</span><span class="p">)</span>
 <span class="n">endpoint</span> <span class="o">=</span> <span class="n">ec2</span><span class="o">.</span><span class="n">get_endpoint</span><span class="p">(</span><span class="s1">&#39;ec2&#39;</span><span class="p">)</span>
 <span class="n">describe_instances</span> <span class="o">=</span> <span class="n">ec2</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="s1">&#39;DescribeInstances&#39;</span><span class="p">)</span>
 <span class="n">http</span><span class="p">,</span> <span class="n">parsed</span> <span class="o">=</span> <span class="n">describe_instances</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">endpoint</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>New</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">ec2</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="s1">&#39;ec2&#39;</span><span class="p">,</span> <span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ec2</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="s1">&#39;ec2&#39;</span><span class="p">,</span> <span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
 <span class="n">parsed</span> <span class="o">=</span> <span class="n">ec2</span><span class="o">.</span><span class="n">describe_instances</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -293,24 +287,24 @@ response is returned.  The HTTP response object is not returned.</p>
 error occurred via the HTTP response status code.  This is now no longer
 required (discussed below).  Exception are automatically raised.</p>
 <p>Note that if for some reason you do need to see the response status code,
-it is available via the <code class="docutils literal"><span class="pre">ResponseMetadata</span></code> in the parsed dict that’s
+it is available via the <code class="docutils literal notranslate"><span class="pre">ResponseMetadata</span></code> in the parsed dict that’s
 returned.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">ec2</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="s1">&#39;ec2&#39;</span><span class="p">,</span> <span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ec2</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="s1">&#39;ec2&#39;</span><span class="p">,</span> <span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
 <span class="n">parsed</span> <span class="o">=</span> <span class="n">ec2</span><span class="o">.</span><span class="n">describe_instances</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The status code is:&quot;</span><span class="p">,</span>
       <span class="n">parsed</span><span class="p">[</span><span class="s1">&#39;ResponseMetadata&#39;</span><span class="p">][</span><span class="s1">&#39;HTTPStatusCode&#39;</span><span class="p">]))</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="error-handling">
-<h2>Error Handling<a class="headerlink" href="#error-handling" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="error-handling">
+<h2>Error Handling<a class="headerlink" href="#error-handling" title="Permalink to this heading">¶</a></h2>
 <p>With clients, exceptions are now raised on any non 2xx response.
-A <code class="docutils literal"><span class="pre">ClientError</span></code> exception has both a <code class="docutils literal"><span class="pre">.msg</span></code> attribute as well
+A <code class="docutils literal notranslate"><span class="pre">ClientError</span></code> exception has both a <code class="docutils literal notranslate"><span class="pre">.msg</span></code> attribute as well
 as the parsed error response (which is a dictionary).  There isn’t
 really equivalent functionality in the old interface, but below is
 an example of how you can handle an error:</p>
 <p><strong>New</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">botocore.exceptions</span> <span class="kn">import</span> <span class="n">ClientError</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">botocore.exceptions</span> <span class="kn">import</span> <span class="n">ClientError</span>
 
 <span class="n">ec2</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="s1">&#39;ec2&#39;</span><span class="p">,</span> <span class="s1">&#39;us-west-2&#39;</span><span class="p">)</span>
 <span class="k">try</span><span class="p">:</span>
@@ -325,8 +319,8 @@ an example of how you can handle an error:</p>
 <p>If you run into any issues migrating from the old interface to the newer
 client interface, please file an issue on github and let us know.  We’d
 be happy to help.</p>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -340,7 +334,8 @@ be happy to help.</p>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li class="nav-item nav-item-0"><a href="index.html">ibm_botocore 2.13.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">ibm_botocore 2.13.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Upgrading to Clients</a></li> 
       </ul>
     </div>
 
