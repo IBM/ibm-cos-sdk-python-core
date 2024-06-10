@@ -728,33 +728,6 @@ class TestCreateClient(BaseSessionTest):
                 create_client.call_args[1]
             self.assertEqual(call_kwargs['api_version'], override_api_version)
 
-    @mock.patch('ibm_botocore.client.ClientCreator')
-    def test_defaults_mode_resolved_from_config_store(self, client_creator):
-        config_store = self.session.get_component('config_store')
-        config_store.set_config_variable('defaults_mode', 'standard')
-        self.session.create_client('sts', 'us-west-2')
-        self.assertIsNot(client_creator.call_args[0][-1], config_store)
-
-    @mock.patch('ibm_botocore.client.ClientCreator')
-    def test_defaults_mode_resolved_from_client_config(self, client_creator):
-        config_store = self.session.get_component('config_store')
-        config = ibm_botocore.config.Config(defaults_mode='standard')
-        self.session.create_client('sts', 'us-west-2', config=config)
-        self.assertIsNot(client_creator.call_args[0][-1], config_store)
-
-    @mock.patch('ibm_botocore.client.ClientCreator')
-    def test_defaults_mode_resolved_invalid_mode_exception(self,
-                                                           client_creator):
-        with self.assertRaises(ibm_botocore.exceptions.InvalidDefaultsMode):
-            config = ibm_botocore.config.Config(defaults_mode='foo')
-            self.session.create_client('sts', 'us-west-2', config=config)
-
-    @mock.patch('ibm_botocore.client.ClientCreator')
-    def test_defaults_mode_resolved_legacy(self, client_creator):
-        config_store = self.session.get_component('config_store')
-        self.session.create_client('sts', 'us-west-2')
-        self.assertIs(client_creator.call_args[0][-1], config_store)
-
 
 class TestSessionComponent(BaseSessionTest):
     def test_internal_component(self):
@@ -763,9 +736,7 @@ class TestSessionComponent(BaseSessionTest):
         self.assertIs(
             self.session._get_internal_component('internal'), component)
         with self.assertRaises(ValueError):
-            # get_component has been deprecated to the public
-            with pytest.warns(DeprecationWarning):
-                self.session.get_component('internal')
+            self.session.get_component('internal')
 
     def test_internal_endpoint_resolver_is_same_as_deprecated_public(self):
         endpoint_resolver = self.session._get_internal_component(

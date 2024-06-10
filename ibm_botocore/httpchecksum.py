@@ -25,7 +25,11 @@ from binascii import crc32
 from hashlib import sha1, sha256
 
 from ibm_botocore.compat import HAS_CRT
-from ibm_botocore.exceptions import AwsChunkedWrapperError, FlexibleChecksumError
+from ibm_botocore.exceptions import (
+    AwsChunkedWrapperError,
+    FlexibleChecksumError,
+    MissingDependencyException,
+)
 from ibm_botocore.response import StreamingBody
 from ibm_botocore.utils import (
     conditionally_calculate_md5,
@@ -425,7 +429,7 @@ def handle_checksum_body(http_response, response, context, operation_model):
                 # algorithm
             )
 
-        # Expose metadata that the checksum check actually occured
+        # Expose metadata that the checksum check actually occurred
         checksum_context = response["context"].get("checksum", {})
         checksum_context["response_algorithm"] = algorithm
         response["context"]["checksum"] = checksum_context
@@ -470,19 +474,24 @@ def _handle_bytes_response(
     #     raise FlexibleChecksumError(error_msg=error_msg)
     return body
 
-
+# IBM Unsupported
 # _CHECKSUM_CLS = {
 #     "crc32": Crc32Checksum,
 #     "sha1": Sha1Checksum,
 #     "sha256": Sha256Checksum,
 # }
-
+#_CRT_CHECKSUM_ALGORITHMS = ["crc32", "crc32c"]
 # IBM Unsupported
 # if HAS_CRT:
 #     # Use CRT checksum implementations if available
-#     _CHECKSUM_CLS.update(
-#         {"crc32": CrtCrc32Checksum, "crc32c": CrtCrc32cChecksum}
-#     )
-
+#    _CRT_CHECKSUM_CLS = {
+#       "crc32": CrtCrc32Checksum,
+#        "crc32c": CrtCrc32cChecksum,
+#    }
+#    _CHECKSUM_CLS.update(_CRT_CHECKSUM_CLS)
+#    # Validate this list isn't out of sync with _CRT_CHECKSUM_CLS keys
+#    assert all(
+#        name in _CRT_CHECKSUM_ALGORITHMS for name in _CRT_CHECKSUM_CLS.keys()
+#    )
 # _SUPPORTED_CHECKSUM_ALGORITHMS = list(_CHECKSUM_CLS.keys())
 # _ALGORITHMS_PRIORITY_LIST = ['crc32c', 'crc32', 'sha1', 'sha256']

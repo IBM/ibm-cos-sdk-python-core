@@ -1,0 +1,15 @@
+{
+  "version": 1.0,
+  "merge": {
+    "pagination": {
+      "ListParts": {
+        "non_aggregate_keys": [
+          "ChecksumAlgorithm",
+          "Initiator",
+          "Owner",
+          "StorageClass"
+        ]
+      }
+    }
+  }
+}

@@ -24,12 +24,22 @@ from ibm_botocore.config import Config
 from ibm_botocore.configprovider import ConfigValueStore
 from ibm_botocore.hooks import HierarchicalEmitter
 from ibm_botocore.model import ServiceModel
+from ibm_botocore.useragent import UserAgentString
 
 
 class TestCreateClientArgs(unittest.TestCase):
     def setUp(self):
         self.event_emitter = mock.Mock(HierarchicalEmitter)
         self.config_store = ConfigValueStore()
+        user_agent_creator = UserAgentString(
+            platform_name=None,
+            platform_version=None,
+            platform_machine=None,
+            python_version=None,
+            python_implementation=None,
+            execution_env=None,
+            crt_version=None,
+        )
         self.args_create = args.ClientArgsCreator(
             self.event_emitter, None, None, None, None, self.config_store)
         self.service_name = 's3'

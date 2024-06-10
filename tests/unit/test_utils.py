@@ -11,6 +11,8 @@
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 import io
+from contextlib import contextmanager
+from sys import getrefcount
 
 import pytest
 
@@ -80,6 +82,7 @@ from ibm_botocore.utils import SSOTokenLoader
 from ibm_botocore.utils import is_valid_uri, is_valid_ipv6_endpoint_url
 from ibm_botocore.utils import has_header
 from ibm_botocore.utils import determine_content_length
+from ibm_botocore.utils import lru_cache_weakref
 from ibm_botocore.exceptions import SSOTokenLoadError
 from ibm_botocore.model import DenormalizedStructureBuilder
 from ibm_botocore.model import ShapeResolver
@@ -396,6 +399,18 @@ class TestParseTimestamps(unittest.TestCase):
             parse_timestamp(0),
             datetime.datetime(1970, 1, 1, 0, 0, 0, tzinfo=tzutc()))
 
+    def test_parse_epoch_negative_time(self):
+        self.assertEqual(
+            parse_timestamp(-2208988800),
+            datetime.datetime(1900, 1, 1, 0, 0, 0, tzinfo=tzutc()),
+        )
+
+    def test_parse_epoch_beyond_2038(self):
+        self.assertEqual(
+            parse_timestamp(2524608000),
+            datetime.datetime(2050, 1, 1, 0, 0, 0, tzinfo=tzutc()),
+        )
+
     def test_parse_epoch_as_string(self):
         self.assertEqual(
             parse_timestamp('1222172800'),
@@ -431,6 +446,42 @@ class TestParseTimestamps(unittest.TestCase):
         with mock.patch('ibm_botocore.utils.get_tzinfo_options', mock_get_tzinfo_options):
             with self.assertRaises(RuntimeError):
                 parse_timestamp(0)
+
+    @contextmanager
+    def mocked_fromtimestamp_that_raises(self, exception_type):
+        class MockDatetime(datetime.datetime):
+            @classmethod
+            def fromtimestamp(cls, *args, **kwargs):
+                raise exception_type()
+
+        mock_fromtimestamp = mock.Mock()
+        mock_fromtimestamp.side_effect = OverflowError()
+
+        with mock.patch('datetime.datetime', MockDatetime):
+            yield
+
+    def test_parse_timestamp_succeeds_with_fromtimestamp_overflowerror(self):
+        # ``datetime.fromtimestamp()`` fails with OverflowError on some systems
+        # for timestamps beyond 2038. See
+        # https://docs.python.org/3/library/datetime.html#datetime.datetime.fromtimestamp
+        # This test mocks fromtimestamp() to always raise an OverflowError and
+        # checks that the fallback method returns the same time and timezone
+        # as fromtimestamp.
+        wout_fallback = parse_timestamp(0)
+        with self.mocked_fromtimestamp_that_raises(OverflowError):
+            with_fallback = parse_timestamp(0)
+            self.assertEqual(with_fallback, wout_fallback)
+            self.assertEqual(with_fallback.tzinfo, wout_fallback.tzinfo)
+
+    def test_parse_timestamp_succeeds_with_fromtimestamp_oserror(self):
+        # Same as test_parse_timestamp_succeeds_with_fromtimestamp_overflowerror
+        # but for systems where datetime.fromtimestamp() fails with OSerror for
+        # negative timestamps that represent times before 1970.
+        wout_fallback = parse_timestamp(0)
+        with self.mocked_fromtimestamp_that_raises(OSError):
+            with_fallback = parse_timestamp(0)
+            self.assertEqual(with_fallback, wout_fallback)
+            self.assertEqual(with_fallback.tzinfo, wout_fallback.tzinfo)
 
 
 class TestDatetime2Timestamp(unittest.TestCase):
@@ -983,17 +1034,24 @@ class TestSwitchToVirtualHostStyle(unittest.TestCase):
                          'https://bucket.s3.amazonaws.com/key.txt')
 
 
-class TestSwitchToChunkedEncodingForNonSeekableObjects(unittest.TestCase):
-    def test_switch_to_chunked_encodeing_for_stream_like_object(self):
-        request = AWSRequest(
-            method='POST', headers={},
-            data=io.BufferedIOBase(b"some initial binary data"),
-            url='https://foo.amazonaws.com/bucket/key.txt'
-        )
-        prepared_request = request.prepare()
-        self.assertEqual(
-            prepared_request.headers, {'Transfer-Encoding': 'chunked'}
-        )
+def test_chunked_encoding_used_for_stream_like_object():
+    class BufferedStream(io.BufferedIOBase):
+        """Class to ensure seek/tell don't work, but read is implemented."""
+
+        def __init__(self, value):
+            self.value = io.BytesIO(value)
+
+        def read(self, size=-1):
+            return self.value.read(size)
+
+    request = AWSRequest(
+        method='POST',
+        headers={},
+        data=BufferedStream(b"some initial binary data"),
+        url='https://foo.amazonaws.com/bucket/key.txt',
+    )
+    prepared_request = request.prepare()
+    assert prepared_request.headers == {'Transfer-Encoding': 'chunked'}
 
 
 class TestInstanceCache(unittest.TestCase):
@@ -2292,8 +2350,8 @@ class TestContainerMetadataFetcher(unittest.TestCase):
         self.assertEqual(self.http.send.call_count, fetcher.RETRY_ATTEMPTS)
 
     def test_can_retrieve_full_uri_with_fixed_ip(self):
-        self.assert_can_retrieve_metadata_from(
-            'http://%s/foo?id=1' % ContainerMetadataFetcher.IP_ADDRESS)
+        uri = f'http://{ContainerMetadataFetcher.IP_ADDRESS}/foo?id=1'
+        self.assert_can_retrieve_metadata_from(uri)
 
     def test_localhost_http_is_allowed(self):
         self.assert_can_retrieve_metadata_from('http://localhost/foo')
@@ -2309,6 +2367,21 @@ class TestContainerMetadataFetcher(unittest.TestCase):
 
     def test_can_use_127_ip_addr_with_port(self):
         self.assert_can_retrieve_metadata_from('https://127.0.0.1:8080/foo')
+
+    def test_can_use_eks_ipv4_addr(self):
+        uri = 'http://169.254.170.23/credentials'
+        self.assert_can_retrieve_metadata_from(uri)
+
+    def test_can_use_eks_ipv6_addr(self):
+        uri = 'http://[fd00:ec2::23]/credentials'
+        self.assert_can_retrieve_metadata_from(uri)
+
+    def test_can_use_eks_ipv6_addr_with_port(self):
+        uri = 'https://[fd00:ec2::23]:8000'
+        self.assert_can_retrieve_metadata_from(uri)
+
+    def test_can_use_loopback_v6_uri(self):
+        self.assert_can_retrieve_metadata_from('http://[::1]/credentials')
 
     def test_link_local_http_is_not_allowed(self):
         self.assert_host_is_not_allowed('http://169.254.0.1/foo')
@@ -2700,6 +2773,12 @@ class TestInstanceMetadataFetcher(unittest.TestCase):
             user_agent=user_agent).retrieve_iam_role_credentials()
         self.assertEqual(result, {})
 
+    def test_v1_disabled_by_config(self):
+        config = {'ec2_metadata_v1_disabled': True}
+        self.add_imds_response(b'', status_code=404)
+        fetcher = InstanceMetadataFetcher(num_attempts=1, config=config)
+        with self.assertRaises(MetadataRetrievalError):
+            fetcher.retrieve_iam_role_credentials()
 # IBM Unsupported
 # class TestIMDSRegionProvider(unittest.TestCase):
 #     def setUp(self):
@@ -2906,3 +2985,38 @@ class TestDetermineContentLength(unittest.TestCase):
 
         length = determine_content_length(Seekable())
         self.assertEqual(length, 50)
+def test_lru_cache_weakref():
+    class ClassWithCachedMethod:
+        @lru_cache_weakref(maxsize=10)
+        def cached_fn(self, a, b):
+            return a + b
+
+    cls1 = ClassWithCachedMethod()
+    cls2 = ClassWithCachedMethod()
+
+    assert cls1.cached_fn.cache_info().currsize == 0
+    assert getrefcount(cls1) == 2
+    assert getrefcount(cls2) == 2
+    # "The count returned is generally one higher than you might expect, because
+    # it includes the (temporary) reference as an argument to getrefcount()."
+    # https://docs.python.org/3.8/library/sys.html#getrefcount
+
+    cls1.cached_fn(1, 1)
+    cls2.cached_fn(1, 1)
+
+    # The cache now has two entries, but the reference count remains the same as
+    # before.
+    assert cls1.cached_fn.cache_info().currsize == 2
+    assert getrefcount(cls1) == 2
+    assert getrefcount(cls2) == 2
+
+    # Deleting one of the objects does not interfere with the cache entries
+    # related to the other object.
+    del cls1
+    assert cls2.cached_fn.cache_info().currsize == 2
+    assert cls2.cached_fn.cache_info().hits == 0
+    assert cls2.cached_fn.cache_info().misses == 2
+    cls2.cached_fn(1, 1)
+    assert cls2.cached_fn.cache_info().currsize == 2
+    assert cls2.cached_fn.cache_info().hits == 1  # the call was a cache hit
+    assert cls2.cached_fn.cache_info().misses == 2

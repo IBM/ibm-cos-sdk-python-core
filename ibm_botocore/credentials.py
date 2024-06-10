@@ -86,6 +86,9 @@ def create_credential_resolver(session, cache=None, region_name=None):
             session
         ),
         'ec2_credential_refresh_window': _DEFAULT_ADVISORY_REFRESH_TIMEOUT,
+        'ec2_metadata_v1_disabled': session.get_config_variable(
+            'ec2_metadata_v1_disabled'
+        ),
     }
 
     if cache is None:
@@ -231,7 +234,11 @@ class ProfileProviderBuilder:
             profile_name=profile_name,
             cache=self._cache,
             token_cache=self._sso_token_cache,
-            token_provider=SSOTokenProvider(self._session),
+            token_provider=SSOTokenProvider(
+                self._session,
+                cache=self._sso_token_cache,
+                profile_name=profile_name,
+            ),
         )
 
 
@@ -347,6 +354,7 @@ class RefreshableCredentials(Credentials):
     :param str access_key: The access key part of the credentials.
     :param str secret_key: The secret key part of the credentials.
     :param str token: The security token, valid only for session credentials.
+    :param datetime expiry_time: The expiration time of the credentials.
     :param function refresh_using: Callback function to refresh the credentials.
     :param str method: A string which identifies where the credentials
         were found.
@@ -369,6 +377,8 @@ class RefreshableCredentials(Credentials):
         refresh_using,
         method,
         time_fetcher=_local_now,
+        advisory_timeout=None,
+        mandatory_timeout=None,
     ):
         self._refresh_using = refresh_using
         self._access_key = access_key
@@ -382,13 +392,30 @@ class RefreshableCredentials(Credentials):
             access_key, secret_key, token
         )
         self._normalize()
+        if advisory_timeout is not None:
+            self._advisory_refresh_timeout = advisory_timeout
+        if mandatory_timeout is not None:
+            self._mandatory_refresh_timeout = mandatory_timeout
 
     def _normalize(self):
         self._access_key = ibm_botocore.compat.ensure_unicode(self._access_key)
         self._secret_key = ibm_botocore.compat.ensure_unicode(self._secret_key)
 
     @classmethod
-    def create_from_metadata(cls, metadata, refresh_using, method):
+    def create_from_metadata(
+        cls,
+        metadata,
+        refresh_using,
+        method,
+        advisory_timeout=None,
+        mandatory_timeout=None,
+    ):
+        kwargs = {}
+        if advisory_timeout is not None:
+            kwargs['advisory_timeout'] = advisory_timeout
+        if mandatory_timeout is not None:
+            kwargs['mandatory_timeout'] = mandatory_timeout
+
         instance = cls(
             access_key=metadata['access_key'],
             secret_key=metadata['secret_key'],
@@ -396,6 +423,7 @@ class RefreshableCredentials(Credentials):
             expiry_time=cls._expiry_datetime(metadata['expiry_time']),
             method=method,
             refresh_using=refresh_using,
+            **kwargs,
         )
         return instance
 
@@ -654,7 +682,7 @@ class CachedCredentialFetcher:
 
     def _make_file_safe(self, filename):
         # Replace :, path sep, and / to make it the string filename safe.
-        filename = filename.replace(':', '_').replace(os.path.sep, '_')
+        filename = filename.replace(':', '_').replace(os.sep, '_')
         return filename.replace('/', '_')
 
     def _get_credentials(self):
@@ -1966,6 +1994,7 @@ class ContainerProvider(CredentialProvider):
     ENV_VAR = 'AWS_CONTAINER_CREDENTIALS_RELATIVE_URI'
     ENV_VAR_FULL = 'AWS_CONTAINER_CREDENTIALS_FULL_URI'
     ENV_VAR_AUTH_TOKEN = 'AWS_CONTAINER_AUTHORIZATION_TOKEN'
+    ENV_VAR_AUTH_TOKEN_FILE = 'AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE'
 
     def __init__(self, environ=None, fetcher=None):
         if environ is None:
@@ -1999,9 +2028,20 @@ class ContainerProvider(CredentialProvider):
         )
 
     def _build_headers(self):
-        auth_token = self._environ.get(self.ENV_VAR_AUTH_TOKEN)
+        auth_token = None
+        if self.ENV_VAR_AUTH_TOKEN_FILE in self._environ:
+            auth_token_file_path = self._environ[self.ENV_VAR_AUTH_TOKEN_FILE]
+            with open(auth_token_file_path) as token_file:
+                auth_token = token_file.read()
+        elif self.ENV_VAR_AUTH_TOKEN in self._environ:
+            auth_token = self._environ[self.ENV_VAR_AUTH_TOKEN]
         if auth_token is not None:
+            self._validate_auth_token(auth_token)
             return {'Authorization': auth_token}
+
+    def _validate_auth_token(self, auth_token):
+        if "\r" in auth_token or "\n" in auth_token:
+            raise ValueError("Auth token value is not a legal header value")
 
     def _create_fetcher(self, full_uri, headers):
         def fetch_creds():

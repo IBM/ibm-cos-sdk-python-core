@@ -22,8 +22,10 @@ from ibm_botocore.awsrequest import AWSResponse
 from ibm_botocore.model import OperationModel
 from ibm_botocore.exceptions import AwsChunkedWrapperError
 from ibm_botocore.exceptions import FlexibleChecksumError
+from ibm_botocore.exceptions import MissingDependencyException
 from ibm_botocore.httpchecksum import AwsChunkedWrapper
 from ibm_botocore.httpchecksum import StreamingChecksumBody
+from ibm_botocore.compat import HAS_CRT
 # IBM Unsupported
 # from ibm_botocore.httpchecksum import (
 #     Crc32Checksum,
@@ -170,12 +172,27 @@ class TestHttpChecksumHandlers(unittest.TestCase):
     #     operation_model = self._make_operation_model(
     #         http_checksum={"requestAlgorithmMember": "Algorithm"},
     #     )
-    #     params = {"Algorithm": "crc32"}
+    #   params = {"Algorithm": "sha256"}
 
     #     with self.assertRaises(FlexibleChecksumError):
     #         resolve_request_checksum_algorithm(
     #             request, operation_model, params, supported_algorithms=[]
     #         )
+    @unittest.skipIf(HAS_CRT, "Error only expected when CRT is not available")
+    def test_request_checksum_algorithm_model_no_crt_crc32c_unsupported(self):
+        request = self._build_request(b"")
+        operation_model = self._make_operation_model(
+            http_checksum={"requestAlgorithmMember": "Algorithm"},
+        )
+        params = {"Algorithm": "crc32c"}
+        with self.assertRaises(MissingDependencyException) as context:
+            resolve_request_checksum_algorithm(
+                request, operation_model, params
+            )
+            self.assertIn(
+                "Using CRC32C requires an additional dependency",
+                str(context.exception),
+            )
 
     def test_request_checksum_algorithm_model_legacy_md5(self):
         request = self._build_request(b"")

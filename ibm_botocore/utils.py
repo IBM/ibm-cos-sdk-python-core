@@ -25,6 +25,8 @@ import socket
 import time
 import warnings
 import weakref
+from datetime import datetime as _DatetimeClass
+from ipaddress import ip_address
 from pathlib import Path
 from urllib.request import getproxies, proxy_bypass
 
@@ -394,8 +396,10 @@ class IMDSFetcher:
 
         if env is None:
             env = os.environ.copy()
-        self._disabled = env.get('AWS_EC2_METADATA_DISABLED', 'false').lower()
-        self._disabled = self._disabled == 'true'
+        self._disabled = (
+            env.get('AWS_EC2_METADATA_DISABLED', 'false').lower() == 'true'
+        )
+        self._imds_v1_disabled = config.get('ec2_metadata_v1_disabled')
         self._user_agent = user_agent
         self._session = ibm_botocore.httpsession.URLLib3Session(
             timeout=self._timeout,
@@ -495,6 +499,8 @@ class IMDSFetcher:
         :param token: Metadata token to send along with GET requests to IMDS.
         """
         self._assert_enabled()
+        if not token:
+            self._assert_v1_enabled()
         if retry_func is None:
             retry_func = self._default_retry
         url = self._construct_url(url_path)
@@ -528,6 +534,12 @@ class IMDSFetcher:
         if self._disabled:
             logger.debug("Access to EC2 metadata has been disabled.")
             raise self._RETRIES_EXCEEDED_ERROR_CLS()
+
+    def _assert_v1_enabled(self):
+        if self._imds_v1_disabled:
+            raise MetadataRetrievalError(
+                error_msg="Unable to retrieve token for use in IMDSv2 call and IMDSv1 has been disabled"
+            )
 
     def _default_retry(self, response):
         return self._is_non_ok_response(response) or self._is_empty(response)
@@ -900,6 +912,22 @@ def percent_encode(input_str, safe=SAFE_CHARS):
     return quote(input_str, safe=safe)
 
 
+def _epoch_seconds_to_datetime(value, tzinfo):
+    """Parse numerical epoch timestamps (seconds since 1970) into a
+    ``datetime.datetime`` in UTC using ``datetime.timedelta``. This is intended
+    as fallback when ``fromtimestamp`` raises ``OverflowError`` or ``OSError``.
+
+    :type value: float or int
+    :param value: The Unix timestamps as number.
+
+    :type tzinfo: callable
+    :param tzinfo: A ``datetime.tzinfo`` class or compatible callable.
+    """
+    epoch_zero = datetime.datetime(1970, 1, 1, 0, 0, 0, tzinfo=tzutc())
+    epoch_zero_localized = epoch_zero.astimezone(tzinfo())
+    return epoch_zero_localized + datetime.timedelta(seconds=value)
+
+
 def _parse_timestamp_with_tzinfo(value, tzinfo):
     """Parse timestamp with pluggable tzinfo options."""
     if isinstance(value, (int, float)):
@@ -931,12 +959,34 @@ def parse_timestamp(value):
     This will return a ``datetime.datetime`` object.
 
     """
-    for tzinfo in get_tzinfo_options():
+    tzinfo_options = get_tzinfo_options()
+    for tzinfo in tzinfo_options:
         try:
             return _parse_timestamp_with_tzinfo(value, tzinfo)
-        except OSError as e:
+        except (OSError, OverflowError) as e:
             logger.debug(
                 'Unable to parse timestamp with "%s" timezone info.',
+                tzinfo.__name__,
+                exc_info=e,
+            )
+    # For numeric values attempt fallback to using fromtimestamp-free method.
+    # From Python's ``datetime.datetime.fromtimestamp`` documentation: "This
+    # may raise ``OverflowError``, if the timestamp is out of the range of
+    # values supported by the platform C localtime() function, and ``OSError``
+    # on localtime() failure. It's common for this to be restricted to years
+    # from 1970 through 2038."
+    try:
+        numeric_value = float(value)
+    except (TypeError, ValueError):
+        pass
+    else:
+        try:
+            for tzinfo in tzinfo_options:
+                return _epoch_seconds_to_datetime(numeric_value, tzinfo=tzinfo)
+        except (OSError, OverflowError) as e:
+            logger.debug(
+                'Unable to parse timestamp using fallback method with "%s" '
+                'timezone info.',
                 tzinfo.__name__,
                 exc_info=e,
             )
@@ -972,7 +1022,7 @@ def parse_to_aware_datetime(value):
     # converting the provided value to a string timestamp suitable to be
     # serialized to an http request. It can handle:
     # 1) A datetime.datetime object.
-    if isinstance(value, datetime.datetime):
+    if isinstance(value, _DatetimeClass):
         datetime_obj = value
     else:
         # 2) A string object that's formatted as a timestamp.
@@ -1006,11 +1056,7 @@ def datetime2timestamp(dt, default_timezone=None):
             default_timezone = tzutc()
         dt = dt.replace(tzinfo=default_timezone)
     d = dt.replace(tzinfo=None) - dt.utcoffset() - epoch
-    if hasattr(d, "total_seconds"):
-        return d.total_seconds()  # Works in Python 3.6+
-    return (
-        d.microseconds + (d.seconds + d.days * 24 * 3600) * 10**6
-    ) / 10**6
+    return d.total_seconds()
 
 
 def calculate_sha256(body, as_hex=False):
@@ -1420,6 +1466,34 @@ def instance_cache(func):
     return _cache_guard
 
 
+def lru_cache_weakref(*cache_args, **cache_kwargs):
+    """
+    Version of functools.lru_cache that stores a weak reference to ``self``.
+
+    Serves the same purpose as :py:func:`instance_cache` but uses Python's
+    functools implementation which offers ``max_size`` and ``typed`` properties.
+
+    lru_cache is a global cache even when used on a method. The cache's
+    reference to ``self`` will prevent garbace collection of the object. This
+    wrapper around functools.lru_cache replaces the reference to ``self`` with
+    a weak reference to not interfere with garbage collection.
+    """
+
+    def wrapper(func):
+        @functools.lru_cache(*cache_args, **cache_kwargs)
+        def func_with_weakref(weakref_to_self, *args, **kwargs):
+            return func(weakref_to_self(), *args, **kwargs)
+
+        @functools.wraps(func)
+        def inner(self, *args, **kwargs):
+            return func_with_weakref(weakref.ref(self), *args, **kwargs)
+
+        inner.cache_info = func_with_weakref.cache_info
+        return inner
+
+    return wrapper
+
+
 def switch_host_s3_accelerate(request, operation_name, **kwargs):
     """Switches the current s3 endpoint with an S3 Accelerate endpoint"""
 
@@ -1499,6 +1573,38 @@ def hyphenize_service_id(service_id):
     :param service_id: The service_id to convert.
     """
     return service_id.replace(' ', '-').lower()
+class IdentityCache:
+    """Base IdentityCache implementation for storing and retrieving
+    highly accessed credentials.
+
+    This class is not intended to be instantiated in user code.
+    """
+
+    METHOD = "base_identity_cache"
+
+    def __init__(self, client, credential_cls):
+        self._client = client
+        self._credential_cls = credential_cls
+
+    def get_credentials(self, **kwargs):
+        callback = self.build_refresh_callback(**kwargs)
+        metadata = callback()
+        credential_entry = self._credential_cls.create_from_metadata(
+            metadata=metadata,
+            refresh_using=callback,
+            method=self.METHOD,
+            advisory_timeout=45,
+            mandatory_timeout=10,
+        )
+        return credential_entry
+
+    def build_refresh_callback(**kwargs):
+        """Callback to be implemented by subclasses.
+
+        Returns a set of metadata to be converted into a new
+        credential instance.
+        """
+        raise NotImplementedError()
 
 
 class S3RegionRedirectorv2:
@@ -2849,7 +2955,12 @@ class ContainerMetadataFetcher:
     RETRY_ATTEMPTS = 3
     SLEEP_TIME = 1
     IP_ADDRESS = '169.254.170.2'
-    _ALLOWED_HOSTS = [IP_ADDRESS, 'localhost', '127.0.0.1']
+    _ALLOWED_HOSTS = [
+        IP_ADDRESS,
+        '169.254.170.23',
+        'fd00:ec2::23',
+        'localhost',
+    ]
 
     def __init__(self, session=None, sleep=time.sleep):
         if session is None:
@@ -2873,13 +2984,21 @@ class ContainerMetadataFetcher:
 
     def _validate_allowed_url(self, full_url):
         parsed = ibm_botocore.compat.urlparse(full_url)
+        if self._is_loopback_address(parsed.hostname):
+            return
         is_whitelisted_host = self._check_if_whitelisted_host(parsed.hostname)
         if not is_whitelisted_host:
             raise ValueError(
-                "Unsupported host '%s'.  Can only "
-                "retrieve metadata from these hosts: %s"
-                % (parsed.hostname, ', '.join(self._ALLOWED_HOSTS))
+                f"Unsupported host '{parsed.hostname}'.  Can only retrieve metadata "
+                f"from a loopback address or one of these hosts: {', '.join(self._ALLOWED_HOSTS)}"
             )
+
+    def _is_loopback_address(self, hostname):
+        try:
+            ip = ip_address(hostname)
+            return ip.is_loopback
+        except ValueError:
+            return False
 
     def _check_if_whitelisted_host(self, host):
         if host in self._ALLOWED_HOSTS:
@@ -2887,7 +3006,7 @@ class ContainerMetadataFetcher:
         return False
 
     def retrieve_uri(self, relative_uri):
-        """Retrieve JSON metadata from ECS metadata.
+        """Retrieve JSON metadata from container metadata.
 
         :type relative_uri: str
         :param relative_uri: A relative URI, e.g "/foo/bar?id=123"
@@ -2929,22 +3048,20 @@ class ContainerMetadataFetcher:
             if response.status_code != 200:
                 raise MetadataRetrievalError(
                     error_msg=(
-                        "Received non 200 response (%s) from ECS metadata: %s"
+                        f"Received non 200 response {response.status_code} "
+                        f"from container metadata: {response_text}"
                     )
-                    % (response.status_code, response_text)
                 )
             try:
                 return json.loads(response_text)
             except ValueError:
-                error_msg = (
-                    "Unable to parse JSON returned from ECS metadata services"
-                )
+                error_msg = "Unable to parse JSON returned from container metadata services"
                 logger.debug('%s:%s', error_msg, response_text)
                 raise MetadataRetrievalError(error_msg=error_msg)
         except RETRYABLE_HTTP_ERRORS as e:
             error_msg = (
                 "Received error when attempting to retrieve "
-                "ECS metadata: %s" % e
+                f"container metadata: {e}"
             )
             raise MetadataRetrievalError(error_msg=error_msg)
 
@@ -3294,8 +3411,22 @@ class JSONFileCache:
         return full_path
 
     def _serialize_if_needed(self, value, iso=False):
-        if isinstance(value, datetime.datetime):
+        if isinstance(value, _DatetimeClass):
             if iso:
                 return value.isoformat()
             return value.strftime('%Y-%m-%dT%H:%M:%S%Z')
         return value
+# This parameter is not part of the public interface and is subject to abrupt
+# breaking changes or removal without prior announcement.
+# Mapping of services that have been renamed for backwards compatibility reasons.
+# Keys are the previous name that should be allowed, values are the documented
+# and preferred client name.
+SERVICE_NAME_ALIASES = {'runtime.sagemaker': 'sagemaker-runtime'}
+
+
+# This parameter is not part of the public interface and is subject to abrupt
+# breaking changes or removal without prior announcement.
+# Mapping to determine the service ID for services that do not use it as the
+# model data directory name. The keys are the data directory name and the
+# values are the transformed service IDs (lower case and hyphenated).
+CLIENT_NAME_TO_HYPHENIZED_SERVICE_ID_OVERRIDES = {}

@@ -10,7 +10,11 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
+import os
+
+from ibm_botocore import xform_name
 from ibm_botocore.compat import OrderedDict
+from ibm_botocore.docs.bcdoc.restdoc import DocumentStructure
 from ibm_botocore.docs.example import ResponseExampleDocumenter
 from ibm_botocore.docs.method import (
     document_custom_method,
@@ -33,8 +37,10 @@ class ClientDocumenter:
         _allowlist_generate_presigned_url,
     ]
 
-    def __init__(self, client, shared_examples=None):
+    def __init__(self, client, root_docs_path, shared_examples=None):
         self._client = client
+        self._client_class_name = self._client.__class__.__name__
+        self._root_docs_path = root_docs_path
         self._shared_examples = shared_examples
         if self._shared_examples is None:
             self._shared_examples = {}
@@ -49,7 +55,7 @@ class ClientDocumenter:
         self._add_class_signature(section)
         client_methods = self._get_client_methods()
         self._add_client_intro(section, client_methods)
-        self._add_client_methods(section, client_methods)
+        self._add_client_methods(client_methods)
 
     def _get_client_methods(self):
         client_methods = get_instance_public_methods(self._client)
@@ -98,16 +104,16 @@ class ClientDocumenter:
         self._add_client_creation_example(section)
 
         # List out all of the possible client methods.
-        section.style.new_line()
-        section.write('These are the available methods:')
-        section.style.new_line()
-        class_name = self._client.__class__.__name__
+        section.style.dedent()
+        section.style.new_paragraph()
+        section.writeln('These are the available methods:')
+        section.style.toctree()
         for method_name in sorted(client_methods):
-            section.style.li(f":py:meth:`~{class_name}.Client.{method_name}`")
+            section.style.tocitem(f'{self._service_name}/client/{method_name}')
 
     def _add_class_signature(self, section):
         section.style.start_sphinx_py_class(
-            class_name=f'{self._client.__class__.__name__}.Client'
+            class_name=f'{self._client_class_name}.Client'
         )
 
     def _add_client_creation_example(self, section):
@@ -120,19 +126,41 @@ class ClientDocumenter:
         )
         section.style.end_codeblock()
 
-    def _add_client_methods(self, section, client_methods):
-        section = section.add_new_section('methods')
+    def _add_client_methods(self, client_methods):
         for method_name in sorted(client_methods):
-            self._add_client_method(
-                section, method_name, client_methods[method_name]
+            # Create a new DocumentStructure for each client method and add contents.
+            method_doc_structure = DocumentStructure(
+                method_name, target='html'
             )
+            self._add_client_method(
+                method_doc_structure, method_name, client_methods[method_name]
+            )
+            # Write client methods in individual/nested files.
+            # Path: <root>/reference/services/<service>/client/<method_name>.rst
+            client_dir_path = os.path.join(
+                self._root_docs_path, self._service_name, 'client'
+            )
+            method_doc_structure.write_to_file(client_dir_path, method_name)
 
     def _add_client_method(self, section, method_name, method):
-        section = section.add_new_section(method_name)
+        breadcrumb_section = section.add_new_section('breadcrumb')
+        breadcrumb_section.style.ref(
+            self._client_class_name, f'../../{self._service_name}'
+        )
+        breadcrumb_section.write(f' / Client / {method_name}')
+        section.add_title_section(method_name)
+        method_section = section.add_new_section(
+            method_name,
+            context={'qualifier': f'{self._client_class_name}.Client.'},
+        )
         if self._is_custom_method(method_name):
-            self._add_custom_method(section, method_name, method)
+            self._add_custom_method(
+                method_section,
+                method_name,
+                method,
+            )
         else:
-            self._add_model_driven_method(section, method_name)
+            self._add_model_driven_method(method_section, method_name)
 
     def _is_custom_method(self, method_name):
         return method_name not in self._client.meta.method_to_api_mapping
@@ -145,9 +173,10 @@ class ClientDocumenter:
         error_section.style.new_line()
         error_section.style.bold('Exceptions')
         error_section.style.new_line()
-        client_name = self._client.__class__.__name__
         for error in operation_model.error_shapes:
-            class_name = f'{client_name}.Client.exceptions.{error.name}'
+            class_name = (
+                f'{self._client_class_name}.Client.exceptions.{error.name}'
+            )
             error_section.style.li(':py:class:`%s`' % class_name)
 
     def _add_model_driven_method(self, section, method_name):
@@ -156,9 +185,12 @@ class ClientDocumenter:
         operation_model = service_model.operation_model(operation_name)
 
         example_prefix = 'response = client.%s' % method_name
+        full_method_name = (
+            f"{section.context.get('qualifier', '')}{method_name}"
+        )
         document_model_driven_method(
             section,
-            method_name,
+            full_method_name,
             operation_model,
             event_emitter=self._client.meta.events,
             method_description=operation_model.documentation,
@@ -179,7 +211,7 @@ class ClientDocumenter:
 
 class ClientExceptionsDocumenter:
     _USER_GUIDE_LINK = (
-        'https://ibm_boto3.amazonaws.com/'
+        'https://boto3.amazonaws.com/'
         'v1/documentation/api/latest/guide/error-handling.html'
     )
     _GENERIC_ERROR_SHAPE = DocumentedShape(
@@ -213,15 +245,17 @@ class ClientExceptionsDocumenter:
         ),
     )
 
-    def __init__(self, client):
+    def __init__(self, client, root_docs_path):
         self._client = client
+        self._client_class_name = self._client.__class__.__name__
         self._service_name = self._client.meta.service_model.service_name
+        self._root_docs_path = root_docs_path
 
     def document_exceptions(self, section):
         self._add_title(section)
         self._add_overview(section)
         self._add_exceptions_list(section)
-        self._add_exception_classes(section)
+        self._add_exception_classes()
 
     def _add_title(self, section):
         section.style.h2('Client Exceptions')
@@ -242,8 +276,7 @@ class ClientExceptionsDocumenter:
         section.style.new_line()
 
     def _exception_class_name(self, shape):
-        cls_name = self._client.__class__.__name__
-        return f'{cls_name}.Client.exceptions.{shape.name}'
+        return f'{self._client_class_name}.Client.exceptions.{shape.name}'
 
     def _add_exceptions_list(self, section):
         error_shapes = self._client.meta.service_model.error_shapes
@@ -253,17 +286,39 @@ class ClientExceptionsDocumenter:
             section.style.new_line()
             return
         section.style.new_line()
-        section.write('The available client exceptions are:')
-        section.style.new_line()
+        section.writeln('The available client exceptions are:')
+        section.style.toctree()
         for shape in error_shapes:
-            class_name = self._exception_class_name(shape)
-            section.style.li(':py:class:`%s`' % class_name)
+            section.style.tocitem(
+                f'{self._service_name}/client/exceptions/{shape.name}'
+            )
 
-    def _add_exception_classes(self, section):
+    def _add_exception_classes(self):
         for shape in self._client.meta.service_model.error_shapes:
-            self._add_exception_class(section, shape)
+            # Create a new DocumentStructure for each exception method and add contents.
+            exception_doc_structure = DocumentStructure(
+                shape.name, target='html'
+            )
+            self._add_exception_class(exception_doc_structure, shape)
+            # Write exceptions in individual/nested files.
+            # Path: <root>/reference/services/<service>/client/exceptions/<exception_name>.rst
+            exception_dir_path = os.path.join(
+                self._root_docs_path,
+                self._service_name,
+                'client',
+                'exceptions',
+            )
+            exception_doc_structure.write_to_file(
+                exception_dir_path, shape.name
+            )
 
     def _add_exception_class(self, section, shape):
+        breadcrumb_section = section.add_new_section('breadcrumb')
+        breadcrumb_section.style.ref(
+            self._client_class_name, f'../../../{self._service_name}'
+        )
+        breadcrumb_section.write(f' / Client / exceptions / {shape.name}')
+        section.add_title_section(shape.name)
         class_section = section.add_new_section(shape.name)
         class_name = self._exception_class_name(shape)
         class_section.style.start_sphinx_py_class(class_name=class_name)
@@ -281,6 +336,7 @@ class ClientExceptionsDocumenter:
     def _add_exception_catch_example(self, section, shape):
         section.style.new_line()
         section.style.bold('Example')
+        section.style.new_paragraph()
         section.style.start_codeblock()
         section.write('try:')
         section.style.indent()
@@ -344,3 +400,56 @@ class ClientExceptionsDocumenter:
             shape,
             include=[self._GENERIC_ERROR_SHAPE],
         )
+
+
+class ClientContextParamsDocumenter:
+    _CONFIG_GUIDE_LINK = (
+        'https://boto3.amazonaws.com/'
+        'v1/documentation/api/latest/guide/configuration.html'
+    )
+
+    OMITTED_CONTEXT_PARAMS = {
+        's3': (
+            'Accelerate',
+            'DisableMultiRegionAccessPoints',
+            'ForcePathStyle',
+            'UseArnRegion',
+        ),
+        's3control': ('UseArnRegion',),
+    }
+
+    def __init__(self, service_name, context_params):
+        self._service_name = service_name
+        self._context_params = context_params
+
+    def document_context_params(self, section):
+        self._add_title(section)
+        self._add_overview(section)
+        self._add_context_params_list(section)
+
+    def _add_title(self, section):
+        section.style.h2('Client Context Parameters')
+
+    def _add_overview(self, section):
+        section.style.new_line()
+        section.write(
+            'Client context parameters are configurable on a client '
+            'instance via the ``client_context_params`` parameter in the '
+            '``Config`` object. For more detailed instructions and examples '
+            'on the exact usage of context params see the '
+        )
+        section.style.external_link(
+            title='configuration guide',
+            link=self._CONFIG_GUIDE_LINK,
+        )
+        section.write('.')
+        section.style.new_line()
+
+    def _add_context_params_list(self, section):
+        section.style.new_line()
+        sn = f'``{self._service_name}``'
+        section.writeln(f'The available {sn} client context params are:')
+        for param in self._context_params:
+            section.style.new_line()
+            name = f'``{xform_name(param.name)}``'
+            section.write(f'* {name} ({param.type}) - {param.documentation}')

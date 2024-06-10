@@ -178,6 +178,7 @@ class TestOperationModelFromService(unittest.TestCase):
                     },
                     'errors': [{'shape': 'NoSuchResourceException'}],
                     'documentation': 'Docs for PayloadOperation',
+                    'requestcompression': {'encodings': ['gzip']},
                 },
                 'NoBodyOperation': {
                     'http': {
@@ -439,6 +440,12 @@ class TestOperationModelFromService(unittest.TestCase):
     #     )
 
 
+    def test_request_compression(self):
+        service_model = model.ServiceModel(self.model)
+        operation = service_model.operation_model('PayloadOperation')
+        self.assertEqual(
+            operation.request_compression, {'encodings': ['gzip']}
+        )
 class TestOperationModelEventStreamTypes(unittest.TestCase):
     def setUp(self):
         super(TestOperationModelEventStreamTypes, self).setUp()

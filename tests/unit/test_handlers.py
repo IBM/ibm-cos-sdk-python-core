@@ -1230,3 +1230,48 @@ def test_add_recursion_detection_header(environ, header_before, header_after):
     with mock.patch('os.environ', environ):
         handlers.add_recursion_detection_header(request_dict)
         assert request_dict['headers'] == header_after
+@pytest.mark.parametrize(
+    'request_uri_before, request_uri_after, auth_path',
+    [
+        ('/{Bucket}', '', '/{Bucket}/'),
+        ('/{Bucket}?query', '?query', '/{Bucket}/'),
+        ('/{Bucket}/123', '/123', '/{Bucket}/123'),
+        ('/{Bucket}/123?query', '/123?query', '/{Bucket}/123'),
+    ],
+)
+def test_remove_bucket_from_url_paths_from_model(
+    request_uri_before, request_uri_after, auth_path
+):
+    operation_def = {
+        'name': 'TestOp',
+        'http': {
+            'method': 'GET',
+            'requestUri': request_uri_before,
+            'responseCode': 200,
+        },
+        'input': {'shape': 'TestOpInput'},
+    }
+    service_def = {
+        'metadata': {},
+        'shapes': {
+            'TestOpInput': {
+                'type': 'structure',
+                'required': ['Bucket'],
+                'members': {
+                    'Bucket': {
+                        'shape': 'String',
+                        'contextParam': {'name': 'Bucket'},
+                        'location': 'uri',
+                        'locationName': 'Bucket',
+                    },
+                },
+            },
+        },
+    }
+    model = OperationModel(operation_def, ServiceModel(service_def))
+    # the handler modifies ``model`` in place
+    handlers.remove_bucket_from_url_paths_from_model(
+        params=None, model=model, context=None
+    )
+    assert model.http['requestUri'] == request_uri_after
+    assert model.http['authPath'] == auth_path

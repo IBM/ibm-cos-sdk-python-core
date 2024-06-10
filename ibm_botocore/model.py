@@ -86,6 +86,7 @@ class Shape:
         'union',
         'contextParam',
         'clientContextParams',
+        'requiresLength',
     ]
     MAP_TYPE = OrderedDict
 
@@ -170,6 +171,9 @@ class Shape:
             * idempotencyToken
             * document
             * union
+            * contextParam
+            * clientContextParams
+            * requiresLength
 
         :rtype: dict
         :return: Metadata about the shape.
@@ -525,7 +529,7 @@ class OperationModel:
 
         In many situations this is the same value as the
         ``name``, value, but in some services, the operation name
-        exposed to the user is different from the operaiton name
+        exposed to the user is different from the operation name
         we send across the wire (e.g cloudfront).
 
         Any serialization code should use ``wire_name``.
@@ -611,6 +615,10 @@ class OperationModel:
             if 'contextParam' in shape.metadata
             and 'name' in shape.metadata['contextParam']
         ]
+
+    @CachedProperty
+    def request_compression(self):
+        return self._operation_model.get('requestcompression')
 
     @CachedProperty
     def auth_type(self):

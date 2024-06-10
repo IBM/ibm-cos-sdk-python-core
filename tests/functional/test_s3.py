@@ -1383,6 +1383,17 @@ class TestWriteGetObjectResponse(BaseS3ClientConfigurationTest):
                 RequestToken="SecretToken",
             )
 
+    def test_invalid_request_route_raises(self):
+        self.client, self.http_stubber = self.create_stubbed_s3_client(
+            region_name="us-west-2"
+        )
+        self.http_stubber.add_response()
+        with self.assertRaises(ParamValidationError):
+            self.client.write_get_object_response(
+                RequestRoute="my-route/",
+                RequestToken="SecretToken",
+            )
+
 
 class TestS3SigV4(BaseS3OperationTest):
     def setUp(self):
@@ -2951,7 +2962,7 @@ def _s3_addressing_test_cases():
         region="us-west-2",
         bucket=accesspoint_arn,
         key="key",
-        s3_config={"adressing_style": "auto"},
+        s3_config={"addressing_style": "auto"},
         expected_url=(
             "https://myendpoint-123456789012.s3-accesspoint."
             "us-west-2.amazonaws.com/key"
@@ -2961,7 +2972,7 @@ def _s3_addressing_test_cases():
         region="us-west-2",
         bucket=accesspoint_arn,
         key="key",
-        s3_config={"adressing_style": "virtual"},
+        s3_config={"addressing_style": "virtual"},
         expected_url=(
             "https://myendpoint-123456789012.s3-accesspoint."
             "us-west-2.amazonaws.com/key"
@@ -2971,7 +2982,7 @@ def _s3_addressing_test_cases():
         region="us-west-2",
         bucket=accesspoint_arn,
         key="key",
-        s3_config={"adressing_style": "path"},
+        s3_config={"addressing_style": "path"},
         expected_url=(
             "https://myendpoint-123456789012.s3-accesspoint."
             "us-west-2.amazonaws.com/key"
@@ -3480,6 +3491,64 @@ def _addressing_for_presigned_url_test_cases():
         key="key",
         signature_version="s3",
         expected_url="https://s3.us-west-1.amazonaws.com/foo.bar.biz/key",
+    )
+    # Bucket names that contain dots and subcomponents that are less than
+    # 3 characters should still use virtual host style addressing if
+    # configured by the customer and they provide their own ``endpoint_url``
+    # that is insecure. https://github.com/ibm_boto/ibm_botocore/issues/2938
+    yield dict(
+        bucket="foo.b.biz",
+        key="key",
+        s3_config={"addressing_style": "virtual"},
+        customer_provided_endpoint="http://s3.us-west-2.amazonaws.com",
+        expected_url="http://foo.b.biz.s3.us-west-2.amazonaws.com/key",
+    )
+    yield dict(
+        bucket="foo.b.biz",
+        key="key",
+        s3_config={"addressing_style": "virtual"},
+        customer_provided_endpoint="https://s3.us-west-2.amazonaws.com",
+        expected_url="https://s3.us-west-2.amazonaws.com/foo.b.biz/key",
+    )
+
+    # virtual style addressing expicitly requested always uses
+    # regional endpoints except for us-east-1 and aws-global
+    yield dict(
+        region="us-west-2",
+        bucket="bucket",
+        key="key",
+        signature_version="s3",
+        s3_config={"addressing_style": "virtual"},
+        expected_url="https://bucket.s3.us-west-2.amazonaws.com/key",
+    )
+    yield dict(
+        region="us-east-2",
+        bucket="bucket",
+        key="key",
+        signature_version="s3v4",
+        s3_config={"addressing_style": "virtual"},
+        expected_url="https://bucket.s3.us-east-2.amazonaws.com/key",
+    )
+    yield dict(
+        region="us-west-2",
+        bucket="bucket",
+        key="key",
+        s3_config={"addressing_style": "virtual"},
+        expected_url="https://bucket.s3.us-west-2.amazonaws.com/key",
+    )
+    yield dict(
+        region="us-east-1",
+        bucket="bucket",
+        key="key",
+        s3_config={"addressing_style": "virtual"},
+        expected_url="https://bucket.s3.amazonaws.com/key",
+    )
+    yield dict(
+        region="aws-global",
+        bucket="bucket",
+        key="key",
+        s3_config={"addressing_style": "virtual"},
+        expected_url="https://bucket.s3.amazonaws.com/key",
     )
 
 

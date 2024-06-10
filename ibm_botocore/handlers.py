@@ -73,6 +73,7 @@ from ibm_botocore.compat import MD5_AVAILABLE  # noqa
 from ibm_botocore.exceptions import MissingServiceIdError  # noqa
 from ibm_botocore.utils import hyphenize_service_id  # noqa
 from ibm_botocore.utils import is_global_accesspoint  # noqa
+from ibm_botocore.utils import SERVICE_NAME_ALIASES  # noqa
 
 
 logger = logging.getLogger(__name__)
@@ -98,8 +99,6 @@ VALID_S3_ARN = re.compile('|'.join([_ACCESSPOINT_ARN, _OUTPOST_ARN]))
 # ibm_botocore/data/s3/2006-03-01/endpoints-rule-set-1.json
 S3_SIGNING_NAMES = ('s3', 's3-outposts', 's3-object-lambda')
 VERSION_ID_SUFFIX = re.compile(r'\?versionId=[^\s]+$')
-
-SERVICE_NAME_ALIASES = {'runtime.sagemaker': 'sagemaker-runtime'}
 
 
 def handle_service_name_alias(service_name, **kwargs):
@@ -840,7 +839,7 @@ def _decode_list_object(top_level_keys, nested_keys, parsed, context):
             if key in parsed:
                 parsed[key] = unquote_str(parsed[key])
         # URL decode nested keys from the response if present.
-        for (top_key, child_key) in nested_keys:
+        for top_key, child_key in nested_keys:
             if top_key in parsed:
                 for member in parsed[top_key]:
                     member[child_key] = unquote_str(member[child_key])
@@ -1050,6 +1049,10 @@ def remove_bucket_from_url_paths_from_model(params, model, context, **kwargs):
     bucket_path = '/{Bucket}'
     if req_uri.startswith(bucket_path):
         model.http['requestUri'] = req_uri[len(bucket_path) :]
+        # Strip query off the requestUri before using as authPath. The
+        # HmacV1Auth signer will append query params to the authPath during
+        # signing.
+        req_uri = req_uri.split('?')[0]
         # If the request URI is ONLY a bucket, the auth_path must be
         # terminated with a '/' character to generate a signature that the
         # server will accept.
@@ -1137,6 +1140,14 @@ def customize_endpoint_resolver_builtins(
         builtins[EndpointResolverBuiltins.AWS_S3_USE_GLOBAL_ENDPOINT] = True
 
 
+def remove_content_type_header_for_presigning(request, **kwargs):
+    if (
+        request.context.get('is_presign_request') is True
+        and 'Content-Type' in request.headers
+    ):
+        del request.headers['Content-Type']
+
+
 # This is a list of (event_name, handler).
 # When a Session is created, everything in this list will be
 # automatically registered with that Session.
@@ -1219,9 +1230,14 @@ BUILTIN_HANDLERS = [
     ('before-parameter-build.s3.UploadPart', sse_md5),
     ('before-parameter-build.s3.UploadPartCopy', sse_md5),
     ('before-parameter-build.s3.UploadPartCopy', copy_source_sse_md5),
+    ('before-parameter-build.s3.CompleteMultipartUpload', sse_md5),
     ('before-parameter-build.s3.SelectObjectContent', sse_md5),
 
     ('before-sign.s3', remove_arn_from_signing_path),
+    (
+        'before-sign.polly.SynthesizeSpeech',
+        remove_content_type_header_for_presigning,
+    ),
     ('after-call.s3.ListObjects', decode_list_object),
     ('after-call.s3.ListObjectsV2', decode_list_object_v2),
     ('after-call.s3.ListObjectVersions', decode_list_object_versions),

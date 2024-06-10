@@ -5,8 +5,8 @@ import ibm_botocore
 
 requires = [
     'jmespath>=0.10.0,<=1.0.1',
-    'python-dateutil>=2.8.2,<3.0.0',
-    'requests>=2.31.0,<3.0',
+    'python-dateutil>=2.9.0,<3.0.0',
+    'requests>=2.32.3,<3.0',
     'urllib3>=1.26.18,<1.27 ; python_version < "3.10"',
     'urllib3>=1.26.18,<2.2 ; python_version >= "3.10"'
 ]
@@ -36,12 +36,12 @@ setup(
         'Natural Language :: English',
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
     ],
 )

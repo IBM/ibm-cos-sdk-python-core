@@ -175,5 +175,24 @@ class TestConfigLoader(BaseEnvVar):
         self.assertIn('personal', loaded_config['profiles'])
 
 
+    def test_services_config(self):
+        filename = path('aws_services_config')
+        loaded_config = load_config(filename)
+        self.assertIn('profiles', loaded_config)
+        self.assertIn('default', loaded_config['profiles'])
+        self.assertIn('services', loaded_config)
+        self.assertIn('my-services', loaded_config['services'])
+        services_config = loaded_config['services']['my-services']
+        self.assertIn('s3', services_config)
+        self.assertIn('dynamodb', services_config)
+        self.assertEqual(
+            services_config['s3']['endpoint_url'], 'https://localhost:5678/'
+        )
+        self.assertEqual(
+            services_config['dynamodb']['endpoint_url'],
+            'https://localhost:8888/',
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -13,6 +13,7 @@
 import datetime
 import json
 
+import pytest
 from dateutil.tz import tzutc
 
 import ibm_botocore
@@ -33,6 +34,11 @@ from ibm_botocore.signers import generate_db_auth_token
 from tests import mock
 from tests import unittest
 from tests import assert_url_equal
+@pytest.fixture
+def polly_client():
+    session = ibm_botocore.session.get_session()
+    session.set_credentials('key', 'secret')
+    return session.create_client('polly', region_name='us-west-2')
 
 
 class BaseSignerTest(unittest.TestCase):
@@ -861,6 +867,36 @@ class TestGenerateUrl(unittest.TestCase):
                 'The context did not have is_presign_request set to True for '
                 'the following kwargs emitted: %s' % kwargs
             )
+    def test_context_param_from_event_handler_sent_to_endpoint_resolver(self):
+        def change_bucket_param(params, **kwargs):
+            params['Bucket'] = 'mybucket-bar'
+
+        self.client.meta.events.register_last(
+            'provide-client-params.s3.*', change_bucket_param
+        )
+
+        self.client.generate_presigned_url(
+            'get_object', Params={'Bucket': 'mybucket-foo', 'Key': self.key}
+        )
+
+        ref_request_dict = {
+            'body': b'',
+            # If the bucket name set in the provide-client-params event handler
+            # was correctly passed to the endpoint provider as a dynamic context
+            # parameter, it will appear in the URL and the auth_path:
+            'url': 'https://mybucket-bar.s3.amazonaws.com/mykey',
+            'headers': {},
+            'auth_path': '/mybucket-bar/mykey',
+            'query_string': {},
+            'url_path': '/mykey',
+            'method': 'GET',
+            'context': mock.ANY,
+        }
+        self.generate_url_mock.assert_called_with(
+            request_dict=ref_request_dict,
+            expires_in=3600,
+            operation_name='GetObject',
+        )
 
 
 class TestGeneratePresignedPost(unittest.TestCase):
@@ -956,3 +992,21 @@ class TestGeneratePresignedPost(unittest.TestCase):
             self.client.generate_presigned_post()
 
 
+@pytest.mark.parametrize(
+    'request_method',
+    ['GET', 'HEAD', 'OPTIONS', 'POST', 'PUT', 'DELETE', None],
+)
+def test_generate_presigned_url_content_type_removal_for_polly(
+    polly_client,
+    request_method,
+):
+    url = polly_client.generate_presigned_url(
+        'synthesize_speech',
+        Params={
+            'OutputFormat': 'mp3',
+            'Text': 'Hello world!',
+            'VoiceId': 'Joanna',
+        },
+        HttpMethod=request_method,
+    )
+    assert 'content-type' not in url.lower()
