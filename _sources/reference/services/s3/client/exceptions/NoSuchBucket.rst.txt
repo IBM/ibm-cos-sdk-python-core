@@ -1,0 +1,64 @@
+:doc:`S3 <../../../s3>` / Client / exceptions / NoSuchBucket
+
+************
+NoSuchBucket
+************
+
+
+
+.. py:class:: S3.Client.exceptions.NoSuchBucket
+
+  
+  
+
+  The specified bucket does not exist.
+
+  
+  
+  **Example**
+
+  ::
+
+    try:
+      ...
+    except client.exceptions.NoSuchBucket as e:
+      print(e.response)
+
+  
+
+
+
+  .. py:attribute:: response
+
+    
+    The parsed error response. All exceptions have a top level ``Error`` key that provides normalized access to common exception atrributes. All other keys are specific to this service or exception class.
+    
+
+  
+    **Syntax**
+
+    
+    ::
+
+      {}
+      
+    **Structure**
+
+    
+
+    - *(dict) --* 
+
+      The specified bucket does not exist.
+
+      
+      
+
+      - **Error** *(dict) --* Normalized access to common exception attributes.
+        
+
+        - **Code** *(string) --* An identifier specifying the exception type.
+        
+
+        - **Message** *(string) --* A descriptive message explaining why the exception occured.
+    
+  

@@ -1,0 +1,64 @@
+:doc:`S3 <../../../s3>` / Client / exceptions / ObjectNotInActiveTierError
+
+**************************
+ObjectNotInActiveTierError
+**************************
+
+
+
+.. py:class:: S3.Client.exceptions.ObjectNotInActiveTierError
+
+  
+  
+
+  The source object of the COPY action is not in the active tier and is only stored in Amazon S3 Glacier.
+
+  
+  
+  **Example**
+
+  ::
+
+    try:
+      ...
+    except client.exceptions.ObjectNotInActiveTierError as e:
+      print(e.response)
+
+  
+
+
+
+  .. py:attribute:: response
+
+    
+    The parsed error response. All exceptions have a top level ``Error`` key that provides normalized access to common exception atrributes. All other keys are specific to this service or exception class.
+    
+
+  
+    **Syntax**
+
+    
+    ::
+
+      {}
+      
+    **Structure**
+
+    
+
+    - *(dict) --* 
+
+      The source object of the COPY action is not in the active tier and is only stored in Amazon S3 Glacier.
+
+      
+      
+
+      - **Error** *(dict) --* Normalized access to common exception attributes.
+        
+
+        - **Code** *(string) --* An identifier specifying the exception type.
+        
+
+        - **Message** *(string) --* A descriptive message explaining why the exception occured.
+    
+  

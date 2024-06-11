@@ -1,0 +1,64 @@
+:doc:`S3 <../../../s3>` / Client / exceptions / BucketAlreadyExists
+
+*******************
+BucketAlreadyExists
+*******************
+
+
+
+.. py:class:: S3.Client.exceptions.BucketAlreadyExists
+
+  
+  
+
+  The requested bucket name is not available. The bucket namespace is shared by all users of the system. Select a different name and try again.
+
+  
+  
+  **Example**
+
+  ::
+
+    try:
+      ...
+    except client.exceptions.BucketAlreadyExists as e:
+      print(e.response)
+
+  
+
+
+
+  .. py:attribute:: response
+
+    
+    The parsed error response. All exceptions have a top level ``Error`` key that provides normalized access to common exception atrributes. All other keys are specific to this service or exception class.
+    
+
+  
+    **Syntax**
+
+    
+    ::
+
+      {}
+      
+    **Structure**
+
+    
+
+    - *(dict) --* 
+
+      The requested bucket name is not available. The bucket namespace is shared by all users of the system. Select a different name and try again.
+
+      
+      
+
+      - **Error** *(dict) --* Normalized access to common exception attributes.
+        
+
+        - **Code** *(string) --* An identifier specifying the exception type.
+        
+
+        - **Message** *(string) --* A descriptive message explaining why the exception occured.
+    
+  
