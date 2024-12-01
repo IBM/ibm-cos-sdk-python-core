@@ -4892,9 +4892,9 @@
     "LifecycleRule":{
       "type":"structure",
       "required":[
-       "Status",
-       "Filter"
-       ],
+        "Status",
+        "Filter"
+      ],
       "members":{
         "Expiration":{
           "shape":"LifecycleExpiration",
@@ -4904,9 +4904,14 @@
           "shape":"ID",
           "documentation":"<p>Unique identifier for the rule. The value cannot be longer than 255 characters.</p>"
         },
+        "Prefix":{
+          "shape":"Prefix",
+          "documentation":"<p>Prefix identifying one or more objects to which the rule applies. This is no longer used; use <code>Filter</code> instead.</p> <important> <p>Replacement must be made for object keys containing special characters (such as carriage returns) when using XML requests. For more information, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html#object-key-xml-related-constraints\"> XML related object key constraints</a>.</p> </important>",
+          "deprecated":true
+        },
         "Filter":{
           "shape":"LifecycleRuleFilter",
-          "documentation":"<p>The <code>Filter</code> is used to identify objects that a Lifecycle Rule applies to. A <code>Filter</code> must have exactly one of <code>Prefix</code>, <code>Tag</code>, or <code>And</code> specified. <code>Filter</code> is required if the <code>LifecycleRule</code> does not containt a <code>Prefix</code> element.</p>"
+          "documentation":"<p>The <code>Filter</code> is used to identify objects that a Lifecycle Rule applies to. A <code>Filter</code> must have exactly one of <code>Prefix</code>, <code>Tag</code>, or <code>And</code> specified. <code>Filter</code> is required if the <code>LifecycleRule</code> does not contain a <code>Prefix</code> element.</p>"
         },
         "Status":{
           "shape":"ExpirationStatus",
@@ -4920,7 +4925,31 @@
         "NoncurrentVersionExpiration":{"shape":"NoncurrentVersionExpiration"},
         "AbortIncompleteMultipartUpload":{"shape":"AbortIncompleteMultipartUpload"}
       },
-      "documentation":"<p>A lifecycle rule for individual objects in an Amazon S3 bucket.</p>"
+      "documentation":"<p>A lifecycle rule for individual objects in an Amazon S3 bucket.</p> <p>For more information see, <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html\">Managing your storage lifecycle</a> in the <i>Amazon S3 User Guide</i>.</p>"
+    },
+    "LifecycleRuleAndOperator":{
+      "type":"structure",
+      "members":{
+        "Prefix":{
+          "shape":"Prefix",
+          "documentation":"<p>Prefix identifying one or more objects to which the rule applies.</p>"
+        },
+        "Tags":{
+          "shape":"TagSet",
+          "documentation":"<p>All of these tags must exist in the object's tag set in order for the rule to apply.</p>",
+          "flattened":true,
+          "locationName":"Tag"
+        },
+        "ObjectSizeGreaterThan":{
+          "shape":"ObjectSizeGreaterThanBytes",
+          "documentation":"<p>Minimum object size to which the rule applies.</p>"
+        },
+        "ObjectSizeLessThan":{
+          "shape":"ObjectSizeLessThanBytes",
+          "documentation":"<p>Maximum object size to which the rule applies.</p>"
+        }
+      },
+      "documentation":"<p>This is used in a Lifecycle Rule Filter to apply a logical AND to two or more predicates. The Lifecycle Rule will apply to any object matching all of the predicates configured inside the And operator.</p>"
     },
     "LifecycleRuleFilter":{
       "type":"structure",
@@ -4932,16 +4961,23 @@
         "Tag":{
           "shape":"Tag",
           "documentation":"<p>This tag must exist in the object's tag set in order for the rule to apply.</p>"
-        }
-
+        },
+        "ObjectSizeGreaterThan":{
+          "shape":"ObjectSizeGreaterThanBytes",
+          "documentation":"<p>Minimum object size to which the rule applies.</p>"
+        },
+        "ObjectSizeLessThan":{
+          "shape":"ObjectSizeLessThanBytes",
+          "documentation":"<p>Maximum object size to which the rule applies.</p>"
+        },
+        "And":{"shape":"LifecycleRuleAndOperator"}
       },
       "documentation":"<p>The <code>Filter</code> is used to identify objects that a Lifecycle Rule applies to. A <code>Filter</code> must have exactly one of <code>Prefix</code>, <code>Tag</code>, or <code>And</code> specified.</p>"
     },
     "LifecycleRules":{
       "type":"list",
       "member":{"shape":"LifecycleRule"},
-      "flattened":true,
-      "documentation":"Currently only one Rule allowed."
+      "flattened":true
     },
     "ListBucketAnalyticsConfigurationsOutput":{
       "type":"structure",
@@ -5958,6 +5994,10 @@
         "NoncurrentDays":{
           "shape":"Days",
           "documentation":"<p>Specifies the number of days an object is noncurrent before Amazon S3 can perform the associated action. The value must be a non-zero positive integer. For information about the noncurrent days calculations, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/intro-lifecycle-rules.html#non-current-days-calculations\">How Amazon S3 Calculates When an Object Became Noncurrent</a> in the <i>Amazon S3 User Guide</i>.</p>"
+        },
+        "NewerNoncurrentVersions":{
+          "shape":"VersionCount",
+          "documentation":"Ignored by COS if present."
         }
       },
       "documentation":"<p>Specifies when noncurrent object versions expire. Upon expiration, Amazon S3 permanently deletes the noncurrent object versions. You set this lifecycle configuration action on a bucket that has versioning enabled (or suspended) to request that Amazon S3 delete noncurrent object versions at a specific period in the object's lifetime.</p>"
@@ -6178,6 +6218,14 @@
       },
       "documentation":"<p>The source object of the COPY action is not in the active tier and is only stored in Amazon S3 Glacier.</p>",
       "exception":true
+    },
+    "ObjectSizeGreaterThanBytes":{
+      "type":"long",
+      "box":true
+    },
+    "ObjectSizeLessThanBytes":{
+      "type":"long",
+      "box":true
     },
     "ObjectStorageClass":{
       "type":"string",
@@ -6936,7 +6984,7 @@
         },
         "ExpectedBucketOwner":{
           "shape":"AccountId",
-          "documentation":"<p>The account ID of the expected bucket owner. If the account ID that you provide does not match the actual owner of the bucket, the request fails with the HTTP status code <code>403 Forbidden</code> (access denied).</p>",
+          "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-expected-bucket-owner"
         }
@@ -7248,7 +7296,7 @@
         },
         "ExpectedBucketOwner":{
           "shape":"AccountId",
-          "documentation":"<p>The account ID of the expected bucket owner. If the account ID that you provide does not match the actual owner of the bucket, the request fails with the HTTP status code <code>403 Forbidden</code> (access denied).</p>",
+          "documentation":"Ignored by COS if present.",
           "location":"header",
           "locationName":"x-amz-expected-bucket-owner"
         }
@@ -8304,6 +8352,7 @@
       "payload":"Body"
     },
     "Value":{"type":"string"},
+    "VersionCount":{"type":"integer"},
     "VersionIdMarker":{"type":"string"},
     "VersioningConfiguration":{
       "type":"structure",
