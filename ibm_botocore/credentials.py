@@ -2556,6 +2556,7 @@ class DefaultTokenManager(TokenManager):
         self._time_fetcher = time_fetcher
         self.set_verify(verify)
         self.proxies = None
+        self.background_refresher_retry_count = 3
 
         if auth_function:
             self.auth_function = auth_function
@@ -2597,6 +2598,16 @@ class DefaultTokenManager(TokenManager):
         """
         self._background_thread_wakeup_event.set()
 
+    def decrement_background_refresher_retry_count(self):
+        self.background_refresher_retry_count -= 1
+
+    def reset_background_refresher_retry_count(self):
+        self.background_refresher_retry_count = 3
+        logger.info("successfully set the count to 3")
+
+    def is_background_refresher_retry_count_exhausted(self):
+        return self.background_refresher_retry_count == 0
+
     def _background_refresher(self):
         """Refreshes token that's about to expire.
         Runs on background thread and sleeps until _advisory_refresh_timeout
@@ -2621,7 +2632,7 @@ class DefaultTokenManager(TokenManager):
                 self._background_thread_wakeup_event.clear()
                 self._background_thread_wakeup_event.wait(new_remaining)
         except Exception as e:
-             logger.error("Exiting background refresh thread: " + str(e))
+            logger.error("Exiting background refresh thread: " + str(e))
 
         self._background_thread_stopped_event.set()
 
@@ -2722,6 +2733,17 @@ class DefaultTokenManager(TokenManager):
 
         if response.status_code != httplib.OK:
             _msg = 'HttpCode({code}) - Retrieval of tokens from server failed.'.format(code=response.status_code)
+            try:
+                response_dict = response.json()
+                if 'errorMessage' in response_dict:
+                    _msg += f" ErrorMessage: {response_dict.get('errorMessage')}"
+                if 'errorCode' in response_dict:
+                    _msg += f" ErrorCode: {response_dict.get('errorCode')}."
+                if 'requestId' in response_dict.get('context', {}):
+                    _msg += f" RequestId: {response_dict.get('context', {}).get('requestId')}"
+            except json.JSONDecodeError as e:
+                logger.debug("JSON serialization failed for response: %s | Error: %s", response, e)
+
             raise CredentialRetrievalError(provider=self._get_token_url(), error_msg=_msg)
 
         return json.loads(response.content.decode('utf-8'))
@@ -2822,13 +2844,23 @@ class DefaultTokenManager(TokenManager):
                     self._set_cache_token() # clear the cache
                     raise
 
-            # if token hasnt expired continue to use it
+            # stopping background refresher thread since specified token is invalid now
+            error_message = str(e).lower()
+            if "httpcode(400)" in error_message and ("provided api key could not be found" in error_message or
+                                                    "supplied token failed to validate" in error_message):
+                self.decrement_background_refresher_retry_count()
+                if self.is_background_refresher_retry_count_exhausted():
+                    self._set_cache_token()  # clear the cache
+                    raise
+
+            # if token hasn't expired continue to use it
             return
 
+        self.reset_background_refresher_retry_count()
         self._set_from_data(metadata)
 
     def _get_initial_token(self, retry_count=3, retry_delay=1):
-        """ get the inital token - if it fails raise exception
+        """ get the initial token - if it fails raise exception
         """
         _total_attempts = retry_count
         while True:

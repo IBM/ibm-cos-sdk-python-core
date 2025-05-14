@@ -1,12 +1,12 @@
-wheel==0.45.0
+wheel==0.45.1
 behave==1.2.6
 jsonschema==2.6.0
-coverage==7.6.7
-setuptools==75.6.0;python_version>="3.12"
+coverage==7.8.0
+setuptools==80.4.0;python_version>="3.12"
 
 # Pytest specific deps
-pytest==8.3.3
-pytest-cov==2.12.1
-pytest-xdist==6.0.0
+pytest==8.3.5
+pytest-cov==6.1.1
+pytest-xdist==3.6.1
 atomicwrites>=1.0 # Windows requirement
 colorama>0.3.0 # Windows requirement
