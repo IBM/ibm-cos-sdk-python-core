@@ -6,7 +6,7 @@ import ibm_botocore
 requires = [
     'jmespath>=0.10.0,<=1.0.1',
     'python-dateutil>=2.9.0,<3.0.0',
-    'requests>=2.32.0,<2.32.3',
+    'requests>=2.32.4,<3.0.0',
     'urllib3>=1.26.18,<3',
 ]
 
