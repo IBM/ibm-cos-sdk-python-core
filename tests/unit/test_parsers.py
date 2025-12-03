@@ -377,24 +377,19 @@ class TestResponseMetadataParsed(unittest.TestCase):
         }
         self.assertEqual(parsed, expected)
 
-    # IBM Unsupported
-    # def test_checksum_metadata_parsed_from_response_context(self):
-    #     headers = {}
-    #     response_dict = {
-    #         'status_code': 200,
-    #         'headers': headers,
-    #         'body': b'',
-    #         'context': {
-    #             'checksum': {
-    #                 'response_algorithm': 'crc32'
-    #             }
-    #         }
-    #     }
-    #     parser = parsers.RestXMLParser()
-    #     parsed = parser.parse(response_dict, None)
-    #     expected_algorithm = 'crc32'
-    #     actual_algorithm = parsed['ResponseMetadata']['ChecksumAlgorithm']
-    #     self.assertEqual(actual_algorithm, expected_algorithm)
+    def test_checksum_metadata_parsed_from_response_context(self):
+        headers = {}
+        response_dict = {
+            'status_code': 200,
+            'headers': headers,
+            'body': b'',
+            'context': {'checksum': {'response_algorithm': 'crc32'}},
+        }
+        parser = parsers.RestXMLParser()
+        parsed = parser.parse(response_dict, None)
+        expected_algorithm = 'crc32'
+        actual_algorithm = parsed['ResponseMetadata']['ChecksumAlgorithm']
+        self.assertEqual(actual_algorithm, expected_algorithm)
 
 
 class TestTaggedUnions(unittest.TestCase):

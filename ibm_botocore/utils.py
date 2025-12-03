@@ -3171,8 +3171,74 @@ def _calculate_md5_from_file(fileobj):
     return md5.digest()
 
 
+def _is_s3express_request(params):
+    endpoint_properties = params.get('context', {}).get(
+        'endpoint_properties', {}
+    )
+    return endpoint_properties.get('backend') == 'S3Express'
+
+
+def has_checksum_header(params):
+    """
+    Checks if a header starting with "x-amz-checksum-" is provided in a request.
+
+    This function is considered private and subject to abrupt breaking changes or
+    removal without prior announcement. Please do not use it directly.
+    """
+    headers = params['headers']
+
+    # If a header matching the x-amz-checksum-* pattern is present, we
+    # assume a checksum has already been provided by the user.
+    for header in headers:
+        if CHECKSUM_HEADER_PATTERN.match(header):
+            return True
+
+    return False
+
+def has_content_md5(params):
+    """
+    Checks if a Content-MD5 header is already existing in the request.
+
+    This function is considered private and subject to abrupt breaking changes or
+    removal without prior announcement. Please do not use it directly.
+    """
+    headers = params['headers']
+    # If a Content-MD5 header is present and has a not null value it will return true.
+    for header in headers:
+        if header == "Content-MD5" and headers[header]:
+            return True
+
+    return False
+
+    return False
+def conditionally_calculate_checksum(params, **kwargs):
+    """This function has been deprecated, but is kept for backwards compatibility."""
+    if not has_checksum_header(params):
+        conditionally_calculate_md5(params, **kwargs)
+        conditionally_enable_crc32(params, **kwargs)
+
+
+def conditionally_enable_crc32(params, **kwargs):
+    """This function has been deprecated, but is kept for backwards compatibility."""
+    checksum_context = params.get('context', {}).get('checksum', {})
+    checksum_algorithm = checksum_context.get('request_algorithm')
+    if (
+        _is_s3express_request(params)
+        and params['body'] is not None
+        and checksum_algorithm in (None, "conditional-md5")
+    ):
+        params['context']['checksum'] = {
+            'request_algorithm': {
+                'algorithm': 'crc32',
+                'in': 'header',
+                'name': 'x-amz-checksum-crc32',
+            }
+        }
+
+
 def conditionally_calculate_md5(params, **kwargs):
     """Only add a Content-MD5 if the system supports it."""
+    
     headers = params['headers']
     body = params['body']
     checksum_context = params.get('context', {}).get('checksum', {})
@@ -3180,12 +3246,20 @@ def conditionally_calculate_md5(params, **kwargs):
     if checksum_algorithm and checksum_algorithm != 'conditional-md5':
         # Skip for requests that will have a flexible checksum applied
         return
-    # If a header matching the x-amz-checksum-* pattern is present, we
-    # assume a checksum has already been provided and an md5 is not needed
-    for header in headers:
-        if CHECKSUM_HEADER_PATTERN.match(header):
-            return
-    if MD5_AVAILABLE and body is not None and 'Content-MD5' not in headers:
+
+    if has_checksum_header(params):
+        # Don't add a new header if one is already available.
+        return
+
+    if _is_s3express_request(params):
+        # S3Express doesn't support MD5
+        return
+
+    if has_content_md5(params):
+        # No need to calculate MD5 as it is already available
+        return
+        
+    if MD5_AVAILABLE and body is not None:
         md5_digest = calculate_md5(body, **kwargs)
         params['headers']['Content-MD5'] = md5_digest
 

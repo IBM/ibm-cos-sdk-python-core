@@ -1148,6 +1148,29 @@ def remove_content_type_header_for_presigning(request, **kwargs):
         del request.headers['Content-Type']
 
 
+def _handle_request_validation_mode_member(params, model, **kwargs):
+    client_config = kwargs.get("context", {}).get("client_config")
+    if client_config is None:
+        return
+    response_checksum_validation = client_config.response_checksum_validation
+    http_checksum = model.http_checksum
+    mode_member = http_checksum.get("requestValidationModeMember")
+    if (
+        mode_member is not None
+        and response_checksum_validation == "when_supported"
+    ):
+        params.setdefault(mode_member, "ENABLED")
+def _set_extra_headers_for_unsigned_request(
+    request, signature_version, **kwargs
+):
+    # When sending a checksum in the trailer of an unsigned chunked request, S3
+    # requires us to set the "X-Amz-Content-SHA256" header to "STREAMING-UNSIGNED-PAYLOAD-TRAILER".
+    checksum_context = request.context.get("checksum", {})
+    algorithm = checksum_context.get("request_algorithm", {})
+    in_trailer = algorithm.get("in") == "trailer"
+    headers = request.headers
+    if signature_version == ibm_botocore.UNSIGNED and in_trailer:
+        headers["X-Amz-Content-SHA256"] = "STREAMING-UNSIGNED-PAYLOAD-TRAILER"
 # This is a list of (event_name, handler).
 # When a Session is created, everything in this list will be
 # automatically registered with that Session.
@@ -1177,6 +1200,7 @@ BUILTIN_HANDLERS = [
     ('after-call.cloudformation.GetTemplate', json_decode_template_body),
     ('after-call.s3.GetBucketLocation', parse_get_bucket_location),
     ('before-parameter-build', generate_idempotent_uuid),
+    ('before-parameter-build', _handle_request_validation_mode_member),
     ('before-parameter-build.s3', validate_bucket_name),
     (
         'before-parameter-build.s3.ListObjects',
@@ -1204,8 +1228,6 @@ BUILTIN_HANDLERS = [
     ('before-endpoint-resolution.s3', customize_endpoint_resolver_builtins),
     ('before-call', add_recursion_detection_header),
     ('before-call.s3', add_expect_header),
-    ('before-call.s3.PutObject', conditionally_calculate_md5),
-    ('before-call.s3.UploadPart', conditionally_calculate_md5),
     ('before-call.s3.DeleteObjects', escape_xml_payload),
     ('before-call.s3.PutBucketLifecycleConfiguration', escape_xml_payload),
     ('before-call.s3.CompleteMultipartUpload', conditionally_calculate_md5),
@@ -1234,6 +1256,7 @@ BUILTIN_HANDLERS = [
     ('before-parameter-build.s3.SelectObjectContent', sse_md5),
 
     ('before-sign.s3', remove_arn_from_signing_path),
+    ('before-sign.s3', _set_extra_headers_for_unsigned_request),
     (
         'before-sign.polly.SynthesizeSpeech',
         remove_content_type_header_for_presigning,

@@ -228,6 +228,37 @@ class Config:
         the ``Client Context Parameters`` section of the service client's
         documentation. Invalid parameters or ones that are not used by the
         specified service will be ignored.
+        Defaults to None.
+
+    :type request_checksum_calculation: str
+    :param request_checksum_calculation: Determines when a checksum will be
+        calculated for request payloads. Valid values are:
+
+        * ``when_supported`` -- When set, a checksum will be calculated for
+          all request payloads of operations modeled with the ``httpChecksum``
+          trait where ``requestChecksumRequired`` is ``true`` or a
+          ``requestAlgorithmMember`` is modeled.
+
+        * ``when_required`` -- When set, a checksum will only be calculated
+          for request payloads of operations modeled with the ``httpChecksum``
+          trait where ``requestChecksumRequired`` is ``true`` or where a
+          ``requestAlgorithmMember`` is modeled and supplied.
+
+        Defaults to None.
+
+    :type response_checksum_validation: str
+    :param response_checksum_validation: Determines when checksum validation
+        will be performed on response payloads. Valid values are:
+
+        * ``when_supported`` -- When set, checksum validation is performed on
+          all response payloads of operations modeled with the ``httpChecksum``
+          trait where ``responseAlgorithms`` is modeled, except when no modeled
+          checksum algorithms are supported.
+
+        * ``when_required`` -- When set, checksum validation is not performed
+          on response payloads of operations unless the checksum algorithm is
+          supported and the ``requestValidationModeMember`` member is set to ``ENABLED``.
+
 
         Defaults to None.
     """
@@ -259,6 +290,8 @@ class Config:
             ('request_min_compression_size_bytes', None),
             ('disable_request_compression', None),
             ('client_context_params', None),
+            ('request_checksum_calculation', None),
+            ('response_checksum_validation', None),
         ]
     )
 

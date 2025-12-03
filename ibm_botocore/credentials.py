@@ -2603,7 +2603,7 @@ class DefaultTokenManager(TokenManager):
 
     def reset_background_refresher_retry_count(self):
         self.background_refresher_retry_count = 3
-        logger.info("successfully set the count to 3")
+        logger.debug("successfully set the count to 3")
 
     def is_background_refresher_retry_count_exhausted(self):
         return self.background_refresher_retry_count == 0

@@ -201,25 +201,29 @@ POSITIVE_CASES = [
 ]
 
 CORRUPTED_HEADER_LENGTH = (
-    (b"\x00\x00\x00=\xFF\x00\x01\x02\x07\xfd\x83\x96\x0ccontent-type\x07\x00"
-     b"\x10application/json{'foo':'bar'}\x8d\x9c\x08\xb1"),
-    InvalidHeadersLength
+    (
+        b"\x00\x00\x00=\xff\x00\x01\x02\x07\xfd\x83\x96\x0ccontent-type\x07\x00"
+        b"\x10application/json{'foo':'bar'}\x8d\x9c\x08\xb1"
+    ),
+    ChecksumMismatch,
 )
 
 CORRUPTED_HEADERS = (
-    (b"\x00\x00\x00=\x00\x00\x00 \x07\xfd\x83\x96\x0ccontent+type\x07\x00\x10"
-     b"application/json{'foo':'bar'}\x8d\x9c\x08\xb1"),
-    ChecksumMismatch
+    (
+        b"\x00\x00\x00=\x00\x00\x00 \x07\xfd\x83\x96\x0ccontent+type\x07\x00\x10"
+        b"application/json{'foo':'bar'}\x8d\x9c\x08\xb1"
+    ),
+    ChecksumMismatch,
 )
 
 CORRUPTED_LENGTH = (
     b"\x01\x00\x00\x1d\x00\x00\x00\x00\xfdR\x8cZ{'foo':'bar'}\xc3e96",
-    InvalidPayloadLength
+    ChecksumMismatch,
 )
 
 CORRUPTED_PAYLOAD = (
     b"\x00\x00\x00\x1d\x00\x00\x00\x00\xfdR\x8cZ{'foo':'bar'\x8d\xc3e96",
-    ChecksumMismatch
+    ChecksumMismatch,
 )
 
 DUPLICATE_HEADER = (
@@ -292,7 +296,17 @@ def test_all_positive_cases():
         assert_message_equal(expected, decoded)
 
 
-@pytest.mark.parametrize("encoded, exception", NEGATIVE_CASES)
+@pytest.mark.parametrize(
+    "encoded, exception",
+    NEGATIVE_CASES,
+    ids=[
+        "corrupted-length",
+        "corrupted-payload",
+        "corrupted-headers",
+        "corrupted-headers-length",
+        "duplicate-headers",
+    ],
+)
 def test_negative_cases(encoded, exception):
     """Test that all negative cases raise the expected exception. """
     with pytest.raises(exception):

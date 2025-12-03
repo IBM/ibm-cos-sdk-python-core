@@ -298,6 +298,19 @@ try:
 except ImportError:
     HAS_CRT = False
 
+def has_minimum_crt_version(minimum_version):
+    """Not intended for use outside ibm_botocore."""
+    if not HAS_CRT:
+        return False
+
+    crt_version_str = awscrt.__version__
+    try:
+        crt_version_ints = map(int, crt_version_str.split("."))
+        crt_version_tuple = tuple(crt_version_ints)
+    except (TypeError, ValueError):
+        return False
+
+    return crt_version_tuple >= minimum_version
 
 ########################################################
 #              urllib3 compat backports                #

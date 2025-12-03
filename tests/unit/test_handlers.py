@@ -1275,3 +1275,54 @@ def test_remove_bucket_from_url_paths_from_model(
     )
     assert model.http['requestUri'] == request_uri_after
     assert model.http['authPath'] == auth_path
+@pytest.fixture()
+def checksum_operation_model():
+    operation_model = mock.Mock(spec=OperationModel)
+    operation_model.http_checksum = {
+        "requestValidationModeMember": "ChecksumMode",
+    }
+    return operation_model
+
+
+def create_checksum_context(
+    request_checksum_calculation="when_supported",
+    response_checksum_validation="when_supported",
+):
+    context = {
+        "client_config": Config(
+            request_checksum_calculation=request_checksum_calculation,
+            response_checksum_validation=response_checksum_validation,
+        )
+    }
+    return context
+
+
+def test_request_validation_mode_member_default(checksum_operation_model):
+    params = {}
+    handlers._handle_request_validation_mode_member(
+        params, checksum_operation_model, context=create_checksum_context()
+    )
+    assert params["ChecksumMode"] == "ENABLED"
+
+
+def test_request_validation_mode_member_when_required(
+    checksum_operation_model,
+):
+    params = {}
+    context = create_checksum_context(
+        response_checksum_validation="when_required"
+    )
+    handlers._handle_request_validation_mode_member(
+        params, checksum_operation_model, context=context
+    )
+    assert "ChecksumMode" not in params
+
+
+def test_request_validation_mode_member_set_by_user(
+    checksum_operation_model,
+):
+    params = {"ChecksumMode": "FAKE_VALUE"}
+    handlers._handle_request_validation_mode_member(
+        params, checksum_operation_model, context=create_checksum_context()
+    )
+    assert params["ChecksumMode"] == "FAKE_VALUE"

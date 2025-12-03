@@ -6,9 +6,12 @@ import ibm_botocore
 requires = [
     'jmespath>=0.10.0,<=1.0.1',
     'python-dateutil>=2.9.0,<3.0.0',
-    'requests>=2.32.4,<3.0.0',
+    'requests>=2.32.5,<3.0.0',
     'urllib3>=2.5.0,<3',
 ]
+extras_require = {
+    'crt': ['awscrt==0.29.1'],
+}
 
 setup(
     name='ibm-cos-sdk-core',
@@ -26,6 +29,7 @@ setup(
                  },
     include_package_data=True,
     install_requires=requires,
+    extras_require=extras_require,
     license="Apache License 2.0",
     python_requires=">= 3.6",
     classifiers=[

@@ -33,6 +33,7 @@ from tests import (
     ClientHTTPStubber,
     FreezeTime,
     create_session,
+    get_checksum_cls,
     mock,
     requires_crt,
     temporary_file,
@@ -2132,7 +2133,7 @@ def test_checksums_included_in_expected_operations(
         stub.add_response()
         call = getattr(client, operation)
         call(**operation_kwargs)
-        assert "Content-MD5" in stub.requests[-1].headers
+        assert "x-amz-checksum-crc32" in stub.requests[-1].headers
 
 
 @pytest.mark.parametrize(
@@ -3584,15 +3585,17 @@ def _verify_presigned_url_addressing(
     # We're not trying to verify the params for URL presigning,
     # those are tested elsewhere.  We just care about the hostname/path.
     parts = urlsplit(url)
-    actual = "%s://%s%s" % parts[:3]
+    actual = "{}://{}{}".format(*parts[:3])
     assert actual == expected_url
 
 
 class TestS3XMLPayloadEscape(BaseS3OperationTest):
-    def assert_correct_content_md5(self, request):
-        content_md5_bytes = get_md5(request.body).digest()
-        content_md5 = base64.b64encode(content_md5_bytes)
-        self.assertEqual(content_md5, request.headers["Content-MD5"])
+    def assert_correct_crc32_checksum(self, request):
+        checksum = get_checksum_cls()()
+        crc32_checksum = checksum.handle(request.body).encode()
+        self.assertEqual(
+            crc32_checksum, request.headers["x-amz-checksum-crc32"]
+        )
 
     def test_escape_keys_in_xml_delete_objects(self):
         self.http_stubber.add_response()
@@ -3604,7 +3607,7 @@ class TestS3XMLPayloadEscape(BaseS3OperationTest):
         request = self.http_stubber.requests[0]
         self.assertNotIn(b"\r\n\r", request.body)
         self.assertIn(b"&#xD;&#xA;&#xD;", request.body)
-        self.assert_correct_content_md5(request)
+        self.assert_correct_crc32_checksum(request)
 
     def test_escape_keys_in_xml_put_bucket_lifecycle_configuration(self):
         self.http_stubber.add_response()
@@ -3623,4 +3626,4 @@ class TestS3XMLPayloadEscape(BaseS3OperationTest):
         request = self.http_stubber.requests[0]
         self.assertNotIn(b"my\r\n\rprefix", request.body)
         self.assertIn(b"my&#xD;&#xA;&#xD;prefix", request.body)
-        self.assert_correct_content_md5(request)
+        self.assert_correct_crc32_checksum(request)

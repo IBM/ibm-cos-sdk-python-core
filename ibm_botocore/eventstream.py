@@ -63,12 +63,7 @@ class ChecksumMismatch(ParserError):
     """Calculated checksum did not match the expected checksum."""
 
     def __init__(self, expected, calculated):
-        message = (
-            'Checksum mismatch: expected 0x{:08x}, calculated 0x{:08x}'.format(
-                expected,
-                calculated,
-            )
-        )
+        message = f'Checksum mismatch: expected 0x{expected:08x}, calculated 0x{calculated:08x}'
         super().__init__(message)
 
 
