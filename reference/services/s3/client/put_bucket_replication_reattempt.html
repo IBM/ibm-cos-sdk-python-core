@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><link rel="next" title="get_bucket_analytics_configuration" href="get_bucket_analytics_configuration.html" /><link rel="prev" title="get_bucket_accelerate_configuration" href="get_bucket_accelerate_configuration.html" />
+<link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><link rel="next" title="put_bucket_tagging" href="put_bucket_tagging.html" /><link rel="prev" title="put_bucket_replication" href="put_bucket_replication.html" />
 
     <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
-        <title>get_bucket_acl - ibm_botocore 2.15.0 documentation</title>
+        <title>put_bucket_replication_reattempt - ibm_botocore 2.15.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css" />
@@ -213,128 +213,28 @@
           </label>
         </div>
         <article role="main">
-          <p><a class="reference internal" href="../../s3.html"><span class="doc">S3</span></a> / Client / get_bucket_acl</p>
-<section id="get-bucket-acl">
-<h1>get_bucket_acl<a class="headerlink" href="#get-bucket-acl" title="Permalink to this heading">#</a></h1>
+          <p><a class="reference internal" href="../../s3.html"><span class="doc">S3</span></a> / Client / put_bucket_replication_reattempt</p>
+<section id="put-bucket-replication-reattempt">
+<h1>put_bucket_replication_reattempt<a class="headerlink" href="#put-bucket-replication-reattempt" title="Permalink to this heading">#</a></h1>
 <dl class="py method">
-<dt class="sig sig-object py" id="S3.Client.get_bucket_acl">
-<span class="sig-prename descclassname"><span class="pre">S3.Client.</span></span><span class="sig-name descname"><span class="pre">get_bucket_acl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#S3.Client.get_bucket_acl" title="Permalink to this definition">#</a></dt>
-<dd><p>This implementation of the <code class="docutils literal notranslate"><span class="pre">GET</span></code> action uses the <code class="docutils literal notranslate"><span class="pre">acl</span></code> subresource to return the access control list (ACL) of a bucket. To use <code class="docutils literal notranslate"><span class="pre">GET</span></code> to return the ACL of the bucket, you must have <code class="docutils literal notranslate"><span class="pre">READ_ACP</span></code> access to the bucket. If <code class="docutils literal notranslate"><span class="pre">READ_ACP</span></code> permission is granted to the anonymous user, you can return the ACL of the bucket without using an authorization header.</p>
-<div class="admonition note">
-<h3 class='admonition-title'> Note</h3><p>If your bucket uses the bucket owner enforced setting for S3 Object Ownership, requests to read ACLs are still supported and return the <code class="docutils literal notranslate"><span class="pre">bucket-owner-full-control</span></code> ACL with the owner being the account that created the bucket. For more information, see <a class="reference external" href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/about-object-ownership.html">Controlling object ownership and disabling ACLs</a> in the <em>Amazon S3 User Guide</em>.</p>
-</div>
-<h3>Related Resources</h3>
-<ul class="simple">
-<li><p><a class="reference external" href="https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjects.html">ListObjects</a></p></li>
-</ul>
-<p>See also: <a class="reference external" href="https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/GetBucketAcl">AWS API Documentation</a></p>
+<dt class="sig sig-object py" id="S3.Client.put_bucket_replication_reattempt">
+<span class="sig-prename descclassname"><span class="pre">S3.Client.</span></span><span class="sig-name descname"><span class="pre">put_bucket_replication_reattempt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#S3.Client.put_bucket_replication_reattempt" title="Permalink to this definition">#</a></dt>
+<dd><p>Schedules reattempt of cold replication failures on the next reattempt cycle.</p>
+<p>See also: <a class="reference external" href="https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/PutBucketReplicationReattempt">AWS API Documentation</a></p>
 <h3>Request Syntax</h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_bucket_acl</span><span class="p">(</span>
-    <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
-    <span class="n">ExpectedBucketOwner</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">put_bucket_replication_reattempt</span><span class="p">(</span>
+    <span class="n">Bucket</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>Bucket</strong> (<em>string</em>) – <p><strong>[REQUIRED]</strong></p>
-<p>Specifies the S3 bucket whose ACL is being requested.</p>
-</p></li>
-<li><p><strong>ExpectedBucketOwner</strong> (<em>string</em>) – Ignored by COS if present.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>dict</p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><h3>Response Syntax</h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s1">&#39;Owner&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;DisplayName&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;ID&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
-    <span class="p">},</span>
-    <span class="s1">&#39;Grants&#39;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span>
-            <span class="s1">&#39;Grantee&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;DisplayName&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;EmailAddress&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;ID&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Type&#39;</span><span class="p">:</span> <span class="s1">&#39;CanonicalUser&#39;</span><span class="o">|</span><span class="s1">&#39;AmazonCustomerByEmail&#39;</span><span class="o">|</span><span class="s1">&#39;Group&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;URI&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
-            <span class="p">},</span>
-            <span class="s1">&#39;Permission&#39;</span><span class="p">:</span> <span class="s1">&#39;FULL_CONTROL&#39;</span><span class="o">|</span><span class="s1">&#39;WRITE&#39;</span><span class="o">|</span><span class="s1">&#39;WRITE_ACP&#39;</span><span class="o">|</span><span class="s1">&#39;READ&#39;</span><span class="o">|</span><span class="s1">&#39;READ_ACP&#39;</span>
-        <span class="p">},</span>
-    <span class="p">]</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<h3>Response Structure</h3>
-<ul>
-<li><p><em>(dict) –</em></p>
-<ul>
-<li><p><strong>Owner</strong> <em>(dict) –</em></p>
-<p>Container for the bucket owner’s display name and ID.</p>
-<ul>
-<li><p><strong>DisplayName</strong> <em>(string) –</em></p>
-<p>Container for the display name of the owner.</p>
-</li>
-<li><p><strong>ID</strong> <em>(string) –</em></p>
-<p>Container for the ID of the owner.</p>
-</li>
-</ul>
-</li>
-<li><p><strong>Grants</strong> <em>(list) –</em></p>
-<p>A list of grants.</p>
-<ul>
-<li><p><em>(dict) –</em></p>
-<p>Container for grant information.</p>
-<ul>
-<li><p><strong>Grantee</strong> <em>(dict) –</em></p>
-<p>The person being granted permissions.</p>
-<ul>
-<li><p><strong>DisplayName</strong> <em>(string) –</em></p>
-<p>Screen name of the grantee.</p>
-</li>
-<li><p><strong>EmailAddress</strong> <em>(string) –</em></p>
-<p>Email address of the grantee.</p>
-<div class="admonition note">
-<h3 class='admonition-title'> Note</h3><p>Using email addresses to specify a grantee is only supported in the following Amazon Web Services Regions:</p>
-<ul class="simple">
-<li><p>US East (N. Virginia)</p></li>
-<li><p>US West (N. California)</p></li>
-<li><p>US West (Oregon)</p></li>
-<li><p>Asia Pacific (Singapore)</p></li>
-<li><p>Asia Pacific (Sydney)</p></li>
-<li><p>Asia Pacific (Tokyo)</p></li>
-<li><p>Europe (Ireland)</p></li>
-<li><p>South America (São Paulo)</p></li>
-</ul>
-<p>For a list of all the Amazon S3 supported Regions and endpoints, see <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region">Regions and Endpoints</a> in the Amazon Web Services General Reference.</p>
-</div>
-</li>
-<li><p><strong>ID</strong> <em>(string) –</em></p>
-<p>The canonical user ID of the grantee.</p>
-</li>
-<li><p><strong>Type</strong> <em>(string) –</em></p>
-<p>Type of grantee</p>
-</li>
-<li><p><strong>URI</strong> <em>(string) –</em></p>
-<p>URI of the grantee group.</p>
-</li>
-</ul>
-</li>
-<li><p><strong>Permission</strong> <em>(string) –</em></p>
-<p>Specifies the permission given to the grantee.</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+<dd class="field-odd"><p><strong>Bucket</strong> (<em>string</em>) – <p><strong>[REQUIRED]</strong></p>
+<p>The bucket name.</p>
 </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -346,23 +246,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="get_bucket_analytics_configuration.html">
+          <a class="next-page" href="put_bucket_tagging.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">get_bucket_analytics_configuration</div>
+                <div class="title">put_bucket_tagging</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="get_bucket_accelerate_configuration.html">
+          <a class="prev-page" href="put_bucket_replication.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">get_bucket_accelerate_configuration</div>
+                <div class="title">put_bucket_replication</div>
                 
               </div>
             </a>
@@ -422,8 +322,8 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">get_bucket_acl</a><ul>
-<li><a class="reference internal" href="#S3.Client.get_bucket_acl"><code class="docutils literal notranslate"><span class="pre">S3.Client.get_bucket_acl()</span></code></a></li>
+<li><a class="reference internal" href="#">put_bucket_replication_reattempt</a><ul>
+<li><a class="reference internal" href="#S3.Client.put_bucket_replication_reattempt"><code class="docutils literal notranslate"><span class="pre">S3.Client.put_bucket_replication_reattempt()</span></code></a></li>
 </ul>
 </li>
 </ul>
