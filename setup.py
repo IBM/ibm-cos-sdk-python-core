@@ -7,10 +7,10 @@ requires = [
     'jmespath>=0.10.0,<=1.0.1',
     'python-dateutil>=2.9.0,<3.0.0',
     'requests>=2.32.5,<3.0.0',
-    'urllib3>=2.5.0,<3',
+    'urllib3>=2.6.2,<3',
 ]
 extras_require = {
-    'crt': ['awscrt==0.29.1'],
+    'crt': ['awscrt==0.30.0'],
 }
 
 setup(
@@ -47,5 +47,6 @@ setup(
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
         'Programming Language :: Python :: 3.13',
+        'Programming Language :: Python :: 3.14',
     ],
 )

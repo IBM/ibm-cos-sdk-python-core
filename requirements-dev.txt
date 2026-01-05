@@ -1,7 +1,7 @@
 wheel==0.45.1
 behave==1.2.6
 jsonschema==2.6.0
-coverage==7.12.1
+coverage==7.13.1
 setuptools==80.9.0;python_version>="3.12"
 
 # Pytest specific deps
