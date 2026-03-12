@@ -1225,6 +1225,7 @@ BUILTIN_HANDLERS = [
     ('before-parameter-build.s3-control', remove_accid_host_prefix_from_model),
     ('docs.*.s3.CopyObject.complete-section', document_copy_source_form),
     ('docs.*.s3.UploadPartCopy.complete-section', document_copy_source_form),
+    ('before-endpoint-resolution.s3', remove_bucket_from_url_paths_from_model),
     ('before-endpoint-resolution.s3', customize_endpoint_resolver_builtins),
     ('before-call', add_recursion_detection_header),
     ('before-call.s3', add_expect_header),
