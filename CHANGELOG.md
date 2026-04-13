@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2.16.2
+
+### Content
+
+#### Features
+
+#### Defect Fixes
+
+* Internal fixes and improvements
+
 ## 2.16.1
 
 ### Content

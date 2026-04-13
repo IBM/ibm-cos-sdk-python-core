@@ -4,7 +4,7 @@ A low-level interface to IBM Cloud Object Storage based on the `ibm_botocore` pa
 
 ## Documentation
 
-Documentation for `ibm-cos-sdk-python-core` can be found [here](https://ibm.github.io/ibm-cos-sdk-python-core/).
+Documentation for `ibm-cos-sdk-python-core` can be found [IBM COS Python Core SDK Documentation](https://ibm.github.io/ibm-cos-sdk-python-core/).
 
 ## Getting Help
 
